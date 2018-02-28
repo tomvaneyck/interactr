@@ -1,3 +1,5 @@
 language: csharp
+solution: Interactr/Interactr.sln
 script:
-        - ./temp.sh
+  - xbuild /p:Configuration=Release Interactr.sln
+  - mono ./testrunner/NUnit.Runners.3.9.0/tools/nunit-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll
