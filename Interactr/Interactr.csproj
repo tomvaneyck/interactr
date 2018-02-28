@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\Party.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
     <Compile Include="Window\InputMapper.cs" />
@@ -79,7 +81,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Model\.keep" />
     <Content Include="ViewModel\.keep" />
     <Content Include="View\.keep" />
   </ItemGroup>
