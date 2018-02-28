@@ -3,5 +3,5 @@ solution: Interactr/Interactr.sln
 before_install:
   - sudo apt-get install nunit-console
 script:
-  - xbuild /p:Configuration=Release Interactr/Interactr.sln
+  - msbuild /p:Configuration=Release Interactr/Interactr.sln
   - nunit-console ./Interactr.Tests/bin/Release/Interactr.Tests.dll
