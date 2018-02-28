@@ -5,4 +5,4 @@ before_install:
   - unzip NUnit.Console-3.8.0.zip -d nunit
 script:
   - msbuild /p:Configuration=Release Interactr/Interactr.sln
-  - nunit/nunit-console ./Interactr.Tests/bin/Release/Interactr.Tests.dll
+  - nunit/nunit3-console ./Interactr.Tests/bin/Release/Interactr.Tests.dll
