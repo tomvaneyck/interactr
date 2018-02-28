@@ -1,7 +1,8 @@
 language: csharp
 solution: Interactr/Interactr.sln
 before_install:
-  - sudo apt-get install nunit-console
+  - wget https://github.com/nunit/nunit-console/releases/download/3.8/NUnit.Console-3.8.0.zip
+  - unzip NUnit.Console-3.8.0.zip -d nunit
 script:
   - msbuild /p:Configuration=Release Interactr/Interactr.sln
-  - nunit-console ./Interactr.Tests/bin/Release/Interactr.Tests.dll
+  - nunit/nunit-console ./Interactr.Tests/bin/Release/Interactr.Tests.dll
