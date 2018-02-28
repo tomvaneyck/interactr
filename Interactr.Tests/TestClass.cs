@@ -15,11 +15,5 @@ namespace Interactr.Tests
         {
             Assert.Pass("My first test");
         }
-
-        [Test]
-        public void TestFail()
-        {
-            Assert.Fail();
-        }
     }
 }
