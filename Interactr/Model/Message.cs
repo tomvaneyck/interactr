@@ -5,11 +5,6 @@
     /// </summary>
     public class Message
     {
-        private Party _sender;
-        private Party _receiver;
-        private MessageType _type;
-        private string _label;
-
         public Message(Party sender, Party receiver, MessageType type, string label)
         {
             Sender = sender;

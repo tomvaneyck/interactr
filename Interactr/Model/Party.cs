@@ -8,9 +8,6 @@ namespace Interactr.Model
     /// </summary>
     public class Party
     {
-        private string _label;
-        private PartyType _type;
-
         public Party(PartyType type, string label)
         {
             Type = type;
