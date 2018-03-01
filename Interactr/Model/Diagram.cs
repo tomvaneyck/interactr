@@ -3,7 +3,7 @@
 namespace Interactr.Model
 {
     /// <summary>
-    /// Contains all the elements present in the UML diagram.
+    /// Contain all the elements present in the UML diagram.
     /// </summary>
     public class Diagram
     {
