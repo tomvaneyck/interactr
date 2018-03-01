@@ -32,21 +32,12 @@ namespace Interactr.Model
         /// <remarks>
         /// It is impossible for a party to not have a type.
         /// </remarks>
-        public PartyType Type
-        {
-            get => _type;
-            set => _type = value;
-        }
+        public PartyType Type { get; set; }
 
         /// <summary> A label in the specified format.
         /// <example> instance_name;class_name </example>
         /// </summary>
         //TODO validate label before assignment.
-        public string Label
-        {
-            get => _label;
-            set => _label = value;
-        }
-
+        public string Label { get; set; }
     }
 }

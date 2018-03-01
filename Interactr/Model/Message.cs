@@ -33,11 +33,7 @@
         /// <remarks>
         /// It is impossible for a message to not have a type.
         /// </remarks>
-        public MessageType Type
-        {
-            get => _type;
-            set => _type = value;
-        }
+        public MessageType Type { get; set; }
 
         /// <summary>
         /// Represent the message label.
@@ -45,28 +41,16 @@
         /// <remarks>
         /// There are no restrictions on the format of the label.
         /// </remarks>
-        public string Label
-        {
-            get => _label;
-            set => _label = value;
-        }
+        public string Label { get; set; }
 
         /// <summary>
         /// Represent the message sender.
         /// </summary>
-        public Party Sender
-        {
-            get => _sender;
-            set => _sender = value;
-        }
+        public Party Sender { get; set; }
 
         /// <summary>
         /// Represent the message receiver.
         /// </summary>
-        public Party Receiver
-        {
-            get => _receiver;
-            set => _receiver = value;
-        }
+        public Party Receiver { get; set; }
     }
 }
