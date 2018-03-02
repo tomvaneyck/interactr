@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Interactr.Reactive
 {
-    ///<summary>
+    /// <summary>
     /// A property that includes a value and an IObservable.
     /// Changes to the value are indicated in the changed observable.
     /// </summary> 
