@@ -31,7 +31,7 @@ namespace Interactr.Reactive
         public IObservable<T> Changed => _changed.StartWith(Value);
 
         /// <summary>
-        /// Value of Type T. 
+        /// Represents the value of the property, the value has a type T. 
         /// </summary>
         public T Value
         {
