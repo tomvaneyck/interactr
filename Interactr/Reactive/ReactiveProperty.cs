@@ -11,26 +11,35 @@ namespace Interactr.Reactive
     ///<summary>
     /// A property that includes a value and an IObservable.
     ///Changes to the value are indicated in the changed observable.
-    /// 
     /// </summary> 
     public class ReactiveProperty<T>
     {
         private T _value;
-        private Subject<T> _changed;
+        private readonly Subject<T> _changed;
 
-        public IObservable<T> Changed
+        public ReactiveProperty(T value)
         {
-            get
-            {
-                if (_changed == null)
-                {
-                    _changed = new Subject<T>();
-                }
-
-                return _changed.StartWith(Value);
-            }
+            _value = value;
+            _changed = new Subject<T>();
         }
 
+        /// <summary>
+        /// A a stream of changed values. 
+        /// </summary>
+        /// <remarks>
+        /// Stream is readonly.
+        /// </remarks>
+        public IObservable<T> Changed
+        {
+            get { return _changed.StartWith(Value); }
+        }
+
+        /// <summary>
+        /// Value of Type T. 
+        /// </summary>
+        /// <remarks>
+        /// ReactiveProperty should always have a value set.
+        /// </remarks>
         public T Value
         {
             get => _value;
