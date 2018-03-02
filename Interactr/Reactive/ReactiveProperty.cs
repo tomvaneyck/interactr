@@ -17,9 +17,8 @@ namespace Interactr.Reactive
         private T _value;
         private readonly Subject<T> _changed;
 
-        public ReactiveProperty(T value)
+        public ReactiveProperty()
         {
-            _value = value;
             _changed = new Subject<T>();
         }
 
@@ -37,9 +36,6 @@ namespace Interactr.Reactive
         /// <summary>
         /// Value of Type T. 
         /// </summary>
-        /// <remarks>
-        /// ReactiveProperty should always have a value set.
-        /// </remarks>
         public T Value
         {
             get => _value;

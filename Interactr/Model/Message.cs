@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using Interactr.Reactive;
 
 namespace Interactr.Model
@@ -33,6 +34,7 @@ namespace Interactr.Model
         /// It is impossible for a message to not have a type.
         /// </remarks>
         private readonly ReactiveProperty<MessageType> _type = new ReactiveProperty<MessageType>();
+        
         public MessageType Type
         {
             get => _type.Value;
