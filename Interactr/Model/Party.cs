@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Interactr.Reactive;
 
 namespace Interactr.Model
 {
@@ -8,6 +9,9 @@ namespace Interactr.Model
     /// </summary>
     public class Party
     {
+        private readonly ReactiveProperty<PartyType> _type = new ReactiveProperty<PartyType>();
+        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+
         public Party(PartyType type, string label)
         {
             Type = type;
@@ -24,17 +28,35 @@ namespace Interactr.Model
         }
 
         /// <summary>
+        /// A stream of changed types.
+        /// </summary>
+        public IObservable<PartyType> TypeChanged => _type.Changed;
+
+        /// <summary>
+        /// A stream of changed labels.
+        /// </summary>
+        public IObservable<string> labelChanged => _label.Changed;
+
+        /// <summary>
         /// Represent the type of this party.
         /// </summary>
         /// <remarks>
         /// It is impossible for a party to not have a type.
         /// </remarks>
-        public PartyType Type { get; set; }
+        public PartyType Type
+        {
+            get => _type.Value;
+            set => _type.Value = value;
+        }
 
         /// <summary> A label in the specified format.
         /// <example> instance_name;class_name </example>
         /// </summary>
         //TODO validate label before assignment.
-        public string Label { get; set; }
+        public string Label
+        {
+            get => _label.Value;
+            set => _label.Value = value;
+        }
     }
 }
