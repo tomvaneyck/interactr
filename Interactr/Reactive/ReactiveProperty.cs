@@ -10,7 +10,7 @@ namespace Interactr.Reactive
 {
     ///<summary>
     /// A property that includes a value and an IObservable.
-    ///Changes to the value are indicated in the changed observable.
+    /// Changes to the value are indicated in the changed observable.
     /// </summary> 
     public class ReactiveProperty<T>
     {
