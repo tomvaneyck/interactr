@@ -34,7 +34,6 @@ namespace Interactr.Model
             Result
         }
 
-
         /// <summary>
         /// A stream of changed types.
         /// </summary>
