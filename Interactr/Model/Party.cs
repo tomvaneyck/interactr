@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Interactr.Model
@@ -36,5 +37,13 @@ namespace Interactr.Model
         /// </summary>
         //TODO validate label before assignment.
         public string Label { get; set; }
+
+        public bool isValidLabel(string label)
+        {
+            string pattern = @"(^;|^[a-z]\w*;)[A-Z]\w*";
+            return Regex.IsMatch(label,pattern);
+        }
     }
+
+
 }
