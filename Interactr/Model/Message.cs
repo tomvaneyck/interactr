@@ -91,7 +91,7 @@ namespace Interactr.Model
         public Party Receiver
         {
             get => _receiver.Value;
-            set => _sender.Value = value;
+            set => _receiver.Value = value;
         }
     }
 }
