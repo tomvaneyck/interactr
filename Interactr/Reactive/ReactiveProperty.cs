@@ -28,10 +28,7 @@ namespace Interactr.Reactive
         /// <remarks>
         /// Stream is readonly.
         /// </remarks>
-        public IObservable<T> Changed
-        {
-            get { return _changed.StartWith(Value); }
-        }
+        public IObservable<T> Changed => _changed.StartWith(Value);
 
         /// <summary>
         /// Value of Type T. 
