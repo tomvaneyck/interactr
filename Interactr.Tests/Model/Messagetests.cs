@@ -156,6 +156,7 @@ namespace Interactr.Tests.Model
             // Assert that resultcollector contains 3 labels. 
             Assert.That(_senderResultCollector, Has.Count.EqualTo(3));
         }
+
         [Test]
         public void NoReceiverChangeObservableTest()
         {
