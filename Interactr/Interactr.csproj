@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Party.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
