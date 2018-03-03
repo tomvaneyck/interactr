@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interactr.Model;
+using Microsoft.Reactive.Testing;
+using System.Reactive.Concurrency;
 using NUnit.Framework;
 
 namespace Interactr.Tests.Model
@@ -32,6 +35,9 @@ namespace Interactr.Tests.Model
         private List<Party> _senderResultCollector;
         private List<Party> _receiveResultCollector;
 
+        //Scheduler 
+        private TestScheduler _scheduler;
+
         [OneTimeSetUp]
         public void init()
         {
@@ -51,36 +57,35 @@ namespace Interactr.Tests.Model
         [SetUp]
         public void before()
         {
-            // New testMessage before every test.
-            _defaultTestMessage =
-                new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1);
+            // initialize scheduler 
+            _scheduler = new TestScheduler();
+
+            // Schedule creation of the defaultTestMessage.
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () =>
+                _defaultTestMessage = new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1));
 
             // Clear resultcollectors before every test.
             _labelResultCollector.Clear();
             _messageTypeResultCollector.Clear();
             _receiveResultCollector.Clear();
             _senderResultCollector.Clear();
-
-            //Subscribe to observables.
-            ObservableExtensions.Subscribe(_defaultTestMessage.labelChanged, x => _labelResultCollector.Add(x));
-            ObservableExtensions.Subscribe(_defaultTestMessage.TypeChanged, x => _messageTypeResultCollector.Add(x));
-            ObservableExtensions.Subscribe(_defaultTestMessage.senderChanged, x => _senderResultCollector.Add(x));
-            ObservableExtensions.Subscribe(_defaultTestMessage.receiverChanged, x => _receiveResultCollector.Add(x));
         }
 
         [Test]
         public void NoLabelChangeObservableTest()
         {
-            Assert.That(_labelResultCollector, Has.Count.EqualTo(1));
-            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
+            var expected = new[] {ReactiveTest.OnNext(10, MessageLabel1)};
+            var actual = _scheduler.Start(() => _defaultTestMessage.labelChanged).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void AddOneLabelObservableTest()
         {
-            _defaultTestMessage.Label = MessageLabel2;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Label = MessageLabel2);
 
-            //Assert that the resultcollector contains the initial label and new label.
+            // Assert that the resultcollector contains the initial label and new label.
             Assert.That(_labelResultCollector, Has.Count.EqualTo(2));
             Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
             Assert.That(_labelResultCollector, Has.Member(MessageLabel2));
@@ -101,7 +106,7 @@ namespace Interactr.Tests.Model
         [Test]
         public void NoMessageTypeChangeObservableTest()
         {
-            //Assert that the result collector only has the initial value.
+            // Assert that the result collector only has the initial value.
             Assert.That(_messageTypeResultCollector, Has.Count.EqualTo(1));
             Assert.That(_messageTypeResultCollector, Has.Member(_defaultTestMessage.Type));
         }
@@ -112,7 +117,7 @@ namespace Interactr.Tests.Model
             Message.MessageType newMessageType = Message.MessageType.Result;
             _defaultTestMessage.Type = newMessageType;
 
-            //Assert that the resultcollector contains the initial value and the new value.
+            // Assert that the resultcollector contains the initial value and the new value.
             Assert.That(_messageTypeResultCollector, Has.Count.EqualTo(2));
             Assert.That(_messageTypeResultCollector, Has.Member(DefaultMessageType));
             Assert.That(_messageTypeResultCollector, Has.Member(newMessageType));
