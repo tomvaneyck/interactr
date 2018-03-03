@@ -20,7 +20,7 @@ namespace Interactr.Tests.Model
         private const string ValidPartyLabel1 = "instanceName;Classname";
         private const string ValidPartyLabel2 = "instanceName2;Classname2";
 
-        // Test party
+        // Test parties
         private Party _testSender1;
         private Party _testReceiver1;
         private Party _testSender2;
@@ -28,12 +28,6 @@ namespace Interactr.Tests.Model
 
         // Test message
         private Message _defaultTestMessage;
-
-        //Result collectors
-        private List<string> _labelResultCollector;
-        private List<Message.MessageType> _messageTypeResultCollector;
-        private List<Party> _senderResultCollector;
-        private List<Party> _receiveResultCollector;
 
         //Scheduler 
         private TestScheduler _scheduler;
@@ -46,12 +40,6 @@ namespace Interactr.Tests.Model
             _testReceiver1 = new Party(Party.PartyType.Actor, ValidPartyLabel2);
             _testSender2 = new Party(Party.PartyType.Object, ValidPartyLabel1);
             _testReceiver2 = new Party(Party.PartyType.Object, ValidPartyLabel2);
-
-            //Initialize result collectors.
-            _labelResultCollector = new List<string>();
-            _messageTypeResultCollector = new List<Message.MessageType>();
-            _receiveResultCollector = new List<Party>();
-            _senderResultCollector = new List<Party>();
         }
 
         [SetUp]
@@ -60,16 +48,18 @@ namespace Interactr.Tests.Model
             // initialize scheduler 
             _scheduler = new TestScheduler();
 
-            // Schedule creation of the defaultTestMessage.
-            _scheduler.Schedule(TimeSpan.FromTicks(10), () =>
-                _defaultTestMessage = new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1));
+            // Initialize default message.
+            _defaultTestMessage = new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1);
         }
 
         [Test]
         public void NoLabelChangeObservableTest()
         {
-            var expected = new[] {ReactiveTest.OnNext(10, MessageLabel1)};
-            var actual = _scheduler.Start(() => _defaultTestMessage.labelChanged).Messages;
+            // Subsription on LabelChanged happens on tick 0, tick 1 gives the value of the label.
+            var expected = new[] {ReactiveTest.OnNext(1, MessageLabel1)};
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+
+            // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
@@ -79,110 +69,184 @@ namespace Interactr.Tests.Model
             // Define the actions. 
             _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Label = MessageLabel2);
 
-            // Assert that the resultcollector contains the initial label and new label.
-            Assert.That(_labelResultCollector, Has.Count.EqualTo(2));
-            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
-            Assert.That(_labelResultCollector, Has.Member(MessageLabel2));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, MessageLabel1),
+                ReactiveTest.OnNext(10, MessageLabel2)
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void AddTwoLabelsObservableTest()
         {
-            _defaultTestMessage.Label = MessageLabel1;
-            _defaultTestMessage.Label = MessageLabel2;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Label = MessageLabel2);
+            _scheduler.Schedule(TimeSpan.FromTicks(20), () => _defaultTestMessage.Label = MessageLabel1);
 
-            // Assert that resultcollector contains 3 labels: the initial label and the 2 changes. 
-            Assert.That(_labelResultCollector, Has.Count.EqualTo(3));
-            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
-            Assert.That(_labelResultCollector, Has.Member(MessageLabel2));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, MessageLabel1),
+                ReactiveTest.OnNext(10, MessageLabel2),
+                ReactiveTest.OnNext(20, MessageLabel1)
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void NoMessageTypeChangeObservableTest()
         {
-            // Assert that the result collector only has the initial value.
-            Assert.That(_messageTypeResultCollector, Has.Count.EqualTo(1));
-            Assert.That(_messageTypeResultCollector, Has.Member(_defaultTestMessage.Type));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, DefaultMessageType),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeMessageTypeOnceObservableTest()
         {
-            Message.MessageType newMessageType = Message.MessageType.Result;
-            _defaultTestMessage.Type = newMessageType;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Type = Message.MessageType.Result);
 
-            // Assert that the resultcollector contains the initial value and the new value.
-            Assert.That(_messageTypeResultCollector, Has.Count.EqualTo(2));
-            Assert.That(_messageTypeResultCollector, Has.Member(DefaultMessageType));
-            Assert.That(_messageTypeResultCollector, Has.Member(newMessageType));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, DefaultMessageType),
+                ReactiveTest.OnNext(10, Message.MessageType.Result),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeMessageTypeTwiceObservablesTest()
         {
-            _defaultTestMessage.Type = Message.MessageType.Result;
-            _defaultTestMessage.Type = DefaultMessageType;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Type = Message.MessageType.Result);
+            _scheduler.Schedule(TimeSpan.FromTicks(20),
+                () => _defaultTestMessage.Type = Message.MessageType.Invocation);
 
-            // Assert that resultcollector contains 3 labels. 
-            Assert.That(_messageTypeResultCollector, Has.Count.EqualTo(3));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, DefaultMessageType),
+                ReactiveTest.OnNext(10, Message.MessageType.Result),
+                ReactiveTest.OnNext(20, Message.MessageType.Invocation)
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void NoSenderChangeObservableTest()
         {
-            //Assert that the result collector only has the initial value.
-            Assert.That(_senderResultCollector, Has.Count.EqualTo(1));
-            Assert.That(_senderResultCollector, Has.Member(_testSender1));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testSender1),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.SenderChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeSenderOnceObservableTest()
         {
-            _defaultTestMessage.Sender = _testSender2;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Sender = _testSender2);
 
-            //Assert that the resultcollector contains the initial value and the new value.
-            Assert.That(_senderResultCollector, Has.Count.EqualTo(2));
-            Assert.That(_senderResultCollector, Has.Member(_testSender1));
-            Assert.That(_senderResultCollector, Has.Member(_testSender2));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testSender1),
+                ReactiveTest.OnNext(10, _testSender2),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.SenderChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeSenderTwiceObservablesTest()
         {
-            _defaultTestMessage.Sender = _testSender2;
-            _defaultTestMessage.Sender = _testSender1;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Sender = _testSender2);
 
-            // Assert that resultcollector contains 3 labels. 
-            Assert.That(_senderResultCollector, Has.Count.EqualTo(3));
+            _scheduler.Schedule(TimeSpan.FromTicks(20),
+                () => _defaultTestMessage.Sender = _testSender1);
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testSender1),
+                ReactiveTest.OnNext(10, _testSender2),
+                ReactiveTest.OnNext(20, _testSender1)
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.SenderChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void NoReceiverChangeObservableTest()
         {
-            //Assert that the result collector only has the initial value.
-            Assert.That(_receiveResultCollector, Has.Count.EqualTo(1));
-            Assert.That(_receiveResultCollector, Has.Member(_testReceiver1));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testReceiver1),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.ReceiverChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeReceiverOnceObservableTest()
         {
-            _defaultTestMessage.Receiver = _testReceiver2;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Receiver = _testReceiver2);
 
-            //Assert that the resultcollector contains the initial value and the new value.
-            Assert.That(_receiveResultCollector, Has.Count.EqualTo(2));
-            Assert.That(_receiveResultCollector, Has.Member(_testReceiver1));
-            Assert.That(_receiveResultCollector, Has.Member(_testReceiver2));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testReceiver1),
+                ReactiveTest.OnNext(10, _testReceiver2),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.ReceiverChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
         public void ChangeReceiverTwiceObservablesTest()
         {
-            _defaultTestMessage.Receiver = _testReceiver2;
-            _defaultTestMessage.Receiver = _testReceiver1;
+            // Define the actions. 
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Receiver = _testReceiver2);
+            _scheduler.Schedule(TimeSpan.FromTicks(20), () => _defaultTestMessage.Receiver = _testReceiver1);
 
-            // Assert that resultcollector contains 3 labels. 
-            Assert.That(_receiveResultCollector, Has.Count.EqualTo(3));
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, _testReceiver1),
+                ReactiveTest.OnNext(10, _testReceiver2),
+                ReactiveTest.OnNext(20, _testReceiver1),
+            };
+            var actual = _scheduler.Start(() => _defaultTestMessage.ReceiverChanged, 0, 0, 1000).Messages;
+
+            // Assert
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
     }
 }

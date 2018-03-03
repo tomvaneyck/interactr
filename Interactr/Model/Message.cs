@@ -42,17 +42,17 @@ namespace Interactr.Model
         ///<summary>
         /// A stream of changed labels.
         /// </summary>
-        public IObservable<string> labelChanged => _label.Changed;
+        public IObservable<string> LabelChanged => _label.Changed;
 
         ///<summary>
         /// A stream of changed senders.
         /// </summary>
-        public IObservable<Party> senderChanged => _sender.Changed;
+        public IObservable<Party> SenderChanged => _sender.Changed;
 
         ///<summary>
         /// A stream of changed receivers.
         /// </summary>
-        public IObservable<Party> receiverChanged => _receiver.Changed;
+        public IObservable<Party> ReceiverChanged => _receiver.Changed;
 
 
         /// <summary>
