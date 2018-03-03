@@ -21,6 +21,6 @@ namespace Interactr.Model
         /// <summary>
         /// List of messages present in the diagram.
         /// </summary>
-        public List<Message> Messages { get; set; }
+        public IList<Message> Messages { get; set; }
     }
 }
