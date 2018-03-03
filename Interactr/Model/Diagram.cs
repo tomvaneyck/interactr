@@ -16,7 +16,7 @@ namespace Interactr.Model
         /// <summary>
         /// List of parties present in the diagram.
         /// </summary>
-        public List<Party> Parties { get; set; }
+        public IList<Party> Parties { get; set; }
 
         /// <summary>
         /// List of messages present in the diagram.
