@@ -33,7 +33,7 @@ namespace Interactr.Tests.Model
         private TestScheduler _scheduler;
 
         [OneTimeSetUp]
-        public void init()
+        public void Init()
         {
             // initialize parties
             _testSender1 = new Party(Party.PartyType.Actor, ValidPartyLabel1);
@@ -43,7 +43,7 @@ namespace Interactr.Tests.Model
         }
 
         [SetUp]
-        public void before()
+        public void Before()
         {
             // initialize scheduler 
             _scheduler = new TestScheduler();
