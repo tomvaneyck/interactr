@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Interactr.View.Controls
 {
+    /// <summary>
+    /// Represents a position in 2D space.
+    /// </summary>
     public struct Point
     {
         public int X { get; }
@@ -41,8 +44,7 @@ namespace Interactr.View.Controls
         {
             return $"({this.X}, {this.Y})";
         }
-
-
+        
         public override bool Equals(object obj)
         {
             // Check for null values and compare run-time types.
@@ -55,7 +57,7 @@ namespace Interactr.View.Controls
 
         public override int GetHashCode()
         {
-            return this.X ^ this.Y;
+            return X ^ Y;
         }
     }
 }
