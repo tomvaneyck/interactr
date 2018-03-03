@@ -16,11 +16,19 @@ namespace Interactr.Reactive
     {
         private List<T> _contents = new List<T>();
 
-        private readonly Subject<T> _onAdd = new Subject<T>();
+        /// <summary>
+        /// Observable that emits any item that is added to the list.
+        /// The element is emitted after it is added.
+        /// </summary>
         public IObservable<T> OnAdd => _onAdd;
+        private readonly Subject<T> _onAdd = new Subject<T>();
 
-        private readonly Subject<T> _onDelete = new Subject<T>();
+        /// <summary>
+        /// Observable that emits any item that is remove from the list.
+        /// The element is emitted after it is removed.
+        /// </summary>
         public IObservable<T> OnDelete => _onDelete;
+        private readonly Subject<T> _onDelete = new Subject<T>();
 
         public T this[int index]
         {
