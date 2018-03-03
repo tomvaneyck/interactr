@@ -35,22 +35,22 @@ namespace Interactr.Model
         }
 
         /// <summary>
-        /// A stream of changed types.
+        /// A stream of message types that have been changed.
         /// </summary>
         public IObservable<MessageType> TypeChanged => _type.Changed;
 
         ///<summary>
-        /// A stream of changed labels.
+        /// A stream of labels that have been changed.
         /// </summary>
         public IObservable<string> LabelChanged => _label.Changed;
 
         ///<summary>
-        /// A stream of changed senders.
+        /// A stream of senders that have been changed.
         /// </summary>
         public IObservable<Party> SenderChanged => _sender.Changed;
 
         ///<summary>
-        /// A stream of changed receivers.
+        /// A stream of receivers that have been changed.
         /// </summary>
         public IObservable<Party> ReceiverChanged => _receiver.Changed;
 
@@ -58,7 +58,7 @@ namespace Interactr.Model
         /// <summary>
         /// Represent the message type.
         /// </summary>
-     
+
         public MessageType Type
         {
             get => _type.Value;
