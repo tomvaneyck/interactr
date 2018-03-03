@@ -23,7 +23,7 @@ namespace Interactr.Tests.View.Controls
             Assert.IsNull(elem2.Parent);
             elem1.Children.Add(elem2);
             Assert.AreEqual(elem2.Parent, elem1);
-            elem2.Children.Remove(elem1);
+            elem1.Children.Remove(elem2);
             Assert.IsNull(elem2.Parent);
         }
 
@@ -70,6 +70,23 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
+        public void TestFindElementAt()
+        {
+            UIElement a = new UIElement();
+            UIElement b = new UIElement
+            {
+                Position = new Point(10, 10),
+                Width = 10,
+                Height = 10
+            };
+            a.Children.Add(b);
+
+            Assert.AreEqual(a, a.FindElementAt(new Point(5, 5)));
+            Assert.AreEqual(b, a.FindElementAt(new Point(12, 12)));
+            Assert.AreEqual(a, a.FindElementAt(new Point(20, 20)));
+        }
+
+        [Test]
         public void TranslatePointToTest()
         {
             UIElement root = new UIElement
@@ -80,7 +97,7 @@ namespace Interactr.Tests.View.Controls
             };
             UIElement child1 = new UIElement
             {
-                Position = new Point(10, 15),
+                Position = new Point(10, 10),
                 Width = 200,
                 Height = 200
             };
@@ -123,7 +140,6 @@ namespace Interactr.Tests.View.Controls
 
             Assert.AreEqual(testPointDownInChild4, new Point(-5, -5));
             Assert.AreEqual(testPointDown2InChild4, new Point(20, 20));
-
         }
     }
 }
