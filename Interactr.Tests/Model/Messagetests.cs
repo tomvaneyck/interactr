@@ -63,12 +63,6 @@ namespace Interactr.Tests.Model
             // Schedule creation of the defaultTestMessage.
             _scheduler.Schedule(TimeSpan.FromTicks(10), () =>
                 _defaultTestMessage = new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1));
-
-            // Clear resultcollectors before every test.
-            _labelResultCollector.Clear();
-            _messageTypeResultCollector.Clear();
-            _receiveResultCollector.Clear();
-            _senderResultCollector.Clear();
         }
 
         [Test]
