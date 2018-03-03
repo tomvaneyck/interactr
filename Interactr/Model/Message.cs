@@ -12,10 +12,6 @@ namespace Interactr.Model
     /// </summary>
     public class Message
     {
-        private readonly ReactiveProperty<MessageType> _type = new ReactiveProperty<MessageType>();
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-        private readonly ReactiveProperty<Party> _receiver = new ReactiveProperty<Party>();
-        private readonly ReactiveProperty<Party> _sender = new ReactiveProperty<Party>();
 
         public Message(Party sender, Party receiver, MessageType type, string label)
         {
@@ -34,36 +30,31 @@ namespace Interactr.Model
             Result
         }
 
+        #region Type
+        private readonly ReactiveProperty<MessageType> _type = new ReactiveProperty<MessageType>();
+
         /// <summary>
         /// A stream of message types that have been changed.
         /// </summary>
         public IObservable<MessageType> TypeChanged => _type.Changed;
 
-        ///<summary>
-        /// A stream of labels that have been changed.
-        /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
-
-        ///<summary>
-        /// A stream of senders that have been changed.
-        /// </summary>
-        public IObservable<Party> SenderChanged => _sender.Changed;
-
-        ///<summary>
-        /// A stream of receivers that have been changed.
-        /// </summary>
-        public IObservable<Party> ReceiverChanged => _receiver.Changed;
-
-
         /// <summary>
         /// Represent the message type.
         /// </summary>
-
         public MessageType Type
         {
             get => _type.Value;
             set => _type.Value = value;
         }
+        #endregion
+
+        #region Label
+        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+
+        ///<summary>
+        /// A stream of labels that have been changed.
+        /// </summary>
+        public IObservable<string> LabelChanged => _label.Changed;
 
         /// <summary>
         /// Represent the message label.
@@ -76,6 +67,15 @@ namespace Interactr.Model
             get => _label.Value;
             set => _label.Value = value;
         }
+        #endregion
+
+        #region Sender
+        private readonly ReactiveProperty<Party> _sender = new ReactiveProperty<Party>();
+
+        ///<summary>
+        /// A stream of senders that have been changed.
+        /// </summary>
+        public IObservable<Party> SenderChanged => _sender.Changed;
 
         /// <summary>
         /// Represent the message sender.
@@ -85,6 +85,15 @@ namespace Interactr.Model
             get => _sender.Value;
             set => _sender.Value = value;
         }
+        #endregion
+
+        #region Receiver
+        private readonly ReactiveProperty<Party> _receiver = new ReactiveProperty<Party>();
+
+        ///<summary>
+        /// A stream of receivers that have been changed.
+        /// </summary>
+        public IObservable<Party> ReceiverChanged => _receiver.Changed;
 
         /// <summary>
         /// Represent the message receiver.
@@ -94,5 +103,6 @@ namespace Interactr.Model
             get => _receiver.Value;
             set => _receiver.Value = value;
         }
+        #endregion
     }
 }
