@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
@@ -139,20 +140,19 @@ namespace Interactr.Tests.Reactive
 
             //Define actions
             scheduler.Schedule(TimeSpan.FromTicks(10), () => list[1] = "Z");
-            var actualDelete = scheduler.Start(() => list.OnDelete, created: 0, subscribed: 0, disposed: 100);
-            var actualAdd = scheduler.Start(() => list.OnAdd, created: 0, subscribed: 0, disposed: 100);
-
+            var actual = scheduler.Start(() => 
+                    Observable.Merge(
+                        list.OnDelete.Select(e => (Element: e, WasAdded: false)),
+                        list.OnAdd.Select(e => (Element: e, WasAdded: true))
+                    ), created: 0, subscribed: 0, disposed: 100);
+            
             //Assert
-            var expectedDelete = new[]
+            var expected = new[]
             {
-                OnNext(10, "B")
+                OnNext(10, ("B", false)),
+                OnNext(10, ("Z", true))
             };
-            var expectedAdd = new[]
-            {
-                OnNext(10, "Z")
-            };
-            ReactiveAssert.AreElementsEqual(expectedDelete, actualDelete.Messages);
-            ReactiveAssert.AreElementsEqual(expectedAdd, actualAdd.Messages);
+            ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
     }
 }
