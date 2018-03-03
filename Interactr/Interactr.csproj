@@ -68,6 +68,7 @@
     <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Party.cs" />
+    <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainView.cs" />

@@ -58,6 +58,7 @@ namespace Interactr.Model
         /// <summary>
         /// Represent the message type.
         /// </summary>
+     
         public MessageType Type
         {
             get => _type.Value;

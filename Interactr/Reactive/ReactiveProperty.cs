@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Interactr.Reactive
 {
-    ///<summary>
+    /// <summary>
     /// A property that includes a value and an IObservable.
-    ///Changes to the value are indicated in the changed observable.
+    /// Changes to the value are indicated in the changed observable.
     /// </summary> 
     public class ReactiveProperty<T>
     {
@@ -31,7 +31,7 @@ namespace Interactr.Reactive
         public IObservable<T> Changed => _changed.StartWith(Value);
 
         /// <summary>
-        /// Value of Type T. 
+        /// Represents the value of the property, the value has a type T. 
         /// </summary>
         public T Value
         {
