@@ -41,7 +41,7 @@ namespace Interactr.Tests.Model
             _partyTypeResultCollector.Clear();
 
             //Subscribe to observables.
-            ObservableExtensions.Subscribe(_defaultTestParty.labelChanged, x => _labelResultCollector.Add(x));
+            ObservableExtensions.Subscribe(_defaultTestParty.LabelChanged, x => _labelResultCollector.Add(x));
             ObservableExtensions.Subscribe(_defaultTestParty.TypeChanged, x => _partyTypeResultCollector.Add(x));
         }
 

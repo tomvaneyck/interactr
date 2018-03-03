@@ -35,7 +35,7 @@ namespace Interactr.Model
         /// <summary>
         /// A stream of changed labels.
         /// </summary>
-        public IObservable<string> labelChanged => _label.Changed;
+        public IObservable<string> LabelChanged => _label.Changed;
 
         /// <summary>
         /// Represent the type of this party.
