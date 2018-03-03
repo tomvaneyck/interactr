@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Interactr.Reactive
 {
     /// <summary>
-    /// This is an implementation of IList with observables.
+    /// An implementation of IList with observables.
     /// </summary>
     /// <typeparam name="T">The type of items contained in the list.</typeparam>
     public class ReactiveList<T> : IList<T>
@@ -33,7 +33,6 @@ namespace Interactr.Reactive
                 _onAdd.OnNext(value);
             }
         }
-
         
         public void Add(T item)
         {
@@ -43,7 +42,7 @@ namespace Interactr.Reactive
 
         public void Clear()
         {
-            // Clearing _contents by making new list but keeping items for notifying.
+            //Clear _contents by making new list but keep items for emitting _onDelete.
             List<T> temp = _contents;
             _contents = new List<T>();
 
