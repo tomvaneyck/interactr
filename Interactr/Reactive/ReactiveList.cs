@@ -14,13 +14,12 @@ namespace Interactr.Reactive
     /// <typeparam name="T">The type of items contained in the list.</typeparam>
     public class ReactiveList<T> : IList<T>
     {
-
         private List<T> _contents;
 
-        private Subject<T> _onAdd;
+        private readonly Subject<T> _onAdd = new Subject<T>();
         public IObservable<T> OnAdd => _onAdd;
 
-        private Subject<T> _onDelete;
+        private readonly Subject<T> _onDelete = new Subject<T>();
         public IObservable<T> OnDelete => _onDelete;
 
         public T this[int index]
@@ -64,9 +63,10 @@ namespace Interactr.Reactive
 
         public bool Remove(T item)
         {
-            if (_contents.Remove(item))
+            int index = IndexOf(item);
+            if (index >= 0)
             {
-                _onDelete.OnNext(item);
+                RemoveAt(index);
                 return true;
             }
             return false;
@@ -75,7 +75,8 @@ namespace Interactr.Reactive
         public void RemoveAt(int index)
         {
             T item = _contents[index];
-            this.Remove(item);
+            _contents.RemoveAt(index);
+            _onDelete.OnNext(item);
         }
 
         #region DefaultImplementations
