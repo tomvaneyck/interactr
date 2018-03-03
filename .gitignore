@@ -322,4 +322,12 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Visual paradigm
+.vpprefdata/
+*.vpp~*
+*.vpp.working
+*.vpp.working-journal
+*.lock
+tmp/*
+
 ClassDiagram/\.Interactr\.vpp\.lck
