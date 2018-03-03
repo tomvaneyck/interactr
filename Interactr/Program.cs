@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Interactr.View;
+using Interactr.ViewModel;
 
 namespace Interactr
 {
@@ -16,7 +18,10 @@ namespace Interactr
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
+
+            MainViewModel vm = new MainViewModel();
+            MainView view = new MainView();
+            view.Show();
         }
     }
 }

@@ -1,4 +1,9 @@
-﻿namespace Interactr.Model
+﻿using System;
+using System.Reactive.Linq;
+using System.Runtime.InteropServices;
+using Interactr.Reactive;
+
+namespace Interactr.Model
 {
     /// <summary>
     /// Represent a message passed between parties.
@@ -28,7 +33,14 @@
         /// <remarks>
         /// It is impossible for a message to not have a type.
         /// </remarks>
-        public MessageType Type { get; set; }
+        private readonly ReactiveProperty<MessageType> _type = new ReactiveProperty<MessageType>();
+        
+        public MessageType Type
+        {
+            get => _type.Value;
+            set => _type.Value = value;
+        }
+        public IObservable<MessageType> TypeChanged => _type.Changed;
 
         /// <summary>
         /// Represent the message label.
