@@ -17,8 +17,8 @@ namespace Interactr.Tests.Model
         private const string MessageLabel1 = "testLabel1";
         private const string MessageLabel2 = "testLabel2";
 
-        private const string ValidPartyLabel1 = "instanceName;Classname";
-        private const string ValidPartyLabel2 = "instanceName2;Classname2";
+        private const string ValidPartyLabel1 = "instanceName:Classname";
+        private const string ValidPartyLabel2 = "instanceName2:Classname2";
 
         // Test parties
         private Party _testSender1;

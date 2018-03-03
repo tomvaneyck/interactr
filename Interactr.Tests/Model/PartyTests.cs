@@ -19,8 +19,8 @@ namespace Interactr.Tests.Model
         private const Party.PartyType DefaultPartyType = Party.PartyType.Actor;
 
         //Test labels
-        private const string ValidLabel1 = "instanceName;Classname";
-        private const string ValidLabel2 = "instanceName2;Classname2";
+        private const string ValidLabel1 = "instanceName:Classname";
+        private const string ValidLabel2 = "instanceName2:Classname2";
 
         // Test parties
         private Party _defaultTestParty;
