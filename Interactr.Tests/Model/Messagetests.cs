@@ -11,11 +11,11 @@ namespace Interactr.Tests.Model
         private const Message.MessageType DefaultMessageType = Message.MessageType.Invocation;
 
         //Test labels
-        private const string messageLabel1 = "testLabel1";
-        private const string messageLabel2 = "testLabel2";
+        private const string MessageLabel1 = "testLabel1";
+        private const string MessageLabel2 = "testLabel2";
 
-        private const string validPartyLabel1 = "instanceName;Classname";
-        private const string validPartyLabel2 = "instanceName2;Classname2";
+        private const string ValidPartyLabel1 = "instanceName;Classname";
+        private const string ValidPartyLabel2 = "instanceName2;Classname2";
 
         // Test party
         private Party _testSender1;
@@ -36,10 +36,10 @@ namespace Interactr.Tests.Model
         public void init()
         {
             // initialize parties
-            _testSender1 = new Party(Party.PartyType.Actor, validPartyLabel1);
-            _testReceiver1 = new Party(Party.PartyType.Actor, validPartyLabel2);
-            _testSender2 = new Party(Party.PartyType.Object, validPartyLabel1);
-            _testReceiver2 = new Party(Party.PartyType.Object, validPartyLabel2);
+            _testSender1 = new Party(Party.PartyType.Actor, ValidPartyLabel1);
+            _testReceiver1 = new Party(Party.PartyType.Actor, ValidPartyLabel2);
+            _testSender2 = new Party(Party.PartyType.Object, ValidPartyLabel1);
+            _testReceiver2 = new Party(Party.PartyType.Object, ValidPartyLabel2);
 
             //Initialize result collectors.
             _labelResultCollector = new List<string>();
@@ -53,7 +53,7 @@ namespace Interactr.Tests.Model
         {
             // New testMessage before every test.
             _defaultTestMessage =
-                new Message(_testSender1, _testReceiver1, DefaultMessageType, messageLabel1);
+                new Message(_testSender1, _testReceiver1, DefaultMessageType, MessageLabel1);
 
             // Clear resultcollectors before every test.
             _labelResultCollector.Clear();
@@ -72,30 +72,30 @@ namespace Interactr.Tests.Model
         public void NoLabelChangeObservableTest()
         {
             Assert.That(_labelResultCollector, Has.Count.EqualTo(1));
-            Assert.That(_labelResultCollector, Has.Member(messageLabel1));
+            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
         }
 
         [Test]
         public void AddOneLabelObservableTest()
         {
-            _defaultTestMessage.Label = messageLabel2;
+            _defaultTestMessage.Label = MessageLabel2;
 
             //Assert that the resultcollector contains the initial label and new label.
             Assert.That(_labelResultCollector, Has.Count.EqualTo(2));
-            Assert.That(_labelResultCollector, Has.Member(messageLabel1));
-            Assert.That(_labelResultCollector, Has.Member(messageLabel2));
+            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
+            Assert.That(_labelResultCollector, Has.Member(MessageLabel2));
         }
 
         [Test]
         public void AddTwoLabelsObservableTest()
         {
-            _defaultTestMessage.Label = messageLabel1;
-            _defaultTestMessage.Label = messageLabel2;
+            _defaultTestMessage.Label = MessageLabel1;
+            _defaultTestMessage.Label = MessageLabel2;
 
             // Assert that resultcollector contains 3 labels: the initial label and the 2 changes. 
             Assert.That(_labelResultCollector, Has.Count.EqualTo(3));
-            Assert.That(_labelResultCollector, Has.Member(messageLabel1));
-            Assert.That(_labelResultCollector, Has.Member(messageLabel2));
+            Assert.That(_labelResultCollector, Has.Member(MessageLabel1));
+            Assert.That(_labelResultCollector, Has.Member(MessageLabel2));
         }
 
         [Test]
