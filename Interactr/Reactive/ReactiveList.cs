@@ -14,7 +14,7 @@ namespace Interactr.Reactive
     /// <typeparam name="T">The type of items contained in the list.</typeparam>
     public class ReactiveList<T> : IList<T>
     {
-        private List<T> _contents;
+        private List<T> _contents = new List<T>();
 
         private readonly Subject<T> _onAdd = new Subject<T>();
         public IObservable<T> OnAdd => _onAdd;
