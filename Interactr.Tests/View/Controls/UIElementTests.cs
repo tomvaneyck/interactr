@@ -49,17 +49,17 @@ namespace Interactr.Tests.View.Controls
         [Test]
         public void TestFocusObservable()
         {
-            //Setup
+            // Setup
             var scheduler = new TestScheduler();
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement();
 
-            //Define actions
+            // Define actions
             scheduler.Schedule(TimeSpan.FromTicks(10), () => elem1.Focus());
             scheduler.Schedule(TimeSpan.FromTicks(20), () => elem2.Focus());
             var actual = scheduler.Start(() => elem1.FocusChanged, created: 0, subscribed: 0, disposed: 100);
 
-            //Assert
+            // Assert
             var expected = new[]
             {
                 OnNext(1, false),
@@ -72,18 +72,18 @@ namespace Interactr.Tests.View.Controls
         [Test]
         public void TestFindElementAt()
         {
-            UIElement a = new UIElement();
-            UIElement b = new UIElement
+            UIElement elem1 = new UIElement();
+            UIElement elem2 = new UIElement
             {
                 Position = new Point(10, 10),
                 Width = 10,
                 Height = 10
             };
-            a.Children.Add(b);
+            elem1.Children.Add(elem2);
 
-            Assert.AreEqual(a, a.FindElementAt(new Point(5, 5)));
-            Assert.AreEqual(b, a.FindElementAt(new Point(12, 12)));
-            Assert.AreEqual(a, a.FindElementAt(new Point(20, 20)));
+            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(5, 5)));
+            Assert.AreEqual(elem2, elem1.FindElementAt(new Point(12, 12)));
+            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(20, 20)));
         }
 
         [Test]

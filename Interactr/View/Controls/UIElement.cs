@@ -20,9 +20,11 @@ namespace Interactr.View.Controls
     {
         /// <summary>
         /// The UI element that currently has the keyboard focus.
+        /// </summary>
+        /// <remarks>
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
-        /// </summary>
+        /// </remarks>
         public static UIElement FocusedElement { get; private set; }
 
         #region Children
@@ -106,7 +108,7 @@ namespace Interactr.View.Controls
 
         private void SetupParentChildRelationship()
         {
-            //Set parent-child relationship on child add
+            // Set parent-child relationship on child add
             _children.OnAdd.Subscribe(newChild =>
             {
                 if (newChild.Parent != null)
@@ -117,13 +119,13 @@ namespace Interactr.View.Controls
                 newChild.Parent = this;
             });
 
-            //Remove parent-child relationship on child remove
+            // Remove parent-child relationship on child remove
             _children.OnDelete.Subscribe(child =>
             {
                 child.Parent = null;
             });
 
-            //When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
+            // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             _children.OnAdd.Subscribe(newChild =>
             {
                 IDisposable subscription = newChild.RepaintRequested.Subscribe(_ => Repaint());
@@ -143,16 +145,16 @@ namespace Interactr.View.Controls
         {
             if (this == FocusedElement)
             {
-                //this is already focused
+                // This is already focused
                 return;
             }
 
-            //Previously focused element is now unfocused
+            // Previously focused element is now unfocused
             FocusedElement?._focusChanged.OnNext(false);
 
             FocusedElement = this;
 
-            //This element is now focused
+            // This element is now focused
             this._focusChanged.OnNext(true);
         }
 
@@ -257,11 +259,11 @@ namespace Interactr.View.Controls
 
             if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, id, mousePos, clickCount))
             {
-                //Event was handled
+                // Event was handled
                 return true;
             }
 
-            //Bubble up event from FocusedElement to root
+            // Bubble up event from FocusedElement to root
             Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, mousePos);
             return mouseoverElement.BubbleUpMouseEvent(id, mousePos, clickCount);
         }
@@ -344,7 +346,7 @@ namespace Interactr.View.Controls
 
         #region Painting
         /// <summary>
-        /// Paints this element and its children.
+        /// Paint this element and its children.
         /// </summary>
         /// <param name="g">The graphics object</param>
         public void Paint(Graphics g)
@@ -356,38 +358,45 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <summary>
+        /// Emit a request for repainting.
+        /// </summary>
+        /// <remarks>
+        /// This method will trigger a RepaintRequested event, which will be bubbled upwards
+        /// to the top-level where it can be handled by the window.
+        /// </remarks>
         public void Repaint()
         {
             _repaintRequested.OnNext(Unit.Default);
         }
 
         /// <summary>
-        /// Draws the children of this element
+        /// Draw the children of this element
         /// </summary>
         private void PaintChildren(Graphics g)
         {
-            //Render first to last, so last element is on top
+            // Render first to last, so last element is on top
             foreach (UIElement child in Children)
             {
-                //save current transform and clip
+                // Save current transform and clip
                 Matrix currentTransform = g.Transform;
                 Region currentClip = g.Clip;
 
-                //map x, y coordinates to child space (relative to child origin)
+                // Map x, y coordinates to child space (relative to child origin)
                 g.TranslateTransform(child.Position.X, child.Position.Y);
                 g.SetClip(new RectangleF(0, 0, child.Width+1, child.Height+1));
 
-                //paint
+                // Paint
                 child.Paint(g);
 
-                //Reset clip and transform
+                // Reset clip and transform
                 g.Transform = currentTransform;
                 g.Clip = currentClip;
             }
         }
 
         /// <summary>
-        /// This function is called to render this element to the screen.
+        /// Render this element to the screen.
         /// </summary>
         /// <param name="g">The graphics object that can be used to draw</param>
         public virtual void PaintElement(Graphics g)
@@ -414,7 +423,7 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Returns the UIElement that is visible at this point.
+        /// Find the UIElement that is visible at this point on the screen.
         /// This function searches downward in the tree for the bottom-most node that contains the specified point
         /// </summary>
         /// <param name="point"></param>
@@ -443,7 +452,7 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Returns this element, this elements parent, and so on until the root element is reached.
+        /// Return this element, this elements parent, and so on until the root element is reached.
         /// </summary>
         /// <returns>This element, every element between this element and the root element, and the root element</returns>
         private IEnumerable<UIElement> WalkToRoot()
