@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Interactr.Reactive;
 
 namespace Interactr.Model
 {
@@ -7,16 +8,17 @@ namespace Interactr.Model
     /// </summary>
     public class Diagram
     {
-        public Diagram()
+        public Diagram(ReactiveList<Message> messages)
         {
-            Parties = new List<Party>();
-            Messages = new List<Message>();
+            Messages = new ReactiveList<Message>();
+            Parties = new ReactiveList<Party>();
         }
 
         /// <summary>
         /// IList of parties present in the diagram.
         /// </summary>
         public IList<Party> Parties { get; set; }
+
 
         /// <summary>
         /// List of messages present in the diagram.
