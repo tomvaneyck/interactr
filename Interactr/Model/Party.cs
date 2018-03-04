@@ -9,9 +9,6 @@ namespace Interactr.Model
     /// </summary>
     public class Party
     {
-        private readonly ReactiveProperty<PartyType> _type = new ReactiveProperty<PartyType>();
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-
         public Party(PartyType type, string label)
         {
             Type = type;
@@ -26,16 +23,9 @@ namespace Interactr.Model
             Actor,
             Object
         }
-
-        /// <summary>
-        /// A stream of changed types.
-        /// </summary>
-        public IObservable<PartyType> TypeChanged => _type.Changed;
-
-        /// <summary>
-        /// A stream of changed labels.
-        /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
+        
+        #region Type
+        private readonly ReactiveProperty<PartyType> _type = new ReactiveProperty<PartyType>();
 
         /// <summary>
         /// Represent the type of this party.
@@ -49,6 +39,15 @@ namespace Interactr.Model
             set => _type.Value = value;
         }
 
+        /// <summary>
+        /// An observable that emits the new party type when it has changed.
+        /// </summary>
+        public IObservable<PartyType> TypeChanged => _type.Changed;
+        #endregion
+
+        #region Label
+        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+
         /// <summary> A label in the specified format.
         /// <example> instance_name;class_name </example>
         /// </summary>
@@ -58,5 +57,11 @@ namespace Interactr.Model
             get => _label.Value;
             set => _label.Value = value;
         }
+
+        /// <summary>
+        /// An observable that emits the new label when it has changed.
+        /// </summary>
+        public IObservable<string> LabelChanged => _label.Changed; 
+        #endregion
     }
 }
