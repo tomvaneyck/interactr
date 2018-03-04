@@ -73,13 +73,9 @@ namespace Interactr.Model
             get => _label.Value;
             set
             {
-                if (Regex.Match(value, "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$").Success)
+                if (Regex.Match(value, "^(([a-z\u00C0-\u017F]{1}[a-zA-Z\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z\u00C0-\u017F]*)+$").Success)
                 {
                     _label.Value = value;
-                }
-                else
-                {
-                    throw new Exception("Label is not valid");
                 }
             }
         }
