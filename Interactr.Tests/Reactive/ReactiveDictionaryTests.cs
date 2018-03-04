@@ -115,12 +115,16 @@ namespace Interactr.Tests.Reactive
             scheduler.Schedule(TimeSpan.FromTicks(10), () => dict["A"] = 0);
             scheduler.Schedule(TimeSpan.FromTicks(20), () => dict["Z"] = 1);
             scheduler.Schedule(TimeSpan.FromTicks(30), () => dict.Remove("Z"));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => dict.Clear());
             var actual = scheduler.Start(() => dict.OnValueRemoved, created: 0, subscribed: 0, disposed: 100);
 
             //Assert
             var expected = new[]
             {
-                OnNext(30, new KeyValuePair<string, int>("Z", 1))
+                OnNext(30, new KeyValuePair<string, int>("Z", 1)),
+                OnNext(40, new KeyValuePair<string, int>("A", 0)),
+                OnNext(40, new KeyValuePair<string, int>("B", 2)),
+                OnNext(40, new KeyValuePair<string, int>("C", 3))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
