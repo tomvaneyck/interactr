@@ -53,7 +53,7 @@ namespace Interactr.Model
         //TODO validate label before assignment.
         public string Label { get; set; }
 
-        public bool IsValidLabel(string label)
+        public static bool IsValidLabel(string label)
         {
             if (Regex.Match(label, "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$").Success)
             {
