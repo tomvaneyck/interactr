@@ -39,7 +39,7 @@ namespace Interactr.Reactive
             set
             {
                 _value = value;
-                _changed?.OnNext(_value);
+                _changed.OnNext(_value);
             }
         }
     }
