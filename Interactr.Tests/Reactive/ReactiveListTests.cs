@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
@@ -153,6 +154,42 @@ namespace Interactr.Tests.Reactive
                 OnNext(10, ("Z", true))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
+        }
+
+        [Test]
+        public void TestObserveEach()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            var dummy1 = new DummyTestingClass {Identifier = "A"};
+            var dummy2 = new DummyTestingClass {Identifier = "B"};
+            ReactiveList<DummyTestingClass> list = new ReactiveList<DummyTestingClass>
+            {
+                dummy1
+            };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => dummy1.TestObservable.OnNext("First test event"));
+            scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Add(dummy2));
+            scheduler.Schedule(TimeSpan.FromTicks(30), () => dummy2.TestObservable.OnNext("Second test event"));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0]));
+            scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Third test event"));
+            scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0]));
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            var expected = new[]
+            {
+                OnNext(10, (dummy1, "First test event")),
+                OnNext(30, (dummy2, "Second test event"))
+            };
+            ReactiveAssert.AreElementsEqual(expected, actual.Messages);
+        }
+
+        class DummyTestingClass
+        {
+            public string Identifier { get; set; }
+            public Subject<string> TestObservable = new Subject<string>();
         }
     }
 }
