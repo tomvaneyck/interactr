@@ -8,7 +8,7 @@ namespace Interactr.Model
     /// </summary>
     public class Diagram
     {
-        public Diagram(ReactiveList<Message> messages)
+        public Diagram()
         {
             Messages = new ReactiveList<Message>();
             Parties = new ReactiveList<Party>();
