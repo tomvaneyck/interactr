@@ -424,7 +424,7 @@ namespace Interactr.View.Controls
 
         /// <summary>
         /// Find the UIElement that is visible at this point on the screen.
-        /// This function searches downward in the tree for the bottom-most node that contains the specified point
+        /// This function searches downward in the tree for the bottom-most node that contains the specified point.
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
