@@ -13,16 +13,6 @@ using static System.Object;
 
 namespace Interactr.Tests.Model
 {
-    [TestFixture]
-    public class PartyTests
-    {
-        [Test]
-        public void Test()
-        {
-            Assert.Fail("Tom is shite");
-        }
-    }
-}
     public class PartyObservablesTest
     {
         private const Party.PartyType DefaultPartyType = Party.PartyType.Actor;

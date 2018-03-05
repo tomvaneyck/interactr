@@ -56,12 +56,12 @@ namespace Interactr.Model
         /// <exception cref="ArgumentException"> Throw an ArgumentException if the label has an invalid format.</exception>
         public string Label
         {
-            get => _label;
+            get => _label.Value;
             set
             {
                 if (IsValidLabel(value))
                 {
-                    _label = value;
+                    _label.Value = value;
                 }
                 else
                 {
