@@ -73,16 +73,16 @@ namespace Interactr.Model
         /// <summary>
         /// Return True if the given label has a valid format.
         /// <remarks>
-        /// a valid format is specified as follows:
-        /// An optional instance_name starting with lowercase, followed by a colon and a class name starting with uppercase. 
+        /// A valid format is specified as follows:
+        /// An optional instance_name starting with lowercase, followed by a colon and a class name starting with uppercase.
         /// </remarks>
-        /// <example> [instance_name]:class_name </example>
+        /// <example> [instance_name]:Class_name </example>
         /// </summary>
         /// <param name="label"> The label string.</param>
         /// <returns>A boolean indicating if it is a valid label.</returns>
         public static bool IsValidLabel(string label)
         {
-            return Regex.Match(label,
+            return label != null && Regex.Match(label,
                     "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
                 .Success;
         }
