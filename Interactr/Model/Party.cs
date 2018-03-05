@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Interactr.Reactive;
 
@@ -48,14 +50,41 @@ namespace Interactr.Model
         #region Label
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
-        /// <summary> A label in the specified format.
-        /// <example> instance_name;class_name </example>
+        /// <summary>
+        ///  A label in the valid format.
         /// </summary>
-        //TODO validate label before assignment.
+        /// <exception cref="ArgumentException"> Throw an ArgumentException if the label has an invalid format.</exception>
         public string Label
         {
             get => _label.Value;
-            set => _label.Value = value;
+            set
+            {
+                if (IsValidLabel(value))
+                {
+                    _label.Value = value;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return True if the given label has a valid format.
+        /// <remarks>
+        /// A valid format is specified as follows:
+        /// An optional instance_name starting with lowercase, followed by a colon and a class name starting with uppercase.
+        /// </remarks>
+        /// <example> [instance_name]:Class_name </example>
+        /// </summary>
+        /// <param name="label"> The label string.</param>
+        /// <returns>A boolean indicating if it is a valid label.</returns>
+        public static bool IsValidLabel(string label)
+        {
+            return label != null && Regex.Match(label,
+                    "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
+                .Success;
         }
 
         /// <summary>
@@ -63,5 +92,6 @@ namespace Interactr.Model
         /// </summary>
         public IObservable<string> LabelChanged => _label.Changed; 
         #endregion
+
     }
 }
