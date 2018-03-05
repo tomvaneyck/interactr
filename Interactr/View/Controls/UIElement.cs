@@ -36,7 +36,12 @@ namespace Interactr.View.Controls
         /// The parent element of this element in the view-tree.
         /// </summary>
         public UIElement Parent { get; private set; }
-
+        
+        /// <summary>
+        /// The properties that are attached to this element.
+        /// </summary>
+        public ReactiveDictionary<AttachedProperty, object> AttachedProperties { get; } = new ReactiveDictionary<AttachedProperty, object>();
+        
         #region Position
         private readonly ReactiveProperty<Point> _position = new ReactiveProperty<Point>();
         /// <summary>

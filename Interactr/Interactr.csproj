@@ -73,6 +73,7 @@
     <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\Controls\AttachedProperty.cs" />
     <Compile Include="View\Controls\Point.cs" />
     <Compile Include="View\Controls\UIElement.cs" />
     <Compile Include="View\MainView.cs" />
