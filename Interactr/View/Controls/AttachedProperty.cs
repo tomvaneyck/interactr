@@ -10,14 +10,15 @@ namespace Interactr.View.Controls
     /// <summary>
     /// A property that can be set on arbitrary UIElements.
     /// Allows configuring of UIElements through composition.
-    /// 
+    /// </summary>
+    /// <example>
     /// For example: a DragLayout component wants to know which of its
     /// children can be dragged around and which cannot. The class
     /// can expose a IsDraggable AttachedProperty and users of DragLayout
     /// can attach IsDraggable to the children of the layout.
     /// This approach scales well because each element class can expose their
     /// own attached properties without cluttering the UIElement class.
-    /// </summary>
+    /// </example>
     public class AttachedProperty
     {
         /// <summary>
