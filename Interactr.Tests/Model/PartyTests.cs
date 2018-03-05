@@ -13,6 +13,7 @@ using static System.Object;
 
 namespace Interactr.Tests.Model
 {
+    [TestFixture]
     public class PartyObservablesTest
     {
         private const Party.PartyType DefaultPartyType = Party.PartyType.Actor;
