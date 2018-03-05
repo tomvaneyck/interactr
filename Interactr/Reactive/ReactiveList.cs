@@ -35,8 +35,8 @@ namespace Interactr.Reactive
         /// Apply the specified observableSelector to every item that is added to the list,
         /// and automatically unsubscribes the resulting observable when the item is removed from the list.
         /// </summary>
-        /// <typeparam name="V">The value produced by the observable returned by observableSelector</typeparam>
-        /// <param name="observableSelector">A function that maps each element on an observable</param>
+        /// <typeparam name="V">The value produced by the observable returned by observableSelector.</typeparam>
+        /// <param name="observableSelector">A function that maps each element on an observable.</param>
         /// <returns>An observable of the elements that are emitted along with the item that produced it.</returns>
         public IObservable<(T Element, V Value)> ObserveEach<V>(Func<T, IObservable<V>> observableSelector)
         {

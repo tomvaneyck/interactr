@@ -10,8 +10,8 @@ namespace Interactr.Reactive
     public static class ReactiveExtensions
     {
         /// <summary>
-        /// Takes IObservable&lt;T&gt;, projects each element of type T on an IObservable&lt;R&gt; 
-        /// and returns the values of type R emitted by the most recently emitted T.
+        /// Take IObservable&lt;T&gt;, project each element of type T on an IObservable&lt;R&gt; 
+        /// and return the values of type R emitted by the most recently emitted T.
         /// If a null value is encountered for T, this value is simply ignored.
         /// </summary>
         /// <typeparam name="T">The source observable type</typeparam>
