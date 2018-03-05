@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Reactive\ReactiveDictionaryTests.cs" />
     <Compile Include="Reactive\ReactiveListTests.cs" />
     <Compile Include="Reactive\ReactivePropertyTests.cs" />
     <Compile Include="Model\Messagetests.cs" />

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,30 @@ namespace Interactr.Reactive
         /// </summary>
         public IObservable<T> OnDelete => _onDelete;
         private readonly Subject<T> _onDelete = new Subject<T>();
+
+        /// <summary>
+        /// Apply the specified observableSelector to every item that is added to the list,
+        /// and automatically unsubscribes the resulting observable when the item is removed from the list.
+        /// </summary>
+        /// <typeparam name="V">The value produced by the observable returned by observableSelector.</typeparam>
+        /// <param name="observableSelector">A function that maps each element on an observable.</param>
+        /// <returns>An observable of the elements that are emitted along with the item that produced it.</returns>
+        public IObservable<(T Element, V Value)> ObserveEach<V>(Func<T, IObservable<V>> observableSelector)
+        {
+            // Take all items that are currently in the list, 
+            // aswell as all that will be added in the future.
+            IObservable<T> items = _contents.ToObservable().Concat(OnAdd);
+
+            // Select the target observable using observableSelector and return
+            // values from it until the item is removed from this list.
+            return items.SelectMany(newElem =>
+                observableSelector(newElem)
+                    .TakeUntil(
+                        OnDelete.Where(deletedElem => Object.Equals(deletedElem, newElem))
+                    )
+                    .Select(val => (newElem, val))
+            );
+        }
 
         public T this[int index]
         {

@@ -26,14 +26,11 @@ namespace Interactr.View.Controls
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
         public static UIElement FocusedElement { get; private set; }
-
-        #region Children
+        
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
-        public IList<UIElement> Children => _children;
-        private readonly ReactiveList<UIElement> _children = new ReactiveList<UIElement>();
-        #endregion
+        public ReactiveList<UIElement> Children { get; } = new ReactiveList<UIElement>();
 
         /// <summary>
         /// The parent element of this element in the view-tree.
@@ -109,7 +106,7 @@ namespace Interactr.View.Controls
         private void SetupParentChildRelationship()
         {
             // Set parent-child relationship on child add
-            _children.OnAdd.Subscribe(newChild =>
+            Children.OnAdd.Subscribe(newChild =>
             {
                 if (newChild.Parent != null)
                 {
@@ -120,21 +117,13 @@ namespace Interactr.View.Controls
             });
 
             // Remove parent-child relationship on child remove
-            _children.OnDelete.Subscribe(child =>
+            Children.OnDelete.Subscribe(child =>
             {
                 child.Parent = null;
             });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
-            _children.OnAdd.Subscribe(newChild =>
-            {
-                IDisposable subscription = newChild.RepaintRequested.Subscribe(_ => Repaint());
-                //When the child is removed, also unsubscribe from its RepaintRequested observable
-                _children.OnDelete.Where(c => c == newChild).Take(1).Subscribe(_ =>
-                {
-                    subscription.Dispose();
-                });
-            });
+            Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());
         }
         
         /// <summary>
