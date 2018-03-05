@@ -65,10 +65,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Party.cs" />
+    <Compile Include="Reactive\ReactiveDictionary.cs" />
+    <Compile Include="Reactive\ReactiveExtensions.cs" />
+    <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\Controls\Point.cs" />
+    <Compile Include="View\Controls\UIElement.cs" />
     <Compile Include="View\MainView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />

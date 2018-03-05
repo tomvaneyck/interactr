@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Interactr.Reactive;
 
 namespace Interactr.Model
 {
@@ -10,8 +11,6 @@ namespace Interactr.Model
     /// </summary>
     public class Party
     {
-        private string _label;
-
         public Party(PartyType type, string label)
         {
             Type = type;
@@ -26,6 +25,9 @@ namespace Interactr.Model
             Actor,
             Object
         }
+        
+        #region Type
+        private readonly ReactiveProperty<PartyType> _type = new ReactiveProperty<PartyType>();
 
         /// <summary>
         /// Represent the type of this party.
@@ -33,7 +35,20 @@ namespace Interactr.Model
         /// <remarks>
         /// It is impossible for a party to not have a type.
         /// </remarks>
-        public PartyType Type { get; set; }
+        public PartyType Type
+        {
+            get => _type.Value;
+            set => _type.Value = value;
+        }
+
+        /// <summary>
+        /// An observable that emits the new party type when it has changed.
+        /// </summary>
+        public IObservable<PartyType> TypeChanged => _type.Changed;
+        #endregion
+
+        #region Label
+        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
         /// <summary>
         ///  A label in the valid format.
@@ -71,5 +86,12 @@ namespace Interactr.Model
                     "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
                 .Success;
         }
+
+        /// <summary>
+        /// An observable that emits the new label when it has changed.
+        /// </summary>
+        public IObservable<string> LabelChanged => _label.Changed; 
+        #endregion
+
     }
 }
