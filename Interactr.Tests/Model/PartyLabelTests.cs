@@ -90,5 +90,10 @@ namespace Interactr.Tests.Model
         {
             Assert.False(Party.IsValidLabel(""));
         }
+        [Test]
+        public void NullLabel()
+        {
+            Assert.False(Party.IsValidLabel(null));
+        }
     }
 }
