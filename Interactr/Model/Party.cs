@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -9,6 +10,8 @@ namespace Interactr.Model
     /// </summary>
     public class Party
     {
+        private string _label;
+
         public Party(PartyType type, string label)
         {
             Type = type;
@@ -32,39 +35,40 @@ namespace Interactr.Model
         /// </remarks>
         public PartyType Type { get; set; }
 
-        /// <summary> A label in the specified format.
-        /// <example> [instance_name]:class_name </example>
+        /// <summary>
+        ///  A label in the valid format.
         /// </summary>
-        /// <remarks>
-        /// The label is only accepted if the optional instance_name starts with lowercase,
-        /// has one colon followed by a class_name starting with uppercase.
-        /// The label is thus only accepted if it follows on of the following patterns:
-        /// <list type="bullet">
-        /// <item>test:Approved</item>
-        /// <item>:Approved</item>
-        /// </list>
-        /// and rejected when it follows one of the following patterns:
-        /// <list type="bullet">
-        /// <item>Test:Rejected</item>
-        /// <item>test:rejected</item>
-        /// <item>test:</item>
-        /// </list>
-        /// </remarks>
-        //TODO validate label before assignment.
-        public string Label { get; set; }
-
-        public static bool IsValidLabel(string label)
+        /// <exception cref="ArgumentException"> Throw an ArgumentException if the label has an invalid format.</exception>
+        public string Label
         {
-            if (Regex.Match(label, "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$").Success)
+            get => _label;
+            set
             {
-                return true;
-            }
-            else
-            {
-                return false;
+                if (IsValidLabel(value))
+                {
+                    _label = value;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
             }
         }
+
+        /// <summary>
+        /// Return True if the given label has a valid format.
+        /// <remarks>
+        /// a valid format is specified as follows:
+        /// An optional instance_name starting with lowercase, followed by a colon and a class name starting with uppercase. 
+        /// </remarks>
+        /// <example> [instance_name]:class_name </example>
+        /// </summary>
+        /// <param name="label"> The label string.</param>
+        /// <returns>A boolean indicating if it is a valid label.</returns>
+        public static bool IsValidLabel(string label)
+        {
+            return Regex.Match(label,
+                    "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
+                .Success;
+        }
     }
-
-
-}
