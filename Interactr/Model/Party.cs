@@ -72,3 +72,4 @@ namespace Interactr.Model
                 .Success;
         }
     }
+}
