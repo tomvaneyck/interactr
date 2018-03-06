@@ -331,3 +331,4 @@ Desktop.ini
 tmp/*
 
 ClassDiagram/\.Interactr\.vpp\.lck
+ClassDiagram/*.pdf
