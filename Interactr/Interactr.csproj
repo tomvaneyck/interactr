@@ -73,6 +73,9 @@
     <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\Controls\AnchorPanel.cs" />
+    <Compile Include="View\Controls\Anchors.cs" />
+    <Compile Include="View\Controls\Margins.cs" />
     <Compile Include="View\Framework\AttachedProperty.cs" />
     <Compile Include="View\Framework\KeyEventData.cs" />
     <Compile Include="View\Framework\MouseEventData.cs" />
