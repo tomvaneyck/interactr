@@ -78,6 +78,10 @@
     <Compile Include="View\Framework\MouseEventData.cs" />
     <Compile Include="View\Framework\Point.cs" />
     <Compile Include="View\Framework\UIElement.cs" />
+    <Compile Include="View\Controls\ImageView.cs" />
+    <Compile Include="View\Controls\LabelView.cs" />
+    <Compile Include="View\Controls\LineView.cs" />
+    <Compile Include="View\Controls\RectangleView.cs" />
     <Compile Include="View\MainView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
@@ -113,8 +117,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="View\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
