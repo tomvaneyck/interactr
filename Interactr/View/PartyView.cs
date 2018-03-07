@@ -54,7 +54,10 @@ namespace Interactr.View
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
                 .Subscribe(newLabel => _labelView.Text = newLabel);
-            _labelView.TextChanged.Subscribe(newText => ViewModel.Label = newText);
+            _labelView.TextChanged.Subscribe(newText =>
+            {
+                if (ViewModel != null) ViewModel.Label = newText;
+            });
 
             // On double click, change party type
             Observable.Merge(
