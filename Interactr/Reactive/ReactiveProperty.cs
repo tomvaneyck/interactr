@@ -38,8 +38,11 @@ namespace Interactr.Reactive
             get => _value;
             set
             {
-                _value = value;
-                _changed.OnNext(_value);
+                if (!object.Equals(_value, value))
+                {
+                    _value = value;
+                    _changed.OnNext(_value);
+                }
             }
         }
     }
