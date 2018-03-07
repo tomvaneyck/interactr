@@ -179,10 +179,10 @@ namespace Interactr.View.Framework
 
         #region Keyboard events
         /// <summary>
-        /// Emits a keyboard event
+        /// Emits a keyboard event.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
+        /// <returns>True if the event was handled by an element.</returns>
         public static bool HandleKeyEvent(KeyEventData eventData)
         {
             if (TunnelDownKeyEventPreview(eventData))
@@ -231,8 +231,8 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// This function is called when keyboard events are triggered.
-        /// Use this function to intercept key events before they reach the FocusedElement.
+        /// Is called when keyboard events are triggered.
+        /// Can be overriden to intercept key events before they reach the FocusedElement.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
@@ -243,7 +243,8 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// This function is called when keyboard events are triggered.
+        /// Is called when keyboard events are triggered.
+        /// Can be overridden to handle keyboard events.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
@@ -256,34 +257,34 @@ namespace Interactr.View.Framework
 
         #region Mouse events
         /// <summary>
-        /// Emits a mouse event
+        /// Emit a mouse event.
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree</param>
-        /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
+        /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
+        /// <returns>True if the event was handled by an element.</returns>
         public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
             UIElement mouseoverElement = rootElement.FindElementAt(eventData.MousePosition);
 
             if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, eventData))
             {
-                // Event was handled
+                // Event was handled.
                 return true;
             }
 
-            // Bubble up event from FocusedElement to root
+            // Bubble up event from FocusedElement to root.
             Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
-            return mouseoverElement.BubbleUpMouseEvent(eventData);
+            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
-        /// Takes a mouse event, calls OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
+        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
         /// Only the ancestors of the mouseover-element will receive the event.
         /// </summary>
-        /// <param name="rootElement">The element at the top of the view-tree</param>
-        /// <param name="mouseoverElement">The element the mouse is over</param>
-        /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
+        /// <param name="rootElement">The element at the top of the view-tree.</param>
+        /// <param name="mouseoverElement">The element the mouse is over.</param>
+        /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
+        /// <returns>True if the event was handled by an element.</returns>
         private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
@@ -299,10 +300,10 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Takes a mouse event, calls OnMouseEvent and passes the event to the parent element until an element handles it.
+        /// Take a mouse event, call OnMouseEvent and keep passing the event to the parent element until an element handles it.
         /// </summary>
-        /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
+        /// <returns>True if the event was handled by an element.</returns>
         private bool BubbleUpMouseEvent(MouseEventData eventData)
         {
             _mouseEventOccured.OnNext(eventData);
@@ -321,11 +322,11 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// This function is called when mouse events are triggered.
-        /// Use this method to intercept mouse events before they reach the element the mouse is over.
+        /// Is called when mouse events are triggered.
+        /// Override this method to intercept mouse events before they reach the element the mouse is over.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="eventData">Details about this event.</param>
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
         protected virtual bool OnMouseEventPreview(MouseEventData eventData)
         {
@@ -333,10 +334,11 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// This function is called when mouse events are triggered.
+        /// Is called when mouse events are triggered.
+        /// Can be overriden to handle mouse events.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="eventData">Details about this event.</param>
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
@@ -439,6 +441,7 @@ namespace Interactr.View.Framework
 
             if (childContainingPoint == null)
             {
+                //No child of this element contains 'point', so this is the deepest element that does.
                 return this;
             }
 

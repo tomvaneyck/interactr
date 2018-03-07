@@ -22,9 +22,9 @@
 
         public KeyEventData(int id, int keyCode, char keyChar)
         {
-            this.Id = id;
-            this.KeyCode = keyCode;
-            this.KeyChar = keyChar;
+            Id = id;
+            KeyCode = keyCode;
+            KeyChar = keyChar;
         }
     }
 }
