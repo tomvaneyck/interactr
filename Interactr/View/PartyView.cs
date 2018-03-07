@@ -51,9 +51,10 @@ namespace Interactr.View
                     _objectRectangle.IsVisible = partyType == Party.PartyType.Object;
                 });
 
-            // Bind party label to view
+            // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
                 .Subscribe(newLabel => _labelView.Text = newLabel);
+            _labelView.TextChanged.Subscribe(newText => ViewModel.Label = newText);
 
             // On double click, change party type
             Observable.Merge(
