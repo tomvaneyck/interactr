@@ -1,5 +1,4 @@
-﻿using Interactr.View.Controls;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ using Interactr.Reactive;
 using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
 
-namespace Interactr.Tests.View.Controls
+namespace Interactr.Tests.View.Framework
 {
     [TestFixture]
     public class UIElementTests : ReactiveTest
