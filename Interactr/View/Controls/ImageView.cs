@@ -10,22 +10,31 @@ using Interactr.View.Framework;
 namespace Interactr.View.Controls
 {
     /// <summary>
-    /// A view that displays an image
+    /// A view that displays an image.
     /// </summary>
     public class ImageView : UIElement
     {
         #region Image
-        private readonly ReactiveProperty<Image> _image = new ReactiveProperty<Image>();
+        /// <summary>
+        /// The image to display.
+        /// </summary>
         public Image Image
         {
             get => _image.Value;
             set => _image.Value = value;
         }
+        private readonly ReactiveProperty<Image> _image = new ReactiveProperty<Image>();
         public IObservable<Image> ImageChanged => _image.Changed;
         #endregion
 
         public ImageView()
         {
+            SetupObservables();
+        }
+
+        private void SetupObservables()
+        {
+            //When the image changes, change to preferred size and repaint.
             this.ImageChanged.Subscribe(newImage =>
             {
                 if (newImage != null)
@@ -41,7 +50,7 @@ namespace Interactr.View.Controls
         {
             if (Image == null)
             {
-                // Draw a pink rectangle if the image is null.
+                // Draw a pink rectangle if no image was set.
                 g.FillRectangle(Brushes.Pink, 0, 0, this.Width, this.Height);
                 return;
             }
