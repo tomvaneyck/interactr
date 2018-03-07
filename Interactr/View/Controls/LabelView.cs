@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 
@@ -42,6 +43,18 @@ namespace Interactr.View.Controls
         public IObservable<Font> FontChanged => _font.Changed;
         #endregion
 
+        #region IsInEditMode
+        public bool IsInEditMode
+        {
+            get => _isInEditMode.Value;
+            set => _isInEditMode.Value = value;
+        }
+        private readonly ReactiveProperty<bool> _isInEditMode = new ReactiveProperty<bool>();
+        public IObservable<bool> EditModeChanged => _isInEditMode.Changed;
+        #endregion
+
+        private bool _cursorIsVisible;
+
         public LabelView()
         {
             // Set the default font.
@@ -52,6 +65,34 @@ namespace Interactr.View.Controls
                 TextChanged.Select(_ => Unit.Default),
                 FontChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => Repaint());
+
+            // Blink cursor if label is in edit mode.
+            Observable.CombineLatest(
+                Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime)),
+                EditModeChanged,
+                (timestamp, editMode) => editMode
+            ).Subscribe(editMode =>
+            {
+                if (!editMode)
+                {
+                    _cursorIsVisible = false;
+                }
+                else
+                {
+                    _cursorIsVisible = !_cursorIsVisible;
+                    Repaint();
+                }
+            });
+
+            //Observable.Timer(DateTimeOffset.UtcNow, TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime))
+            //    .Where(_ => IsInEditMode)
+            //    .Subscribe(_ =>
+            //    {
+            //        _cursorIsVisible = !_cursorIsVisible;
+            //        Repaint();
+            //    });
+
+            IsInEditMode = true;
         }
 
         public override void PaintElement(Graphics g)
@@ -63,8 +104,14 @@ namespace Interactr.View.Controls
             PreferredWidth = (int)Math.Ceiling(preferredSize.Width);
             PreferredHeight = (int)Math.Ceiling(preferredSize.Height);
 
-            //Draw the string.
+            // Draw the string.
             g.DrawString(Text, Font, Brushes.Black, 0, 0);
+
+            // Draw cursor.
+            if (_cursorIsVisible)
+            {
+                g.DrawLine(Pens.Black, PreferredWidth - 1, 0, PreferredWidth - 1, PreferredHeight);
+            }
         }
     }
 }
