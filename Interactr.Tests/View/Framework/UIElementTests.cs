@@ -141,5 +141,66 @@ namespace Interactr.Tests.View.Framework
             Assert.AreEqual(testPointDownInChild4, new Point(-5, -5));
             Assert.AreEqual(testPointDown2InChild4, new Point(20, 20));
         }
+
+        [Test]
+        public void TestValidateLayout()
+        {
+            TestableUIElement parent = new TestableUIElement
+            {
+                Width = 100,
+                Height = 100
+            };
+
+            UIElement child1 = new UIElement
+            {
+                Width = 200,
+                Height = 200
+            };
+            parent.Children.Add(child1);
+
+            UIElement child2 = new UIElement
+            {
+                Width = 100,
+                Height = 100
+            };
+            parent.Children.Add(child2);
+
+            UIElement child3 = new UIElement
+            {
+                Position = new Point(90, 90),
+                Width = 50,
+                Height = 50
+            };
+            parent.Children.Add(child3);
+
+            UIElement child4 = new UIElement
+            {
+                Width = 50,
+                Height = 50
+            };
+            parent.Children.Add(child4);
+
+            parent.RunValidateLayout();
+
+            Assert.AreEqual(100, child1.Width);
+            Assert.AreEqual(100, child1.Height);
+
+            Assert.AreEqual(100, child2.Width);
+            Assert.AreEqual(100, child2.Height);
+
+            Assert.AreEqual(10, child3.Width);
+            Assert.AreEqual(10, child3.Height);
+
+            Assert.AreEqual(50, child4.Width);
+            Assert.AreEqual(50, child4.Height);
+        }
+
+        class TestableUIElement : UIElement
+        {
+            public void RunValidateLayout()
+            {
+                ValidateLayout();
+            }
+        }
     }
 }

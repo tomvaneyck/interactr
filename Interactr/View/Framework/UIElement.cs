@@ -358,6 +358,7 @@ namespace Interactr.View.Framework
         {
             if (IsVisible)
             {
+                ValidateLayout();
                 PaintElement(g);
                 PaintChildren(g);
             }
@@ -397,6 +398,24 @@ namespace Interactr.View.Framework
                 // Reset clip and transform
                 g.Transform = currentTransform;
                 g.Clip = currentClip;
+            }
+        }
+
+        protected void ValidateLayout()
+        {
+            foreach (UIElement child in Children)
+            {
+                int availableWidth = this.Width - child.Position.X;
+                if (availableWidth < child.Width)
+                {
+                    child.Width = availableWidth;
+                }
+
+                int availableHeight = this.Height - child.Position.Y;
+                if (availableHeight < child.Height)
+                {
+                    child.Height = availableHeight;
+                }
             }
         }
 
