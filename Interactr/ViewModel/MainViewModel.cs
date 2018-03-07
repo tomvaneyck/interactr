@@ -22,6 +22,7 @@ namespace Interactr.ViewModel
         public MainViewModel(Diagram diagram)
         {
             Diagram = diagram;
+            SeqDiagramVM.IsVisible = true;
         }
 
         /// <summary>
