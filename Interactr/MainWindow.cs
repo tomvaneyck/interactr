@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interactr.Model;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
@@ -18,7 +19,6 @@ namespace Interactr.View
     public class MainWindow : CanvasWindow
     {
         public MainView View { get; } = new MainView();
-        public MainViewModel ViewModel { get; } = new MainViewModel();
 
         public MainWindow() : base("Interactr")
         {
@@ -26,7 +26,7 @@ namespace Interactr.View
             View.Width = Size.Width;
             View.Height = Size.Height;
 
-            View.ViewModel = ViewModel;
+            View.ViewModel = new MainViewModel(new Diagram());
             View.Focus();
 
             View.RepaintRequested.Subscribe(_ => Repaint());
