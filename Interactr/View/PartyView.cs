@@ -63,7 +63,7 @@ namespace Interactr.View
             Observable.Merge(
                     _objectRectangle.MouseEventOccured,
                     _actorImage.MouseEventOccured
-                ).Where(e => e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount == 2)
+                ).Where(e => e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0) // Modulo for consequent double clicks.
                 .Subscribe(_ => ViewModel?.TogglePartyType());
 
             // Add child elements
