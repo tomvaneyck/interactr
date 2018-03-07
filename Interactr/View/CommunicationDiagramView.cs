@@ -35,8 +35,6 @@ namespace Interactr.View
             //Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
-
-            this.Children.Add(new LineView());
         }
     }
 }

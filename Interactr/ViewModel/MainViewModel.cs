@@ -17,7 +17,7 @@ namespace Interactr.ViewModel
     {
         public CommunicationDiagramViewModel CommDiagramVM { get; } = new CommunicationDiagramViewModel();
         public SequenceDiagramViewModel SeqDiagramVM { get; } = new SequenceDiagramViewModel();
-        public Diagram Diagram { get; private set; }
+        public Diagram Diagram { get; }
 
         public MainViewModel(Diagram diagram)
         {
