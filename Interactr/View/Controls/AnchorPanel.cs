@@ -10,12 +10,24 @@ namespace Interactr.View.Controls
 {
     /// <summary>
     /// Layout UIElement that automatically resizes subelements as the size of this panel changes. 
+    /// If a child element is 'anchored' to a side, its distance from that side does not change.
+    /// For example: if an element has a right anchor then it is moved when the anchorpanel width changes, 
+    /// so that the distance between its right side and the right side of the anchorpanel stays the same.
+    /// If the element also has a left anchor, it will be resized instead of moved so that both the left
+    /// and the right side keep the correct margin from the sides of the panel.
     /// </summary>
     public class AnchorPanel : UIElement
     {
+        /// <summary>
+        /// Attached property to set anchors on a child of an AnchorPanel.
+        /// </summary>
         public static AttachedProperty<Anchors> AnchorsProperty { get; }
             = new AttachedProperty<Anchors>(Anchors.Left | Anchors.Top | Anchors.Right | Anchors.Bottom);
 
+        /// <summary>
+        /// Attached property to set the distance from the sides on a child of an AnchorPanel.
+        /// The margin is only applied when the element also has an anchor in that direction.
+        /// </summary>
         public static AttachedProperty<Margins> MarginsProperty { get; } 
             = new AttachedProperty<Margins>(new Margins());
 
