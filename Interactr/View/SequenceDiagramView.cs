@@ -11,25 +11,31 @@ using Interactr.ViewModel;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// The view for the sequence diagram.
+    /// </summary>
     public class SequenceDiagramView : UIElement
     {
         #region ViewModel
-        private readonly ReactiveProperty<SequenceDiagramViewModel> _viewModel = new ReactiveProperty<SequenceDiagramViewModel>();
+
+        private readonly ReactiveProperty<SequenceDiagramViewModel> _viewModel =
+            new ReactiveProperty<SequenceDiagramViewModel>();
+
         public SequenceDiagramViewModel ViewModel
         {
             get => _viewModel.Value;
             set => _viewModel.Value = value;
         }
+
         public IObservable<SequenceDiagramViewModel> ViewModelChanged => _viewModel.Changed;
+
         #endregion
 
         public SequenceDiagramView()
         {
-            //The visibility of this view is set by the visibility of the latest viewmodel assigned to this view.
-            ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged).Subscribe(isVisible =>
-            {
-                this.IsVisible = isVisible;
-            });
+            //Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
+            ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
+                .Subscribe(isVisible => { this.IsVisible = isVisible; });
         }
     }
 }

@@ -8,6 +8,11 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
+    /// <summary>
+    /// The ViewModel for the mainView.
+    /// </summary>
+    /// <remarks> A view model represents the data you want to display on your view
+    /// and is responsible for interaction with the data objects from the model.</remarks>
     public class MainViewModel
     {
         public CommunicationDiagramViewModel CommDiagramVM { get; } = new CommunicationDiagramViewModel();
@@ -19,6 +24,9 @@ namespace Interactr.ViewModel
             Diagram = diagram;
         }
 
+        /// <summary>
+        /// Switch the views from communication diagram to sequence diagram and vice versa.
+        /// </summary>
         public void SwitchViews()
         {
             if (CommDiagramVM.IsVisible)

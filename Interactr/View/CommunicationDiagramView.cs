@@ -10,25 +10,31 @@ using Interactr.ViewModel;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// The view for the communication diagram.
+    /// </summary>
     public class CommunicationDiagramView : AnchorPanel
     {
         #region ViewModel
-        private readonly ReactiveProperty<CommunicationDiagramViewModel> _viewModel = new ReactiveProperty<CommunicationDiagramViewModel>();
+
+        private readonly ReactiveProperty<CommunicationDiagramViewModel> _viewModel =
+            new ReactiveProperty<CommunicationDiagramViewModel>();
+
         public CommunicationDiagramViewModel ViewModel
         {
             get => _viewModel.Value;
             set => _viewModel.Value = value;
         }
+
         public IObservable<CommunicationDiagramViewModel> ViewModelChanged => _viewModel.Changed;
+
         #endregion
 
         public CommunicationDiagramView()
         {
-            //The visibility of this view is set by the visibility of the latest viewmodel assigned to this view.
-            ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged).Subscribe(isVisible =>
-            {
-                this.IsVisible = isVisible;
-            });
+            //Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
+            ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
+                .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             this.Children.Add(new LineView());
         }
