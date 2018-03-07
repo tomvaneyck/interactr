@@ -179,7 +179,7 @@ namespace Interactr.View.Framework
 
         #region Keyboard events
         /// <summary>
-        /// Emits a keyboard event.
+        /// Emit a keyboard event.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if the event was handled by an element.</returns>
@@ -196,9 +196,11 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Takes a key event, calls OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
-        /// Only the ancestors of FocusedElement will receive the event.
+        /// Take a key event, call OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
         /// </summary>
+        /// <remarks>
+        /// Only the ancestors of FocusedElement will receive the event.
+        /// </remarks>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if the event was handled by an element</returns>
         private static bool TunnelDownKeyEventPreview(KeyEventData eventData)
@@ -215,7 +217,7 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Takes a key event, calls OnKeyEvent and passes the event to the parent element until an element handles it.
+        /// Take a key event, call OnKeyEvent and pass the event to the parent element until an element handles it.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element or one of its ancestors has handled the event</returns>
