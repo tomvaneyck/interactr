@@ -18,10 +18,9 @@ namespace Interactr
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            MainViewModel vm = new MainViewModel();
-            MainView view = new MainView();
-            view.Show();
+            
+            MainWindow window = new MainWindow();
+            window.Show();
         }
     }
 }
