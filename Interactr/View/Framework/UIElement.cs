@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Reactive;
 
-namespace Interactr.View.Controls
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// Parent class for views.
@@ -75,6 +72,26 @@ namespace Interactr.View.Controls
         public IObservable<int> HeightChanged => _height.Changed;
         #endregion
 
+        #region PreferredWidth
+        private readonly ReactiveProperty<int> _preferredWidth = new ReactiveProperty<int>();
+        public int PreferredWidth
+        {
+            get => _preferredWidth.Value;
+            set => _preferredWidth.Value = value;
+        }
+        public IObservable<int> PreferredWidthChanged => _preferredWidth.Changed;
+        #endregion
+
+        #region PreferredHeight
+        private readonly ReactiveProperty<int> _preferredHeight = new ReactiveProperty<int>();
+        public int PreferredHeight
+        {
+            get => _preferredHeight.Value;
+            set => _preferredHeight.Value = value;
+        }
+        public IObservable<int> PreferredHeightChanged => _preferredHeight.Changed;
+        #endregion
+
         #region IsVisible
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
         public bool IsVisible
@@ -94,6 +111,14 @@ namespace Interactr.View.Controls
         #region RepaintRequested
         private readonly Subject<Unit> _repaintRequested = new Subject<Unit>();
         public IObservable<Unit> RepaintRequested => _repaintRequested;
+        #endregion
+
+        #region Event observables
+        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
+
+        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
         #endregion
 
         public UIElement()
@@ -154,37 +179,35 @@ namespace Interactr.View.Controls
 
         #region Keyboard events
         /// <summary>
-        /// Emits a keyboard event
+        /// Emit a keyboard event.
         /// </summary>
-        /// <param name="id">The type of key event</param>
-        /// <param name="keyCode">The key identifier</param>
-        /// <param name="keyChar">The character associated with this key</param>
-        /// <returns>True if the event was handled by an element</returns>
-        public static bool HandleKeyEvent(int id, int keyCode, char keyChar)
+        /// <param name="eventData">Details about this event.</param>
+        /// <returns>True if the event was handled by an element.</returns>
+        public static bool HandleKeyEvent(KeyEventData eventData)
         {
-            if (TunnelDownKeyEventPreview(id, keyCode, keyChar))
+            if (TunnelDownKeyEventPreview(eventData))
             {
                 //Event was handled
                 return true;
             }
 
             //Bubble up event from FocusedElement to root
-            return FocusedElement.BubbleUpKeyEvent(id, keyCode, keyChar);
+            return FocusedElement.BubbleUpKeyEvent(eventData);
         }
 
         /// <summary>
-        /// Takes a key event, calls OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
-        /// Only the ancestors of FocusedElement will receive the event.
+        /// Take a key event, call OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
         /// </summary>
-        /// <param name="id">The type of key event</param>
-        /// <param name="keyCode">The key identifier</param>
-        /// <param name="keyChar">The character associated with this key</param>
+        /// <remarks>
+        /// Only the ancestors of FocusedElement will receive the event.
+        /// </remarks>
+        /// <param name="eventData">Details about this event.</param>
         /// <returns>True if the event was handled by an element</returns>
-        private static bool TunnelDownKeyEventPreview(int id, int keyCode, char keyChar)
+        private static bool TunnelDownKeyEventPreview(KeyEventData eventData)
         {
             foreach (UIElement element in UIElement.FocusedElement.WalkToRoot().Reverse())
             {
-                if (element.OnKeyEventPreview(id, keyCode, keyChar))
+                if (element.OnKeyEventPreview(eventData))
                 {
                     return true;
                 }
@@ -194,45 +217,41 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Takes a key event, calls OnKeyEvent and passes the event to the parent element until an element handles it.
+        /// Take a key event, call OnKeyEvent and pass the event to the parent element until an element handles it.
         /// </summary>
-        /// <param name="id">The type of key event</param>
-        /// <param name="keyCode">The key identifier</param>
-        /// <param name="keyChar">The character associated with this key</param>
+        /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element or one of its ancestors has handled the event</returns>
-        private bool BubbleUpKeyEvent(int id, int keyCode, char keyChar)
+        private bool BubbleUpKeyEvent(KeyEventData eventData)
         {
-            if (this.OnKeyEvent(id, keyCode, keyChar))
+            _keyEventOccurred.OnNext(eventData);
+            if (this.OnKeyEvent(eventData))
             {
                 return true;
             }
 
-            return Parent?.BubbleUpKeyEvent(id, keyCode, keyChar) ?? false;
+            return Parent?.BubbleUpKeyEvent(eventData) ?? false;
         }
 
         /// <summary>
-        /// This function is called when keyboard events are triggered.
-        /// Use this function to intercept key events before they reach the FocusedElement.
+        /// Is called when keyboard events are triggered.
+        /// Can be overriden to intercept key events before they reach the FocusedElement.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="id">The type of key event</param>
-        /// <param name="keyCode">The key identifier</param>
-        /// <param name="keyChar">The character associated with this key</param>
+        /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEventPreview(int id, int keyCode, char keyChar)
+        protected virtual bool OnKeyEventPreview(KeyEventData eventData)
         {
             return false;
         }
 
         /// <summary>
-        /// This function is called when keyboard events are triggered.
+        /// Is called when keyboard events are triggered.
+        /// Can be overridden to handle keyboard events.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="id">The type of key event</param>
-        /// <param name="keyCode">The key identifier</param>
-        /// <param name="keyChar">The character associated with this key</param>
+        /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEvent(int id, int keyCode, char keyChar)
+        protected virtual bool OnKeyEvent(KeyEventData eventData)
         {
             return false;
         }
@@ -240,44 +259,40 @@ namespace Interactr.View.Controls
 
         #region Mouse events
         /// <summary>
-        /// Emits a mouse event
+        /// Emit a mouse event.
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree</param>
-        /// <param name="id">The type of mouse event</param>
-        /// <param name="mousePos">The current position of the mouse relative to the root element</param>
-        /// <param name="clickCount">Amount of times the mouse button was pressed</param>
-        /// <returns>True if the event was handled by an element</returns>
-        public static bool HandleMouseEvent(UIElement rootElement, int id, Point mousePos, int clickCount)
+        /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
+        /// <returns>True if the event was handled by an element.</returns>
+        public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
-            UIElement mouseoverElement = rootElement.FindElementAt(mousePos);
+            UIElement mouseoverElement = rootElement.FindElementAt(eventData.MousePosition);
 
-            if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, id, mousePos, clickCount))
+            if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, eventData))
             {
-                // Event was handled
+                // Event was handled.
                 return true;
             }
 
-            // Bubble up event from FocusedElement to root
-            Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, mousePos);
-            return mouseoverElement.BubbleUpMouseEvent(id, mousePos, clickCount);
+            // Bubble up event from FocusedElement to root.
+            Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
+            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
-        /// Takes a mouse event, calls OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
+        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
         /// Only the ancestors of the mouseover-element will receive the event.
         /// </summary>
-        /// <param name="rootElement">The element at the top of the view-tree</param>
-        /// <param name="mouseoverElement">The element the mouse is over</param>
-        /// <param name="id">The type of mouse event</param>
-        /// <param name="mousePos">The current position of the mouse relative to the root element</param>
-        /// <param name="clickCount">Amount of times the mouse button was pressed</param>
-        /// <returns>True if the event was handled by an element</returns>
-        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, int id, Point mousePos, int clickCount)
+        /// <param name="rootElement">The element at the top of the view-tree.</param>
+        /// <param name="mouseoverElement">The element the mouse is over.</param>
+        /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
+        /// <returns>True if the event was handled by an element.</returns>
+        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
-                Point relativeMousePos = rootElement.TranslatePointTo(element, mousePos);
-                if (element.OnMouseEventPreview(id, relativeMousePos, clickCount))
+                Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
+                if (element.OnMouseEventPreview(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
                 {
                     return true;
                 }
@@ -287,15 +302,14 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Takes a mouse event, calls OnMouseEvent and passes the event to the parent element until an element handles it.
+        /// Take a mouse event, call OnMouseEvent and keep passing the event to the parent element until an element handles it.
         /// </summary>
-        /// <param name="id">The type of mouse event</param>
-        /// <param name="mousePos">The current position of the mouse relative to the this element</param>
-        /// <param name="clickCount">Amount of times the mouse button was pressed</param>
-        /// <returns>True if the event was handled by an element</returns>
-        private bool BubbleUpMouseEvent(int id, Point mousePos, int clickCount)
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
+        /// <returns>True if the event was handled by an element.</returns>
+        private bool BubbleUpMouseEvent(MouseEventData eventData)
         {
-            if (this.OnMouseEvent(id, mousePos, clickCount))
+            _mouseEventOccured.OnNext(eventData);
+            if (this.OnMouseEvent(eventData))
             {
                 return true;
             }
@@ -305,33 +319,30 @@ namespace Interactr.View.Controls
                 return false;
             }
 
-            Point relativeMousePos = this.TranslatePointTo(Parent, mousePos);
-            return Parent.BubbleUpMouseEvent(id, relativeMousePos, clickCount);
+            Point relativeMousePos = this.TranslatePointTo(Parent, eventData.MousePosition);
+            return Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
-        /// This function is called when mouse events are triggered.
-        /// Use this method to intercept mouse events before they reach the element the mouse is over.
+        /// Is called when mouse events are triggered.
+        /// Override this method to intercept mouse events before they reach the element the mouse is over.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="id">The type of mouse event</param>
-        /// <param name="mousePos">The current position of the mouse relative to this element</param>
-        /// <param name="clickCount">Amount of times the mouse button was pressed</param>
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEventPreview(int id, Point mousePos, int clickCount)
+        protected virtual bool OnMouseEventPreview(MouseEventData eventData)
         {
             return false;
         }
 
         /// <summary>
-        /// This function is called when mouse events are triggered.
+        /// Is called when mouse events are triggered.
+        /// Can be overriden to handle mouse events.
         /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="id">The type of mouse event</param>
-        /// <param name="mousePos">The current position of the mouse relative to this element</param>
-        /// <param name="clickCount">Amount of times the mouse button was pressed</param>
+        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEvent(int id, Point mousePos, int clickCount)
+        protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
             this.Focus();
             return true;
@@ -378,7 +389,7 @@ namespace Interactr.View.Controls
 
                 // Map x, y coordinates to child space (relative to child origin)
                 g.TranslateTransform(child.Position.X, child.Position.Y);
-                g.SetClip(new RectangleF(0, 0, child.Width+1, child.Height+1));
+                g.SetClip(new RectangleF(0, 0, child.Width, child.Height));
 
                 // Paint
                 child.Paint(g);
@@ -424,11 +435,15 @@ namespace Interactr.View.Controls
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child => point.X >= child.Position.X && point.Y >= child.Position.Y &&
-                                                                        point.X < (child.Position.X + child.Width) &&
-                                                                        point.Y < (child.Position.Y + child.Height));
+            var childContainingPoint = Children.FirstOrDefault(child => 
+                child.IsVisible &&
+                point.X >= child.Position.X && point.Y >= child.Position.Y &&
+                point.X < (child.Position.X + child.Width) &&
+                point.Y < (child.Position.Y + child.Height));
+
             if (childContainingPoint == null)
             {
+                //No child of this element contains 'point', so this is the deepest element that does.
                 return this;
             }
 
