@@ -33,7 +33,7 @@ namespace Interactr.View.Controls
 
         #region PointA
         /// <summary>
-        /// The starting point of the line
+        /// The starting point of the line.
         /// </summary>
         public Point PointA
         {
