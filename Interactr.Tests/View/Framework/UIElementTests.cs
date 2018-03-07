@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
+using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
 
 namespace Interactr.Tests.View.Controls

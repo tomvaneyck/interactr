@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Reactive;
 
-namespace Interactr.View.Controls
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// A property that can be set on arbitrary UIElements.
