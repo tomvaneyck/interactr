@@ -1,5 +1,8 @@
 ﻿namespace Interactr.View.Framework
 {
+    /// <summary>
+    /// Information about a mouse input event.
+    /// </summary>
     public class MouseEventData
     {
         /// <summary>

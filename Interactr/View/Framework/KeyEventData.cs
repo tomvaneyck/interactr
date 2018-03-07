@@ -1,5 +1,8 @@
 ﻿namespace Interactr.View.Framework
 {
+    /// <summary>
+    /// Information about a keyboard input event.
+    /// </summary>
     public class KeyEventData
     {
         /// <summary>
