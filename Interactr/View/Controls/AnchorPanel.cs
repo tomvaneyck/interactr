@@ -21,8 +21,23 @@ namespace Interactr.View.Controls
 
         public AnchorPanel()
         {
+            InitializeObservables();
+        }
+
+        /// <summary>
+        /// Initialize the observables for this panel.
+        /// </summary>
+        /// <remarks>
+        /// Observe:
+        /// <list type="bullet">
+        /// <item>a combination of WidthChanged and HeightChanged,</item>
+        /// <item>the children of this panel</item>
+        /// </list>
+        /// </remarks>
+        private void InitializeObservables()
+        {
             // Update layout when the width or height of this panel changes.
-            Observable.Merge(this.WidthChanged, this.HeightChanged).Subscribe(_ => UpdateLayout());
+            Observable.Merge(WidthChanged, HeightChanged).Subscribe(_ => UpdateLayout());
 
             // Update a child when its Anchors or Margins property changes.
             Children.ObserveEach(child => child.AttachedProperties.OnValueChanged)
