@@ -383,6 +383,19 @@ namespace Interactr.View.Framework
             // Render first to last, so last element is on top
             foreach (UIElement child in Children)
             {
+                //Validate layout
+                int availableWidth = this.Width - child.Position.X;
+                if (availableWidth < child.Width)
+                {
+                    child.Width = availableWidth;
+                }
+
+                int availableHeight = this.Height - child.Position.Y;
+                if (availableHeight < child.Height)
+                {
+                    child.Height = availableHeight;
+                }
+
                 // Save current transform and clip
                 Matrix currentTransform = g.Transform;
                 Region currentClip = g.Clip;
