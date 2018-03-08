@@ -171,10 +171,12 @@ namespace Interactr.View.Framework
                 return;
             }
 
-            // Previously focused element is now unfocused
-            FocusedElement?._focusChanged.OnNext(false);
-
+            // Set focused element, then emit events for previous and current focused elements.
+            UIElement previouslyFocusedElement = FocusedElement;
             FocusedElement = this;
+
+            // Previously focused element is now unfocused
+            previouslyFocusedElement?._focusChanged.OnNext(false);
 
             // This element is now focused
             this._focusChanged.OnNext(true);
