@@ -88,6 +88,7 @@ namespace Interactr.Reactive
             List<T> temp = _contents;
             _contents = new List<T>();
 
+            // Delete the contents items in reverse order.
             for (var i = temp.Count-1; i >= 0; i--)
             {
                 T item = temp[i];
