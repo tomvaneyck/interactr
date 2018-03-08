@@ -137,11 +137,31 @@ namespace Interactr.View.Controls
 
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
-            if (eventData.Id == KeyEvent.KEY_RELEASED && eventData.KeyCode == KeyEvent.VK_ESCAPE && CanLeaveEditMode)
+            if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
             {
-                IsInEditMode = false;
+                if (eventData.Id == KeyEvent.KEY_RELEASED && CanLeaveEditMode)
+                {
+                    IsInEditMode = false;
+                }
                 return true;
             }
+
+            if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
+            {
+                if (eventData.KeyChar == '\b') //Backspace
+                {
+                    if (Text.Length > 0)
+                    {
+                        Text = Text.Substring(0, Text.Length - 1);
+                    }
+                }
+                else if (eventData.KeyChar != '\x1b') //Not escape
+                {
+                    Text += eventData.KeyChar;
+                }
+                return true;
+            }
+
             return false;
         }
 
