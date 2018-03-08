@@ -118,7 +118,7 @@ namespace Interactr.Reactive
             _onAdd.OnNext((item, index));
         }
 
-        /// <see cref="IList.Remove"/>
+        /// <inheritdoc cref="IList.Remove"/>
         public bool Remove(T item)
         {
             int index = IndexOf(item);
@@ -130,7 +130,7 @@ namespace Interactr.Reactive
             return false;
         }
 
-        /// <see cref="IList.RemoveAt"/> 
+        /// <inheritdoc cref="IList.RemoveAt"/> 
         public void RemoveAt(int index)
         {
             T item = _contents[index];
