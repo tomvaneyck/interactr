@@ -34,9 +34,9 @@ namespace Interactr.View
 
         #endregion
 
-        private readonly ImageView _actorImage = new ImageView();
-        private readonly RectangleView _objectRectangle = new RectangleView();
-        private readonly LabelView _labelView = new LabelView();
+        protected readonly ImageView _actorImage = new ImageView();
+        protected readonly RectangleView _objectRectangle = new RectangleView();
+        protected readonly LabelView _labelView = new LabelView();
 
         public PartyView()
         {
@@ -78,6 +78,21 @@ namespace Interactr.View
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);
             Children.Add(_labelView);
+
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
+
+            // Bind text of label between this and PartyViewModel.
+            _labelView.TextChanged.Subscribe(text => 
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
+            // Fire ApplyLabel when leaving edit mode.
+            _labelView.EditModeChanged.Subscribe(isInEditMode => { if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel(); });
         }
     }
 }
