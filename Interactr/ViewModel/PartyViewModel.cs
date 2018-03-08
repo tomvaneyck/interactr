@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Model;
@@ -66,10 +68,16 @@ namespace Interactr.ViewModel
         public PartyViewModel(Party party)
         {
             Party = party;
+
+            // Define the type in the viewmodel to be changed when the type changes in the model.
+            party.TypeChanged.Subscribe(newType => Type = newType);
+            
+            // Define the label in the viewmodel to change when the label changes in the model.
+            party.LabelChanged.Subscribe(newLabel => Label = newLabel);
         }
 
         /// <summary>
-        /// Change the party type of this party. 
+        /// Change the party type of this party in the view model and in the model.
         /// </summary>
         public void SwitchPartyType()
         {
