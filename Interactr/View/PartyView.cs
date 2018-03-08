@@ -81,11 +81,5 @@ namespace Interactr.View
             Children.Add(_objectRectangle);
             Children.Add(_labelView);
         }
-
-        public override void PaintElement(Graphics g)
-        {
-            g.FillRectangle(Brushes.Pink, 0, 0, Width, Height);
-            base.PaintElement(g);
-        }
     }
 }

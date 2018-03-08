@@ -168,10 +168,12 @@ namespace Interactr.View.Framework
                 return;
             }
 
-            // Previously focused element is now unfocused
-            FocusedElement?._focusChanged.OnNext(false);
-
+            // Set focused element, then emit events for previous and current focused elements.
+            UIElement previouslyFocusedElement = FocusedElement;
             FocusedElement = this;
+
+            // Previously focused element is now unfocused
+            previouslyFocusedElement?._focusChanged.OnNext(false);
 
             // This element is now focused
             this._focusChanged.OnNext(true);
@@ -358,6 +360,7 @@ namespace Interactr.View.Framework
         {
             if (IsVisible)
             {
+                ValidateLayout();
                 PaintElement(g);
                 PaintChildren(g);
             }
@@ -397,6 +400,24 @@ namespace Interactr.View.Framework
                 // Reset clip and transform
                 g.Transform = currentTransform;
                 g.Clip = currentClip;
+            }
+        }
+
+        protected void ValidateLayout()
+        {
+            foreach (UIElement child in Children)
+            {
+                int availableWidth = this.Width - child.Position.X;
+                if (availableWidth < child.Width)
+                {
+                    child.Width = availableWidth;
+                }
+
+                int availableHeight = this.Height - child.Position.Y;
+                if (availableHeight < child.Height)
+                {
+                    child.Height = availableHeight;
+                }
             }
         }
 
