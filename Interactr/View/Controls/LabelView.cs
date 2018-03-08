@@ -83,6 +83,9 @@ namespace Interactr.View.Controls
                 _cursorIsVisible = !_cursorIsVisible;
                 Repaint();
             });
+
+            // Repaint on focus change.
+            FocusChanged.Subscribe(_ => Repaint());
         }
 
         public override void PaintElement(Graphics g)
@@ -93,6 +96,11 @@ namespace Interactr.View.Controls
             var preferredSize = g.MeasureString(Text, Font);
             PreferredWidth = (int)Math.Ceiling(preferredSize.Width);
             PreferredHeight = (int)Math.Ceiling(preferredSize.Height);
+
+            if (IsFocused)
+            {
+                g.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+            }
 
             // Draw the string.
             g.DrawString(Text, Font, Brushes.Black, 0, 0);
