@@ -106,6 +106,8 @@ namespace Interactr.View.Framework
         public bool IsFocused => FocusedElement == this;
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
+
+        public bool CanLoseFocus { get; set; } = true;
         #endregion
 
         #region RepaintRequested
@@ -162,7 +164,7 @@ namespace Interactr.View.Framework
         /// </summary>
         public void Focus()
         {
-            if (this == FocusedElement)
+            if (this == FocusedElement || (!FocusedElement?.CanLoseFocus ?? false))
             {
                 // This is already focused
                 return;
