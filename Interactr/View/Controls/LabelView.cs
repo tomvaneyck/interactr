@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+using Interactr.Window;
 
 namespace Interactr.View.Controls
 {
@@ -136,7 +137,7 @@ namespace Interactr.View.Controls
 
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (IsFocused && eventData.Id == 500)
+            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
                 return true;

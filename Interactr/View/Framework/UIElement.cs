@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Interactr.Reactive;
+using Interactr.Window;
 
 namespace Interactr.View.Framework
 {
@@ -347,7 +348,7 @@ namespace Interactr.View.Framework
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == 500)
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 this.Focus();
                 return true;
