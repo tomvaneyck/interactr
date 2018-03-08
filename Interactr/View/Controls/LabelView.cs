@@ -105,12 +105,9 @@ namespace Interactr.View.Controls
             });
 
             // Block focus losing when canLeaveEditMode false.
-            Observable.CombineLatest(
-                EditModeChanged,
-                CanLeaveEditModeChanged,
-                (editMode, canLeaveEditMode) => editMode && canLeaveEditMode
-            ).Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
+            CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
 
+            CanLeaveEditMode = true;
         }
 
         public override void PaintElement(Graphics g)
