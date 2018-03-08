@@ -41,6 +41,9 @@ namespace Interactr.View.Controls
             ).Subscribe(p => UpdateLayout());
         }
 
+        /// <summary>
+        /// Updates the position and size of the children.
+        /// </summary>
         private void UpdateLayout()
         {
             if (StackOrientation == Orientation.Horizontal)
@@ -53,6 +56,12 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <summary>
+        /// Stacks the children horizontally.
+        /// The width of each child is set to its preferred width.
+        /// The height of each child is set to the panel height.
+        /// The positions of the elements stack in the x-direction
+        /// </summary>
         private void UpdateHorizontalLayout()
         {
             int curX = 0;
@@ -65,6 +74,11 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <summary>
+        /// Stacks the children vertically.
+        /// The width of each child is set to the panel width.
+        /// The height of each child is set to its preferred height.
+        /// </summary>
         private void UpdateVerticalLayout()
         {
             int curY = 0;
