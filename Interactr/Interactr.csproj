@@ -77,6 +77,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
+    <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\Margins.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="View\Controls\RectangleView.cs" />
     <Compile Include="View\MainView.cs" />
     <Compile Include="View\SequenceDiagramView.cs" />
+    <Compile Include="View\PartyView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
     <Compile Include="Window\InputMapper.cs" />
