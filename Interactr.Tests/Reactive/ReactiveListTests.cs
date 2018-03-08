@@ -24,7 +24,7 @@ namespace Interactr.Tests.Reactive
             Assert.AreEqual(1, list.Count);
             list.Insert(0, "A");
             list.Insert(2, "C");
-            Assert.IsTrue(list.SequenceEqual(new[] { "A", "B", "C" }));
+            Assert.IsTrue(list.SequenceEqual(new[] {"A", "B", "C"}));
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Interactr.Tests.Reactive
         [Test]
         public void TestContains()
         {
-            ReactiveList<string> list = new ReactiveList<string> { "A", "B", "C" };
+            ReactiveList<string> list = new ReactiveList<string> {"A", "B", "C"};
             Assert.IsTrue(list.Contains("A"));
             Assert.IsFalse(list.Contains("Z"));
         }
@@ -51,9 +51,9 @@ namespace Interactr.Tests.Reactive
         public void TestCopyTo()
         {
             string[] copy = new string[4];
-            ReactiveList<string> list = new ReactiveList<string> { "A", "B", "C" };
+            ReactiveList<string> list = new ReactiveList<string> {"A", "B", "C"};
             list.CopyTo(copy, 1);
-            Assert.IsTrue(copy.SequenceEqual(new string[]{null, "A", "B", "C"}));
+            Assert.IsTrue(copy.SequenceEqual(new string[] {null, "A", "B", "C"}));
         }
 
         [Test]
@@ -67,8 +67,8 @@ namespace Interactr.Tests.Reactive
             scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Add("A"));
             scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Insert(1, "B"));
             scheduler.Schedule(TimeSpan.FromTicks(30), () => list.Add("C"));
-            var actual = scheduler.Start(() => list.OnAdd, created: 0, subscribed: 0, disposed:100);
-            
+            var actual = scheduler.Start(() => list.OnAdd, created: 0, subscribed: 0, disposed: 100);
+
             //Assert
             var expected = new[]
             {
@@ -86,7 +86,9 @@ namespace Interactr.Tests.Reactive
             var scheduler = new TestScheduler();
             ReactiveList<string> list = new ReactiveList<string>
             {
-                "A", "B", "C"
+                "A",
+                "B",
+                "C"
             };
 
             //Define actions
@@ -112,7 +114,9 @@ namespace Interactr.Tests.Reactive
             var scheduler = new TestScheduler();
             ReactiveList<string> list = new ReactiveList<string>
             {
-                "A", "B", "C"
+                "A",
+                "B",
+                "C"
             };
 
             //Define actions
@@ -122,9 +126,9 @@ namespace Interactr.Tests.Reactive
             //Assert
             var expected = new[]
             {
-                OnNext(10, ("A", 0)),
-                OnNext(10, ("B", 0)),
-                OnNext(10, ("C", 0))
+                OnNext(10, ("C", 2)),
+                OnNext(10, ("B", 1)),
+                OnNext(10, ("A", 0))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
@@ -136,17 +140,19 @@ namespace Interactr.Tests.Reactive
             var scheduler = new TestScheduler();
             ReactiveList<string> list = new ReactiveList<string>
             {
-                "A", "B", "C"
+                "A",
+                "B",
+                "C"
             };
 
             //Define actions
             scheduler.Schedule(TimeSpan.FromTicks(10), () => list[1] = "Z");
-            var actual = scheduler.Start(() => 
-                    Observable.Merge(
-                        list.OnDelete.Select(e => (Element: e, WasAdded: false)),
-                        list.OnAdd.Select(e => (Element: e, WasAdded: true))
-                    ), created: 0, subscribed: 0, disposed: 100);
-            
+            var actual = scheduler.Start(() =>
+                Observable.Merge(
+                    list.OnDelete.Select(e => (Element: e, WasAdded: false)),
+                    list.OnAdd.Select(e => (Element: e, WasAdded: true))
+                ), created: 0, subscribed: 0, disposed: 100);
+
             //Assert
             var expected = new[]
             {
@@ -175,7 +181,8 @@ namespace Interactr.Tests.Reactive
             scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0]));
             scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Third test event"));
             scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0]));
-            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0,
+                disposed: 100);
 
             //Assert
             var expected = new[]

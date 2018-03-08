@@ -64,7 +64,7 @@ namespace Interactr.Reactive
                 T item = _contents[index];
                 _contents[index] = value;
                 _onDelete.OnNext((item, index));
-                _onAdd.OnNext((item, index));
+                _onAdd.OnNext((value, index));
             }
         }
         
@@ -88,7 +88,7 @@ namespace Interactr.Reactive
             List<T> temp = _contents;
             _contents = new List<T>();
 
-            for (var i = 0; i < temp.Count; i++)
+            for (var i = temp.Count-1; i >= 0; i--)
             {
                 T item = temp[i];
                 _onDelete.OnNext((item, i));
