@@ -135,6 +135,16 @@ namespace Interactr.View.Controls
             }
         }
 
+        protected override bool OnKeyEvent(KeyEventData eventData)
+        {
+            if (eventData.Id == KeyEvent.KEY_RELEASED && eventData.KeyCode == KeyEvent.VK_ESCAPE && CanLeaveEditMode)
+            {
+                IsInEditMode = false;
+                return true;
+            }
+            return false;
+        }
+
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
             if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
