@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,31 +30,19 @@ namespace Interactr.View
         public IObservable<CommunicationDiagramViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
-
+        
         public CommunicationDiagramView()
         {
-            //Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
+            // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
-            // Define that a new party view gets added to this view when a new partyViewModel is added in the viewmodel.
-            ViewModelChanged.ObserveNested(vm => vm.PartyViewModelOnAdd).Subscribe(partyViewModel =>
-            {
-                Children.Add(new PartyView() {ViewModel = partyViewModel});
-            });
-
-            // Define that all party views corresponding with the party view model get deleted when 
-            // the party view model is deleted.
-            ViewModelChanged.ObserveNested(vm => vm.PartyViewModelOnDelete).Subscribe(partyViewModel =>
-            {
-                foreach (var partyView in Children.OfType<PartyView>())
-                {
-                    if (partyView.ViewModel == partyViewModel)
-                    {
-                        Children.Remove(partyView);
-                    }
-                }
-            });
+            // Create a list of party views based on the party viewmodel.
+            ReactiveList<PartyView> partyViews = ViewModelChanged.Select(vm => vm.PartyViewModels)
+                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm }).ResultList;
+            // Automatically add and remove party views to Children.
+            partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
     }
 }

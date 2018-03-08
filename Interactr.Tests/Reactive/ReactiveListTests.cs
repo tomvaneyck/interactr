@@ -72,9 +72,9 @@ namespace Interactr.Tests.Reactive
             //Assert
             var expected = new[]
             {
-                OnNext(10, "A"),
-                OnNext(20, "B"),
-                OnNext(30, "C")
+                OnNext(10, ("A", 0)),
+                OnNext(20, ("B", 1)),
+                OnNext(30, ("C", 2))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
@@ -98,9 +98,9 @@ namespace Interactr.Tests.Reactive
             //Assert
             var expected = new[]
             {
-                OnNext(10, "A"),
-                OnNext(20, "B"),
-                OnNext(30, "C")
+                OnNext(10, ("A", 0)),
+                OnNext(20, ("B", 0)),
+                OnNext(30, ("C", 0))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
@@ -122,9 +122,9 @@ namespace Interactr.Tests.Reactive
             //Assert
             var expected = new[]
             {
-                OnNext(10, "A"),
-                OnNext(10, "B"),
-                OnNext(10, "C"),
+                OnNext(10, ("A", 0)),
+                OnNext(10, ("B", 0)),
+                OnNext(10, ("C", 0))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
@@ -150,8 +150,8 @@ namespace Interactr.Tests.Reactive
             //Assert
             var expected = new[]
             {
-                OnNext(10, ("B", false)),
-                OnNext(10, ("Z", true))
+                OnNext(10, (("B", 1), false)),
+                OnNext(10, (("Z", 1), true))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
