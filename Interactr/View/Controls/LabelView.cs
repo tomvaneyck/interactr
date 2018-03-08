@@ -80,7 +80,6 @@ namespace Interactr.View.Controls
 
         #endregion
 
-
         public LabelView()
         {
             // Set the default font.
