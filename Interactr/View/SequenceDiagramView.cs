@@ -14,7 +14,7 @@ namespace Interactr.View
     /// <summary>
     /// The view for the sequence diagram.
     /// </summary>
-    public class SequenceDiagramView : UIElement
+    public class SequenceDiagramView : AnchorPanel
     {
         #region ViewModel
 
@@ -33,9 +33,15 @@ namespace Interactr.View
 
         public SequenceDiagramView()
         {
-            //Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
+            // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
+            // Create a list of party views based on the party viewmodel.
+            ReactiveList<PartyView> partyViews = ViewModelChanged.Select(vm => vm.PartyViewModels)
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm}).ResultList;
+            // Automatically add and remove party views to Children.
+            partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
     }
 }

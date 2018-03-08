@@ -170,8 +170,9 @@ namespace Interactr.View.Framework
         private void SetupParentChildRelationship()
         {
             // Set parent-child relationship on child add
-            Children.OnAdd.Subscribe(newChild =>
+            Children.OnAdd.Subscribe(e =>
             {
+                UIElement newChild = e.Element;
                 if (newChild.Parent != null)
                 {
                     throw new Exception("UIElement already has a parent.");
