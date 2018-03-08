@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace Interactr.Tests.View.Controls
 {
+    [TestFixture]
     public class LabelViewTests
     {
         private TestableLabelView _labelView;
