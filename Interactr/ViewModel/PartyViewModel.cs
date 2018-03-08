@@ -16,7 +16,6 @@ namespace Interactr.ViewModel
     public class PartyViewModel
     {
         #region Type
-
         private readonly ReactiveProperty<Party.PartyType> _type = new ReactiveProperty<Party.PartyType>();
 
         /// <summary>
@@ -35,17 +34,14 @@ namespace Interactr.ViewModel
         /// An observable that emits the new party type when it has changed.
         /// </summary>
         public IObservable<Party.PartyType> TypeChanged => _type.Changed;
-
         #endregion
 
         #region Label
-
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
-        /// <summary> A label in the specified format.
+        /// <summary> A label.
         /// <example> instance_name;class_name </example>
         /// </summary>
-        //TODO validate label before assignment.
         public string Label
         {
             get => _label.Value;
@@ -56,24 +52,35 @@ namespace Interactr.ViewModel
         /// An observable that emits the new label when it has changed.
         /// </summary>
         public IObservable<string> LabelChanged => _label.Changed;
-
         #endregion
+        
+        #region CanApplyLabel
+        private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
 
-        #region Party
+        /// <summary>Is the label valid?</summary>
+        public bool CanApplyLabel
+        {
+            get => _canApplyLabel.Value;
+            set => _canApplyLabel.Value = value;
+        }
 
+        public IObservable<bool> CanApplyLabelChanged => _canApplyLabel.Changed;
+        #endregion
+        
         public Party Party { get; }
-
-        #endregion
 
         public PartyViewModel(Party party)
         {
             Party = party;
 
-            // Define the type in the viewmodel to be changed when the type changes in the model.
+            // Bind the type in the viewmodel to the type in the model.
             party.TypeChanged.Subscribe(newType => Type = newType);
             
             // Define the label in the viewmodel to change when the label changes in the model.
             party.LabelChanged.Subscribe(newLabel => Label = newLabel);
+
+            // Update CanApplyLabel when the label changes.
+            LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
@@ -84,8 +91,16 @@ namespace Interactr.ViewModel
             // Change the type in the viewmodel.
             Type = Type == Party.PartyType.Actor ? Party.PartyType.Object : Party.PartyType.Actor;
 
-            // Change the type in the model
+            // Change the type in the model.
             Party.Type = Type;
+        }
+
+        /// <summary>
+        /// Set the model label to the label in the viewmodel.
+        /// </summary>
+        public void ApplyLabel()
+        {
+            Party.Label = Label;
         }
     }
 }
