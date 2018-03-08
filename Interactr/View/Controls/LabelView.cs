@@ -98,9 +98,11 @@ namespace Interactr.View.Controls
                     return Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime))
                         .StartWith(0);
                 }
-
-                _cursorIsVisible = false;
-                return Observable.Empty<long>();
+                else
+                {
+                    _cursorIsVisible = false;
+                    return Observable.Empty<long>();
+                }
             }).Switch().Subscribe(_ =>
             {
                 _cursorIsVisible = !_cursorIsVisible;
@@ -157,11 +159,9 @@ namespace Interactr.View.Controls
                 {
                     IsInEditMode = false;
                 }
-
                 return true;
             }
-
-            if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
+            else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
             {
                 // If the keyChar is backspace.
                 if (eventData.KeyChar == '\b')
@@ -179,8 +179,10 @@ namespace Interactr.View.Controls
 
                 return true;
             }
-
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc cref="OnMouseEvent"/>
