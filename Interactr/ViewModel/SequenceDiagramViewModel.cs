@@ -14,6 +14,12 @@ namespace Interactr.ViewModel
     /// and is responsible for interaction with the data objects from the model.</remarks>
     public class SequenceDiagramViewModel
     {
+        #region PartyViewModel
+
+        public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
+
+        #endregion
+
         #region IsVisible
 
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
