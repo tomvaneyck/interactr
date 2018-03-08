@@ -43,6 +43,6 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
-            }
+        }
     }
 }
