@@ -67,32 +67,22 @@ namespace Interactr.View.Controls
             ).Subscribe(_ => Repaint());
 
             // Blink cursor if label is in edit mode.
-            Observable.CombineLatest(
-                Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime)),
-                EditModeChanged,
-                (timestamp, editMode) => editMode
-            ).Subscribe(editMode =>
+            EditModeChanged.Select(editMode =>
             {
-                if (!editMode)
+                if (editMode)
                 {
-                    _cursorIsVisible = false;
+                    return Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime));
                 }
                 else
                 {
-                    _cursorIsVisible = !_cursorIsVisible;
-                    Repaint();
+                    _cursorIsVisible = false;
+                    return Observable.Empty<long>();
                 }
+            }).Switch().Subscribe(_ =>
+            {
+                _cursorIsVisible = !_cursorIsVisible;
+                Repaint();
             });
-
-            //Observable.Timer(DateTimeOffset.UtcNow, TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime))
-            //    .Where(_ => IsInEditMode)
-            //    .Subscribe(_ =>
-            //    {
-            //        _cursorIsVisible = !_cursorIsVisible;
-            //        Repaint();
-            //    });
-
-            IsInEditMode = true;
         }
 
         public override void PaintElement(Graphics g)
