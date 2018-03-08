@@ -82,13 +82,22 @@ namespace Interactr.Tests.View.Controls
         [Test]
         public void MouseClickFunctionalityEventInLabel()
         {
+            UIElement ui = new UIElement();
             LabelView labelview = new LabelView();
-            MouseEventData mouseEventData = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 1);
+            labelview.Height = 2;
+            labelview.Width = 2;
+            ui.Children.Add(labelview);
+            MouseEventData mouseEventData1 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 1);
+            MouseEventData mouseEventData2 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 2);
 
-            bool result = UIElement.HandleMouseEvent(labelview, mouseEventData);
+
+            bool result1 = UIElement.HandleMouseEvent(labelview, mouseEventData1);
+            bool result2 = UIElement.HandleMouseEvent(labelview, mouseEventData2);
+
 
             // Check if an action occurred.
-            Assert.IsTrue(result);
+            Assert.IsTrue(result1);
+            Assert.IsTrue(result2);
 
             // Check if expected mouse action occured.
             Assert.IsTrue(_labelView.IsInEditMode);
@@ -107,7 +116,7 @@ namespace Interactr.Tests.View.Controls
             bool result = UIElement.HandleMouseEvent(ui, mouseEventData);
 
             // Check if an action occurred.
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
 
             // Check if expected mouse action occured.
             Assert.IsFalse(_labelView.IsInEditMode);
