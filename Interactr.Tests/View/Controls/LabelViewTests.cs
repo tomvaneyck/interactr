@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Concurrency;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
+using Interactr.Window;
 using Microsoft.Reactive.Testing;
 using NUnit.Framework;
 
@@ -19,15 +20,25 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        public void TestEscKeyFunctionality()
+        public void EscKeyFunctionalityShouldWork()
         {
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
+            _labelView.CanLeaveEditMode = true;
+
+            bool result = _labelView.RunOnKeyEvent(keyEventData);
+
+            // Check if an action occured.
+            Assert.IsTrue(result);
+
+            //Check if expected ESC action occurred.
+            Assert.IsFalse(_labelView.IsInEditMode);
         }
 
         public class TestableLabelView : LabelView
         {
-            public void RunOnKeyEvent(KeyEventData keyEventData)
+            public bool RunOnKeyEvent(KeyEventData keyEventData)
             {
-                OnKeyEvent(keyEventData);
+                return OnKeyEvent(keyEventData);
             }
         }
     }
