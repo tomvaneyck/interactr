@@ -82,6 +82,7 @@
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\Margins.cs" />
+    <Compile Include="View\Controls\Orientation.cs" />
     <Compile Include="View\Controls\StackPanel.cs" />
     <Compile Include="View\Framework\AttachedProperty.cs" />
     <Compile Include="View\Framework\KeyEventData.cs" />
