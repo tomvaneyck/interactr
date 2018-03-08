@@ -49,6 +49,7 @@
     <Reference Include="System.Reactive.PlatformServices, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\Interactr\packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\PartyLabelTests.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\MainViewModelTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
+    <Compile Include="View\Controls\StackPanelTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
   </ItemGroup>
   <ItemGroup>
