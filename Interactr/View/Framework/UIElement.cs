@@ -170,8 +170,9 @@ namespace Interactr.View.Framework
         private void SetupParentChildRelationship()
         {
             // Set parent-child relationship on child add
-            Children.OnAdd.Subscribe(newChild =>
+            Children.OnAdd.Subscribe(e =>
             {
+                UIElement newChild = e.Element;
                 if (newChild.Parent != null)
                 {
                     throw new Exception("UIElement already has a parent.");
@@ -181,7 +182,7 @@ namespace Interactr.View.Framework
             });
 
             // Remove parent-child relationship on child remove
-            Children.OnDelete.Subscribe(child => { child.Parent = null; });
+            Children.OnDelete.Subscribe(e => { e.Element.Parent = null; });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());

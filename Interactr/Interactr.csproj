@@ -74,12 +74,16 @@
     <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
+    <Compile Include="ViewModel\DiagramViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
+    <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\Margins.cs" />
+    <Compile Include="View\Controls\Orientation.cs" />
+    <Compile Include="View\Controls\StackPanel.cs" />
     <Compile Include="View\Framework\AttachedProperty.cs" />
     <Compile Include="View\Framework\KeyEventData.cs" />
     <Compile Include="View\Framework\MouseEventData.cs" />
@@ -90,6 +94,7 @@
     <Compile Include="View\Controls\LineView.cs" />
     <Compile Include="View\Controls\RectangleView.cs" />
     <Compile Include="View\MainView.cs" />
+    <Compile Include="View\PartyView.cs" />
     <Compile Include="View\SequenceDiagramView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
