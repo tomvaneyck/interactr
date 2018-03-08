@@ -75,9 +75,9 @@
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
+    <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\Margins.cs" />

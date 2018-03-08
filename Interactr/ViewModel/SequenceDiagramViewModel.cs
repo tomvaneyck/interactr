@@ -27,5 +27,15 @@ namespace Interactr.ViewModel
         public IObservable<bool> IsVisibleChanged => _isVisible.Changed;
 
         #endregion
+
+        #region partyViewModels
+
+        public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
+
+        public IObservable<PartyViewModel> partyViewModelOnAdd => PartyViewModels.OnAdd;
+
+        public IObservable<PartyViewModel> partyViewModelOnDelete => PartyViewModels.OnDelete;
+
+        #endregion
     }
 }
