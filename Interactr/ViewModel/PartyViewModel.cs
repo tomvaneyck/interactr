@@ -8,6 +8,9 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
+    /// <summary>
+    /// The view model for a party.
+    /// </summary>
     public class PartyViewModel
     {
         #region Type
@@ -50,7 +53,10 @@ namespace Interactr.ViewModel
         public IObservable<string> LabelChanged => _label.Changed;
         #endregion
 
-        public void TogglePartyType()
+        /// <summary>
+        /// Change the party type of this party. 
+        /// </summary>
+        public void SwitchPartyType()
         {
             Type = Type == Party.PartyType.Actor ? Party.PartyType.Object : Party.PartyType.Actor;
         }
