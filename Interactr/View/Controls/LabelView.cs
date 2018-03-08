@@ -82,6 +82,9 @@ namespace Interactr.View.Controls
 
         public LabelView()
         {
+            // Set the text to empty string
+            Text = "";
+            
             // Set the default font.
             Font = new Font("Arial", 11);
 
