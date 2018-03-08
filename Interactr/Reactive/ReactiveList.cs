@@ -40,7 +40,7 @@ namespace Interactr.Reactive
         /// <returns>An observable of the elements that are emitted along with the item that produced it.</returns>
         public IObservable<(T Element, V Value)> ObserveEach<V>(Func<T, IObservable<V>> observableSelector)
         {
-            // Take all items that are currently in the list, 
+            // Take all items that are currently in the list (values and corresponding index), 
             // aswell as all that will be added in the future.
             var currentContents = Observable.Zip(_contents.ToObservable(), Observable.Range(0, _contents.Count), (e, i) => (e, i));
             IObservable<(T Element, int Index)> items = currentContents.Concat(OnAdd);
