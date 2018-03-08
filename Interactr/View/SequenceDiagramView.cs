@@ -36,7 +36,6 @@ namespace Interactr.View
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
- });
             // Create a list of party views based on the party viewmodel.
             ReactiveList<PartyView> partyViews = ViewModelChanged.Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm}).ResultList;

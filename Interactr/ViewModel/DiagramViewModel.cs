@@ -4,7 +4,7 @@ using Interactr.View.Controls;
 
 namespace Interactr.ViewModel
 {
-     /// <summary>
+    /// <summary>
     /// The ViewModel for a diagram.
     /// </summary>
     /// <remarks> A view model represents the data you want to display on your view
@@ -29,9 +29,9 @@ namespace Interactr.ViewModel
 
         public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
 
-        public IObservable<PartyViewModel> PartyViewModelOnAdd => PartyViewModels.OnAdd;
+        public IObservable<(PartyViewModel, int)> PartyViewOnAdd => PartyViewModels.OnAdd;
 
-        public IObservable<PartyViewModel> PartyViewModelOnDelete => PartyViewModels.OnDelete;
+        public IObservable<(PartyViewModel, int)> PartyViewModelOnDelete => PartyViewModels.OnDelete;
 
         #endregion
     }
