@@ -37,8 +37,11 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
             // Create a list of party views based on the party viewmodel.
-            ReactiveList<PartyView> partyViews = ViewModelChanged.Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm}).ResultList;
+            ReactiveList<PartyView> partyViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.PartyViewModels)
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
+                .ResultList;
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
