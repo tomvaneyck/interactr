@@ -63,7 +63,7 @@ namespace Interactr.View.Controls
         public IObservable<bool> CanLeaveEditModeChanged => _canLeaveEditMode.Changed;
         #endregion
 
-        private bool _cursorIsVisible;
+        private bool _cursorIsVisible = false;
 
         public LabelView()
         {
@@ -81,7 +81,7 @@ namespace Interactr.View.Controls
             {
                 if (editMode)
                 {
-                    return Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime));
+                    return Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime)).StartWith(0);
                 }
                 else
                 {
@@ -93,8 +93,6 @@ namespace Interactr.View.Controls
                 _cursorIsVisible = !_cursorIsVisible;
                 Repaint();
             });
-
-            CanLeaveEditMode = true;
 
             // Block focus change if not allowed to leave edit mode and repaint.
             FocusChanged.Subscribe(isFocused =>
@@ -113,9 +111,6 @@ namespace Interactr.View.Controls
                 (editMode, canLeaveEditMode) => editMode && canLeaveEditMode
             ).Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
 
-            Focus();
-            IsInEditMode = true;
-            CanLeaveEditMode = false;
         }
 
         public override void PaintElement(Graphics g)
@@ -140,6 +135,16 @@ namespace Interactr.View.Controls
             {
                 g.DrawLine(Pens.Black, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
             }
+        }
+
+        protected override bool OnMouseEvent(MouseEventData eventData)
+        {
+            if (IsFocused && eventData.Id == 500)
+            {
+                IsInEditMode = true;
+                return true;
+            }
+            return base.OnMouseEvent(eventData);
         }
     }
 }

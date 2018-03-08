@@ -186,7 +186,7 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if the event was handled by an element.</returns>
         public static bool HandleKeyEvent(KeyEventData eventData)
-        {
+        { 
             if (TunnelDownKeyEventPreview(eventData))
             {
                 //Event was handled
@@ -346,8 +346,13 @@ namespace Interactr.View.Framework
         /// <returns>True if this element has handled the event</returns>
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
-            this.Focus();
-            return true;
+            // Only focus on mouseclick.
+            if (eventData.Id == 500)
+            {
+                this.Focus();
+                return true;
+            }
+            return false;
         }
         #endregion
 

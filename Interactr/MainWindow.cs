@@ -27,6 +27,7 @@ namespace Interactr.View
             View.Height = Size.Height;
 
             View.ViewModel = new MainViewModel(new Diagram());
+            View.Focus();
 
             View.RepaintRequested.Subscribe(_ => Repaint());
         }
