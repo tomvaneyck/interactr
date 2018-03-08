@@ -48,11 +48,7 @@ namespace Interactr.View
             this.Children.Add(SeqDiagView);
         }
 
-        /// <summary>
-        /// Process the key event and call the corresponding action on the viewModel.
-        /// </summary>
-        /// <param name="e"> The KeyEventData from the key event</param>
-        /// <returns>A boolean indicating if an action occured from the key event.</returns>
+        /// <inheritdoc cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData e)
         {
             if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)

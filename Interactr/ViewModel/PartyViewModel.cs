@@ -16,6 +16,7 @@ namespace Interactr.ViewModel
     public class PartyViewModel
     {
         #region Type
+
         private readonly ReactiveProperty<Party.PartyType> _type = new ReactiveProperty<Party.PartyType>();
 
         /// <summary>
@@ -34,9 +35,11 @@ namespace Interactr.ViewModel
         /// An observable that emits the new party type when it has changed.
         /// </summary>
         public IObservable<Party.PartyType> TypeChanged => _type.Changed;
+
         #endregion
 
         #region Label
+
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
         /// <summary> A label.
@@ -52,9 +55,11 @@ namespace Interactr.ViewModel
         /// An observable that emits the new label when it has changed.
         /// </summary>
         public IObservable<string> LabelChanged => _label.Changed;
+
         #endregion
-        
+
         #region CanApplyLabel
+
         private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
 
         /// <summary>Is the label valid?</summary>
@@ -65,8 +70,9 @@ namespace Interactr.ViewModel
         }
 
         public IObservable<bool> CanApplyLabelChanged => _canApplyLabel.Changed;
+
         #endregion
-        
+
         public Party Party { get; }
 
         public PartyViewModel(Party party)
@@ -75,7 +81,7 @@ namespace Interactr.ViewModel
 
             // Bind the type in the viewmodel to the type in the model.
             party.TypeChanged.Subscribe(newType => Type = newType);
-            
+
             // Define the label in the viewmodel to change when the label changes in the model.
             party.LabelChanged.Subscribe(newLabel => Label = newLabel);
 

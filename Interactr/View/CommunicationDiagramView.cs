@@ -30,7 +30,7 @@ namespace Interactr.View
         public IObservable<CommunicationDiagramViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
-        
+
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -39,7 +39,7 @@ namespace Interactr.View
 
             // Create a list of party views based on the party viewmodel.
             ReactiveList<PartyView> partyViews = ViewModelChanged.Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm}).ResultList;
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
