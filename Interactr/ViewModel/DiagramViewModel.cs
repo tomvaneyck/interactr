@@ -9,7 +9,7 @@ namespace Interactr.ViewModel
     /// </summary>
     /// <remarks> A view model represents the data you want to display on your view
     /// and is responsible for interaction with the data objects from the model.</remarks>
-    public abstract class DiagramViewModel : AnchorPanel
+    public abstract class DiagramViewModel
     {
         #region IsVisible
 
