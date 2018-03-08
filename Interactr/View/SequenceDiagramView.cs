@@ -38,14 +38,14 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Define that a new party view gets added to this view when a new partyViewModel is added in the viewmodel.
-            _viewModel.Value.partyViewModelOnAdd.Subscribe(partyViewModel =>
+            _viewModel.Value.PartyViewModelOnAdd.Subscribe(partyViewModel =>
             {
                 Children.Add(new PartyView() {ViewModel = partyViewModel});
             });
             
             // Define that all party views corresponding with the party view model get deleted when 
             // the party view model is deleted.
-            _viewModel.Value.partyViewModelOnDelete.Subscribe(partyViewModel =>
+            _viewModel.Value.PartyViewModelOnDelete.Subscribe(partyViewModel =>
             {
                 foreach (var partyView in Children.OfType<PartyView>())
                 {
