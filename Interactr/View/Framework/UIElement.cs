@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Interactr.Reactive;
+using Interactr.Window;
 
 namespace Interactr.View.Framework
 {
@@ -23,7 +24,7 @@ namespace Interactr.View.Framework
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
         public static UIElement FocusedElement { get; private set; }
-        
+
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
@@ -33,14 +34,17 @@ namespace Interactr.View.Framework
         /// The parent element of this element in the view-tree.
         /// </summary>
         public UIElement Parent { get; private set; }
-        
+
         /// <summary>
         /// The properties that are attached to this element.
         /// </summary>
-        public ReactiveDictionary<AttachedProperty, object> AttachedProperties { get; } = new ReactiveDictionary<AttachedProperty, object>();
-        
+        public ReactiveDictionary<AttachedProperty, object> AttachedProperties { get; } =
+            new ReactiveDictionary<AttachedProperty, object>();
+
         #region Position
+
         private readonly ReactiveProperty<Point> _position = new ReactiveProperty<Point>();
+
         /// <summary>
         /// The position of this element, relative to its parent
         /// </summary>
@@ -49,76 +53,106 @@ namespace Interactr.View.Framework
             get => _position.Value;
             set => _position.Value = value;
         }
+
         public IObservable<Point> PositionChanged => _position.Changed;
+
         #endregion
 
         #region Width
+
         private readonly ReactiveProperty<int> _width = new ReactiveProperty<int>();
+
         public int Width
         {
             get => _width.Value;
             set => _width.Value = value;
         }
+
         public IObservable<int> WidthChanged => _width.Changed;
+
         #endregion
 
         #region Height
+
         private readonly ReactiveProperty<int> _height = new ReactiveProperty<int>();
+
         public int Height
         {
             get => _height.Value;
             set => _height.Value = value;
         }
+
         public IObservable<int> HeightChanged => _height.Changed;
+
         #endregion
 
         #region PreferredWidth
+
         private readonly ReactiveProperty<int> _preferredWidth = new ReactiveProperty<int>();
+
         public int PreferredWidth
         {
             get => _preferredWidth.Value;
             set => _preferredWidth.Value = value;
         }
+
         public IObservable<int> PreferredWidthChanged => _preferredWidth.Changed;
+
         #endregion
 
         #region PreferredHeight
+
         private readonly ReactiveProperty<int> _preferredHeight = new ReactiveProperty<int>();
+
         public int PreferredHeight
         {
             get => _preferredHeight.Value;
             set => _preferredHeight.Value = value;
         }
+
         public IObservable<int> PreferredHeightChanged => _preferredHeight.Changed;
+
         #endregion
 
         #region IsVisible
+
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
+
         public bool IsVisible
         {
             get => _isVisible.Value;
             set => _isVisible.Value = value;
         }
+
         public IObservable<bool> IsVisibleChanged => _isVisible.Changed;
+
         #endregion
 
         #region Focus
+
         public bool IsFocused => FocusedElement == this;
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
+
+        public bool CanLoseFocus { get; set; } = true;
+
         #endregion
 
         #region RepaintRequested
+
         private readonly Subject<Unit> _repaintRequested = new Subject<Unit>();
         public IObservable<Unit> RepaintRequested => _repaintRequested;
+
         #endregion
 
         #region Event observables
+
         private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
         public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
 
         private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
         public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
+
         #endregion
 
         public UIElement()
@@ -148,23 +182,19 @@ namespace Interactr.View.Framework
             });
 
             // Remove parent-child relationship on child remove
-            Children.OnDelete.Subscribe(e =>
-            {
-                UIElement deletedChild = e.Element;
-                deletedChild.Parent = null;
-            });
+            Children.OnDelete.Subscribe(e => { e.Element.Parent = null; });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());
         }
-        
+
         /// <summary>
         /// Marks this element as the focused element.
         /// See UIElement.FocusedElement for more information.
         /// </summary>
         public void Focus()
         {
-            if (this == FocusedElement)
+            if (this == FocusedElement || (!FocusedElement?.CanLoseFocus ?? false))
             {
                 // This is already focused
                 return;
@@ -182,6 +212,7 @@ namespace Interactr.View.Framework
         }
 
         #region Keyboard events
+
         /// <summary>
         /// Emit a keyboard event.
         /// </summary>
@@ -259,9 +290,11 @@ namespace Interactr.View.Framework
         {
             return false;
         }
+
         #endregion
 
         #region Mouse events
+
         /// <summary>
         /// Emit a mouse event.
         /// </summary>
@@ -280,7 +313,8 @@ namespace Interactr.View.Framework
 
             // Bubble up event from FocusedElement to root.
             Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
-            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
+                eventData.ClickCount));
         }
 
         /// <summary>
@@ -291,12 +325,14 @@ namespace Interactr.View.Framework
         /// <param name="mouseoverElement">The element the mouse is over.</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
         /// <returns>True if the event was handled by an element.</returns>
-        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, MouseEventData eventData)
+        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
+            MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
-                if (element.OnMouseEventPreview(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
+                if (element.OnMouseEventPreview(
+                    new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
                 {
                     return true;
                 }
@@ -348,12 +384,20 @@ namespace Interactr.View.Framework
         /// <returns>True if this element has handled the event</returns>
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
-            this.Focus();
-            return true;
+            // Only focus on mouseclick.
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED)
+            {
+                this.Focus();
+                return true;
+            }
+
+            return false;
         }
+
         #endregion
 
         #region Painting
+
         /// <summary>
         /// Paint this element and its children.
         /// </summary>
@@ -429,7 +473,8 @@ namespace Interactr.View.Framework
         /// <param name="g">The graphics object that can be used to draw</param>
         public virtual void PaintElement(Graphics g)
         {
-        } 
+        }
+
         #endregion
 
         /// <summary>
@@ -458,7 +503,7 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child => 
+            var childContainingPoint = Children.FirstOrDefault(child =>
                 child.IsVisible &&
                 point.X >= child.Position.X && point.Y >= child.Position.Y &&
                 point.X < (child.Position.X + child.Width) &&

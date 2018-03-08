@@ -75,6 +75,10 @@ namespace Interactr.Window
             {
                 OnKeyEvent?.Invoke(sender, new KeyEventItem(KeyEvent.KEY_TYPED, KeyEvent.VK_UNDEFINED, args.KeyChar));
             };
+            form.KeyUp += (sender, args) =>
+            {
+                OnKeyEvent?.Invoke(sender, new KeyEventItem(KeyEvent.KEY_RELEASED, (int)args.KeyCode, KeyToChar(args)));
+            };
         }
 
         private readonly Dictionary<Keys, char> _alphanumericKeyMap = new Dictionary<Keys, char>

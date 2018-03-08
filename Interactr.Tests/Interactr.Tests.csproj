@@ -59,6 +59,7 @@
     <Compile Include="Model\PartyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\MainViewModelTests.cs" />
+    <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
   </ItemGroup>
   <ItemGroup>
