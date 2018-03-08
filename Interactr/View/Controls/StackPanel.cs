@@ -60,7 +60,7 @@ namespace Interactr.View.Controls
         /// Stacks the children horizontally.
         /// The width of each child is set to its preferred width.
         /// The height of each child is set to the panel height.
-        /// The positions of the elements stack in the x-direction
+        /// The positions of the elements stack left-to-right.
         /// </summary>
         private void UpdateHorizontalLayout()
         {
@@ -78,6 +78,7 @@ namespace Interactr.View.Controls
         /// Stacks the children vertically.
         /// The width of each child is set to the panel width.
         /// The height of each child is set to its preferred height.
+        /// The positions of the elements stack top-to-bottom.
         /// </summary>
         private void UpdateVerticalLayout()
         {
