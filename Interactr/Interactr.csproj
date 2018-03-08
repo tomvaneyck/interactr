@@ -92,8 +92,8 @@
     <Compile Include="View\Controls\LineView.cs" />
     <Compile Include="View\Controls\RectangleView.cs" />
     <Compile Include="View\MainView.cs" />
-    <Compile Include="View\SequenceDiagramView.cs" />
     <Compile Include="View\PartyView.cs" />
+    <Compile Include="View\SequenceDiagramView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
     <Compile Include="Window\InputMapper.cs" />
