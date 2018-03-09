@@ -165,6 +165,8 @@ namespace Interactr.View.Framework
             this.WidthChanged.Subscribe(_ => Repaint());
             this.HeightChanged.Subscribe(_ => Repaint());
             this.IsVisibleChanged.Subscribe(_ => Repaint());
+            this.Children.OnDelete.Subscribe(_ => Repaint());
+            this.Children.OnAdd.Subscribe(_ => Repaint());
 
             SetupParentChildRelationship();
         }

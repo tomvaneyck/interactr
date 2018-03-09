@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,6 +10,7 @@ using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
 using Point = Interactr.View.Framework.Point;
@@ -36,8 +38,14 @@ namespace Interactr.View
 
         protected readonly ImageView _actorImage = new ImageView();
         protected readonly RectangleView _objectRectangle = new RectangleView();
-        public LabelView LabelView { get; } = new LabelView();
-        
+        protected readonly LabelView _labelView = new LabelView();
+
+        public LabelView LabelView
+        {
+            get => _labelView;
+        }
+
+
         public PartyView()
         {
             // Set the image
@@ -85,6 +93,18 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
+            // Bind text of label between this and PartyViewModel.
+            _labelView.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
+
             // Fire ApplyLabel when leaving edit mode.
             LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
@@ -102,6 +122,20 @@ namespace Interactr.View
                 }
             });
 
+        }
+
+        protected override bool OnKeyEvent(KeyEventData e)
+        {
+            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
+            {
+                // Delete this party from the parent view.
+                UIElement parent = Parent;
+                Parent.Children.Remove(this);
+                parent.Repaint();
+                return true;
+            }
+
+            return false;
         }
     }
 }
