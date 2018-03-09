@@ -86,8 +86,6 @@ namespace Interactr.Tests.View.Controls
         {
             UIElement ui = new UIElement();
             LabelView labelview = new LabelView();
-            labelview.Height = 2;
-            labelview.Width = 2;
             ui.Children.Add(labelview);
             MouseEventData mouseEventData1 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 1);
             MouseEventData mouseEventData2 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 2);
