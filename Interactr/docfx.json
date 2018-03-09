@@ -4,37 +4,29 @@
       "src": [
         {
           "files": [
-            "*.csproj"
+            "**.csproj"
           ],
-          "cwd": ".",
-          "exclude": [
-            "**/obj/**",
-            "**/bin/**",
-            "Documentation_build/**"
-          ]
+          "src": "./"
         }
       ],
-      "dest": "obj/api"
+      "dest": "Documentation/api",
+      "disableGitFeatures": false
     }
   ],
   "build": {
     "content": [
       {
         "files": [
-          "Documentation/api/**.yml"
-        ],
-        "cwd": "obj"
+          "Documentation/api/**.yml",
+          "Documentation/api/index.md"
+        ]
       },
       {
         "files": [
-          "Documentation/api/*.md",
           "Documentation/articles/**.md",
+          "Documentation/articles/**/toc.yml",
           "Documentation/toc.yml",
           "Documentation/*.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "Documentation_build/**"
         ]
       }
     ],
@@ -42,17 +34,13 @@
       {
         "files": [
           "Documentation/images/**"
-        ],
-        "exclude": [
-          "obj/**",
-          "Documentation_build/**"
         ]
       }
     ],
     "overwrite": [
       {
         "files": [
-          "apidoc/**.md"
+          "Documentation/apidoc/**.md"
         ],
         "exclude": [
           "obj/**",
@@ -61,8 +49,15 @@
       }
     ],
     "dest": "Documentation_build",
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
     "template": [
       "default"
-    ]
+    ],
+    "postProcessors": [],
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
   }
 }

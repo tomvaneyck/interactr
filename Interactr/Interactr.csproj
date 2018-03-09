@@ -122,11 +122,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Documentation\api\index.md" />
-    <None Include="Documentation\articles\intro.md" />
-    <None Include="Documentation\articles\toc.md" />
-    <None Include="Documentation\index.md" />
-    <None Include="docfx.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

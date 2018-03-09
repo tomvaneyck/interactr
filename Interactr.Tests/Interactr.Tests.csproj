@@ -68,12 +68,6 @@
     <Compile Include="View\PartyViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="docfx.json" />
-    <None Include="Documentation\api\index.md" />
-    <None Include="Documentation\articles\intro.md" />
-    <None Include="Documentation\articles\toc.md" />
-    <None Include="Documentation\index.md" />
-    <None Include="Documentation\toc.yml" />
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
