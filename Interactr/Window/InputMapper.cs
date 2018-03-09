@@ -27,11 +27,11 @@ namespace Interactr.Window
         private Stopwatch _stopwatch = new Stopwatch();
         private Point _lastClickPos;
 
-        public InputMapper(Form form)
+        public InputMapper(Form form, Panel panel)
         {
             _stopwatch.Start();
 
-            form.MouseDown += (sender, args) =>
+            panel.MouseDown += (sender, args) =>
             {
                 _isMouseDown = true;
                 bool inDoubleClickInterval = _stopwatch.ElapsedMilliseconds < SystemInformation.DoubleClickTime;
@@ -49,7 +49,7 @@ namespace Interactr.Window
                 _lastClickPos = args.Location;
                 OnMouseEvent?.Invoke(sender, new MouseEventItem(MouseEvent.MOUSE_PRESSED, args.X, args.Y, _clicks));
             };
-            form.MouseUp += (sender, args) =>
+            panel.MouseUp += (sender, args) =>
             {
                 OnMouseEvent?.Invoke(sender, new MouseEventItem(MouseEvent.MOUSE_RELEASED, args.X, args.Y, _clicks));
                 if (!_isDragging)
@@ -59,7 +59,7 @@ namespace Interactr.Window
                 _isMouseDown = false;
                 _isDragging = false;
             };
-            form.MouseMove += (sender, args) =>
+            panel.MouseMove += (sender, args) =>
             {
                 if (_isMouseDown)
                 {
