@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -7,14 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.Window;
 
 namespace Interactr.View
 {
     /// <summary>
     /// The view for the communication diagram.
     /// </summary>
-    public class CommunicationDiagramView : AnchorPanel
+    public class CommunicationDiagramView : DragPanel
     {
         #region ViewModel
 
@@ -46,6 +49,20 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+        }
+
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            // Add a new party on double click
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                Debug.WriteLine("Add Party.");
+                //Add a new Party.
+                ViewModel.AddParty(e.MousePosition);
+                return true;
+            }
+
+            return false;
         }
     }
 }

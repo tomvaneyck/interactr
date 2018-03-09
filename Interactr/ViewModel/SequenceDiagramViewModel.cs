@@ -13,13 +13,6 @@ namespace Interactr.ViewModel
     /// <inheritdoc cref="DiagramViewModel"/>
     public class SequenceDiagramViewModel : DiagramViewModel
     {
-        /// <summary>
-        /// Add a party to the partyViewModels.
-        /// </summary>
-        public void AddParty()
-        {
-            Debug.WriteLine("Add Party.");
-            PartyViewModels.Add(new PartyViewModel(new Party(Party.PartyType.Actor, ValidLabel)));
-        }
+       
     }
 }

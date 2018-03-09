@@ -72,6 +72,10 @@ namespace Interactr.View
                             e.ClickCount % 2 == 0) // Modulo for consequent double clicks.
                 .Subscribe(_ => ViewModel?.SwitchPartyType());
 
+            // On position change in the viewmodel change the position in the view.
+            ViewModelChanged.ObserveNested(vm => vm.PositionChanged)
+                .Subscribe(newPosition => this.Position = newPosition);
+
             // Add child elements
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);

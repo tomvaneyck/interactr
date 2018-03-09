@@ -52,23 +52,13 @@ namespace Interactr.View
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
             // Automatically add and remove party views to Children.
-            partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            partyViews.OnAdd.Subscribe(e =>
+            {
+                Children.Add(e.Element);
+                AnchorsProperty.SetValue(e.Element, Anchors.Left | Anchors.Top);
+            });
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
-        protected override bool OnMouseEvent(MouseEventData e)
-        {
-            Debug.WriteLine(e.ClickCount);
-            Debug.WriteLine("ID: " + e.Id);
-            if (e.Id == MouseEvent.MOUSE_CLICKED)
-            {
-                Debug.WriteLine("Add Party.");
-                //Add a new Party.
-                ViewModel.AddParty();
-                return true;
-            }
-
-            return false;
-        }
     }
 }
