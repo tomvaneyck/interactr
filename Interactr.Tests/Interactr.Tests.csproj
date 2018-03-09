@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,12 +64,13 @@
     <Compile Include="ViewModel\MainViewModelTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
+    <Compile Include="View\Framework\AttachedPropertyTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
     <Compile Include="View\PartyViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interactr\Interactr.csproj">
