@@ -40,12 +40,10 @@ namespace Interactr.View
 
         public PartyView()
         {
-            // Set size of this control
-            PreferredWidth = 125;
-            PreferredHeight = 150;
-
             // Set the image
             _actorImage.Image = Resources.StickFigure;
+            _actorImage.PreferredWidth = 125;
+            _actorImage.PreferredHeight = 125;
 
             // Set layout
             MarginsProperty.SetValue(_actorImage, new Margins(0, 0, 0, 25));
