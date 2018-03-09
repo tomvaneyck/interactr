@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -35,8 +35,8 @@
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="System"/>
-    <Reference Include="System.Core"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -52,68 +52,68 @@
     <Reference Include="System.Reactive.Windows.Threading, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    <Reference Include="Microsoft.CSharp"/>
-    <Reference Include="System.Data"/>
-    <Reference Include="System.Deployment"/>
-    <Reference Include="System.Drawing"/>
-    <Reference Include="System.Net.Http"/>
-    <Reference Include="System.Windows.Forms"/>
-    <Reference Include="System.Xml"/>
-    <Reference Include="WindowsBase"/>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindow.cs"/>
-    <Compile Include="Model\Diagram.cs"/>
-    <Compile Include="Model\Message.cs"/>
-    <Compile Include="Model\Party.cs"/>
-    <Compile Include="Reactive\ReactiveDictionary.cs"/>
-    <Compile Include="Reactive\ReactiveExtensions.cs"/>
-    <Compile Include="Reactive\ReactiveList.cs"/>
-    <Compile Include="Reactive\ReactiveProperty.cs"/>
-    <Compile Include="ViewModel\ActivationBarViewModel.cs"/>
-    <Compile Include="ViewModel\CommunicationDiagramViewModel.cs"/>
-    <Compile Include="ViewModel\DiagramViewModel.cs"/>
-    <Compile Include="ViewModel\LifeLineViewModel.cs"/>
-    <Compile Include="ViewModel\MainViewModel.cs"/>
-    <Compile Include="ViewModel\MessageStackViewModel.cs"/>
-    <Compile Include="ViewModel\MessageViewModel.cs"/>
-    <Compile Include="ViewModel\SequenceDiagramViewModel.cs"/>
-    <Compile Include="View\CommunicationDiagramView.cs"/>
-    <Compile Include="ViewModel\PartyViewModel.cs"/>
-    <Compile Include="View\Controls\AnchorPanel.cs"/>
-    <Compile Include="View\Controls\Anchors.cs"/>
-    <Compile Include="View\LifeLineView.cs"/>
-    <Compile Include="View\Controls\DragPanel.cs"/>
-    <Compile Include="View\Controls\Margins.cs"/>
-    <Compile Include="View\Controls\Orientation.cs"/>
-    <Compile Include="View\Controls\StackPanel.cs"/>
-    <Compile Include="View\Framework\AttachedProperty.cs"/>
-    <Compile Include="View\Framework\KeyEventData.cs"/>
-    <Compile Include="View\Framework\MouseDragEventData.cs"/>
-    <Compile Include="View\Framework\MouseEventData.cs"/>
-    <Compile Include="View\Framework\Point.cs"/>
-    <Compile Include="View\Framework\UIElement.cs"/>
-    <Compile Include="View\Controls\ImageView.cs"/>
-    <Compile Include="View\Controls\LabelView.cs"/>
-    <Compile Include="View\Controls\LineView.cs"/>
-    <Compile Include="View\Controls\RectangleView.cs"/>
-    <Compile Include="View\MainView.cs"/>
-    <Compile Include="View\PartyView.cs"/>
-    <Compile Include="View\SequenceDiagramView.cs"/>
-    <Compile Include="Window\CanvasWindow.cs"/>
-    <Compile Include="Window\CanvasWindowRecording.cs"/>
-    <Compile Include="Window\InputMapper.cs"/>
-    <Compile Include="Window\KeyEvent.cs"/>
-    <Compile Include="Window\KeyEventItem.cs"/>
-    <Compile Include="Window\MouseEvent.cs"/>
-    <Compile Include="Window\MouseEventItem.cs"/>
-    <Compile Include="Window\PaintItem.cs"/>
-    <Compile Include="Window\RecordingItem.cs"/>
-    <Compile Include="Program.cs"/>
-    <Compile Include="Properties\AssemblyInfo.cs"/>
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="Model\Diagram.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\Party.cs" />
+    <Compile Include="Reactive\ReactiveDictionary.cs" />
+    <Compile Include="Reactive\ReactiveExtensions.cs" />
+    <Compile Include="Reactive\ReactiveList.cs" />
+    <Compile Include="Reactive\ReactiveProperty.cs" />
+    <Compile Include="ViewModel\ActivationBarViewModel.cs" />
+    <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
+    <Compile Include="ViewModel\DiagramViewModel.cs" />
+    <Compile Include="ViewModel\LifeLineViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MessageStackViewModel.cs" />
+    <Compile Include="ViewModel\MessageViewModel.cs" />
+    <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
+    <Compile Include="View\CommunicationDiagramView.cs" />
+    <Compile Include="ViewModel\PartyViewModel.cs" />
+    <Compile Include="View\Controls\AnchorPanel.cs" />
+    <Compile Include="View\Controls\Anchors.cs" />
+    <Compile Include="View\LifeLineView.cs" />
+    <Compile Include="View\Controls\DragPanel.cs" />
+    <Compile Include="View\Controls\Margins.cs" />
+    <Compile Include="View\Controls\Orientation.cs" />
+    <Compile Include="View\Controls\StackPanel.cs" />
+    <Compile Include="View\Framework\AttachedProperty.cs" />
+    <Compile Include="View\Framework\KeyEventData.cs" />
+    <Compile Include="View\Framework\MouseDragEventData.cs" />
+    <Compile Include="View\Framework\MouseEventData.cs" />
+    <Compile Include="View\Framework\Point.cs" />
+    <Compile Include="View\Framework\UIElement.cs" />
+    <Compile Include="View\Controls\ImageView.cs" />
+    <Compile Include="View\Controls\LabelView.cs" />
+    <Compile Include="View\Controls\LineView.cs" />
+    <Compile Include="View\Controls\RectangleView.cs" />
+    <Compile Include="View\MainView.cs" />
+    <Compile Include="View\PartyView.cs" />
+    <Compile Include="View\SequenceDiagramView.cs" />
+    <Compile Include="Window\CanvasWindow.cs" />
+    <Compile Include="Window\CanvasWindowRecording.cs" />
+    <Compile Include="Window\InputMapper.cs" />
+    <Compile Include="Window\KeyEvent.cs" />
+    <Compile Include="Window\KeyEventItem.cs" />
+    <Compile Include="Window\MouseEvent.cs" />
+    <Compile Include="Window\MouseEventItem.cs" />
+    <Compile Include="Window\PaintItem.cs" />
+    <Compile Include="Window\RecordingItem.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -123,7 +123,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="packages.config"/>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -135,8 +135,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config"/>
+    <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup/>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
