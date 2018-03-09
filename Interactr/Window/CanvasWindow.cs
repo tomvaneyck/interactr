@@ -43,6 +43,8 @@ namespace Interactr.Window
         private string _recordingPath;
         private InputMapper _inputMapper;
 
+        private readonly Panel _contentPanel = new DoubleBufferPanel();
+
         /// <summary>
         /// Initializes a CanvasWindow object.
         /// </summary>
@@ -51,6 +53,9 @@ namespace Interactr.Window
         {
             Title = title;
 
+            _contentPanel.Dock = DockStyle.Fill;
+            _form.Controls.Add(_contentPanel);
+
             SetupFormEvents();
         }
 
@@ -58,7 +63,7 @@ namespace Interactr.Window
         {
             _form.BackColor = Color.White;
             _form.Closed += (sender, args) => _recording?.Save(_recordingPath);
-            _form.Paint += (sender, args) =>
+            _contentPanel.Paint += (sender, args) =>
             {
                 if (_recording == null)
                 {
@@ -74,7 +79,8 @@ namespace Interactr.Window
             };
 
             //Input events
-            _inputMapper = new InputMapper(_form);
+            _form.KeyPreview = true;
+            _inputMapper = new InputMapper(_form, _contentPanel);
             _inputMapper.OnMouseEvent += (s, e) =>
             {
                 _recording?.Items.Add(e);
@@ -172,6 +178,14 @@ namespace Interactr.Window
         public static void ReplayRecording(string path, CanvasWindow window)
         {
             new CanvasWindowRecording(path).Replay(window);
+        }
+    }
+
+    class DoubleBufferPanel : Panel
+    {
+        public DoubleBufferPanel()
+        {
+            this.DoubleBuffered = true;
         }
     }
 }
