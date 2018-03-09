@@ -61,8 +61,10 @@ namespace Interactr.View
                 ViewModel.AddParty(e.MousePosition);
                 return true;
             }
-
-            return false;
+            else
+            {
+                return base.OnMouseEvent(e);
+            }
         }
     }
 }

@@ -387,7 +387,7 @@ namespace Interactr.View.Framework
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_CLICKED && CanBeFocused)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 this.Focus();
                 return true;
