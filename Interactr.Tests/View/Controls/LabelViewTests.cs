@@ -38,16 +38,6 @@ namespace Interactr.Tests.View.Controls
             Assert.IsFalse(_labelView.IsInEditMode);
         }
 
-        public class TestableLabelView : LabelView
-        {
-            // Count the number of times repaint is called in this labelView.
-            public int RepaintCounter { get; private set; } = 0;
-
-            public bool RunOnKeyEvent(KeyEventData keyEventData)
-            {
-                return OnKeyEvent(keyEventData);
-            }
-        }
 
         [Test]
         public void EscKeyFunctionalityNoEvent()
@@ -81,50 +71,8 @@ namespace Interactr.Tests.View.Controls
             Assert.IsFalse(_labelView.IsInEditMode);
         }
 
-        [Test]
-        public void MouseClickFunctionalityEventInLabel()
-        {
-            UIElement ui = new UIElement();
-            LabelView labelview = new LabelView();
-            labelview.Height = 2;
-            labelview.Width = 2;
-            ui.Children.Add(labelview);
-            MouseEventData mouseEventData1 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 1);
-            MouseEventData mouseEventData2 = new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(0, 0), 2);
-
-
-            bool result1 = UIElement.HandleMouseEvent(labelview, mouseEventData1);
-            bool result2 = UIElement.HandleMouseEvent(labelview, mouseEventData2);
-
-
-            // Check if an action occurred.
-            Assert.IsTrue(result1);
-            Assert.IsTrue(result2);
-
-            // Check if expected mouse action occured.
-            Assert.IsTrue(_labelView.IsInEditMode);
-        }
-
-        [Test]
-        public void MouseClickFunctionalityEventOutsideLabel()
-        {
-            UIElement ui = new UIElement();
-            LabelView labelview = new LabelView();
-            labelview.Height = 2;
-            labelview.Width = 2;
-            ui.Children.Add(labelview);
-            MouseEventData mouseEventData =
-                new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(int.MaxValue, int.MaxValue), 1);
-
-            bool result = UIElement.HandleMouseEvent(ui, mouseEventData);
-
-            // Check if an action occurred.
-            Assert.IsTrue(result);
-
-            // Check if expected mouse action occured.
-            Assert.IsFalse(_labelView.IsInEditMode);
-        }
-
+        //TODO: mouseClick functionality tests.
+        
         [Test]
         public void MouseClickFunctionalityEventNoClick()
         {
@@ -139,6 +87,22 @@ namespace Interactr.Tests.View.Controls
 
             // Check if expected mouse action occured.
             Assert.IsFalse(_labelView.IsInEditMode);
+        }
+
+        public class TestableLabelView : LabelView
+        {
+            // Count the number of times repaint is called in this labelView.
+            public int RepaintCounter { get; private set; } = 0;
+
+            public bool RunOnKeyEvent(KeyEventData keyEventData)
+            {
+                return OnKeyEvent(keyEventData);
+            }
+
+            public bool RunOnMouseEvent(MouseEventData mouseEventData)
+            {
+                return OnMouseEvent(mouseEventData);
+            }
         }
     }
 
