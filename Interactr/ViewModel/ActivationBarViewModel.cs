@@ -9,29 +9,26 @@ namespace Interactr.ViewModel
     /// <remarks>There is no underlying model for the activationBar viewModel.</remarks>
     public class ActivationBarViewModel
     {
-        #region party
-
+        /// <summary>
+        /// The party which is activated.
+        /// </summary>
         public Party Party { get; }
 
-        #endregion
-
-        #region tick
-
+        /// <summary>
+        /// The timestamp at which this activation starts.
+        /// </summary>
         public int StartTick { get; }
 
-        #endregion
+        /// <summary>
+        /// The timestamp at which this activation ends.
+        /// </summary>
+        public int EndTick { get; }
 
-        #region message tick
-
-        public int MessageTick { get; }
-
-        #endregion
-
-        public ActivationBarViewModel(Party party, int startTick, int messageTick)
+        public ActivationBarViewModel(Party party, int startTick, int endTick)
         {
             Party = party;
             StartTick = startTick;
-            MessageTick = messageTick;
+            EndTick = endTick;
         }
     }
 }
