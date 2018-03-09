@@ -73,9 +73,11 @@
     <Compile Include="Reactive\ReactiveExtensions.cs" />
     <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
+    <Compile Include="ViewModel\ActivationBarViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
     <Compile Include="ViewModel\PartyViewModel.cs" />
