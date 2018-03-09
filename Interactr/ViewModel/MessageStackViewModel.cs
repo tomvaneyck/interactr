@@ -25,7 +25,7 @@ namespace Interactr.ViewModel
         {
             _diagram = diagram;
 
-            //When the diagram changes, recalculate layout.
+            // When the diagram changes, recalculate layout.
             Observable.Merge(
                 diagram.Messages.OnAdd.Select(_ => Unit.Default),
                 diagram.Messages.OnDelete.Select(_ => Unit.Default),
@@ -33,7 +33,7 @@ namespace Interactr.ViewModel
                 diagram.Messages.ObserveEach(msg => msg.SenderChanged).Select(_ => Unit.Default)
             ).Subscribe(_ => CalculateLayout());
 
-            //Map Messages to MessageViewModels
+            // Map Messages to MessageViewModels
             _messageViewModels = _diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
         }
 
@@ -78,4 +78,3 @@ namespace Interactr.ViewModel
         }
     }
 }
-
