@@ -62,7 +62,7 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Aplly the drag data to the focused element.
+        /// Apply the drag data to the focused element.
         /// </summary>
         /// <remarks>
         /// Only apply the data if the focused element is a descendant.
@@ -91,7 +91,7 @@ namespace Interactr.View.Controls
         /// </summary>
         /// <param name="element">The given element.</param>
         /// <param name="position">The given position.</param>
-        /// <returns></returns>
+        /// <returns>True if position is a valid position for the given elementt.</returns>
         private bool IsValidPosition(UIElement element, Point position)
         {
             return (
