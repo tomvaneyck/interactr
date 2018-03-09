@@ -159,7 +159,7 @@ namespace Interactr.View.Controls
 
         public void FocusLabel()
         {
-            FocusedElement = this;
+            Focus();
         }
 
 
