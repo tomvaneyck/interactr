@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
 {
@@ -12,7 +15,7 @@ namespace Interactr.ViewModel
     public abstract class DiagramViewModel
     {
         protected const string ValidLabel = "instanceName:ClassName";
-        
+
         #region IsVisible
 
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
@@ -36,5 +39,11 @@ namespace Interactr.ViewModel
         public IObservable<(PartyViewModel, int)> PartyViewModelOnDelete => PartyViewModels.OnDelete;
 
         #endregion
+
+
+        public void AddParty(Point point)
+        {
+            PartyViewModels.Add(new PartyViewModel(new Party(Party.PartyType.Actor, ValidLabel)) {Position = point});
+        }
     }
 }

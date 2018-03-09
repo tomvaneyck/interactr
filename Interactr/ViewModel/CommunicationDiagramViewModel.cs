@@ -16,10 +16,6 @@ namespace Interactr.ViewModel
     /// <inheritdoc cref="DiagramViewModel"/>
     public class CommunicationDiagramViewModel : DiagramViewModel
     {
-        public void AddParty(Point point)
-        {
-            Debug.WriteLine("Add Party.");
-            PartyViewModels.Add(new PartyViewModel(new Party(Party.PartyType.Actor, ValidLabel)){Position = point});
-        }
+        
     }
 }
