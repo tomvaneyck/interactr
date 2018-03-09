@@ -27,6 +27,9 @@ namespace Interactr.View.Controls
 
         public StackPanel()
         {
+            // Set can be focused false.
+            CanBeFocused = false;
+            
             // Update layout when the width, height or orientation of this panel changes.
             Observable.Merge(
                 WidthChanged.Select(_ => Unit.Default), 

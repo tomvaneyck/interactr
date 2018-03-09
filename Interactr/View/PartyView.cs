@@ -36,8 +36,8 @@ namespace Interactr.View
 
         protected readonly ImageView _actorImage = new ImageView();
         protected readonly RectangleView _objectRectangle = new RectangleView();
-        protected readonly LabelView _labelView = new LabelView();
-
+        public LabelView LabelView { get; } = new LabelView();
+        
         public PartyView()
         {
             // Set the image
@@ -48,8 +48,8 @@ namespace Interactr.View
             // Set layout
             MarginsProperty.SetValue(_actorImage, new Margins(0, 0, 0, 25));
             MarginsProperty.SetValue(_objectRectangle, new Margins(0, 0, 0, 25));
-            _labelView.Position = new Point(0, 125);
-            AnchorsProperty.SetValue(_labelView, Anchors.Bottom);
+            LabelView.Position = new Point(0, 125);
+            AnchorsProperty.SetValue(LabelView, Anchors.Bottom);
 
             // Define the display to be the view that matches the party type
             ViewModelChanged.ObserveNested(vm => vm.TypeChanged).Subscribe(partyType =>
@@ -60,8 +60,8 @@ namespace Interactr.View
 
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
-                .Subscribe(newLabel => _labelView.Text = newLabel);
-            _labelView.TextChanged.Subscribe(newText =>
+                .Subscribe(newLabel => LabelView.Text = newLabel);
+            LabelView.TextChanged.Subscribe(newText =>
             {
                 if (ViewModel != null) ViewModel.Label = newText;
             });
@@ -72,16 +72,29 @@ namespace Interactr.View
                             e.ClickCount % 2 == 0) // Modulo for consequent double clicks.
                 .Subscribe(_ => ViewModel?.SwitchPartyType());
 
+            // On position change in the viewmodel change the position in the view.
+            ViewModelChanged.ObserveNested(vm => vm.PositionChanged)
+                .Subscribe(newPosition => this.Position = newPosition);
+
             // Add child elements
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);
-            Children.Add(_labelView);
+            Children.Add(LabelView);
 
             // Bind CanApplyLabel and CanLeaveEditMode.
-            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
+
+            // Fire ApplyLabel when leaving edit mode.
+            LabelView.EditModeChanged.Subscribe(
+                isInEditMode =>
+                {
+                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                }
+            );
 
             // Bind text of label between this and PartyViewModel.
-            _labelView.TextChanged.Subscribe(text => 
+            LabelView.TextChanged.Subscribe(text => 
             {
                 if (ViewModel != null)
                 {
@@ -89,8 +102,6 @@ namespace Interactr.View
                 }
             });
 
-            // Fire ApplyLabel when leaving edit mode.
-            _labelView.EditModeChanged.Subscribe(isInEditMode => { if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel(); });
         }
     }
 }
