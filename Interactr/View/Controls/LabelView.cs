@@ -18,6 +18,7 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LabelView : UIElement
     {
+
         #region Text
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
@@ -157,6 +158,11 @@ namespace Interactr.View.Controls
             }
         }
 
+        public void FocusLabel()
+        {
+            Focus();
+        }
+
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
@@ -186,6 +192,7 @@ namespace Interactr.View.Controls
                 }
 
                 return true;
+                
             }
             else
             {

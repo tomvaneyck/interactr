@@ -11,13 +11,21 @@ namespace Interactr.Tests.View
     [Category("RequiresUI")]
     public class PartyViewTests
     {
+        // Exposing _labelView by inheritance.
+        private class PartyViewTest : PartyView
+        {
+            public LabelView LabelView => _labelView;
+        }
+
         // Party variable.
-        private PartyView partyView;
+        private PartyViewTest partyView;
+
 
         [SetUp]
         public void SetupPartyViewTest()
         {
-            partyView = new PartyView
+
+            partyView = new PartyViewTest
             {
                 ViewModel = new PartyViewModel(new Party(Party.PartyType.Actor, "instance:Classname"))
             };
