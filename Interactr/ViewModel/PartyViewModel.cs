@@ -126,5 +126,6 @@ namespace Interactr.ViewModel
         {
             Party.Label = Label;
         }
+
     }
 }

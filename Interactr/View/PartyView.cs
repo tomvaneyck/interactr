@@ -38,6 +38,11 @@ namespace Interactr.View
         private readonly RectangleView _objectRectangle = new RectangleView();
         private readonly LabelView _labelView = new LabelView();
 
+        public LabelView LabelView
+        {
+            get => _labelView;
+        }
+
         public PartyView()
         {
             // Set the image
@@ -87,7 +92,7 @@ namespace Interactr.View
 
             // Fire ApplyLabel when leaving edit mode.
             _labelView.EditModeChanged.Subscribe(
-                isInEditMode => 
+                isInEditMode =>
                 {
                     if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
                 }

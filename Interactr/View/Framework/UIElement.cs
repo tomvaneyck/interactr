@@ -23,7 +23,7 @@ namespace Interactr.View.Framework
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
-        public static UIElement FocusedElement { get; private set; }
+        public static UIElement FocusedElement { get; protected set; }
 
         /// <summary>
         /// The child-elements of this element in the view-tree.

@@ -46,6 +46,14 @@ namespace Interactr.View
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
+            
+            // Automatically enter label editing mode when adding a party
+            partyViews.OnAdd.Subscribe(elem =>
+            {
+                elem.Element.LabelView.IsInEditMode = true;
+                elem.Element.LabelView.FocusLabel();
+            });
+            
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
