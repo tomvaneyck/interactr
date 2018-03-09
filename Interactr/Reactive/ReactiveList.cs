@@ -111,14 +111,14 @@ namespace Interactr.Reactive
             temp.Clear();
         }
 
-        /// <inheritdoc cref="IList.Insert"/>
+        /// <see cref="IList.Insert"/>
         public void Insert(int index, T item)
         {
             _contents.Insert(index, item);
             _onAdd.OnNext((item, index));
         }
 
-        /// <inheritdoc cref="IList.Remove"/>
+        /// <see cref="IList.Remove"/>
         public bool Remove(T item)
         {
             int index = IndexOf(item);
@@ -130,7 +130,7 @@ namespace Interactr.Reactive
             return false;
         }
 
-        /// <inheritdoc cref="IList.RemoveAt"/> 
+        /// <see cref="IList.RemoveAt"/> 
         public void RemoveAt(int index)
         {
             T item = _contents[index];
