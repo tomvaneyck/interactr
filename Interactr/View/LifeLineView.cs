@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
@@ -22,7 +25,10 @@ namespace Interactr.View
 
         public LifeLineView()
         {
-
+            Observable.Merge(
+                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnAdd),
+                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnDelete)
+            ).Subscribe(_ => Repaint());
         }
 
         protected override bool OnMouseEvent(MouseEventData eventData)
@@ -48,7 +54,7 @@ namespace Interactr.View
             {
                 int barWidth = 12;
                 int tickHeight = 30;
-                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars)
+                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars.Where(bar => bar.Party == ViewModel.PartyVM.Party))
                 {
                     int x = middle - (barWidth / 2);
                     int y = (activationBarVM.StartTick) * tickHeight;

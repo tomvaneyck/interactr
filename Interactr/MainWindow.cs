@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Model;
@@ -29,7 +31,8 @@ namespace Interactr.View
             View.ViewModel = new MainViewModel(new Diagram());
             View.Focus();
 
-            View.RepaintRequested.Subscribe(_ => Repaint());
+            //View.RepaintRequested.Subscribe(_ => Repaint());
+            View.RepaintRequested.ObserveOn(Scheduler.Default).Buffer(TimeSpan.FromMilliseconds(1000 / 120), Scheduler.Default).Subscribe(_ => Repaint());
         }
 
         public override void HandleKeyEvent(int id, int keyCode, char keyChar)
