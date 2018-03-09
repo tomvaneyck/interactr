@@ -115,13 +115,11 @@ namespace Interactr.View
 
         protected override bool OnKeyEvent(KeyEventData e)
         {
-            Debug.WriteLine("KeyChar: " + e.KeyChar);
-            Debug.WriteLine("Keycode: " + e.KeyCode);
             if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
             {
-                Debug.WriteLine("Escape registered.");
                 // Delete this party from the parent view.
                 Parent.Children.Remove(this);
+                Parent.Repaint();
                 return true;
             }
 
