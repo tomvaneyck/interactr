@@ -117,7 +117,7 @@ namespace Interactr.View
         {
             Debug.WriteLine("KeyChar: " + e.KeyChar);
             Debug.WriteLine("Keycode: " + e.KeyCode);
-            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyChar == '\x7f')
+            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
             {
                 Debug.WriteLine("Escape registered.");
                 // Delete this party from the parent view.
