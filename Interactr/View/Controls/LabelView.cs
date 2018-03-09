@@ -80,6 +80,8 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        private bool _isFocusing;
+
         public LabelView()
         {
             // Set the text to empty string
@@ -104,6 +106,8 @@ namespace Interactr.View.Controls
                 else
                 {
                     _cursorIsVisible = false;
+                    // Repainting to get rid of cursor.
+                    Repaint();
                     return Observable.Empty<long>();
                 }
             }).Switch().Subscribe(_ =>
@@ -123,12 +127,15 @@ namespace Interactr.View.Controls
                 Repaint();
             });
 
+            // Ignore mouse clicked when just received focus.
+            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
+
             // Update canLoseFocus when the CanLeaveEditMode is changed.
             CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
             CanLeaveEditMode = true;
         }
 
-        /// <inheritdoc cref="PaintElement"/>
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             // Measure how much space it would take to fully render the
@@ -153,7 +160,7 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnKeyEvent"/>
+        /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
             if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
@@ -162,6 +169,7 @@ namespace Interactr.View.Controls
                 {
                     IsInEditMode = false;
                 }
+
                 return true;
             }
             else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
@@ -188,10 +196,14 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnMouseEvent"/>
+        /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            {
+                _isFocusing = false;
+            }
+            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
                 return true;

@@ -155,6 +155,8 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        public bool CanBeFocused { get; protected set; } = true;
+
         public UIElement()
         {
             this.IsVisible = true;
@@ -385,7 +387,7 @@ namespace Interactr.View.Framework
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_CLICKED)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 this.Focus();
                 return true;
@@ -532,7 +534,7 @@ namespace Interactr.View.Framework
         /// Return this element, this elements parent, and so on until the root element is reached.
         /// </summary>
         /// <returns>This element, every element between this element and the root element, and the root element</returns>
-        private IEnumerable<UIElement> WalkToRoot()
+        public IEnumerable<UIElement> WalkToRoot()
         {
             UIElement ancestor = this;
             yield return ancestor;

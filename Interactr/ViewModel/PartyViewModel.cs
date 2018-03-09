@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
 {
@@ -73,6 +74,23 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        #region PartyPosition
+
+        private ReactiveProperty<Point> _position = new ReactiveProperty<Point>();
+
+        /// <summary>
+        /// The position of the party. 
+        /// </summary>
+        public Point Position
+        {
+            get => _position.Value;
+            set => _position.Value = value;
+        }
+
+        public IObservable<Point> PositionChanged => _position.Changed;
+
+        #endregion
+
         public Party Party { get; }
 
         public PartyViewModel(Party party)
@@ -108,5 +126,6 @@ namespace Interactr.ViewModel
         {
             Party.Label = Label;
         }
+
     }
 }
