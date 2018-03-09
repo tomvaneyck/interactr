@@ -132,7 +132,7 @@ namespace Interactr.View.Controls
             CanLeaveEditMode = true;
         }
 
-        /// <inheritdoc cref="PaintElement"/>
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             // Measure how much space it would take to fully render the
@@ -157,7 +157,7 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnKeyEvent"/>
+        /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
             if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
@@ -192,7 +192,7 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnMouseEvent"/>
+        /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
             if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)

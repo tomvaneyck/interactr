@@ -8,7 +8,7 @@ using Interactr.Reactive;
 namespace Interactr.ViewModel
 {
     /// <summary> The diagram view model for the sequence diagram </summary>
-    /// <inheritdoc cref="DiagramViewModel"/>
+    /// <see cref="DiagramViewModel"/>
     public class SequenceDiagramViewModel : DiagramViewModel
     {
     }
