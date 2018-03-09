@@ -157,6 +157,11 @@ namespace Interactr.View.Controls
             }
         }
 
+        public void FocusLabel()
+        {
+            Focus();
+        }
+
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
@@ -166,6 +171,7 @@ namespace Interactr.View.Controls
                 {
                     IsInEditMode = false;
                 }
+
                 return true;
             }
             else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
