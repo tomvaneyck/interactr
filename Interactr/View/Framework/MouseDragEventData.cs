@@ -12,9 +12,13 @@ namespace Interactr.View.Framework
     class MouseDragEventData
     {
         /// <summary>
-        /// The distance over which the mouse is dragged.
+        /// The horizontal distance over which the mouse is dragged.
         /// </summary>
         public double DeltaX { get; }
+        
+        /// <summary>
+        /// The vertical distance over which the mouse is dragged.
+        /// </summary>
         public double DeltaY { get; }
 
         public MouseDragEventData(int deltaX, int deltaY)
