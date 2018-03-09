@@ -62,6 +62,7 @@ namespace Interactr.View
             // Define the display to be the view that matches the party type
             ViewModelChanged.ObserveNested(vm => vm.TypeChanged).Subscribe(partyType =>
             {
+                Debug.WriteLine("Switch type");
                 _actorImage.IsVisible = partyType == Party.PartyType.Actor;
                 _objectRectangle.IsVisible = partyType == Party.PartyType.Object;
             });
@@ -73,12 +74,6 @@ namespace Interactr.View
             {
                 if (ViewModel != null) ViewModel.Label = newText;
             });
-
-            // On double click, change party type
-            _objectRectangle.MouseEventOccured.Merge(_actorImage.MouseEventOccured)
-                .Where(e => e.Id == MouseEvent.MOUSE_CLICKED &&
-                            e.ClickCount % 2 == 0) // Modulo for consequent double clicks.
-                .Subscribe(_ => ViewModel?.SwitchPartyType());
 
             // On position change in the viewmodel change the position in the view.
             ViewModelChanged.ObserveNested(vm => vm.PositionChanged)
@@ -132,6 +127,19 @@ namespace Interactr.View
                 UIElement parent = Parent;
                 Parent.Children.Remove(this);
                 parent.Repaint();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                Debug.WriteLine("Click registered.");
+                ViewModel.SwitchPartyType();
+                Parent.Repaint();
                 return true;
             }
 
