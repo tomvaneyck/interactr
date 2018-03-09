@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.Window;
 
 namespace Interactr.View
 {
@@ -42,7 +44,7 @@ namespace Interactr.View
                 StackOrientation = Orientation.Horizontal
             };
             Children.Add(stackPanel);
-			
+
             // Create a list of party views based on the party viewmodel.
             ReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
@@ -52,6 +54,21 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+        }
+
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            Debug.WriteLine(e.ClickCount);
+            Debug.WriteLine("ID: " + e.Id);
+            if (e.Id == MouseEvent.MOUSE_CLICKED)
+            {
+                Debug.WriteLine("Add Party.");
+                //Add a new Party.
+                ViewModel.AddParty();
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Interactr.ViewModel
     /// and is responsible for interaction with the data objects from the model.</remarks>
     public abstract class DiagramViewModel
     {
+        protected const string ValidLabel = "instanceName:ClassName";
+        
         #region IsVisible
 
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
