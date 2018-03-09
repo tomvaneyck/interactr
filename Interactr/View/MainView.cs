@@ -48,7 +48,7 @@ namespace Interactr.View
             this.Children.Add(SeqDiagView);
         }
 
-        /// <inheritdoc cref="OnKeyEvent"/>
+        /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData e)
         {
             if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)
