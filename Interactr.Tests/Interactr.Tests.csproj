@@ -64,6 +64,7 @@
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
+    <Compile Include="View\PartyViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

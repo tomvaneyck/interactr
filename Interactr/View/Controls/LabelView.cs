@@ -80,6 +80,8 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        private bool _isFocusing;
+
         public LabelView()
         {
             // Set the text to empty string
@@ -104,6 +106,8 @@ namespace Interactr.View.Controls
                 else
                 {
                     _cursorIsVisible = false;
+                    // Repainting to get rid of cursor.
+                    Repaint();
                     return Observable.Empty<long>();
                 }
             }).Switch().Subscribe(_ =>
@@ -122,6 +126,9 @@ namespace Interactr.View.Controls
 
                 Repaint();
             });
+
+            // Ignore mouse clicked when just received focus.
+            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
 
             // Update canLoseFocus when the CanLeaveEditMode is changed.
             CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
@@ -191,7 +198,11 @@ namespace Interactr.View.Controls
         /// <inheritdoc cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            {
+                _isFocusing = false;
+            }
+            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
                 return true;
