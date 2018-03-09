@@ -45,6 +45,7 @@ namespace Interactr.View
             get => _labelView;
         }
 
+
         public PartyView()
         {
             // Set the image
@@ -55,8 +56,8 @@ namespace Interactr.View
             // Set layout
             MarginsProperty.SetValue(_actorImage, new Margins(0, 0, 0, 25));
             MarginsProperty.SetValue(_objectRectangle, new Margins(0, 0, 0, 25));
-            _labelView.Position = new Point(0, 125);
-            AnchorsProperty.SetValue(_labelView, Anchors.Bottom);
+            LabelView.Position = new Point(0, 125);
+            AnchorsProperty.SetValue(LabelView, Anchors.Bottom);
 
             // Define the display to be the view that matches the party type
             ViewModelChanged.ObserveNested(vm => vm.TypeChanged).Subscribe(partyType =>
@@ -67,8 +68,8 @@ namespace Interactr.View
 
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
-                .Subscribe(newLabel => _labelView.Text = newLabel);
-            _labelView.TextChanged.Subscribe(newText =>
+                .Subscribe(newLabel => LabelView.Text = newLabel);
+            LabelView.TextChanged.Subscribe(newText =>
             {
                 if (ViewModel != null) ViewModel.Label = newText;
             });
@@ -86,11 +87,11 @@ namespace Interactr.View
             // Add child elements
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);
-            Children.Add(_labelView);
+            Children.Add(LabelView);
 
             // Bind CanApplyLabel and CanLeaveEditMode.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
+                .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
             // Bind text of label between this and PartyViewModel.
             _labelView.TextChanged.Subscribe(text =>
@@ -105,12 +106,22 @@ namespace Interactr.View
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
 
             // Fire ApplyLabel when leaving edit mode.
-            _labelView.EditModeChanged.Subscribe(
+            LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
                     if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
                 }
             );
+
+            // Bind text of label between this and PartyViewModel.
+            LabelView.TextChanged.Subscribe(text => 
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
         }
 
         protected override bool OnKeyEvent(KeyEventData e)

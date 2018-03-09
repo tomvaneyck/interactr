@@ -30,15 +30,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        #region partyViewModels
-
         public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
-
-        public IObservable<(PartyViewModel, int)> PartyViewModelOnAdd => PartyViewModels.OnAdd;
-
-        public IObservable<(PartyViewModel, int)> PartyViewModelOnDelete => PartyViewModels.OnDelete;
-
-        #endregion
 
         public void AddParty(Point point)
         {
