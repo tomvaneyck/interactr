@@ -13,6 +13,11 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class SequenceDiagramViewModel : DiagramViewModel
     {
-       
+        public MessageStackViewModel StackVM { get; }
+
+        public SequenceDiagramViewModel(Diagram diagram) : base(diagram)
+        {
+            StackVM = new MessageStackViewModel(diagram);
+        }
     }
 }

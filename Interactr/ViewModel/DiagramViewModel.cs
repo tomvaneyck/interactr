@@ -30,14 +30,24 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
+        public Diagram Diagram { get; }
+
+        public ReactiveList<PartyViewModel> PartyViewModels { get; }
+
+        protected DiagramViewModel(Diagram diagram)
+        {
+            Diagram = diagram;
+            PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(party)).ResultList;
+        }
 
         public void AddParty(Point point)
         {
-            PartyViewModels.Add(new PartyViewModel(new Party(Party.PartyType.Actor, ValidLabel))
+            Party party = new Party(Party.PartyType.Actor, ValidLabel);
+            Diagram.Parties.Add(party); //TODO: fix position setting
+            /*PartyViewModels.Add(new PartyViewModel(party)
             {
                 Position = point
-            });
+            });*/
         }
     }
 }

@@ -16,6 +16,9 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class CommunicationDiagramViewModel : DiagramViewModel
     {
-        
+        public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
+        {
+
+        }
     }
 }
