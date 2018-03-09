@@ -11,19 +11,15 @@ namespace Interactr.ViewModel
     /// </summary>
     public class MessageViewModel
     {
-        #region message and tick
-
         /// <summary>
-        /// Refernce to the Message model.
+        /// Reference to the Message model.
         /// </summary>
         public Message Message { get; }
 
         /// <summary>
-        /// Indicator of the call sequence of the message.
+        /// This marks the position of this call in the sequence of messages.
         /// </summary>
         public int Tick { get; set; }
-
-        #endregion
 
         #region Sender
 
@@ -33,7 +29,7 @@ namespace Interactr.ViewModel
         /// The sender stored in message view model.
         /// </summary>
         /// <remarks>This should not necessarily be the same as the sender in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
+        /// If the changes of viewModel are not propagated to the model for example.
         /// Any changes to the model are however immediately propagated to the viewmodel.
         /// </remarks>
         public Party Sender
@@ -48,17 +44,10 @@ namespace Interactr.ViewModel
 
         #region Receiver
 
-        /// <summary>
-        /// The sender stored in message view model.
-        /// </summary>
-        /// <remarks>This should not necessarily be the same as the sender in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
         private readonly ReactiveProperty<Party> _receiver = new ReactiveProperty<Party>();
 
         /// <summary>
-        /// The Receiver stored in message view model.
+        /// The receiver stored in message view model.
         /// </summary>
         /// <remarks>This should not necessarily be the same as the sender in the message model.
         /// If the changes of viewModel are not propogated to the model for example.
@@ -81,7 +70,7 @@ namespace Interactr.ViewModel
         /// <summary>
         /// The Label stored in message view model.
         /// </summary>
-        /// <remarks>This should not necessarily be the same as the sender in the message model.
+        /// <remarks>This should not necessarily be the same as the label in the message model.
         /// If the changes of viewModel are not propogated to the model for example.
         /// Any changes to the model are however immediately propagated to the viewmodel.
         /// </remarks>
@@ -103,10 +92,7 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Is always consistent with the model because the type of a message cannot change
         /// </remarks>
-        public Message.MessageType MessageType
-        {
-            get => Message.Type;
-        }
+        public Message.MessageType MessageType => Message.Type;
 
         #endregion
 
