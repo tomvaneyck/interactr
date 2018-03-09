@@ -36,6 +36,13 @@ namespace Interactr.View
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
             ViewModelChanged.ObserveNested(vm => vm.IsVisibleChanged)
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
+
+            StackPanel stackPanel = new StackPanel
+            {
+                StackOrientation = Orientation.Horizontal
+            };
+            Children.Add(stackPanel);
+			
             // Create a list of party views based on the party viewmodel.
             ReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)

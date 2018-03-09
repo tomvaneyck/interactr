@@ -61,10 +61,19 @@ namespace Interactr.View.Controls
                 .Subscribe(p => UpdateLayout(p.Element));
 
             // Update a child when its PreferredWidth/Height property changes.
-            Observable.Merge(
+            var onChildPreferredSizeChange = Observable.Merge(
                 Children.ObserveEach(child => child.PreferredHeightChanged),
                 Children.ObserveEach(child => child.PreferredWidthChanged)
-            ).Subscribe(p => UpdateLayout(p.Element));
+            );
+            onChildPreferredSizeChange.Subscribe(p => UpdateLayout(p.Element));
+            // Set own preferred size based on the preferred size and position of the children.
+            onChildPreferredSizeChange.Subscribe(_ => UpdatePreferredSize());
+        }
+
+        private void UpdatePreferredSize()
+        {
+            PreferredWidth = Children.Max(child => child.Position.X + child.PreferredWidth);
+            PreferredHeight = Children.Max(child => child.Position.Y + child.PreferredHeight);
         }
 
         private void UpdateLayout()
