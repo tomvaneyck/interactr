@@ -118,8 +118,9 @@ namespace Interactr.View
             if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
             {
                 // Delete this party from the parent view.
+                UIElement parent = Parent;
                 Parent.Children.Remove(this);
-                Parent.Repaint();
+                parent.Repaint();
                 return true;
             }
 
