@@ -8,6 +8,7 @@ using System;
 namespace Interactr.Tests.View
 {
     [TestFixture]
+    [Category("RequiresUI")]
     public class PartyViewTests
     {
         // Exposing _labelView by inheritance.

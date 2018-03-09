@@ -5,6 +5,6 @@ before_install:
   - unzip NUnit.Console-3.8.0.zip -d nunit
 script:
   - msbuild /p:Configuration=Release Interactr/Interactr.sln
-  - mono nunit/nunit3-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll
+  - mono nunit/nunit3-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll /exclude:RequiresUI
 notifications:
   email: false
