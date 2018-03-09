@@ -1,0 +1,63 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "**.csproj"
+          ],
+          "src": "./"
+        }
+      ],
+      "dest": "Documentation/api",
+      "disableGitFeatures": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "Documentation/api/**.yml",
+          "Documentation/api/index.md"
+        ]
+      },
+      {
+        "files": [
+          "Documentation/articles/**.md",
+          "Documentation/articles/**/toc.yml",
+          "Documentation/toc.yml",
+          "Documentation/*.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "Documentation/images/**"
+        ]
+      }
+    ],
+    "overwrite": [
+      {
+        "files": [
+          "Documentation/apidoc/**.md"
+        ],
+        "exclude": [
+          "obj/**",
+          "Documentation_build/**"
+        ]
+      }
+    ],
+    "dest": "Documentation_build",
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [
+      "default"
+    ],
+    "postProcessors": [],
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}
