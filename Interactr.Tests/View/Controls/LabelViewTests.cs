@@ -22,6 +22,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
+        [Category("UIRequired")]
         public void EscKeyFunctionalityEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
@@ -50,6 +51,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
+        [Category("UIRequired")]
         public void EscKeyFunctionalityNoEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, -1, '\x1b');
@@ -80,7 +82,7 @@ namespace Interactr.Tests.View.Controls
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
-
+        /**
         [Test]
         public void MouseClickFunctionalityEventOutsideLabel()
         {
@@ -100,7 +102,7 @@ namespace Interactr.Tests.View.Controls
             // Check if expected mouse action occured.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
-
+        **/
         [Test]
         public void MouseClickFunctionalityEventNoClick()
         {
@@ -132,6 +134,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
+        [Category("UIRequired")]
         public void LabelTextChangesWhenOneKeyTyped()
         {
             _labelView.IsInEditMode = true;
@@ -150,6 +153,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
+        [Category("UIRequired")]
         public void TestBackSpaceInLabelView()
         {
             _labelView.IsInEditMode = true;
