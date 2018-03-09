@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reactive;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.Window;
 
-namespace Interactr.View.Controls
+namespace Interactr.View
 {
     public class LifeLineView : UIElement
     {
@@ -25,16 +25,44 @@ namespace Interactr.View.Controls
 
         public LifeLineView()
         {
+            Observable.Merge(
+                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnAdd),
+                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnDelete)
+            ).Subscribe(_ => Repaint());
+        }
 
+        protected override bool OnMouseEvent(MouseEventData eventData)
+        {
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED)
+            {
+                ViewModel?.MessageStackVM.Diagram.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Invocation, "Invocation"));
+                ViewModel?.MessageStackVM.Diagram.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Result, "Result"));
+                return true;
+            }
+
+            return false;
         }
 
         public override void PaintElement(Graphics g)
         {
             //Draw lines
-            g.DrawLine(Pens.Black, Width/2, 0, Width/2, Height);
+            int middle = Width / 2;
+            g.DrawLine(Pens.Black, middle, 0, middle, Height);
 
             //Draw activation bars
-            //TODO
+            if (ViewModel?.MessageStackVM != null)
+            {
+                int barWidth = 12;
+                int tickHeight = 30;
+                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars.Where(bar => bar.Party == ViewModel.PartyVM.Party))
+                {
+                    int x = middle - (barWidth / 2);
+                    int y = (activationBarVM.StartTick) * tickHeight;
+                    int height = (activationBarVM.EndTick - activationBarVM.StartTick) * tickHeight;
+                    g.FillRectangle(Brushes.White, x, y, barWidth, height);
+                    g.DrawRectangle(Pens.Black, x, y, barWidth, height);
+                }
+            }
         }
     }
 }
