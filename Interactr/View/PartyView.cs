@@ -80,6 +80,18 @@ namespace Interactr.View
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);
             Children.Add(_labelView);
+
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
+
+            // Fire ApplyLabel when leaving edit mode.
+            _labelView.EditModeChanged.Subscribe(
+                isInEditMode => 
+                {
+                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                }
+            );
         }
     }
 }
