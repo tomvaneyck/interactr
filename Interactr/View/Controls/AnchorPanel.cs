@@ -72,6 +72,7 @@ namespace Interactr.View.Controls
 
         private void UpdatePreferredSize()
         {
+            // Set preferred size to the largest sum of child position and size
             PreferredWidth = Children.Max(child => child.Position.X + child.PreferredWidth);
             PreferredHeight = Children.Max(child => child.Position.Y + child.PreferredHeight);
         }
