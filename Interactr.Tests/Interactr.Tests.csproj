@@ -62,6 +62,7 @@
     <Compile Include="ViewModel\MainViewModelTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
+    <Compile Include="View\Framework\AttachedPropertyTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
   </ItemGroup>
   <ItemGroup>
