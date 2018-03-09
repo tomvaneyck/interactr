@@ -100,56 +100,6 @@ namespace Interactr.Tests.Model
         }
 
         [Test]
-        public void NoMessageTypeChangeObservableTest()
-        {
-            var expected = new[]
-            {
-                ReactiveTest.OnNext(1, DefaultMessageType),
-            };
-            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
-
-            // Assert
-            ReactiveAssert.AreElementsEqual(expected, actual);
-        }
-
-        [Test]
-        public void ChangeMessageTypeOnceObservableTest()
-        {
-            // Define the actions. 
-            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Type = Message.MessageType.Result);
-
-            var expected = new[]
-            {
-                ReactiveTest.OnNext(1, DefaultMessageType),
-                ReactiveTest.OnNext(10, Message.MessageType.Result),
-            };
-            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
-
-            // Assert
-            ReactiveAssert.AreElementsEqual(expected, actual);
-        }
-
-        [Test]
-        public void ChangeMessageTypeTwiceObservablesTest()
-        {
-            // Define the actions. 
-            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Type = Message.MessageType.Result);
-            _scheduler.Schedule(TimeSpan.FromTicks(20),
-                () => _defaultTestMessage.Type = Message.MessageType.Invocation);
-
-            var expected = new[]
-            {
-                ReactiveTest.OnNext(1, DefaultMessageType),
-                ReactiveTest.OnNext(10, Message.MessageType.Result),
-                ReactiveTest.OnNext(20, Message.MessageType.Invocation)
-            };
-            var actual = _scheduler.Start(() => _defaultTestMessage.TypeChanged, 0, 0, 1000).Messages;
-
-            // Assert
-            ReactiveAssert.AreElementsEqual(expected, actual);
-        }
-
-        [Test]
         public void NoSenderChangeObservableTest()
         {
             var expected = new[]
