@@ -14,7 +14,7 @@ namespace Interactr.View.Controls
     /// <summary>
     /// This is a panel that enables some elements to be dragged around.
     /// </summary>
-    class DragPanel : UIElement
+    public class DragPanel : UIElement
     {
         private Point _previousCursorPosition;
 
