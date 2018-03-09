@@ -18,6 +18,7 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LabelView : UIElement
     {
+
         #region Text
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
@@ -191,6 +192,7 @@ namespace Interactr.View.Controls
                 }
 
                 return true;
+                
             }
             else
             {

@@ -9,6 +9,7 @@ using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
 using Point = Interactr.View.Framework.Point;
@@ -109,6 +110,18 @@ namespace Interactr.View
                     if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
                 }
             );
+        }
+
+        protected override bool OnKeyEvent(KeyEventData e)
+        {
+            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_TYPED && e.KeyChar == '\x7f')
+            {
+                // Delete this party from the parent view.
+                Parent.Children.Remove(this);
+                return true;
+            }
+
+            return false;
         }
     }
 }
