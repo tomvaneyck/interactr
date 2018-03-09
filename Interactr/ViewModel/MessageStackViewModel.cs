@@ -17,7 +17,9 @@ namespace Interactr.ViewModel
         private readonly Diagram _diagram;
 
         private ReactiveList<MessageViewModel> _messageViewModels;
-        private readonly ReactiveList<ActivationBarViewModel> _activationBars = new ReactiveList<ActivationBarViewModel>();
+
+        private readonly ReactiveList<ActivationBarViewModel> _activationBars =
+            new ReactiveList<ActivationBarViewModel>();
 
         public MessageStackViewModel(Diagram diagram)
         {
@@ -32,7 +34,7 @@ namespace Interactr.ViewModel
             ).Subscribe(_ => CalculateLayout());
 
             //Map Messages to MessageViewModels
-            _messageViewModels = _diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
+            _messageViewModels = _diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
         }
 
         private void CalculateLayout()
@@ -50,7 +52,7 @@ namespace Interactr.ViewModel
             {
                 _messageViewModels[i].Tick = i;
             }
-            
+
             // Iterate over messages, maintain stack, create activation bar on pop.
             // Push = invocation message
             // Pop = result message
@@ -65,13 +67,16 @@ namespace Interactr.ViewModel
                 }
                 else
                 {
-                    (Party party, int startTick) curActivationInfo = stack.Pop();
-                    _activationBars.Add(new ActivationBarViewModel(party, startTick, messageVM.Tick));
+                    (Party party, int startTick) = stack.Pop();
+                    _activationBars.Add(new ActivationBarViewModel(message.Receiver, startTick, messageVM.Tick));
                 }
             }
-            
+
             // Add activation bar for initiator starting at tick 0, ending at last message tick.
-            _activationBars.Add(new ActivationBarViewModel(_messageViewModels[0].Message.Sender, 0, _messageViewModels.Last().Tick));
+            _activationBars.Add(new ActivationBarViewModel(_messageViewModels[0].Message.Sender, 0,
+                _messageViewModels.Last().Tick));
         }
     }
+}
+
 }
