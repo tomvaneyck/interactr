@@ -51,7 +51,7 @@ namespace Interactr.View
             partyViews.OnAdd.Subscribe(elem =>
             {
                 elem.Element.LabelView.IsInEditMode = true;
-                elem.Element.LabelView.FocusLabel();
+                elem.Element.LabelView.Focus();
             });
             
             // Automatically add and remove party views to Children.

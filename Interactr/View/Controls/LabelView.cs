@@ -157,11 +157,6 @@ namespace Interactr.View.Controls
             }
         }
 
-        public void FocusLabel()
-        {
-            Focus();
-        }
-
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
