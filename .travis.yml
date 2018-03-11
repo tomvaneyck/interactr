@@ -10,6 +10,5 @@ before_script:
 script:
   - msbuild /p:Configuration=Release Interactr/Interactr.sln
   - mono nunit/nunit3-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll --where "cat != RequiresUI"
-  - xvfb-run make test  
 notifications:
   email: false
