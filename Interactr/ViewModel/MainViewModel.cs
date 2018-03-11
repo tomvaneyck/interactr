@@ -9,13 +9,20 @@ using Interactr.Reactive;
 namespace Interactr.ViewModel
 {
     /// <summary>
-    /// The ViewModel for the mainView.
+    /// The ViewModel for the mainView, which contains the sequence and the diagram view models.
     /// </summary>
     /// <remarks> A view model represents the data you want to display on your view
     /// and is responsible for interaction with the data objects from the model.</remarks>
     public class MainViewModel
     {
+        /// <summary>
+        /// The communication diagram view model.
+        /// </summary>
         public CommunicationDiagramViewModel CommDiagramVM { get; }
+
+        /// <summary>
+        /// The sequence diagram view model.
+        /// </summary>
         public SequenceDiagramViewModel SeqDiagramVM { get; }
 
         public MainViewModel(Diagram diagram)
