@@ -14,21 +14,26 @@ using Interactr.Window;
 namespace Interactr.View.Controls
 {
     /// <summary>
-    /// A view for displaying and aediting the text label.
+    /// A view for displaying and editing the text label.
     /// </summary>
     public class LabelView : UIElement
     {
-
         #region Text
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
+        /// <summary>
+        /// The text of the label.
+        /// </summary>
         public string Text
         {
             get => _text.Value;
             set => _text.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new text when the text changes.
+        /// </summary>
         public IObservable<string> TextChanged => _text.Changed;
 
         #endregion
@@ -37,12 +42,18 @@ namespace Interactr.View.Controls
 
         private readonly ReactiveProperty<Font> _font = new ReactiveProperty<Font>();
 
+        /// <summary>
+        /// The font for displaying the label text.
+        /// </summary>
         public Font Font
         {
             get => _font.Value;
             set => _font.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new Font when the font changes.
+        /// </summary>
         public IObservable<Font> FontChanged => _font.Changed;
 
         #endregion
@@ -51,12 +62,18 @@ namespace Interactr.View.Controls
 
         private readonly ReactiveProperty<bool> _isInEditMode = new ReactiveProperty<bool>();
 
+        /// <summary>
+        /// Indicate if the label is in edit mode.
+        /// </summary>
         public bool IsInEditMode
         {
             get => _isInEditMode.Value;
             set => _isInEditMode.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new editMode when edit mode changes.
+        /// </summary>
         public IObservable<bool> EditModeChanged => _isInEditMode.Changed;
 
         #endregion
@@ -65,12 +82,18 @@ namespace Interactr.View.Controls
 
         private readonly ReactiveProperty<bool> _canLeaveEditMode = new ReactiveProperty<bool>();
 
+        /// <summary>
+        /// Indicate if leaving edit mode is allowed.
+        /// </summary>
         public bool CanLeaveEditMode
         {
             get => _canLeaveEditMode.Value;
             set => _canLeaveEditMode.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new canLeaceEditMode value when it changes.
+        /// </summary>
         public IObservable<bool> CanLeaveEditModeChanged => _canLeaveEditMode.Changed;
 
         #endregion
@@ -87,7 +110,7 @@ namespace Interactr.View.Controls
         {
             // Set the text to empty string
             Text = "";
-            
+
             // Set the default font.
             Font = new Font("Arial", 11);
 
@@ -161,6 +184,9 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <summary>
+        /// public accessor for focusing this label.
+        /// </summary>
         public void FocusLabel()
         {
             Focus();
@@ -195,12 +221,9 @@ namespace Interactr.View.Controls
                 }
 
                 return true;
-                
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <see cref="OnMouseEvent"/>
