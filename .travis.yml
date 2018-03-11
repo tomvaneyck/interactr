@@ -9,6 +9,6 @@ before_script:
   - sleep 3 
 script:
   - msbuild /p:Configuration=Release Interactr/Interactr.sln
-  - mono nunit/nunit3-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll --where "cat != RequiresUI"
+  - mono nunit/nunit3-console.exe ./Interactr.Tests/bin/Release/Interactr.Tests.dll
 notifications:
   email: false
