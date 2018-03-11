@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Windows.Forms;
+using System.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
-using Interactr.View.Controls;
 using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
@@ -62,13 +60,7 @@ namespace Interactr.ViewModel
         {
             Party party = new Party(Party.PartyType.Actor, ValidLabel);
             Diagram.Parties.Add(party);
-            foreach (var partyViewModel in PartyViewModels)
-            {
-                if (partyViewModel.Party == party)
-                {
-                    partyViewModel.Position = point;
-                }
-            }
+            PartyViewModels.First(vm => vm.Party == party).Position = point;
         }
     }
 }
