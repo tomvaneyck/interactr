@@ -18,7 +18,6 @@ namespace Interactr.ViewModel
     {
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
-
         }
     }
 }

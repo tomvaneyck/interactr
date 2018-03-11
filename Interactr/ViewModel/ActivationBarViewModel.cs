@@ -9,7 +9,7 @@ namespace Interactr.ViewModel
 {
     /// <summary>
     /// A viewModel for the activationBar.
-    /// the activation bar is immutable.
+    /// <remarks>The activation bar is immutable after creation.</remarks>
     /// </summary>
     /// <remarks>There is no underlying model for the activationBar viewModel.</remarks>
     public class ActivationBarViewModel
