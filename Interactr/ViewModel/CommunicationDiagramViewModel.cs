@@ -28,13 +28,7 @@ namespace Interactr.ViewModel
         {
             Party party = new Party(Party.PartyType.Actor, ValidLabel);
             Diagram.Parties.Add(party);
-            foreach (var partyViewModel in PartyViewModels)
-            {
-                if (partyViewModel.Party == party)
-                {
-                    partyViewModel.Position = point;
-                }
-            }
+            PartyViewModels.First(vm => vm.Party == party).Position = point;
         }
     }
 }
