@@ -31,7 +31,7 @@ namespace Interactr.Model
 
         #region Type
 
-        //Type cannot be changed after creation of the message.
+        // The type cannot be changed after creation of the message.
         public MessageType Type { get; }
 
         #endregion
