@@ -40,11 +40,13 @@ namespace Interactr.View
         protected readonly RectangleView _objectRectangle = new RectangleView();
         protected readonly LabelView _labelView = new LabelView();
 
+        /// <summary>
+        /// The label view associated with this party view.
+        /// </summary>
         public LabelView LabelView
         {
             get => _labelView;
         }
-
 
         public PartyView()
         {
@@ -109,16 +111,16 @@ namespace Interactr.View
             );
 
             // Bind text of label between this and PartyViewModel.
-            LabelView.TextChanged.Subscribe(text => 
+            LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
                     ViewModel.Label = text;
                 }
             });
-
         }
 
+        /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData e)
         {
             if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
@@ -133,6 +135,7 @@ namespace Interactr.View
             return false;
         }
 
+        /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
