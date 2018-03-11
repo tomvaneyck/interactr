@@ -7,7 +7,7 @@ using Interactr.Reactive;
 namespace Interactr.Model
 {
     /// <summary>
-    /// Represents an Actor or an Object in the diagram.
+    /// Represent an Actor or an Object in the diagram.
     /// </summary>
     public class Party
     {
