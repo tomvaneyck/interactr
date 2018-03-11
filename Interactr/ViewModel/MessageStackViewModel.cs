@@ -17,6 +17,13 @@ namespace Interactr.ViewModel
     /// </summary>
     public class MessageStackViewModel
     {
+        private readonly ReactiveList<Message> _messages;
+
+        /// <summary>
+        /// A direct reference to the messages in the model.
+        /// </summary>
+        public ReactiveList<Message> Messages { get; }
+
         /// <summary>
         /// message view models that map to the messages in the diagram.
         /// The index of the message view model in the list is equal to the tick of the message view model.
@@ -31,6 +38,8 @@ namespace Interactr.ViewModel
 
         public MessageStackViewModel(Diagram diagram)
         {
+            _messages = diagram.Messages;
+
             // Map Messages to MessageViewModels
             MessageViewModels = diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
 
