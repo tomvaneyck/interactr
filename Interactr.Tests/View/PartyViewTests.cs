@@ -20,9 +20,11 @@ namespace Interactr.Tests.View
         // Party variable.
         private PartyViewTest partyView;
 
+
         [SetUp]
         public void SetupPartyViewTest()
         {
+
             partyView = new PartyViewTest
             {
                 ViewModel = new PartyViewModel(new Party(Party.PartyType.Actor, "instance:Classname"))

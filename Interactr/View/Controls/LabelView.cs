@@ -18,6 +18,7 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LabelView : UIElement
     {
+
         #region Text
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
@@ -135,7 +136,7 @@ namespace Interactr.View.Controls
             CanLeaveEditMode = true;
         }
 
-        /// <inheritdoc cref="PaintElement"/>
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             // Measure how much space it would take to fully render the
@@ -160,7 +161,12 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnKeyEvent"/>
+        public void FocusLabel()
+        {
+            Focus();
+        }
+
+        /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
             if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
@@ -169,6 +175,7 @@ namespace Interactr.View.Controls
                 {
                     IsInEditMode = false;
                 }
+
                 return true;
             }
             else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
@@ -188,6 +195,7 @@ namespace Interactr.View.Controls
                 }
 
                 return true;
+                
             }
             else
             {
@@ -195,7 +203,7 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <inheritdoc cref="OnMouseEvent"/>
+        /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
             if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
 {
@@ -11,6 +14,8 @@ namespace Interactr.ViewModel
     /// and is responsible for interaction with the data objects from the model.</remarks>
     public abstract class DiagramViewModel
     {
+        protected const string ValidLabel = "instanceName:ClassName";
+
         #region IsVisible
 
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
@@ -25,14 +30,24 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        #region partyViewModels
+        public Diagram Diagram { get; }
 
-        public ReactiveList<PartyViewModel> PartyViewModels { get; } = new ReactiveList<PartyViewModel>();
+        public ReactiveList<PartyViewModel> PartyViewModels { get; }
 
-        public IObservable<(PartyViewModel, int)> PartyViewOnAdd => PartyViewModels.OnAdd;
+        protected DiagramViewModel(Diagram diagram)
+        {
+            Diagram = diagram;
+            PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(party)).ResultList;
+        }
 
-        public IObservable<(PartyViewModel, int)> PartyViewModelOnDelete => PartyViewModels.OnDelete;
-
-        #endregion
+        public void AddParty(Point point)
+        {
+            Party party = new Party(Party.PartyType.Actor, ValidLabel);
+            Diagram.Parties.Add(party); //TODO: fix position setting
+            /*PartyViewModels.Add(new PartyViewModel(party)
+            {
+                Position = point
+            });*/
+        }
     }
 }

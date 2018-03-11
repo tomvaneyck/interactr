@@ -155,6 +155,8 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        public bool CanBeFocused { get; protected set; } = true;
+
         public UIElement()
         {
             this.IsVisible = true;
@@ -163,6 +165,8 @@ namespace Interactr.View.Framework
             this.WidthChanged.Subscribe(_ => Repaint());
             this.HeightChanged.Subscribe(_ => Repaint());
             this.IsVisibleChanged.Subscribe(_ => Repaint());
+            this.Children.OnDelete.Subscribe(_ => Repaint());
+            this.Children.OnAdd.Subscribe(_ => Repaint());
 
             SetupParentChildRelationship();
         }
@@ -385,7 +389,7 @@ namespace Interactr.View.Framework
         protected virtual bool OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 this.Focus();
                 return true;
