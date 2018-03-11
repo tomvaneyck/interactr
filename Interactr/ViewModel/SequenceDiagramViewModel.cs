@@ -13,6 +13,9 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class SequenceDiagramViewModel : DiagramViewModel
     {
+        /// <summary>
+        /// The message stack view model associated with the diagram.
+        /// </summary>
         public MessageStackViewModel StackVM { get; }
 
         public SequenceDiagramViewModel(Diagram diagram) : base(diagram)
