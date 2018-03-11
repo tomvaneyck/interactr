@@ -18,7 +18,23 @@ namespace Interactr.ViewModel
     {
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
+        }
 
+        /// <summary>
+        /// Add a new party at the specified point. 
+        /// </summary>
+        /// <param name="point"> The point on the screen where the party is added.</param>
+        public void AddParty(Point point)
+        {
+            Party party = new Party(Party.PartyType.Actor, ValidLabel);
+            Diagram.Parties.Add(party);
+            foreach (var partyViewModel in PartyViewModels)
+            {
+                if (partyViewModel.Party == party)
+                {
+                    partyViewModel.Position = point;
+                }
+            }
         }
     }
 }
