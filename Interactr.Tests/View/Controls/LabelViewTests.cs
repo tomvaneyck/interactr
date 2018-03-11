@@ -11,19 +11,19 @@ namespace Interactr.Tests.View.Controls
     [TestFixture]
     public class LabelViewTests
     {
-        private TestableLabelView _labelView;
+        private LabelViewObservablesTests.TestableLabelView _labelView;
         private TestScheduler _scheduler;
 
         [SetUp]
         public void BeforeEach()
         {
-            _labelView = new TestableLabelView();
+            _labelView = new LabelViewObservablesTests.TestableLabelView();
             _scheduler = new TestScheduler();
         }
 
         [Test]
         [Category("UIRequired")]
-      public void EscKeyFunctionalityEvent()
+        public void EscKeyFunctionalityEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
@@ -38,32 +38,14 @@ namespace Interactr.Tests.View.Controls
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
-        }
-
-        public class TestableLabelView : LabelView
-        {
-            // Count the number of times repaint is called in this labelView.
-            public int RepaintCounter { get; private set; } = 0;
-
-            public bool RunOnKeyEvent(KeyEventData keyEventData)
-            {
-                return OnKeyEvent(keyEventData);
-            }
-            public bool RunOnMouseEvent(MouseEventData mouseEventData)
-            {
-                return OnMouseEvent(mouseEventData);
-            }
-        }
 
         [Test]
         [Category("UIRequired")]
         public void EscKeyFunctionalityNoEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, -1, '\x1b');
-
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
-
             bool result = _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action occurred.
@@ -78,7 +60,6 @@ namespace Interactr.Tests.View.Controls
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
-
             bool result = _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action occurred.
@@ -87,6 +68,7 @@ namespace Interactr.Tests.View.Controls
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
+
         /**
         [Test]
         public void MouseClickFunctionalityEventOutsideLabel()
@@ -98,12 +80,12 @@ namespace Interactr.Tests.View.Controls
             ui.Children.Add(labelview);
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(int.MaxValue, int.MaxValue), 1);
-
+    
             bool result = UIElement.HandleMouseEvent(ui, mouseEventData);
-
+    
             // Check if an action occurred.
             Assert.IsTrue(result);
-
+    
             // Check if expected mouse action occured.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
@@ -112,6 +94,7 @@ namespace Interactr.Tests.View.Controls
         public void MouseClickFunctionalityEventNoClick()
         {
             LabelView labelview = new LabelView();
+
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.NOBUTTON, new Point(int.MaxValue, int.MaxValue), 1);
 
@@ -128,13 +111,13 @@ namespace Interactr.Tests.View.Controls
     [TestFixture]
     public class LabelViewObservablesTests
     {
-        private LabelViewTests.TestableLabelView _labelView;
+        private TestableLabelView _labelView;
         private TestScheduler _scheduler;
 
         [SetUp]
         public void Before()
         {
-            _labelView = new LabelViewTests.TestableLabelView();
+            _labelView = new TestableLabelView();
             _scheduler = new TestScheduler();
         }
 
@@ -209,6 +192,22 @@ namespace Interactr.Tests.View.Controls
                 _scheduler.Schedule(TimeSpan.FromTicks(scheduleTicks),
                     () => _labelView.RunOnKeyEvent(keyEventData));
                 scheduleTicks += 10;
+            }
+        }
+
+        public class TestableLabelView : LabelView
+        {
+            // Count the number of times repaint is called in this labelView.
+            public int RepaintCounter { get; private set; } = 0;
+
+            public bool RunOnKeyEvent(KeyEventData keyEventData)
+            {
+                return OnKeyEvent(keyEventData);
+            }
+
+            public bool RunOnMouseEvent(MouseEventData mouseEventData)
+            {
+                return OnMouseEvent(mouseEventData);
             }
         }
     }
