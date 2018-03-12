@@ -22,7 +22,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void EscKeyFunctionalityEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
@@ -39,7 +39,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void EscKeyFunctionalityNoEvent()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, -1, '\x1b');
@@ -100,7 +100,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void LabelTextChangesWhenOneKeyTyped()
         {
             _labelView.IsInEditMode = true;
@@ -119,7 +119,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void TestBackSpaceInLabelView()
         {
             _labelView.IsInEditMode = true;
