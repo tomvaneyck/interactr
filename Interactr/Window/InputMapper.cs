@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -23,15 +24,17 @@ namespace Interactr.Window
         private bool _isMouseDown;
         private bool _isDragging;
         private int _clicks;
-        private DateTime _lastClickTimestamp;
+        private Stopwatch _stopwatch = new Stopwatch();
         private Point _lastClickPos;
 
-        public InputMapper(Form form)
+        public InputMapper(Form form, Panel panel)
         {
-            form.MouseDown += (sender, args) =>
+            _stopwatch.Start();
+
+            panel.MouseDown += (sender, args) =>
             {
                 _isMouseDown = true;
-                bool inDoubleClickInterval = (DateTime.Now - _lastClickTimestamp).Milliseconds < SystemInformation.DoubleClickTime;
+                bool inDoubleClickInterval = _stopwatch.ElapsedMilliseconds < SystemInformation.DoubleClickTime;
                 bool inDoubleClickDistance = Math.Abs(_lastClickPos.X - args.X) < SystemInformation.DoubleClickSize.Width &&
                                              Math.Abs(_lastClickPos.Y - args.Y) < SystemInformation.DoubleClickSize.Height;
                 if (inDoubleClickInterval && inDoubleClickDistance)
@@ -42,11 +45,11 @@ namespace Interactr.Window
                 {
                     _clicks = 1;
                 }
-                _lastClickTimestamp = DateTime.Now;
+                _stopwatch.Restart();
                 _lastClickPos = args.Location;
                 OnMouseEvent?.Invoke(sender, new MouseEventItem(MouseEvent.MOUSE_PRESSED, args.X, args.Y, _clicks));
             };
-            form.MouseUp += (sender, args) =>
+            panel.MouseUp += (sender, args) =>
             {
                 OnMouseEvent?.Invoke(sender, new MouseEventItem(MouseEvent.MOUSE_RELEASED, args.X, args.Y, _clicks));
                 if (!_isDragging)
@@ -56,7 +59,7 @@ namespace Interactr.Window
                 _isMouseDown = false;
                 _isDragging = false;
             };
-            form.MouseMove += (sender, args) =>
+            panel.MouseMove += (sender, args) =>
             {
                 if (_isMouseDown)
                 {
@@ -71,6 +74,10 @@ namespace Interactr.Window
             form.KeyPress += (sender, args) =>
             {
                 OnKeyEvent?.Invoke(sender, new KeyEventItem(KeyEvent.KEY_TYPED, KeyEvent.VK_UNDEFINED, args.KeyChar));
+            };
+            form.KeyUp += (sender, args) =>
+            {
+                OnKeyEvent?.Invoke(sender, new KeyEventItem(KeyEvent.KEY_RELEASED, (int)args.KeyCode, KeyToChar(args)));
             };
         }
 
