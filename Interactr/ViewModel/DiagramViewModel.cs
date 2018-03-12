@@ -39,15 +39,5 @@ namespace Interactr.ViewModel
             Diagram = diagram;
             PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(party)).ResultList;
         }
-
-        public void AddParty(Point point)
-        {
-            Party party = new Party(Party.PartyType.Actor, ValidLabel);
-            Diagram.Parties.Add(party); //TODO: fix position setting
-            /*PartyViewModels.Add(new PartyViewModel(party)
-            {
-                Position = point
-            });*/
-        }
     }
 }
