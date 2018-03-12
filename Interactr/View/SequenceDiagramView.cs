@@ -21,7 +21,9 @@ namespace Interactr.View
     public class SequenceDiagramView : AnchorPanel
     {
         #region ViewModel
-        private readonly ReactiveProperty<SequenceDiagramViewModel> _viewModel = new ReactiveProperty<SequenceDiagramViewModel>();
+
+        private readonly ReactiveProperty<SequenceDiagramViewModel> _viewModel =
+            new ReactiveProperty<SequenceDiagramViewModel>();
 
         public SequenceDiagramViewModel ViewModel
         {
@@ -30,6 +32,7 @@ namespace Interactr.View
         }
 
         public IObservable<SequenceDiagramViewModel> ViewModelChanged => _viewModel.Changed;
+
         #endregion
 
         public SequenceDiagramView()
@@ -57,6 +60,9 @@ namespace Interactr.View
         }
     }
 
+    /// <summary>
+    /// The view for the sequence diagram column view.
+    /// </summary>
     class SequenceDiagramColumnView : AnchorPanel
     {
         private readonly PartyView _partyView;
@@ -64,16 +70,21 @@ namespace Interactr.View
 
         public SequenceDiagramColumnView(SequenceDiagramView parent, PartyViewModel partyVM)
         {
+            // Create the party view and add it to this column view.
             _partyView = new PartyView
             {
                 ViewModel = partyVM
             };
+            
             AnchorsProperty.SetValue(_partyView, Anchors.Left | Anchors.Top | Anchors.Right);
-            this.Children.Add(_partyView);
+            Children.Add(_partyView);
 
+            // Create the lifeline view and add it to this column view.
             _lifeLineView = new LifeLineView();
             MarginsProperty.SetValue(_lifeLineView, new Margins(0, _partyView.PreferredHeight, 0, 0));
-            this.Children.Add(_lifeLineView);
+            Children.Add(_lifeLineView);
+            
+            // Setup subscriptions.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => _lifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
         }

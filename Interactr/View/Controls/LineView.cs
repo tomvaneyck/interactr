@@ -18,6 +18,9 @@ namespace Interactr.View.Controls
     public class LineView : UIElement
     {
         #region Pen
+
+        private readonly ReactiveProperty<Pen> _pen = new ReactiveProperty<Pen>();
+
         /// <summary>
         /// The pen that is used to draw the line.
         /// Changing the color or thickness of the line can be done with this property.
@@ -27,11 +30,18 @@ namespace Interactr.View.Controls
             get => _pen.Value;
             set => _pen.Value = value;
         }
-        private readonly ReactiveProperty<Pen> _pen = new ReactiveProperty<Pen>();
+
+        /// <summary>
+        /// Emit the new pen when the pen changes.
+        /// </summary>
         public IObservable<Pen> PenChanged => _pen.Changed;
+
         #endregion
 
         #region PointA
+
+        private readonly ReactiveProperty<Point> _pointA = new ReactiveProperty<Point>();
+
         /// <summary>
         /// The starting point of the line.
         /// </summary>
@@ -40,11 +50,18 @@ namespace Interactr.View.Controls
             get => _pointA.Value;
             set => _pointA.Value = value;
         }
-        private readonly ReactiveProperty<Point> _pointA = new ReactiveProperty<Point>();
+
+        /// <summary>
+        /// Emit the new point A when it changes.
+        /// </summary>
         public IObservable<Point> PointAChanged => _pointA.Changed;
+
         #endregion
 
         #region PointB
+
+        private readonly ReactiveProperty<Point> _pointB = new ReactiveProperty<Point>();
+
         /// <summary>
         /// The endpoint of this line.
         /// </summary>
@@ -53,22 +70,21 @@ namespace Interactr.View.Controls
             get => _pointB.Value;
             set => _pointB.Value = value;
         }
-        private readonly ReactiveProperty<Point> _pointB = new ReactiveProperty<Point>();
+
+        /// <summary>
+        /// Emit the new point B when it changes.
+        /// </summary>
         public IObservable<Point> PointBChanged => _pointB.Changed;
+
         #endregion
 
         public LineView()
         {
             // Default values.
-            this.Pen = Pens.Black;
-            this.PointA = new Point();
-            this.PointB = new Point(10, 10);
+            Pen = Pens.Black;
+            PointA = new Point();
+            PointB = new Point(10, 10);
 
-            SetupObservables();
-        }
-
-        private void SetupObservables()
-        {
             // Repaint on property change.
             Observable.Merge(
                 PenChanged.Select(_ => Unit.Default),
@@ -84,6 +100,7 @@ namespace Interactr.View.Controls
             });
         }
 
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             g.DrawLine(Pen, PointA.X, PointA.Y, PointB.X, PointB.Y);

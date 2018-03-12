@@ -15,7 +15,7 @@ namespace Interactr.View.Framework
         /// The horizontal distance over which the mouse is dragged.
         /// </summary>
         public double DeltaX { get; }
-        
+
         /// <summary>
         /// The vertical distance over which the mouse is dragged.
         /// </summary>
