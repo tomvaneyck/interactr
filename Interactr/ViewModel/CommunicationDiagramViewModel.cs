@@ -1,4 +1,6 @@
-﻿using Interactr.Model;
+﻿using System.Linq;
+using Interactr.Model;
+using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
 {
