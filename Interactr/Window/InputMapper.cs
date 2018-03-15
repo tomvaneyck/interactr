@@ -61,7 +61,7 @@ namespace Interactr.Window
             };
             panel.MouseMove += (sender, args) =>
             {
-                if (_isMouseDown)
+                if (_isMouseDown && args.Location != _lastClickPos)
                 {
                     _isDragging = true;
                     OnMouseEvent?.Invoke(sender, new MouseEventItem(MouseEvent.MOUSE_DRAGGED, args.X, args.Y, 0));
