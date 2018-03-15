@@ -15,14 +15,16 @@ namespace Interactr.ViewModel
     /// and is responsible for interaction with the data objects from the model.</remarks>
     public class MainViewModel
     {
-        public CommunicationDiagramViewModel CommDiagramVM { get; } = new CommunicationDiagramViewModel();
-        public SequenceDiagramViewModel SeqDiagramVM { get; } = new SequenceDiagramViewModel();
-        public Diagram Diagram { get; }
+        public CommunicationDiagramViewModel CommDiagramVM { get; }
+        public SequenceDiagramViewModel SeqDiagramVM { get; }
 
         public MainViewModel(Diagram diagram)
         {
-            Diagram = diagram;
-            SeqDiagramVM.IsVisible = true;
+            CommDiagramVM = new CommunicationDiagramViewModel(diagram);
+            SeqDiagramVM = new SequenceDiagramViewModel(diagram)
+            {
+                IsVisible = true
+            };
         }
 
         /// <summary>

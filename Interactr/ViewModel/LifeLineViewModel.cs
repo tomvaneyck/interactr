@@ -8,5 +8,13 @@ namespace Interactr.ViewModel
 {
     public class LifeLineViewModel
     {
+        public MessageStackViewModel MessageStackVM { get; }
+        public PartyViewModel PartyVM { get; }
+
+        public LifeLineViewModel(MessageStackViewModel messageStackViewModel, PartyViewModel party)
+        {
+            MessageStackVM = messageStackViewModel;
+            PartyVM = party;
+        }
     }
 }

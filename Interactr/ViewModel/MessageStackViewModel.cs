@@ -14,16 +14,18 @@ namespace Interactr.ViewModel
 {
     public class MessageStackViewModel
     {
-        private readonly Diagram _diagram;
+        public Diagram Diagram { get; }
 
-        private ReactiveList<MessageViewModel> _messageViewModels;
+        public ReactiveList<MessageViewModel> MessageViewModels { get; }
 
-        private readonly ReactiveList<ActivationBarViewModel> _activationBars =
-            new ReactiveList<ActivationBarViewModel>();
+        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } = new ReactiveList<ActivationBarViewModel>();
 
         public MessageStackViewModel(Diagram diagram)
         {
-            _diagram = diagram;
+            Diagram = diagram;
+            
+            // Map Messages to MessageViewModels
+            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
 
             // When the diagram changes, recalculate layout.
             Observable.Merge(
@@ -32,32 +34,29 @@ namespace Interactr.ViewModel
                 diagram.Messages.ObserveEach(msg => msg.ReceiverChanged).Select(_ => Unit.Default),
                 diagram.Messages.ObserveEach(msg => msg.SenderChanged).Select(_ => Unit.Default)
             ).Subscribe(_ => CalculateLayout());
-
-            // Map Messages to MessageViewModels
-            _messageViewModels = _diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
         }
 
         private void CalculateLayout()
         {
-            _activationBars.Clear();
+            ActivationBars.Clear();
 
             // Handle the edge case where there are no messages.
-            if (_diagram.Messages.Count == 0)
+            if (Diagram.Messages.Count == 0)
             {
                 return;
             }
 
             // Iterate over messages, tick of message = index in list
-            for (int i = 0; i < _messageViewModels.Count; i++)
+            for (int i = 0; i < MessageViewModels.Count; i++)
             {
-                _messageViewModels[i].Tick = i;
+                MessageViewModels[i].Tick = i;
             }
 
             // Iterate over messages, maintain stack, create activation bar on pop.
             // Push = invocation message
             // Pop = result message
             Stack<(Party Party, int StartTick)> stack = new Stack<(Party Party, int Index)>();
-            foreach (MessageViewModel messageVM in _messageViewModels)
+            foreach (MessageViewModel messageVM in MessageViewModels)
             {
                 Message message = messageVM.Message;
 
@@ -67,14 +66,23 @@ namespace Interactr.ViewModel
                 }
                 else
                 {
-                    (Party party, int startTick) = stack.Pop();
-                    _activationBars.Add(new ActivationBarViewModel(message.Receiver, startTick, messageVM.Tick));
+                    (Party receivingParty, int startTick) = stack.Pop();
+                    if (receivingParty != messageVM.Receiver)
+                    {
+                        // Messages are not balanced, abort!!!
+                        return;
+                    }
+                    ActivationBars.Add(new ActivationBarViewModel(message.Receiver, startTick, messageVM.Tick));
                 }
             }
 
             // Add activation bar for initiator starting at tick 0, ending at last message tick.
-            _activationBars.Add(new ActivationBarViewModel(_messageViewModels[0].Message.Sender, 0,
-                _messageViewModels.Last().Tick));
+            ActivationBars.Add(new ActivationBarViewModel(MessageViewModels[0].Message.Sender, 0, MessageViewModels.Last().Tick));
+        }
+
+        public LifeLineViewModel CreateLifeLineForParty(PartyViewModel party)
+        {
+            return new LifeLineViewModel(this, party);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Interactr.Tests.View.Framework
     [TestFixture]
     public class UIElementTests : ReactiveTest
     {
+
         [Test]
         public void TestTreeStructure()
         {
@@ -33,7 +34,6 @@ namespace Interactr.Tests.View.Framework
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement();
 
-            Assert.IsNull(UIElement.FocusedElement);
             
             elem1.Focus();
             Assert.AreEqual(elem1, UIElement.FocusedElement);
