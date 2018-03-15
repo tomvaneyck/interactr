@@ -11,16 +11,23 @@ using Interactr.Window;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// A view for a life line in a sequence diagram view.
+    /// </summary>
     public class LifeLineView : UIElement
     {
         #region ViewModel
+
         private readonly ReactiveProperty<LifeLineViewModel> _viewModel = new ReactiveProperty<LifeLineViewModel>();
+
         public LifeLineViewModel ViewModel
         {
             get => _viewModel.Value;
             set => _viewModel.Value = value;
         }
+
         public IObservable<LifeLineViewModel> ViewModelChanged => _viewModel.Changed;
+
         #endregion
 
         public LifeLineView()
@@ -31,6 +38,7 @@ namespace Interactr.View
             ).Subscribe(_ => Repaint());
         }
 
+        /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
             if (eventData.Id == MouseEvent.MOUSE_CLICKED)
@@ -43,6 +51,7 @@ namespace Interactr.View
             return false;
         }
 
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             //Draw lines
@@ -54,7 +63,8 @@ namespace Interactr.View
             {
                 int barWidth = 12;
                 int tickHeight = 30;
-                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars.Where(bar => bar.Party == ViewModel.PartyVM.Party))
+                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars.Where(bar =>
+                    bar.Party == ViewModel.PartyVM.Party))
                 {
                     int x = middle - (barWidth / 2);
                     int y = (activationBarVM.StartTick) * tickHeight;

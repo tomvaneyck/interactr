@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Interactr.View.Controls
 {
     /// <summary>
-    /// This is a panel that enables some elements to be dragged around.
+    /// A panel that enables some elements to be dragged around.
     /// </summary>
     public class DragPanel : UIElement
     {
@@ -20,7 +20,7 @@ namespace Interactr.View.Controls
 
         public DragPanel()
         {
-            // Update layout when the width or height of this panel is changed.
+            // Update layout when the width or height is changed.
             Observable.Merge(
                 WidthChanged.Select(_ => Unit.Default),
                 HeightChanged.Select(_ => Unit.Default)
@@ -36,7 +36,8 @@ namespace Interactr.View.Controls
         /// <see cref="UIElement.OnMouseEvent(MouseEventData)"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (eventData.Id == MouseEvent.MOUSE_DRAGGED) {
+            if (eventData.Id == MouseEvent.MOUSE_DRAGGED)
+            {
                 MouseDragEventData dragEventData = new MouseDragEventData(
                     eventData.MousePosition.X - _previousCursorPosition.X,
                     eventData.MousePosition.Y - _previousCursorPosition.Y
@@ -45,10 +46,8 @@ namespace Interactr.View.Controls
                 _previousCursorPosition = eventData.MousePosition;
                 return true;
             }
-            else
-            {
-                return base.OnMouseEvent(eventData);
-            }
+
+            return base.OnMouseEvent(eventData);
         }
 
         /// <see cref="UIElement.OnMouseEventPreview(MouseEventData)"/>
@@ -58,6 +57,7 @@ namespace Interactr.View.Controls
             {
                 _previousCursorPosition = eventData.MousePosition;
             }
+
             return base.OnMouseEventPreview(eventData);
         }
 
@@ -75,8 +75,8 @@ namespace Interactr.View.Controls
             if (dragElement != null)
             {
                 Point newPosition = new Point(
-                    (int)(dragElement.Position.X + dragEventData.DeltaX),
-                    (int)(dragElement.Position.Y + dragEventData.DeltaY)
+                    (int) (dragElement.Position.X + dragEventData.DeltaX),
+                    (int) (dragElement.Position.Y + dragEventData.DeltaY)
                 );
 
                 if (IsValidPosition(dragElement, newPosition))

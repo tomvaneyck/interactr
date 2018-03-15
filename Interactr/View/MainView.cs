@@ -17,6 +17,9 @@ namespace Interactr.View
     /// </summary>
     public class MainView : AnchorPanel
     {
+        public CommunicationDiagramView CommDiagView { get; } = new CommunicationDiagramView();
+        public SequenceDiagramView SeqDiagView { get; } = new SequenceDiagramView();
+
         #region ViewModel
 
         private readonly ReactiveProperty<MainViewModel> _viewModel = new ReactiveProperty<MainViewModel>();
@@ -30,9 +33,6 @@ namespace Interactr.View
         public IObservable<MainViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
-
-        public CommunicationDiagramView CommDiagView { get; } = new CommunicationDiagramView();
-        public SequenceDiagramView SeqDiagView { get; } = new SequenceDiagramView();
 
         public MainView()
         {

@@ -16,23 +16,27 @@ namespace Interactr.View.Controls
     public class StackPanel : UIElement
     {
         #region StackOrientation
+
+        private readonly ReactiveProperty<Orientation> _stackOrientation = new ReactiveProperty<Orientation>();
+
         public Orientation StackOrientation
         {
             get => _stackOrientation.Value;
             set => _stackOrientation.Value = value;
         }
-        private readonly ReactiveProperty<Orientation> _stackOrientation = new ReactiveProperty<Orientation>();
+
         public IObservable<Orientation> StackOrientationChanged => _stackOrientation.Changed;
+
         #endregion
 
         public StackPanel()
         {
             // Set can be focused false.
             CanBeFocused = false;
-            
+
             // Update layout when the width, height or orientation of this panel changes.
             Observable.Merge(
-                WidthChanged.Select(_ => Unit.Default), 
+                WidthChanged.Select(_ => Unit.Default),
                 HeightChanged.Select(_ => Unit.Default),
                 StackOrientationChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => UpdateLayout());

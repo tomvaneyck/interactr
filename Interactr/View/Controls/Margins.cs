@@ -12,10 +12,10 @@
 
         public Margins(int left = 0, int top = 0, int right = 0, int bottom = 0)
         {
-            this.Left = left;
-            this.Top = top;
-            this.Right = right;
-            this.Bottom = bottom;
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
         }
 
         public static bool operator !=(Margins m1, Margins m2)
@@ -42,7 +42,7 @@
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
-            Margins m = (Margins)obj;
+            Margins m = (Margins) obj;
             return this == m;
         }
 
