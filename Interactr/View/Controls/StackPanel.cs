@@ -47,7 +47,7 @@ namespace Interactr.View.Controls
                 Children.ObserveEach(child => child.PreferredWidthChanged)
             ).Subscribe(p => UpdateLayout());
 
-            // Update the positions of the children when a child is removed.
+            // Update the positions of the children when a child is added or removed.
             Observable.Merge(
                 Children.OnDelete,
                 Children.OnAdd
