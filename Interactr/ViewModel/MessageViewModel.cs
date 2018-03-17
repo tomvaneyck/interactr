@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
 using Interactr.Model;
 using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
     /// <summary>
-    /// The ViewModel for MessageView.
+    /// The view model for MessageView.
     /// </summary>
     public class MessageViewModel
     {
@@ -42,6 +36,9 @@ namespace Interactr.ViewModel
             private set => _sender.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new sender when the sender changes.
+        /// </summary>
         public IObservable<Party> SenderChanged => _sender.Changed;
 
         #endregion
@@ -63,6 +60,9 @@ namespace Interactr.ViewModel
             private set => _receiver.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new receiver when the receiver changes.
+        /// </summary>       
         public IObservable<Party> ReceiverChanged => _receiver.Changed;
 
         #endregion
@@ -84,6 +84,9 @@ namespace Interactr.ViewModel
             private set => _label.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new label when the label changes.
+        /// </summary>
         public IObservable<string> LabelChanged => _label.Changed;
 
         #endregion
@@ -99,8 +102,6 @@ namespace Interactr.ViewModel
         public Message.MessageType MessageType => Message.Type;
 
         #endregion
-
-        //TODO reference to activation bars
 
         public MessageViewModel(Message message, int tick)
         {

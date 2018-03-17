@@ -12,20 +12,35 @@ using Message = Interactr.Model.Message;
 
 namespace Interactr.ViewModel
 {
+    /// <summary>
+    /// The message stack view model.
+    /// </summary>
     public class MessageStackViewModel
     {
-        public Diagram Diagram { get; }
 
+        /// <summary>
+        /// A direct reference to the messages in the model.
+        /// </summary>
+        public ReactiveList<Message> Messages { get; }
+
+        /// <summary>
+        /// message view models that map to the messages in the diagram.
+        /// The index of the message view model in the list is equal to the tick of the message view model.
+        /// </summary>
         public ReactiveList<MessageViewModel> MessageViewModels { get; }
 
-        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } = new ReactiveList<ActivationBarViewModel>();
+        /// <summary>
+        /// The activation bar view models.
+        /// </summary>
+        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } =
+            new ReactiveList<ActivationBarViewModel>();
 
         public MessageStackViewModel(Diagram diagram)
         {
-            Diagram = diagram;
-            
+            Messages = diagram.Messages;
+
             // Map Messages to MessageViewModels
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
+            MessageViewModels = diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg, 0)).ResultList;
 
             // When the diagram changes, recalculate layout.
             Observable.Merge(
@@ -36,12 +51,15 @@ namespace Interactr.ViewModel
             ).Subscribe(_ => CalculateLayout());
         }
 
+        /// <summary>
+        /// Recalculate the layout of the messages and activation bars in the messageStack view model.
+        /// </summary>
         private void CalculateLayout()
         {
             ActivationBars.Clear();
 
             // Handle the edge case where there are no messages.
-            if (Diagram.Messages.Count == 0)
+            if (MessageViewModels.Count == 0)
             {
                 return;
             }
@@ -72,14 +90,21 @@ namespace Interactr.ViewModel
                         // Messages are not balanced, abort!!!
                         return;
                     }
+
                     ActivationBars.Add(new ActivationBarViewModel(message.Receiver, startTick, messageVM.Tick));
                 }
             }
 
             // Add activation bar for initiator starting at tick 0, ending at last message tick.
-            ActivationBars.Add(new ActivationBarViewModel(MessageViewModels[0].Message.Sender, 0, MessageViewModels.Last().Tick));
+            ActivationBars.Add(new ActivationBarViewModel(MessageViewModels[0].Message.Sender, 0,
+                MessageViewModels.Last().Tick));
         }
 
+        /// <summary>
+        /// Create the lifeline view model for a specific party.
+        /// </summary>
+        /// <param name="party"> The party to create a lifeline for.</param>
+        /// <returns></returns>
         public LifeLineViewModel CreateLifeLineForParty(PartyViewModel party)
         {
             return new LifeLineViewModel(this, party);
