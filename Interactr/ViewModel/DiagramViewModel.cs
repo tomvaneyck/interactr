@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
-using Interactr.View.Controls;
 using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
@@ -21,18 +19,31 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<bool> _isVisible = new ReactiveProperty<bool>();
 
+        /// <summary>
+        /// Indicate if the diagramModel is visible.
+        /// </summary>
         public bool IsVisible
         {
             get => _isVisible.Value;
             set => _isVisible.Value = value;
         }
 
+        /// <summary>
+        /// Observable that emits the new IsVisible value when it is changed.
+        /// </summary>
         public IObservable<bool> IsVisibleChanged => _isVisible.Changed;
 
         #endregion
 
+        /// <summary>
+        /// The underlying diagram associated with the diagram view model.
+        /// </summary>
+        /// <remarks>The underlying diagram can not be changed after the diagramViewModel construction.</remarks>
         public Diagram Diagram { get; }
 
+        /// <summary>
+        /// The partyViewModels included in this diagram view model.
+        /// </summary>
         public ReactiveList<PartyViewModel> PartyViewModels { get; }
 
         protected DiagramViewModel(Diagram diagram)
