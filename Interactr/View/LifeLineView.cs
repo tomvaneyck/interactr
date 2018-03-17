@@ -43,10 +43,8 @@ namespace Interactr.View
         {
             if (eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
-                ViewModel?.MessageStackVM.Diagram.Messages.Add(new Message(ViewModel.PartyVM.Party, null,
-                    Message.MessageType.Invocation, "Invocation"));
-                ViewModel?.MessageStackVM.Diagram.Messages.Add(new Message(ViewModel.PartyVM.Party, null,
-                    Message.MessageType.Result, "Result"));
+                ViewModel?.MessageStackVM.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Invocation, "Invocation"));
+                ViewModel?.MessageStackVM.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Result, "Result"));
                 return true;
             }
 
