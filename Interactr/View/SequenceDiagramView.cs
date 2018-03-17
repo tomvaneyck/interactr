@@ -58,6 +58,23 @@ namespace Interactr.View
             columnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
             columnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
         }
+
+        /// <see cref="OnMouseEvent"/>
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            // Add a new party on double click
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                Debug.WriteLine("Add Party.");
+                //Add a new Party.
+                ViewModel.AddParty(e.MousePosition);
+                return true;
+            }
+            else
+            {
+                return base.OnMouseEvent(e);
+            }
+        }
     }
 
     /// <summary>
