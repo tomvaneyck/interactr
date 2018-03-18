@@ -90,8 +90,8 @@ namespace Interactr.View
             {
                 PartyView partyView = (PartyView) FocusedElement.Parent;
 
-                // Delete the party from the model. This change is
-                // automatically propagated to the view.
+                // Delete the party from the model. This automatically
+                // propagates to the view.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
 
                 return true;
