@@ -195,29 +195,27 @@ namespace Interactr.View.Controls
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
-            if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
+            if (IsInEditMode)
             {
-                if (eventData.Id == KeyEvent.KEY_RELEASED && CanLeaveEditMode)
+                if (eventData.Id == KeyEvent.KEY_RELEASED && eventData.KeyCode == KeyEvent.VK_ESCAPE && CanLeaveEditMode)
                 {
                     IsInEditMode = false;
                 }
-
-                return true;
-            }
-            else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
-            {
-                // If the keyChar is backspace.
-                if (eventData.KeyChar == '\b')
+                else if (eventData.Id == KeyEvent.KEY_TYPED)
                 {
-                    if (Text.Length > 0)
+                    // If the keyChar is backspace.
+                    if (eventData.KeyChar == '\b')
                     {
-                        Text = Text.Substring(0, Text.Length - 1);
+                        if (Text.Length > 0)
+                        {
+                            Text = Text.Substring(0, Text.Length - 1);
+                        }
                     }
-                }
-                // If Keychar is not escape.
-                else if (eventData.KeyChar != '\x1b')
-                {
-                    Text += eventData.KeyChar;
+                    // If Keychar is not escape.
+                    else if (eventData.KeyChar != '\x1b')
+                    {
+                        Text += eventData.KeyChar;
+                    }
                 }
 
                 return true;
