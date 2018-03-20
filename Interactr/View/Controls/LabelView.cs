@@ -197,7 +197,9 @@ namespace Interactr.View.Controls
         {
             if (IsInEditMode)
             {
-                if (eventData.Id == KeyEvent.KEY_RELEASED && eventData.KeyCode == KeyEvent.VK_ESCAPE && CanLeaveEditMode)
+                if (eventData.Id == KeyEvent.KEY_RELEASED &&
+                    eventData.KeyCode == KeyEvent.VK_ESCAPE &&
+                    CanLeaveEditMode)
                 {
                     IsInEditMode = false;
                 }
