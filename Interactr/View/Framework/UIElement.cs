@@ -28,7 +28,7 @@ namespace Interactr.View.Framework
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
-        public ReactiveList<UIElement> Children { get; } = new ReactiveList<UIElement>();
+        public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
 
         /// <summary>
         /// The parent element of this element in the view-tree.
