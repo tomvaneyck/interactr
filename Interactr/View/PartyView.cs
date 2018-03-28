@@ -123,7 +123,7 @@ namespace Interactr.View
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
                 Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();

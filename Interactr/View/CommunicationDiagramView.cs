@@ -63,7 +63,7 @@ namespace Interactr.View
         protected override bool OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
                 Debug.WriteLine("Add Party.");
                 //Add a new Party.
