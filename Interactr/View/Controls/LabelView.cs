@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Interactr.Reactive;
@@ -214,7 +215,7 @@ namespace Interactr.View.Controls
                         }
                     }
                     // If Keychar is not escape.
-                    else if (eventData.KeyChar != '\x1b')
+                    else if (char.IsLetterOrDigit(eventData.KeyChar))
                     {
                         Text += eventData.KeyChar;
                     }
