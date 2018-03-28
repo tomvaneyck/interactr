@@ -10,8 +10,8 @@ namespace Interactr.Model
     {
         public Diagram()
         {
-            Messages = new ReactiveList<Message>();
-            Parties = new ReactiveList<Party>();
+            Messages = new ReactiveArrayList<Message>();
+            Parties = new ReactiveArrayList<Party>();
         }
 
         /// <summary>

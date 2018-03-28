@@ -27,13 +27,12 @@ namespace Interactr.ViewModel
         /// message view models that map to the messages in the diagram.
         /// The index of the message view model in the list is equal to the tick of the message view model.
         /// </summary>
-        public ReactiveList<MessageViewModel> MessageViewModels { get; }
+        public IReadOnlyReactiveList<MessageViewModel> MessageViewModels { get; }
 
         /// <summary>
         /// The activation bar view models.
         /// </summary>
-        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } =
-            new ReactiveList<ActivationBarViewModel>();
+        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } = new ReactiveArrayList<ActivationBarViewModel>();
 
         public MessageStackViewModel(Diagram diagram)
         {

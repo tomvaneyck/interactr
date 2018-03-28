@@ -48,7 +48,7 @@ namespace Interactr.View
             Children.Add(stackPanel);
 
             // Create a list of party views based on the party viewmodel.
-            ReactiveList<SequenceDiagramColumnView> columnViews = ViewModelChanged
+            IReadOnlyReactiveList<SequenceDiagramColumnView> columnViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(partyVM => new SequenceDiagramColumnView(this, partyVM))
