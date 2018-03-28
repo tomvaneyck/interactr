@@ -44,7 +44,7 @@ namespace Interactr.ViewModel
         /// <summary>
         /// The partyViewModels included in this diagram view model.
         /// </summary>
-        public ReactiveList<PartyViewModel> PartyViewModels { get; }
+        public IReadOnlyReactiveList<PartyViewModel> PartyViewModels { get; }
 
         protected DiagramViewModel(Diagram diagram)
         {

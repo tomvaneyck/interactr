@@ -71,6 +71,8 @@
     <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Party.cs" />
+    <Compile Include="Reactive\IReadOnlyReactiveList.cs" />
+    <Compile Include="Reactive\ReactiveArrayList.cs" />
     <Compile Include="Reactive\ReactiveDictionary.cs" />
     <Compile Include="Reactive\ReactiveExtensions.cs" />
     <Compile Include="Reactive\ReactiveList.cs" />
