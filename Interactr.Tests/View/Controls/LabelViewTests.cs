@@ -25,7 +25,8 @@ namespace Interactr.Tests.View.Controls
         [Category("RequiresUI")]
         public void EscKeyFunctionalityEvent()
         {
-            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
+                KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
 
@@ -42,27 +43,29 @@ namespace Interactr.Tests.View.Controls
         [Category("RequiresUI")]
         public void EscKeyFunctionalityNoEvent()
         {
-            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, -1, '\x1b');
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
+                -1, '\x1b');
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
             bool result = _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsFalse(result);
+            Assert.IsTrue(result);
 
             // Check if expected ESC action occurred.
             Assert.IsTrue(_labelView.IsInEditMode);
         }
 
         [Test]
-        public void EscKeyFunctionalityNotInEnterEditMode()
+        public void EscKeyFunctionalityNotInEditMode()
         {
-            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
+                KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
             bool result = _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsFalse(result);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);

@@ -37,7 +37,7 @@ namespace Interactr.View.Controls
         /// <see cref="UIElement.OnMouseEvent(MouseEventData)"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (eventData.Id == MouseEvent.MOUSE_DRAGGED)
+            if (eventData.Id == MouseEvent.MOUSE_DRAGGED && FocusedElement.CanLoseFocus)
             {
                 MouseDragEventData dragEventData = new MouseDragEventData(
                     eventData.MousePosition.X - _previousCursorPosition.X,
@@ -71,6 +71,7 @@ namespace Interactr.View.Controls
         /// <param name="dragEventData">The drag data.</param>
         private void ApplyDragToFocusedElement(MouseDragEventData dragEventData)
         {
+            // Only drag the direct descendents of this DragPanel.
             UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
 
             if (dragElement != null)
