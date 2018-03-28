@@ -41,7 +41,7 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            ReactiveList<PartyView> partyViews = ViewModelChanged
+            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
