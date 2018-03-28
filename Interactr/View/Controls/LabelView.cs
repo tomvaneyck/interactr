@@ -215,7 +215,7 @@ namespace Interactr.View.Controls
                         }
                     }
                     // If Keychar is not escape.
-                    else if (char.IsLetterOrDigit(eventData.KeyChar))
+                    else if (char.IsLetterOrDigit(eventData.KeyChar) || eventData.KeyChar == '\x3A')
                     {
                         Text += eventData.KeyChar;
                     }
