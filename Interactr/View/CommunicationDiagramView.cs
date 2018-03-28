@@ -75,5 +75,29 @@ namespace Interactr.View
                 return base.OnMouseEvent(e);
             }
         }
+
+        /// <see cref="OnKeyEvent"/>
+        protected override bool OnKeyEvent(KeyEventData eventData)
+        {
+            // Delete party.
+            // The commented check is an extra safety, but not yet possible due
+            // to the need of a recursive search.
+            if (eventData.Id == KeyEvent.KEY_RELEASED && 
+                eventData.KeyCode == 46 &&
+                /*Children.Contains(FocusedElement) &&*/
+                FocusedElement.GetType() == typeof(LabelView)
+            )
+            {
+                PartyView partyView = (PartyView) FocusedElement.Parent;
+
+                // Delete the party from the model. This automatically
+                // propagates to the view.
+                ViewModel.DeleteParty(partyView.ViewModel.Party);
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

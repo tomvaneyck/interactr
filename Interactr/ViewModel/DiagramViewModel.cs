@@ -52,5 +52,23 @@ namespace Interactr.ViewModel
             PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(party)).ResultList;
         }
 
+        /// <summary>
+        /// Add a new party at the specified point. 
+        /// </summary>
+        /// <param name="point"> The point on the screen where the party is added.</param>
+        public void AddParty(Point point)
+        {
+            Party party = new Party(Party.PartyType.Actor, ValidLabel);
+            Diagram.Parties.Add(party);
+            PartyViewModels.First(vm => vm.Party == party).Position = point;
+        }
+
+        /// <summary>
+        /// Delete the given party.
+        /// </summary>
+        public void DeleteParty(Party party)
+        {
+            Diagram.Parties.Remove(party);
+        }
     }
 }
