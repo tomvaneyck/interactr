@@ -54,6 +54,20 @@ namespace Interactr.View
                 .CreateDerivedListBinding(partyVM => new SequenceDiagramColumnView(this, partyVM))
                 .ResultList;
 
+            // Create a list of party views based on the party viewmodel.
+            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.PartyViewModels)
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
+                .ResultList;
+
+            // Automatically enter label editing mode when adding a party
+            partyViews.OnAdd.Subscribe(elem =>
+            {
+                elem.Element.LabelView.IsInEditMode = true;
+                elem.Element.LabelView.Focus();
+            });
+
             // Automatically add and remove party views to Children.
             columnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
             columnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
@@ -75,7 +89,7 @@ namespace Interactr.View
             {
                 ViewModel = partyVM
             };
-            
+
             AnchorsProperty.SetValue(_partyView, Anchors.Left | Anchors.Top | Anchors.Right);
             Children.Add(_partyView);
 
@@ -83,7 +97,7 @@ namespace Interactr.View
             _lifeLineView = new LifeLineView();
             MarginsProperty.SetValue(_lifeLineView, new Margins(0, _partyView.PreferredHeight, 0, 0));
             Children.Add(_lifeLineView);
-            
+
             // Setup subscriptions.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => _lifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
