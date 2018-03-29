@@ -131,20 +131,29 @@ namespace Interactr.View.Controls
 
             // Draw arrowhead triangle.
             float radius = ArrowHeadSize;
-            float wingAngle = (float)(Math.PI / 4d);
+            float wingAngle = (float)(Math.PI / 4d); // Angle between line and arrow wings.
 
-            float xDiff = EndPoint.X - StartPoint.X;
-            float yDiff = EndPoint.Y - StartPoint.Y;
+            float xDiff = EndPoint.X - StartPoint.X; // Length of line projected on X-axis.
+            float yDiff = EndPoint.Y - StartPoint.Y; // Length of line projected on Y-axis.
+
+            // Angle between x-axis and line.
             float arrowAngle = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
-
+            
+            // If line has length 0, assume an angle of 0.
             arrowAngle = float.IsNaN(arrowAngle) ? 0 : arrowAngle;
 
+            // Find points to use for drawing the wings of the arrow.
+            // The wings will be drawn from EndPoint to each of these points.
+            
+            // Calculate point 1
             int x1 = (int)Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y1 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
+            // Calculate point 2, on the other side of the line.
             int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
+            // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
             g.FillPolygon(new SolidBrush(Color), new []
             {
                 new System.Drawing.Point(EndPoint.X, EndPoint.Y),
