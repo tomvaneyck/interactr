@@ -86,6 +86,14 @@ namespace Interactr.View.Controls
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
+            // Fill rectangle with BackgroundColor.
+            g.FillRectangle(
+                new SolidBrush(BackgroundColor),
+                0, 0,
+                Width, Height
+            );
+
+            // Draw border.
             g.DrawRectangle(
                 new Pen(BorderColor, BorderWidth),
                 BorderWidth / 2, BorderWidth / 2,
