@@ -89,6 +89,7 @@
     <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
+    <Compile Include="View\Controls\ArrowView.cs" />
     <Compile Include="View\LifeLineView.cs" />
     <Compile Include="View\Controls\DragPanel.cs" />
     <Compile Include="View\Controls\Margins.cs" />
