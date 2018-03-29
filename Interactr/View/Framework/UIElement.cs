@@ -176,6 +176,8 @@ namespace Interactr.View.Framework
         {
             this.IsVisible = true;
 
+            //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
+            //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
             AbsolutePositionChanged = Observable.Merge(
                 PositionChanged,
                 ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
