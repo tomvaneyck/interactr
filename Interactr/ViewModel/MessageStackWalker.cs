@@ -33,8 +33,8 @@ namespace Interactr.ViewModel
             stack.Push(new Frame(messages[0].Message.Sender));
 
             // Iterate over messages and maintain call stack.
-            // Push = invocation message, push invocation on stack
-            // Pop = result message, pop invocation from stack
+            // An invocation message pushes a new frame on the stack
+            // A return message pops the current frame from the stack.
             foreach (MessageViewModel messageVM in messages)
             {
                 if (messageVM.MessageType == Message.MessageType.Invocation)
@@ -116,7 +116,7 @@ namespace Interactr.ViewModel
             public int StartTick => InvocationMessage?.Tick ?? SubFrames.FirstOrDefault()?.InvocationMessage.Tick ?? 0;
 
             /// <summary>
-            /// The tich at which Party stops being active for this frame.
+            /// The tick at which Party stops being active for this frame.
             /// </summary>
             public int EndTick => ReturnMessage?.Tick ?? SubFrames.LastOrDefault()?.ReturnMessage.Tick ?? StartTick;
 
