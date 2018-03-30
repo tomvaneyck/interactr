@@ -42,6 +42,9 @@ namespace Interactr.ViewModel
                     Frame subFrame = new Frame(messageVM);
 
                     // Add the new frame to the list of sub-frames on the current activation.
+                    // This list is useful because each frame is handled when it is popped from the stack,
+                    // and at that moment, its subframes have already been popped previously. 
+                    // If we didn't keep a seperate list, the subframes would be lost.
                     stack.Peek().SubFrames.Add(subFrame);
 
                     // Push the new frame on the call stack.
