@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Interactr.Constants;
@@ -215,7 +216,7 @@ namespace Interactr.View.Controls
                         }
                     }
                     // If Keychar is not escape.
-                    else if (eventData.KeyChar != HexaDecimalKeyChars.Escape)
+                    else if (char.IsLetterOrDigit(eventData.KeyChar) || eventData.KeyChar == HexaDecimalKeyChars.Colon)
                     {
                         Text += eventData.KeyChar;
                     }
