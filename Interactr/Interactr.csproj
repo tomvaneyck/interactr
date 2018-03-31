@@ -83,6 +83,7 @@
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MessageStackViewModel.cs" />
+    <Compile Include="ViewModel\MessageStackWalker.cs" />
     <Compile Include="ViewModel\MessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
