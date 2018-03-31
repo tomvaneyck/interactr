@@ -88,7 +88,6 @@ namespace Interactr.View
         }
     }
 
-
     /// <summary>
     /// The view for the sequence diagram column view.
     /// </summary>
