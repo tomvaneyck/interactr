@@ -84,6 +84,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MessageStackViewModel.cs" />
     <Compile Include="ViewModel\MessageStackWalker.cs" />
+    <Compile Include="ViewModel\PendingMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\ActivationBarView.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="View\Controls\RectangleView.cs" />
     <Compile Include="View\MainView.cs" />
     <Compile Include="View\PartyView.cs" />
+    <Compile Include="View\SequenceDiagramColumnView.cs" />
     <Compile Include="View\SequenceDiagramMessageView.cs" />
     <Compile Include="View\SequenceDiagramView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
