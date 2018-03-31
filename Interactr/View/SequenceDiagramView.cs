@@ -68,7 +68,26 @@ namespace Interactr.View
                 return base.OnMouseEvent(e);
             }
         }
+
+        /// <see cref="OnKeyEvent"/>
+        protected override bool OnKeyEvent(KeyEventData eventData)
+        {
+            if (eventData.Id == KeyEvent.KEY_RELEASED &&
+                eventData.KeyCode == 46 &&
+                FocusedElement.GetType() == typeof(LabelView)
+            )
+            {
+                // Delete party.
+                PartyView partyView = (PartyView) FocusedElement.Parent;
+                ViewModel.DeleteParty(partyView.ViewModel.Party);
+
+                return true;
+            }
+
+            return false;
+        }
     }
+
 
     /// <summary>
     /// The view for the sequence diagram column view.
@@ -85,7 +104,7 @@ namespace Interactr.View
             {
                 ViewModel = partyVM
             };
-            
+
             AnchorsProperty.SetValue(_partyView, Anchors.Left | Anchors.Top | Anchors.Right);
             Children.Add(_partyView);
 
@@ -93,7 +112,7 @@ namespace Interactr.View
             _lifeLineView = new LifeLineView();
             MarginsProperty.SetValue(_lifeLineView, new Margins(0, _partyView.PreferredHeight, 0, 0));
             Children.Add(_lifeLineView);
-            
+
             // Setup subscriptions.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => _lifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
