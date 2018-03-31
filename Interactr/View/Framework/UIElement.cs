@@ -29,12 +29,25 @@ namespace Interactr.View.Framework
         /// The child-elements of this element in the view-tree.
         /// </summary>
         public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
+        
+        #region Parent
+
+        private readonly ReactiveProperty<UIElement> _parent = new ReactiveProperty<UIElement>();
 
         /// <summary>
         /// The parent element of this element in the view-tree.
+        /// This property is set automatically when the element is added to another elements Children.
         /// </summary>
-        public UIElement Parent { get; private set; }
+        public UIElement Parent
+        {
+            get => _parent.Value;
+            private set => _parent.Value = value;
+        }
 
+        public IObservable<UIElement> ParentChanged => _parent.Changed;
+
+        #endregion
+        
         /// <summary>
         /// The properties that are attached to this element.
         /// </summary>
@@ -57,6 +70,8 @@ namespace Interactr.View.Framework
         public IObservable<Point> PositionChanged => _position.Changed;
 
         #endregion
+
+        public IObservable<Point> AbsolutePositionChanged { get; }
 
         #region Width
 
@@ -145,7 +160,7 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        #region Event observables
+        #region Input event observables
 
         private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
         public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
@@ -160,6 +175,13 @@ namespace Interactr.View.Framework
         public UIElement()
         {
             this.IsVisible = true;
+
+            //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
+            //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
+            AbsolutePositionChanged = Observable.Merge(
+                PositionChanged,
+                ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
+            ).Select(_ => GetPositionRelativeToRoot()).DistinctUntilChanged();
 
             this.PositionChanged.Subscribe(_ => Repaint());
             this.WidthChanged.Subscribe(_ => Repaint());
@@ -489,9 +511,9 @@ namespace Interactr.View.Framework
         /// <returns>Transformed point</returns>
         public Point TranslatePointTo(UIElement e, Point p)
         {
-            Point pRoot = RelativeToRoot(p);
+            Point pRoot = GetPositionRelativeToRoot(p);
 
-            Point uiElementPosition = e.RelativeToRoot();
+            Point uiElementPosition = e.GetPositionRelativeToRoot();
 
             return new Point(
                 pRoot.X - uiElementPosition.X,
@@ -527,7 +549,7 @@ namespace Interactr.View.Framework
         /// Return coördinates relative to the root of this UIElement.
         /// </summary>
         /// <returns>Given point relative to the root.</returns>
-        private Point RelativeToRoot(Point p = default(Point))
+        private Point GetPositionRelativeToRoot(Point p = default(Point))
         {
             return WalkToRoot().Select(c => c.Position).Aggregate((p1, p2) => p1 + p2) + p;
         }

@@ -83,12 +83,14 @@
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MessageStackViewModel.cs" />
+    <Compile Include="ViewModel\MessageStackWalker.cs" />
     <Compile Include="ViewModel\MessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
     <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
+    <Compile Include="View\Controls\ArrowView.cs" />
     <Compile Include="View\LifeLineView.cs" />
     <Compile Include="View\Controls\DragPanel.cs" />
     <Compile Include="View\Controls\Margins.cs" />

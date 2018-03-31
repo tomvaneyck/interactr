@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -71,6 +65,22 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             columnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
             columnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
+        }
+
+        /// <see cref="OnMouseEvent"/>
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            // Add a new party on double click
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                //Add a new Party.
+                ViewModel.AddParty(e.MousePosition);
+                return true;
+            }
+            else
+            {
+                return base.OnMouseEvent(e);
+            }
         }
     }
 
