@@ -18,7 +18,7 @@ namespace Interactr.ViewModel
         /// Because stack frames are returned when they are popped, the deepest frames are returned first.
         /// </remarks>
         /// <param name="messages">The messages to build a stack with.</param>
-        public static IEnumerable<Frame> Walk(IReadOnlyList<MessageViewModel> messages)
+        public static IEnumerable<Frame> Walk(IReadOnlyList<SequenceDiagramMessageViewModel> messages)
         {
             // Handle edge case where there are no messages.
             if (messages.Count == 0)
@@ -35,7 +35,7 @@ namespace Interactr.ViewModel
             // Iterate over messages and maintain call stack.
             // An invocation message pushes a new frame on the stack
             // A return message pops the current frame from the stack.
-            foreach (MessageViewModel messageVM in messages)
+            foreach (var messageVM in messages)
             {
                 if (messageVM.MessageType == Message.MessageType.Invocation)
                 {
@@ -101,12 +101,12 @@ namespace Interactr.ViewModel
             /// <summary>
             /// The message that started this frame. Can be null for the initiator.
             /// </summary>
-            public MessageViewModel InvocationMessage { get; }
+            public SequenceDiagramMessageViewModel InvocationMessage { get; }
 
             /// <summary>
             /// The message that ended this frame. Can be null for the initiator.
             /// </summary>
-            public MessageViewModel ReturnMessage { get; set; }
+            public SequenceDiagramMessageViewModel ReturnMessage { get; set; }
 
             /// <summary>
             /// The list sub-frames that were invoked from this frame.
@@ -128,7 +128,7 @@ namespace Interactr.ViewModel
                 Party = party;
             }
 
-            public Frame(MessageViewModel invocationMessage)
+            public Frame(SequenceDiagramMessageViewModel invocationMessage)
             {
                 InvocationMessage = invocationMessage;
                 Party = invocationMessage.Message.Receiver;
