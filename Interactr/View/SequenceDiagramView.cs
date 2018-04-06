@@ -55,13 +55,6 @@ namespace Interactr.View
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
-            // Automatically enter label editing mode when adding a party
-            partyViews.OnAdd.Subscribe(elem =>
-            {
-                elem.Element.LabelView.IsInEditMode = true;
-                elem.Element.LabelView.Focus();
-            });
-
             // Automatically add and remove party views to Children.
             columnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
             columnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
@@ -111,6 +104,16 @@ namespace Interactr.View
             // Setup subscriptions.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => _lifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
+
+            IsVisible = parent.IsVisible;
+            parent.IsVisibleChanged.Subscribe(isVisible => IsVisible = isVisible);
+
+            // Enter label editing mode if isvisible.
+            if (IsVisible)
+            {
+                _partyView.LabelView.IsInEditMode = true;
+                _partyView.LabelView.Focus();
+            }
         }
     }
 }

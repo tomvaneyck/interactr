@@ -50,8 +50,11 @@ namespace Interactr.View
             // Automatically enter label editing mode when adding a party
             partyViews.OnAdd.Subscribe(elem =>
             {
-                elem.Element.LabelView.IsInEditMode = true;
-                elem.Element.LabelView.Focus();
+                if (IsVisible)
+                {
+                    elem.Element.LabelView.IsInEditMode = true;
+                    elem.Element.LabelView.Focus();
+                }
             });
 
             // Automatically add and remove party views to Children.
