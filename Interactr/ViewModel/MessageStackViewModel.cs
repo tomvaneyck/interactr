@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.ViewModel.MessageStack;
 using Message = Interactr.Model.Message;
 
 namespace Interactr.ViewModel
@@ -84,7 +85,7 @@ namespace Interactr.ViewModel
             try
             {
                 // For every stack frame, create a new activation bar
-                foreach (MessageStackWalker.Frame frame in MessageStackWalker.Walk(MessageViewModels))
+                foreach (StackFrame frame in MessageStackWalker.Walk(MessageViewModels))
                 {
                     // This activation bar starts when the party is invoked, 
                     // or on the first sub-invocation in case of the initiator.
@@ -120,7 +121,7 @@ namespace Interactr.ViewModel
                 newBars.Reverse(); // Fix for correct drawing order of activation bar.
                 ActivationBars.AddRange(newBars);
             }
-            catch (MessageStackWalker.UnbalancedStackException ex)
+            catch (UnbalancedStackException ex)
             {
                 // The message stack is in an invalid state, dont update UI.
             }
@@ -155,7 +156,7 @@ namespace Interactr.ViewModel
             }
 
             // Get the frame on the top of the stack at suggestedTick
-            var stackFrame = MessageStackWalker.Walk(MessageViewModels)
+            var stackFrame = MessageStack.MessageStackWalker.Walk(MessageViewModels)
                 .FirstOrDefault(f => f.StartTick < suggestedTick && suggestedTick <= f.EndTick);
 
             // If sender is not on the top of the message stack at suggestedTick, then don't create a new message. 
