@@ -17,9 +17,8 @@ namespace Interactr.View
     /// </summary>
     public class MainView : AnchorPanel
     {
-        public CommunicationDiagramView CommDiagView { get; } = new CommunicationDiagramView();
-        public SequenceDiagramView SeqDiagView { get; } = new SequenceDiagramView();
-
+        public WindowsView Windows { get; } = new WindowsView();
+        
         #region ViewModel
 
         private readonly ReactiveProperty<MainViewModel> _viewModel = new ReactiveProperty<MainViewModel>();
@@ -36,28 +35,17 @@ namespace Interactr.View
 
         public MainView()
         {
-            ViewModelChanged.Subscribe(viewModel =>
-            {
-                //Retrieve the viewmodels for the child views from this elements viewmodel
-                CommDiagView.ViewModel = viewModel?.CommDiagramVM;
-                SeqDiagView.ViewModel = viewModel?.SeqDiagramVM;
-            });
+            var diagramEditors = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.Diagrams)
+                .CreateDerivedListBinding(diagramVm => new DiagramEditorView {ViewModel = diagramVm})
+                .ResultList;
 
             //Add the views to the view tree.
-            this.Children.Add(CommDiagView);
-            this.Children.Add(SeqDiagView);
-        }
+            diagramEditors.OnAdd.Subscribe(e => Windows.Children.Add(new WindowsView.Window(e.Element)));
+            diagramEditors.OnDelete.Subscribe(e => Windows.Children.Remove(Windows.Children.OfType<WindowsView.Window>().First(w => w.InnerElement == e.Element)));
 
-        /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData e)
-        {
-            if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)
-            {
-                ViewModel?.SwitchViews();
-                return true;
-            }
-
-            return false;
+            this.Children.Add(Windows);
         }
     }
 }

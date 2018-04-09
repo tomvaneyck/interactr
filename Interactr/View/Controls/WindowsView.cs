@@ -1,0 +1,105 @@
+﻿using System;
+using System.Drawing;
+using Interactr.Reactive;
+using Interactr.View.Framework;
+
+namespace Interactr.View.Controls
+{
+    public class WindowsView : DragPanel
+    {
+        #region BackgroundColor
+
+        private readonly ReactiveProperty<Color> _backgroundColor = new ReactiveProperty<Color>();
+
+        /// <summary>
+        /// The color that is used to fill the background of the rectangle.
+        /// </summary>
+        public Color BackgroundColor
+        {
+            get => _backgroundColor.Value;
+            set => _backgroundColor.Value = value;
+        }
+
+        public IObservable<Color> BackgroundColorChanged => _backgroundColor.Changed;
+
+        #endregion
+        
+        public WindowsView()
+        {
+            BackgroundColor = Color.FromArgb(0x33, 0x33, 0x33);
+        }
+
+        public override void PaintElement(Graphics g)
+        {
+            using (Brush brush = new SolidBrush(BackgroundColor))
+            {
+                g.FillRectangle(brush, 0, 0, Width, Height);
+            }
+        }
+
+        public class Window : AnchorPanel
+        {
+            #region Title
+
+            private readonly ReactiveProperty<String> _title = new ReactiveProperty<String>();
+            
+            public String Title
+            {
+                get => _title.Value;
+                set => _title.Value = value;
+            }
+
+            public IObservable<String> TitleChanged => _title.Changed;
+
+            #endregion
+            
+            public UIElement InnerElement { get; }
+
+            public Window(UIElement innerElement)
+            {
+                Title = "New Window";
+                TitleChanged.Subscribe(_ => Repaint());
+
+                InnerElement = innerElement;
+                MarginsProperty.SetValue(InnerElement, new Margins(2, 30, 2, 2));
+                Children.Add(innerElement);
+
+                Button closeButton = new Button
+                {
+                    LabelFont = new Font("Wingdings 2", 8, FontStyle.Bold),
+                    Label = "\u00ce" //X symbol
+                };
+                AnchorsProperty.SetValue(closeButton, Anchors.Top | Anchors.Right);
+                MarginsProperty.SetValue(closeButton, new Margins(top: 7, right: 7, bottom: 7));
+                this.Children.Add(closeButton);
+            }
+
+            public override void PaintElement(Graphics g)
+            {
+                using (Brush brush = new SolidBrush(Color.FromArgb(195, 199, 203)))
+                {
+                    g.FillRectangle(brush, 0, 0, Width, Height);
+                }
+
+                g.DrawLine(Pens.Black, Width - 1, 0, Width - 1, Height - 1);
+                g.DrawLine(Pens.Black, 0, Height - 1, Width - 1, Height - 1);
+
+                g.DrawLine(Pens.White, 1, 1, Width - 3, 1);
+                g.DrawLine(Pens.White, 1, 1, 1, Height - 3);
+                
+                using (Pen pen = new Pen(Color.FromArgb(134, 138, 142)))
+                {
+                    g.DrawLine(pen, 1, Height - 2, Width - 2, Height - 2);
+                    g.DrawLine(pen, Width - 2, 1, Width - 2, Height - 2);
+                }
+
+                using (Brush brush = new SolidBrush(Color.FromArgb(0, 0, 170)))
+                {
+                    g.FillRectangle(brush, 4, 4, Width-8, 18);
+                }
+
+                g.DrawString(Title, new Font("Arial", 9f, FontStyle.Bold), Brushes.White, 5, 5);
+            }
+        }
+    }
+}
