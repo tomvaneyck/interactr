@@ -146,7 +146,7 @@ namespace Interactr.View.Framework
 
         #region Focus
 
-        public bool IsFocused => FocusedElement ==this;
+        public bool IsFocused => FocusedElement == this;
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
 
@@ -576,7 +576,28 @@ namespace Interactr.View.Framework
         /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
         public bool HasChildInFocus()
         {
-            return Children.Any(child => child.IsFocused);
+            // No Child is in focus if the element does not have children.
+            if (Children.Count == 0)
+            {
+                return false;
+            }
+
+            // Check if any of the direct children is focused.
+            if (Children.Any(child => child.IsFocused))
+            {
+                return true;
+            }
+
+            // Recursively check if the any of the children has children in focus.
+            foreach (var child in Children)
+            {
+                if (child.HasChildInFocus())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
