@@ -24,11 +24,17 @@ namespace Interactr.ViewModel
         /// </summary>
         public int EndTick { get; }
 
-        public ActivationBarViewModel(Party party, int startTick, int endTick)
+        /// <summary>
+        /// The level of nesting of this activation bar.
+        /// </summary>
+        public int Level { get; }
+
+        public ActivationBarViewModel(Party party, int startTick, int endTick, int level)
         {
             Party = party;
             StartTick = startTick;
             EndTick = endTick;
+            Level = level;
         }
     }
 }
