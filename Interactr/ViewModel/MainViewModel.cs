@@ -9,8 +9,10 @@ namespace Interactr.ViewModel
 
         public MainViewModel()
         {
-            Diagrams.Add(new DiagramEditorViewModel(new Diagram()));
-            Diagrams.Add(new DiagramEditorViewModel(new Diagram()));
+        }
+
+        public void CreateNewDiagram()
+        {
             Diagrams.Add(new DiagramEditorViewModel(new Diagram()));
         }
     }

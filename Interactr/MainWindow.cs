@@ -37,6 +37,7 @@ namespace Interactr.View
 
         public override void HandleKeyEvent(int id, int keyCode, char keyChar)
         {
+            Keyboard.HandleEvent(id, keyCode);
             UIElement.HandleKeyEvent(new KeyEventData(id, keyCode, keyChar));
         }
 
