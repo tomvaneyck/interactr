@@ -48,6 +48,7 @@ namespace Interactr.View
             SetupMessages();
             SetupPendingMessage();
         }
+
         private void SetupPartyColumns()
         {
             // Create a horizontal stackpanel
@@ -61,11 +62,20 @@ namespace Interactr.View
             ColumnViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-               .CreateDerivedListBinding(partyVM => new SequenceDiagramColumnView(this, partyVM))
+                .CreateDerivedListBinding(partyVM => new SequenceDiagramColumnView(this, partyVM))
                 .ResultList;
 
             // Automatically add and remove columns to the stackpanel.
             ColumnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
+            ColumnViews.OnAdd.Subscribe(e =>
+            {
+                if (IsVisible)
+                {
+                    e.Element.PartyView.LabelView.IsInEditMode = true;
+                    e.Element.PartyView.LabelView.Focus();
+                }
+            });
+
             ColumnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
         }
 
@@ -75,7 +85,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<SequenceDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.StackVM.MessageViewModels)
-                .CreateDerivedListBinding(vm => new SequenceDiagramMessageView { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new SequenceDiagramMessageView {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
@@ -109,7 +119,8 @@ namespace Interactr.View
                         // Get the startpoint of the pending message arrow, relative to the lifeline.
                         Point pointOnLifeline = new Point(
                             lifeLine.Width / 2,
-                            (LifeLineView.TickHeight * ViewModel.StackVM.PendingInvokingMessageVM.Tick) - (LifeLineView.TickHeight / 2)
+                            (LifeLineView.TickHeight * ViewModel.StackVM.PendingInvokingMessageVM.Tick) -
+                            (LifeLineView.TickHeight / 2)
                         );
 
                         // Translate the point to this view, and assign it.
@@ -118,7 +129,8 @@ namespace Interactr.View
                     else
                     {
                         // Calculate how far into this activation the pending message is sent.
-                        int relativeTick = ViewModel.StackVM.PendingInvokingMessageVM.Tick - (bar?.ViewModel.StartTick ?? 0);
+                        int relativeTick = ViewModel.StackVM.PendingInvokingMessageVM.Tick -
+                                           (bar?.ViewModel.StartTick ?? 0);
 
                         // Get the startpoint of the pending message arrow, relative to the activation bar.
                         Point pointOnBar = new Point(
@@ -139,36 +151,10 @@ namespace Interactr.View
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
             if (eventData.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
-                ViewModel = partyVM
-            };
-
-            AnchorsProperty.SetValue(_partyView, Anchors.Left | Anchors.Top | Anchors.Right);
-            Children.Add(_partyView);
-
-            // Create the lifeline view and add it to this column view.
-            _lifeLineView = new LifeLineView();
-            MarginsProperty.SetValue(_lifeLineView, new Margins(0, _partyView.PreferredHeight, 0, 0));
-            Children.Add(_lifeLineView);
-
-            // Setup subscriptions.
-            parent.ViewModelChanged.Select(vm => vm.StackVM)
-                .Subscribe(stackVM => _lifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
-
-            IsVisible = parent.IsVisible;
-            parent.IsVisibleChanged.Subscribe(isVisible => IsVisible = isVisible);
-
-            // Enter label editing mode if isvisible.
-            if (IsVisible)
-            {
-                _partyView.LabelView.IsInEditMode = true;
-                _partyView.LabelView.Focus();
-            }
-
                 _pendingMessageView.EndPoint = new Point(eventData.MousePosition.X, _pendingMessageView.StartPoint.Y);
             }
 
             return base.OnMouseEventPreview(eventData);
-
         }
     }
 }
