@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -78,12 +79,12 @@ namespace Interactr.View
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
-        
+
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
             if (eventData.Id == KeyEvent.KEY_RELEASED &&
-                eventData.KeyCode == 46 &&
+                eventData.KeyCode == KeyCodes.Delete &&
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
@@ -96,7 +97,7 @@ namespace Interactr.View
 
             return false;
         }
-    
+
         private void SetupPendingMessage()
         {
             // Hide the pending message view if there is no pending message.
@@ -171,7 +172,7 @@ namespace Interactr.View
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
             if (eventData.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
-               _pendingMessageView.EndPoint = new Point(eventData.MousePosition.X, _pendingMessageView.StartPoint.Y);
+                _pendingMessageView.EndPoint = new Point(eventData.MousePosition.X, _pendingMessageView.StartPoint.Y);
             }
 
             return base.OnMouseEventPreview(eventData);
