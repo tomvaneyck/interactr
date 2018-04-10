@@ -2,6 +2,6 @@
 {
     public static class KeyCodes
     {
-        public const int Delete = 42;
+        public const int Delete = 46;
     }
 }
