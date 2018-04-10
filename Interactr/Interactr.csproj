@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\HexaDecimalKeyChars.cs" />
+    <Compile Include="Constants\KeyCodes.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
