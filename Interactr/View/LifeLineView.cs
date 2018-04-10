@@ -92,11 +92,6 @@ namespace Interactr.View
                     ViewModel.MessageStackVM.CreatePendingMessage(
                         ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
                     return true;
-                /*case MouseEvent.MOUSE_DRAGGED when pendingMessage != null:
-                    // User is dragging from a lifeline to this one.
-                    // Set this party as the receiver of the pending message.
-                    
-                    return true;*/
                 case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
                     // User released mouse on this lifeline while dragging a new pending message.
                     // Try to create and add an actual message to the diagram.
