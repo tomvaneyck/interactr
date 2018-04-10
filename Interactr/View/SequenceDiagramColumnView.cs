@@ -29,7 +29,7 @@ namespace Interactr.View
             MarginsProperty.SetValue(LifeLineView, new Margins(0, PartyView.PreferredHeight, 0, 0));
             Children.Add(LifeLineView);
             
-            // Setup viewmodel subscription.
+            // Set up viewmodel subscription.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => LifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
         }
