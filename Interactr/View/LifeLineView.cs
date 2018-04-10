@@ -29,23 +29,75 @@ namespace Interactr.View
         public IObservable<LifeLineViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
+        
+        /// <summary>
+        /// Width of each bar, in pixels
+        /// </summary>
+        public const int BarWidth = 12;
+
+        /// <summary>
+        /// Height of a single tick, in pixels
+        /// </summary>
+        public const int TickHeight = 30;
+
+        public IReadOnlyReactiveList<ActivationBarView> ActivationBarViews { get; }
 
         public LifeLineView()
         {
+            // Create views for activation bar viewmodels.
+            ActivationBarViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.MessageStackVM.ActivationBars)
+                .CreateDerivedListBinding(vm => new ActivationBarView
+                {
+                    ViewModel = vm,
+                    TickHeight = TickHeight
+                }, bar => bar.Party == ViewModel.PartyVM.Party)
+                .ResultList;
+            
+            // Add activation bar views to Children.
+            ActivationBarViews.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
+            ActivationBarViews.OnDelete.Subscribe(e => Children.RemoveAt(e.Index));
+
             Observable.Merge(
-                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnAdd),
-                ViewModelChanged.ObserveNested(vm => vm.MessageStackVM.ActivationBars.OnDelete)
-            ).Subscribe(_ => Repaint());
+                ActivationBarViews.OnAdd.Select(_ => Unit.Default),
+                ActivationBarViews.OnDelete.Select(_ => Unit.Default),
+                WidthChanged.Select(_ => Unit.Default)
+            ).Subscribe(_ => UpdateLayout());
+        }
+
+        private void UpdateLayout()
+        {
+            foreach (ActivationBarView barView in ActivationBarViews)
+            { 
+                // Horizontally center bar on lifeline and add offset for the nesting level of the bar.
+                int x = ((Width - BarWidth) / 2) + (barView.ViewModel.Level * (BarWidth/2));
+                int y = barView.ViewModel.StartTick * TickHeight;
+                barView.Position = new Framework.Point(x, y);
+                barView.Width = BarWidth;
+                barView.Height = barView.PreferredHeight;
+            }
         }
 
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (eventData.Id == MouseEvent.MOUSE_CLICKED)
+            var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
+
+            switch (eventData.Id)
             {
-                ViewModel?.MessageStackVM.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Invocation, "Invocation"));
-                ViewModel?.MessageStackVM.Messages.Add(new Message(ViewModel.PartyVM.Party, null, Message.MessageType.Result, "Result"));
-                return true;
+                case MouseEvent.MOUSE_PRESSED:
+                    // User is dragging from one lifeline to another to create a new message.
+                    // Create a new pending message to store this information.
+                    ViewModel.MessageStackVM.CreatePendingMessage(
+                        ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
+                    return true;
+                case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
+                    // User released mouse on this lifeline while dragging a new pending message.
+                    // Try to create and add an actual message to the diagram.
+                    pendingMessage.Receiver = ViewModel.PartyVM.Party;
+                    ViewModel.MessageStackVM.FinishPendingMessage();
+                    return true;
             }
 
             return false;
@@ -54,25 +106,9 @@ namespace Interactr.View
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-            //Draw lines
+            //Draw lifeline
             int middle = Width / 2;
             g.DrawLine(Pens.Black, middle, 0, middle, Height);
-
-            //Draw activation bars
-            if (ViewModel?.MessageStackVM != null)
-            {
-                int barWidth = 12;
-                int tickHeight = 30;
-                foreach (var activationBarVM in ViewModel.MessageStackVM.ActivationBars.Where(bar =>
-                    bar.Party == ViewModel.PartyVM.Party))
-                {
-                    int x = middle - (barWidth / 2);
-                    int y = (activationBarVM.StartTick) * tickHeight;
-                    int height = (activationBarVM.EndTick - activationBarVM.StartTick) * tickHeight;
-                    g.FillRectangle(Brushes.White, x, y, barWidth, height);
-                    g.DrawRectangle(Pens.Black, x, y, barWidth, height);
-                }
-            }
         }
     }
 }
