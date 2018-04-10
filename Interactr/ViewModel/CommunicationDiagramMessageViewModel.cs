@@ -7,5 +7,6 @@ namespace Interactr.ViewModel
         public CommunicationDiagramMessageViewModel(Message message) : base(message)
         {
         }
+
     }
 }

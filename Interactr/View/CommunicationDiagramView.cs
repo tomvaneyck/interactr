@@ -34,6 +34,12 @@ namespace Interactr.View
 
         #endregion
 
+        #region PartyViews
+
+        public readonly IReadOnlyReactiveList<PartyView> PartyViews; 
+
+        #endregion
+
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -41,24 +47,35 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
+            PartyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
             // Automatically enter label editing mode when adding a party
-            partyViews.OnAdd.Subscribe(elem =>
+            PartyViews.OnAdd.Subscribe(elem =>
             {
                 elem.Element.LabelView.IsInEditMode = true;
                 elem.Element.LabelView.Focus();
             });
 
             // Automatically add and remove party views to Children.
-            partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
-            SetupMessages();
+            // Create a list of message views based on the message viewmodels.
+            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.MessageViewModels)
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
+
+            // Automatically change the position of arrows when the Party of a message changes
+            
+            
+            // Automatically add and remove message views to Children.
+            messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -76,20 +93,6 @@ namespace Interactr.View
             {
                 return base.OnMouseEvent(e);
             }
-        }
-
-        private void SetupMessages()
-        {
-            //TODO !!!
-            // Create a list of message views based on the message viewmodels.
-            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
-                .Where(vm => vm != null)
-                .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
-
-            // Automatically add and remove message views to Children.
-            messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
         /// <see cref="OnKeyEvent"/>
@@ -115,5 +118,7 @@ namespace Interactr.View
 
             return false;
         }
+
+        
     }
 }
