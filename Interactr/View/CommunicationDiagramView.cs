@@ -57,6 +57,8 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            SetupMessages();
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -75,15 +77,15 @@ namespace Interactr.View
                 return base.OnMouseEvent(e);
             }
         }
-        
+
         private void SetupMessages()
         {
             //TODO !!!
             // Create a list of message views based on the message viewmodels.
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
-                .Select(vm =>vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(){ViewModel = vm}).ResultList;
+                .Select(vm => vm.MessageViewModels)
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
@@ -96,7 +98,7 @@ namespace Interactr.View
             // Delete party.
             // The commented check is an extra safety, but not yet possible due
             // to the need of a recursive search.
-            if (eventData.Id == KeyEvent.KEY_RELEASED && 
+            if (eventData.Id == KeyEvent.KEY_RELEASED &&
                 eventData.KeyCode == 46 &&
                 /*Children.Contains(FocusedElement) &&*/
                 FocusedElement.GetType() == typeof(LabelView)
