@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -83,7 +84,7 @@ namespace Interactr.View
             // The commented check is an extra safety, but not yet possible due
             // to the need of a recursive search.
             if (eventData.Id == KeyEvent.KEY_RELEASED && 
-                eventData.KeyCode == 46 &&
+                eventData.KeyCode == KeyCodes.Delete &&
                 /*Children.Contains(FocusedElement) &&*/
                 FocusedElement.GetType() == typeof(LabelView)
             )
