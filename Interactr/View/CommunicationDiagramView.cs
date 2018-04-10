@@ -75,6 +75,20 @@ namespace Interactr.View
                 return base.OnMouseEvent(e);
             }
         }
+        
+        private void SetupMessages()
+        {
+            //TODO !!!
+            // Create a list of message views based on the message viewmodels.
+            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm =>vm.MessageViewModels)
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(){ViewModel = vm}).ResultList;
+
+            // Automatically add and remove message views to Children.
+            messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+        }
 
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
