@@ -33,8 +33,6 @@ namespace Interactr.View
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => LifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
 
-            IsVisible = parent.IsVisible;
-            parent.IsVisibleChanged.Subscribe(newVisible => IsVisible = newVisible);
         }
     }
 }
