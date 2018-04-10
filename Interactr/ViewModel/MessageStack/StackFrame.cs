@@ -46,7 +46,7 @@ namespace Interactr.ViewModel.MessageStack
         /// </summary>
         public int EndTick => ReturnMessage?.Tick ?? SubFrames.LastOrDefault()?.ReturnMessage.Tick ?? StartTick;
 
-        public StackFrame(Builder builder)
+        private StackFrame(Builder builder)
         {
             Level = builder.Level;
             Party = builder.Party;
