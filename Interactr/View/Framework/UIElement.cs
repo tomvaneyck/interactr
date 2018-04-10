@@ -146,7 +146,7 @@ namespace Interactr.View.Framework
 
         #region Focus
 
-        public bool IsFocused => FocusedElement.Equals(this);
+        public bool IsFocused => FocusedElement ==this;
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
 
