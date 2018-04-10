@@ -456,7 +456,7 @@ namespace Interactr.View.Framework
         private void PaintChildren(Graphics g)
         {
             // Render first to last, so last element is on top
-            foreach (UIElement child in Children)
+            foreach (UIElement child in Children.Reverse())
             {
                 // Save current transform and clip
                 Matrix currentTransform = g.Transform;

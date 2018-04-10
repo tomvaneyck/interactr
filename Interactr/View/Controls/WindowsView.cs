@@ -2,6 +2,7 @@
 using System.Drawing;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+using Interactr.Window;
 
 namespace Interactr.View.Controls
 {
@@ -27,6 +28,23 @@ namespace Interactr.View.Controls
         public WindowsView()
         {
             BackgroundColor = Color.FromArgb(0x33, 0x33, 0x33);
+
+            Children.ObserveEach(window => window.MouseEventOccured).Subscribe(e =>
+            {
+                int curIndex = Children.IndexOf(e.Element);
+                if (curIndex != 0)
+                {
+                    Children.RemoveAt(curIndex);
+                    Children.Insert(0, e.Element);
+                }
+            });
+            Children.ObserveEach(window => ((Window) window).CloseButton.MouseEventOccured).Subscribe(e =>
+            {
+                if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
+                {
+                    Children.Remove(e.Element);
+                }
+            });
         }
 
         public override void PaintElement(Graphics g)
@@ -54,6 +72,7 @@ namespace Interactr.View.Controls
             #endregion
             
             public UIElement InnerElement { get; }
+            public Button CloseButton { get; }
 
             public Window(UIElement innerElement)
             {
@@ -64,14 +83,14 @@ namespace Interactr.View.Controls
                 MarginsProperty.SetValue(InnerElement, new Margins(2, 30, 2, 2));
                 Children.Add(innerElement);
 
-                Button closeButton = new Button
+                CloseButton = new Button
                 {
                     LabelFont = new Font("Wingdings 2", 8, FontStyle.Bold),
                     Label = "\u00ce" //X symbol
                 };
-                AnchorsProperty.SetValue(closeButton, Anchors.Top | Anchors.Right);
-                MarginsProperty.SetValue(closeButton, new Margins(top: 7, right: 7, bottom: 7));
-                this.Children.Add(closeButton);
+                AnchorsProperty.SetValue(CloseButton, Anchors.Top | Anchors.Right);
+                MarginsProperty.SetValue(CloseButton, new Margins(top: 7, right: 7, bottom: 7));
+                this.Children.Add(CloseButton);
             }
 
             public override void PaintElement(Graphics g)

@@ -1,7 +1,6 @@
 ﻿using Interactr.Model;
 using Interactr.ViewModel;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Interactr.Tests.ViewModel
 {
