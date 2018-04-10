@@ -146,6 +146,21 @@ namespace Interactr.View
             Children.Add(_pendingMessageView);
         }
 
+        /// <see cref="OnMouseEvent"/>
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            // Add a new party on double click
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                //Add a new Party.
+                ViewModel.AddParty(e.MousePosition);
+                return true;
+            }
+
+            return base.OnMouseEvent(e);
+        }
+
+        /// <see cref="OnMouseEventPreview"/>
         protected override bool OnMouseEventPreview(MouseEventData eventData)
         {
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
