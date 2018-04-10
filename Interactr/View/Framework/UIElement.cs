@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Interactr.View.Framework
         /// The child-elements of this element in the view-tree.
         /// </summary>
         public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
-        
+
         #region Parent
 
         private readonly ReactiveProperty<UIElement> _parent = new ReactiveProperty<UIElement>();
@@ -47,7 +48,7 @@ namespace Interactr.View.Framework
         public IObservable<UIElement> ParentChanged => _parent.Changed;
 
         #endregion
-        
+
         /// <summary>
         /// The properties that are attached to this element.
         /// </summary>
@@ -145,7 +146,7 @@ namespace Interactr.View.Framework
 
         #region Focus
 
-        public bool IsFocused => FocusedElement == this;
+        public bool IsFocused => FocusedElement.Equals(this);
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
 
@@ -567,6 +568,15 @@ namespace Interactr.View.Framework
                 ancestor = ancestor.Parent;
                 yield return ancestor;
             }
+        }
+
+        /// <summary>
+        /// Walk through the children of the UIElement to check if one of them is in focus.
+        /// </summary>
+        /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
+        public bool HasChildInFocus()
+        {
+            return Children.Any(child => child.IsFocused);
         }
     }
 }

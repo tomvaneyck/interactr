@@ -69,7 +69,7 @@ namespace Interactr.View
             ColumnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
             ColumnViews.OnAdd.Subscribe(e =>
             {
-                if (IsVisible)
+                if (IsVisible && HasChildInFocus() || IsVisible && IsFocused)
                 {
                     e.Element.PartyView.LabelView.IsInEditMode = true;
                     e.Element.PartyView.LabelView.Focus();
