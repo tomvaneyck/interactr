@@ -28,10 +28,13 @@ namespace Interactr.View
             LifeLineView = new LifeLineView();
             MarginsProperty.SetValue(LifeLineView, new Margins(0, PartyView.PreferredHeight, 0, 0));
             Children.Add(LifeLineView);
-            
+
             // Set up viewmodel subscription.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => LifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
+
+            IsVisible = parent.IsVisible;
+            parent.IsVisibleChanged.Subscribe(newVisible => IsVisible = newVisible);
         }
     }
 }
