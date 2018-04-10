@@ -48,6 +48,7 @@ namespace Interactr.View
             SetupMessages();
             SetupPendingMessage();
         }
+
         private void SetupPartyColumns()
         {
             // Create a horizontal stackpanel
@@ -75,7 +76,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<SequenceDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.StackVM.MessageViewModels)
-                .CreateDerivedListBinding(vm => new SequenceDiagramMessageView { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new SequenceDiagramMessageView {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
@@ -109,7 +110,8 @@ namespace Interactr.View
                         // Get the startpoint of the pending message arrow, relative to the lifeline.
                         Point pointOnLifeline = new Point(
                             lifeLine.Width / 2,
-                            (LifeLineView.TickHeight * ViewModel.StackVM.PendingInvokingMessageVM.Tick) - (LifeLineView.TickHeight / 2)
+                            (LifeLineView.TickHeight * ViewModel.StackVM.PendingInvokingMessageVM.Tick) -
+                            (LifeLineView.TickHeight / 2)
                         );
 
                         // Translate the point to this view, and assign it.
@@ -118,7 +120,8 @@ namespace Interactr.View
                     else
                     {
                         // Calculate how far into this activation the pending message is sent.
-                        int relativeTick = ViewModel.StackVM.PendingInvokingMessageVM.Tick - (bar?.ViewModel.StartTick ?? 0);
+                        int relativeTick = ViewModel.StackVM.PendingInvokingMessageVM.Tick -
+                                           (bar?.ViewModel.StartTick ?? 0);
 
                         // Get the startpoint of the pending message arrow, relative to the activation bar.
                         Point pointOnBar = new Point(
@@ -134,6 +137,21 @@ namespace Interactr.View
             Children.Add(_pendingMessageView);
         }
 
+        /// <see cref="OnMouseEvent"/>
+        protected override bool OnMouseEvent(MouseEventData e)
+        {
+            // Add a new party on double click
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            {
+                //Add a new Party.
+                ViewModel.AddParty(e.MousePosition);
+                return true;
+            }
+
+            return base.OnMouseEvent(e);
+        }
+
+        /// <see cref="OnMouseEventPreview"/>
         protected override bool OnMouseEventPreview(MouseEventData eventData)
         {
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
