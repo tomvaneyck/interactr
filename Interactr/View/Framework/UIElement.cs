@@ -571,33 +571,25 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
+        /// Return all the decendants of this element.
+        /// </summary>
+        /// <returns>All decendants of this element.</returns>
+        public ReactiveList<UIElement> GetDecendants()
+        {
+            ReactiveList<UIElement> result = new ReactiveArrayList<UIElement>();
+            result.OnAdd.Subscribe(child => result.AddRange(child.Element.Children));
+            result.AddRange(Children);
+
+            return result;
+        }
+
+        /// <summary>
         /// Walk through the children of the UIElement to check if one of them is in focus.
         /// </summary>
         /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
         public bool HasChildInFocus()
         {
-            // No Child is in focus if the element does not have children.
-            if (Children.Count == 0)
-            {
-                return false;
-            }
-
-            // Check if any of the direct children is focused.
-            if (Children.Any(child => child.IsFocused))
-            {
-                return true;
-            }
-
-            // Recursively check if the any of the children has children in focus.
-            foreach (var child in Children)
-            {
-                if (child.HasChildInFocus())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return GetDecendants().Any(d => d.IsFocused);
         }
     }
 }
