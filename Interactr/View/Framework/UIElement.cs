@@ -574,13 +574,20 @@ namespace Interactr.View.Framework
         /// Return all the decendants of this element.
         /// </summary>
         /// <returns>All decendants of this element.</returns>
-        public ReactiveList<UIElement> GetDecendants()
+        public IEnumerable<UIElement> GetDecendants()
         {
-            ReactiveList<UIElement> result = new ReactiveArrayList<UIElement>();
-            result.OnAdd.Subscribe(child => result.AddRange(child.Element.Children));
-            result.AddRange(Children);
+            foreach (var child in Children)
+            {
+                yield return child;
+            }
 
-            return result;
+            foreach (var child in Children)
+            {
+                foreach (var subChild in child.GetDecendants())
+                {
+                    yield return subChild;
+                }
+            }
         }
 
         /// <summary>
