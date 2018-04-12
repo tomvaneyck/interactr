@@ -64,6 +64,15 @@ namespace Interactr.View
 
             // Automatically add and remove columns to the stackpanel.
             ColumnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
+            ColumnViews.OnAdd.Subscribe(e =>
+            {
+                if (IsVisible && (IsFocused || HasChildInFocus()))
+                {
+                    e.Element.PartyView.LabelView.IsInEditMode = true;
+                    e.Element.PartyView.LabelView.Focus();
+                }
+            });
+
             ColumnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
         }
 
