@@ -25,7 +25,7 @@ namespace Interactr.View
         public IObservable<CommunicationDiagramMessageViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
-        
+
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
@@ -34,7 +34,7 @@ namespace Interactr.View
             Children.Add(_arrow);
             Children.Add(_label);
             AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
-            
+
             // Put the arrow starting point on the sender.
             ObservePartyPosition(vm => vm.Message.SenderChanged)
                 .Select(partyview => partyview.Position)
@@ -47,7 +47,7 @@ namespace Interactr.View
 
             //TODO: Draw the arrow correctly when dragging a party!!!
             //TODO: Fix bugs!!!
-            
+
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
             Observable.CombineLatest(
