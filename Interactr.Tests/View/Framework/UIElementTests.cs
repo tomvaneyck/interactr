@@ -205,7 +205,7 @@ namespace Interactr.Tests.View.Framework
             root.Children.Add(childElement);
             root.Children.Add(childElement2);
 
-            ReactiveList<UIElement> decendants = root.GetDecendants();
+            IEnumerable<UIElement> decendants = root.GetDecendants();
 
             // The number of decendants is correct.
             Assert.AreEqual(2, decendants.Count());
@@ -235,7 +235,7 @@ namespace Interactr.Tests.View.Framework
             UIElement childElement5 = new UIElement();
             childElement3.Children.Add(childElement5);
 
-            ReactiveList<UIElement> decendants = root.GetDecendants();
+            IEnumerable<UIElement> decendants = root.GetDecendants();
 
             // The number of decendants is correct.
             Assert.AreEqual(5, decendants.Count());
