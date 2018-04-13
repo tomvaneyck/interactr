@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Interactr.View.Framework
         /// The child-elements of this element in the view-tree.
         /// </summary>
         public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
-        
+
         #region Parent
 
         private readonly ReactiveProperty<UIElement> _parent = new ReactiveProperty<UIElement>();
@@ -47,7 +48,7 @@ namespace Interactr.View.Framework
         public IObservable<UIElement> ParentChanged => _parent.Changed;
 
         #endregion
-        
+
         /// <summary>
         /// The properties that are attached to this element.
         /// </summary>
@@ -570,6 +571,35 @@ namespace Interactr.View.Framework
                 ancestor = ancestor.Parent;
                 yield return ancestor;
             }
+        }
+
+        /// <summary>
+        /// Return all the decendants of this element.
+        /// </summary>
+        /// <returns>All decendants of this element.</returns>
+        public IEnumerable<UIElement> GetDecendants()
+        {
+            foreach (var child in Children)
+            {
+                yield return child;
+            }
+
+            foreach (var child in Children)
+            {
+                foreach (var subChild in child.GetDecendants())
+                {
+                    yield return subChild;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Walk through the children of the UIElement to check if one of them is in focus.
+        /// </summary>
+        /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
+        public bool HasChildInFocus()
+        {
+            return GetDecendants().Any(d => d.IsFocused);
         }
     }
 }

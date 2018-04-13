@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -50,8 +51,11 @@ namespace Interactr.View
             // Automatically enter label editing mode when adding a party
             partyViews.OnAdd.Subscribe(elem =>
             {
-                elem.Element.LabelView.IsInEditMode = true;
-                elem.Element.LabelView.Focus();
+                if (IsVisible && (IsFocused || HasChildInFocus()))
+                {
+                    elem.Element.LabelView.IsInEditMode = true;
+                    elem.Element.LabelView.Focus();
+                }
             });
 
             // Automatically add and remove party views to Children.
@@ -83,15 +87,15 @@ namespace Interactr.View
             // The commented check is an extra safety, but not yet possible due
             // to the need of a recursive search.
             if (eventData.Id == KeyEvent.KEY_RELEASED && 
-                eventData.KeyCode == 46 &&
+                eventData.KeyCode == KeyCodes.Delete &&
                 /*Children.Contains(FocusedElement) &&*/
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
                 PartyView partyView = (PartyView) FocusedElement.Parent;
 
-                // Delete the party from the model. This automatically
-                // propagates to the view.
+                // Delete the party from the viewmodel. This automatically
+                // propagates to the view and the model.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
 
                 return true;
