@@ -32,10 +32,10 @@ namespace Interactr.View.Controls
             Children.ObserveEach(window => window.MouseEventOccured).Subscribe(e =>
             {
                 int curIndex = Children.IndexOf(e.Element);
-                if (curIndex != 0)
+                if (curIndex != Children.Count-1)
                 {
                     Children.RemoveAt(curIndex);
-                    Children.Insert(0, e.Element);
+                    Children.Add(e.Element);
                 }
             });
             Children.ObserveEach(window => ((Window) window).CloseButton.MouseEventOccured).Subscribe(e =>

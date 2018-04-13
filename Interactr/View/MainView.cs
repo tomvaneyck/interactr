@@ -42,7 +42,7 @@ namespace Interactr.View
                 .ResultList;
 
             //Add the views to the view tree.
-            diagramEditors.OnAdd.Subscribe(e => Windows.Children.Insert(0, new WindowsView.Window(e.Element)));
+            diagramEditors.OnAdd.Subscribe(e => Windows.Children.Add(new WindowsView.Window(e.Element)));
             diagramEditors.OnDelete.Subscribe(e => Windows.Children.Remove(Windows.Children.OfType<WindowsView.Window>().First(w => w.InnerElement == e.Element)));
 
             this.Children.Add(Windows);

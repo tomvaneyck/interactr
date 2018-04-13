@@ -456,7 +456,7 @@ namespace Interactr.View.Framework
         private void PaintChildren(Graphics g)
         {
             // Render first to last, so last element is on top
-            foreach (UIElement child in Children.Reverse())
+            foreach (UIElement child in Children)
             {
                 // Save current transform and clip
                 Matrix currentTransform = g.Transform;
@@ -529,11 +529,14 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child =>
-                child.IsVisible &&
-                point.X >= child.Position.X && point.Y >= child.Position.Y &&
-                point.X < (child.Position.X + child.Width) &&
-                point.Y < (child.Position.Y + child.Height));
+            var childContainingPoint = Children
+                .Reverse()
+                .FirstOrDefault(child =>
+                    child.IsVisible &&
+                    point.X >= child.Position.X && point.Y >= child.Position.Y &&
+                    point.X < (child.Position.X + child.Width) &&
+                    point.Y < (child.Position.Y + child.Height)
+                );
 
             if (childContainingPoint == null)
             {
