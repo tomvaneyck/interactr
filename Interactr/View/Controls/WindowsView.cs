@@ -68,6 +68,11 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <summary>
+        /// Add a new window to this view, with the specified element as its InnerElement.
+        /// </summary>
+        /// <param name="windowContents">The element to put inside the window.</param>
+        /// <returns>The new window.</returns>
         public Window AddWindow(UIElement windowContents)
         {
             Window window = new Window(windowContents);
@@ -85,6 +90,11 @@ namespace Interactr.View.Controls
             return window;
         }
 
+        /// <summary>
+        /// Remove the window that has the specified element as its InnerElement.
+        /// </summary>
+        /// <param name="elem">The element that is in the window.</param>
+        /// <returns>True if a matching window was found and removed, else false.</returns>
         public bool RemoveWindowWith(UIElement elem)
         {
             Window window = Children.OfType<Window>().FirstOrDefault(w => w.InnerElement == elem);
