@@ -11,6 +11,9 @@ using Interactr.Window;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// This view is used to display and edit diagrams.
+    /// </summary>
     public class DiagramEditorView : AnchorPanel
     {
         #region ViewModel
@@ -34,15 +37,16 @@ namespace Interactr.View
         {
             ViewModelChanged.Subscribe(viewModel =>
             {
-                //Retrieve the viewmodels for the child views from this elements viewmodel
+                // Retrieve the viewmodels for the child views from this elements viewmodel.
                 CommDiagView.ViewModel = viewModel?.CommDiagramVM;
                 SeqDiagView.ViewModel = viewModel?.SeqDiagramVM;
             });
 
-            //Add the views to the view tree.
+            // Add the views to the view tree.
             this.Children.Add(CommDiagView);
             this.Children.Add(SeqDiagView);
 
+            //TODO: this is needed to have working windows. Should be removed once window resizing is implemented.
             this.PreferredWidth = 500;
             this.PreferredHeight = 500;
         }
@@ -50,6 +54,7 @@ namespace Interactr.View
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData e)
         {
+            // Switch views on tab.
             if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)
             {
                 ViewModel?.SwitchViews();

@@ -462,7 +462,7 @@ namespace Interactr.View.Framework
                 if (child.Position.X > this.Width || child.Position.Y > this.Height || 
                     child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
                 {
-                    //child is out of bounds, don't render.
+                    // Child is out of bounds, don't render.
                     continue;
                 }
 

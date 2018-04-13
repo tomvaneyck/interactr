@@ -5,15 +5,21 @@ namespace Interactr.ViewModel
 {
     public class MainViewModel
     {
-        public ReactiveList<DiagramEditorViewModel> Diagrams { get; } = new ReactiveArrayList<DiagramEditorViewModel>();
+        public ReactiveList<DiagramEditorViewModel> DiagramEditors { get; } = new ReactiveArrayList<DiagramEditorViewModel>();
 
-        public MainViewModel()
+        public void EditNewDiagram()
         {
+            DiagramEditors.Add(new DiagramEditorViewModel(new Diagram()));
         }
 
-        public void CreateNewDiagram()
+        public void EditDiagram(Diagram diagram)
         {
-            Diagrams.Add(new DiagramEditorViewModel(new Diagram()));
+            DiagramEditors.Add(new DiagramEditorViewModel(diagram));
+        }
+
+        public void CloseEditor(DiagramEditorViewModel editor)
+        {
+            DiagramEditors.Remove(editor);
         }
     }
 }

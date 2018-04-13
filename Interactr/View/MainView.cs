@@ -35,24 +35,35 @@ namespace Interactr.View
 
         public MainView()
         {
+            // Create DiagramEditorViews for each Diagram
             var diagramEditors = ViewModelChanged
                 .Where(vm => vm != null)
-                .Select(vm => vm.Diagrams)
+                .Select(vm => vm.DiagramEditors)
                 .CreateDerivedListBinding(diagramVm => new DiagramEditorView {ViewModel = diagramVm})
                 .ResultList;
 
-            //Add the views to the view tree.
-            diagramEditors.OnAdd.Subscribe(e => Windows.Children.Add(new WindowsView.Window(e.Element)));
-            diagramEditors.OnDelete.Subscribe(e => Windows.Children.Remove(Windows.Children.OfType<WindowsView.Window>().First(w => w.InnerElement == e.Element)));
+            // Add the diagram views to the view tree.
+            diagramEditors.OnAdd.Subscribe(e => Windows.AddWindow(e.Element));
+            diagramEditors.OnDelete.Subscribe(e => Windows.RemoveWindowWith(e.Element));
+
+            // Remove a diagram editor when its window closes.
+            Windows.WindowCloseRequested.Subscribe(window =>
+            {
+                if (window.InnerElement is DiagramEditorView editor)
+                {
+                    ViewModel.CloseEditor(editor.ViewModel);
+                }
+            });
 
             this.Children.Add(Windows);
         }
 
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
+            // Create a new diagram when the user presses CTRL+N
             if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_N && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
             {
-                ViewModel.CreateNewDiagram();
+                ViewModel.EditNewDiagram();
                 return true;
             }
 
