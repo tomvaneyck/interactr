@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -67,6 +64,15 @@ namespace Interactr.View
 
             // Automatically add and remove columns to the stackpanel.
             ColumnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
+            ColumnViews.OnAdd.Subscribe(e =>
+            {
+                if (IsVisible && (IsFocused || HasChildInFocus()))
+                {
+                    e.Element.PartyView.LabelView.IsInEditMode = true;
+                    e.Element.PartyView.LabelView.Focus();
+                }
+            });
+
             ColumnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
         }
 
@@ -81,6 +87,24 @@ namespace Interactr.View
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+        }
+
+        /// <see cref="OnKeyEvent"/>
+        protected override bool OnKeyEvent(KeyEventData eventData)
+        {
+            if (eventData.Id == KeyEvent.KEY_RELEASED &&
+                eventData.KeyCode == KeyCodes.Delete &&
+                FocusedElement.GetType() == typeof(LabelView)
+            )
+            {
+                // Delete party.
+                PartyView partyView = (PartyView) FocusedElement.Parent;
+                ViewModel.DeleteParty(partyView.ViewModel.Party);
+
+                return true;
+            }
+
+            return false;
         }
 
         private void SetupPendingMessage()
