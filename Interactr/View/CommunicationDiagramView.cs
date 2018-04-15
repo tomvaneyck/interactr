@@ -73,16 +73,17 @@ namespace Interactr.View
 
 
             // Automatically add and remove message views to Children.
-            messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            messageViews.OnAdd.Subscribe(e =>
+            {
+                // Make message views the size of the communication diagram view.
+                e.Element.PreferredWidth = Width;
+                e.Element.PreferredHeight = Height;
+
+                Children.Add(e.Element);
+            });
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
-            Debug.WriteLine(Height);
-            Debug.WriteLine(Width);
-
-            Debug.WriteLine(PreferredHeight);
-            Debug.WriteLine(PreferredWidth);
-           
-            
+            // Keep messageviews the size of the communication diagram view when resized.
             WidthChanged.Subscribe(newWidth =>
             {
                 foreach (var messageView in messageViews)
@@ -134,7 +135,6 @@ namespace Interactr.View
                 // Delete the party from the model. This automatically
                 // propagates to the view.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
-
                 return true;
             }
 
