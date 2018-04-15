@@ -17,7 +17,8 @@ namespace Interactr.View
     {
         #region SequenceDiagramMessageViewModel
 
-        private readonly ReactiveProperty<SequenceDiagramMessageViewModel> _viewModel = new ReactiveProperty<SequenceDiagramMessageViewModel>();
+        private readonly ReactiveProperty<SequenceDiagramMessageViewModel> _viewModel =
+            new ReactiveProperty<SequenceDiagramMessageViewModel>();
 
         public SequenceDiagramMessageViewModel ViewModel
         {
@@ -31,10 +32,9 @@ namespace Interactr.View
 
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
-        
+
         public SequenceDiagramMessageView()
         {
-            
             Children.Add(_arrow);
             Children.Add(_label);
             AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
@@ -80,7 +80,7 @@ namespace Interactr.View
                 0,
                 (ViewModel.Tick - bar.ViewModel.StartTick) * bar.TickHeight
             );
-            SequenceDiagramView parent = (SequenceDiagramView)Parent;
+            SequenceDiagramView parent = (SequenceDiagramView) Parent;
             Point anchorPointOnDiagram = bar.TranslatePointTo(parent, anchorPointOnBar);
 
             // Choose left or right side of bar based on which side the arrow is going.
@@ -88,24 +88,25 @@ namespace Interactr.View
             return anchorPointOnDiagram + new Point(xOffset, 0);
         }
 
-        private IObservable<ActivationBarView> ObserveActivationBarPosition(Func<SequenceDiagramMessageViewModel, IObservable<ActivationBarViewModel>> barSelector)
+        private IObservable<ActivationBarView> ObserveActivationBarPosition(
+            Func<SequenceDiagramMessageViewModel, IObservable<ActivationBarViewModel>> barSelector)
         {
             // With the latest parent view
             return ParentChanged.OfType<SequenceDiagramView>().Select(parent =>
                 // and the latest viewmodel
-                ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                    // and the latest matching activation bar
-                    barSelector(vm).Where(bar => bar != null).Select(targetBar =>
-                    {
-                        // and listen for the position changes of its view.
-                        return parent.ColumnViews.ObserveWhere(
-                            column => column.LifeLineView.ActivationBarViews.ObserveWhere(
-                                bar => bar.AbsolutePositionChanged,
-                                bar => bar.ViewModel == targetBar),
-                            column => column.PartyView.ViewModel.Party == targetBar.Party
-                        ).Select(e => e.Value.Element);
-                    }).Switch()
-                ).Switch()
+                    ViewModelChanged.Where(vm => vm != null).Select(vm =>
+                        // and the latest matching activation bar
+                            barSelector(vm).Where(bar => bar != null).Select(targetBar =>
+                            {
+                                // and listen for the position changes of its view.
+                                return parent.ColumnViews.ObserveWhere(
+                                    column => column.LifeLineView.ActivationBarViews.ObserveWhere(
+                                        bar => bar.AbsolutePositionChanged,
+                                        bar => bar.ViewModel == targetBar),
+                                    column => column.PartyView.ViewModel.Party == targetBar.Party
+                                ).Select(e => e.Value.Element);
+                            }).Switch()
+                    ).Switch()
             ).Switch();
         }
     }
