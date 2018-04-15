@@ -89,6 +89,7 @@ namespace Interactr.View
                 foreach (var messageView in messageViews)
                 {
                     messageView.PreferredWidth = newWidth;
+                    messageView.Width = newWidth;
                 }
             });
 
@@ -97,6 +98,7 @@ namespace Interactr.View
                 foreach (var messageView in messageViews)
                 {
                     messageView.PreferredHeight = newHeight;
+                    messageView.Height = newHeight;
                 }
             });
         }
