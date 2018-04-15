@@ -69,7 +69,6 @@ namespace Interactr.View
                 .Select(vm => vm.MessageViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
 
-
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
             {
@@ -102,7 +101,7 @@ namespace Interactr.View
             // This is necessary because the anchorpanel overrides the size otherwise.
             messageViews.ObserveEach(mv => mv.PreferredHeightChanged)
                 .Subscribe(mv => mv.Element.PreferredHeight = Height);
-            
+
             messageViews.ObserveEach(mv => mv.PreferredWidthChanged)
                 .Subscribe(mv => mv.Element.PreferredWidth = Width);
         }
