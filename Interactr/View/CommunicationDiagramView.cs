@@ -76,8 +76,6 @@ namespace Interactr.View
                 // Make message views the size of the communication diagram view.
                 e.Element.PreferredWidth = Width;
                 e.Element.PreferredHeight = Height;
-                e.Element.Width = Width;
-                e.Element.Height = Height;
 
                 Children.Add(e.Element);
             });
@@ -89,7 +87,6 @@ namespace Interactr.View
                 foreach (var messageView in messageViews)
                 {
                     messageView.PreferredWidth = newWidth;
-                    messageView.Width = newWidth;
                 }
             });
 
@@ -98,10 +95,18 @@ namespace Interactr.View
                 foreach (var messageView in messageViews)
                 {
                     messageView.PreferredHeight = newHeight;
-                    messageView.Height = newHeight;
                 }
             });
+
+            // Make the size of the message views unchangable.
+            // This is necessary because the anchorpanel overrides the size otherwise.
+            messageViews.ObserveEach(mv => mv.PreferredHeightChanged)
+                .Subscribe(mv => mv.Element.PreferredHeight = Height);
+            
+            messageViews.ObserveEach(mv => mv.PreferredWidthChanged)
+                .Subscribe(mv => mv.Element.PreferredWidth = Width);
         }
+
 
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
@@ -126,9 +131,8 @@ namespace Interactr.View
             // Delete party.
             // The commented check is an extra safety, but not yet possible due
             // to the need of a recursive search.
-            if (eventData.Id == KeyEvent.KEY_RELEASED && 
+            if (eventData.Id == KeyEvent.KEY_RELEASED &&
                 eventData.KeyCode == KeyCodes.Delete &&
-
                 /*Children.Contains(FocusedElement) &&*/
                 FocusedElement.GetType() == typeof(LabelView)
             )

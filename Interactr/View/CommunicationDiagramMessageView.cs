@@ -49,7 +49,7 @@ namespace Interactr.View
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
-                _arrow.PreferredWidth= newWidth);
+                _arrow.PreferredWidth = newWidth);
 
             HeightChanged.Subscribe(newHeight => _arrow.PreferredHeight = newHeight);
 
