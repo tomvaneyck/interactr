@@ -75,7 +75,7 @@ namespace Interactr.View
         private IObservable<PartyView> ObservePartyPosition(
             Func<CommunicationDiagramMessageViewModel, IObservable<Party>> partySelector)
         {
-            // With the latest parent view
+            // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
                 // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
