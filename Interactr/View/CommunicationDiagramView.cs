@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -36,7 +37,7 @@ namespace Interactr.View
 
         #region PartyViews
 
-        public readonly IReadOnlyReactiveList<PartyView> PartyViews; 
+        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
 
         #endregion
 
@@ -70,12 +71,33 @@ namespace Interactr.View
                 .Select(vm => vm.MessageViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
 
-            // Automatically change the position of arrows when the Party of a message changes
-            
-            
+
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            Debug.WriteLine(Height);
+            Debug.WriteLine(Width);
+
+            Debug.WriteLine(PreferredHeight);
+            Debug.WriteLine(PreferredWidth);
+           
+            
+            WidthChanged.Subscribe(newWidth =>
+            {
+                foreach (var messageView in messageViews)
+                {
+                    messageView.PreferredWidth = newWidth;
+                }
+            });
+
+            HeightChanged.Subscribe(newHeight =>
+            {
+                foreach (var messageView in messageViews)
+                {
+                    messageView.PreferredHeight = newHeight;
+                }
+            });
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -118,7 +140,5 @@ namespace Interactr.View
 
             return false;
         }
-
-        
     }
 }

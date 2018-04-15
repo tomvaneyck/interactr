@@ -34,6 +34,7 @@ namespace Interactr.View
         
         public SequenceDiagramMessageView()
         {
+            
             Children.Add(_arrow);
             Children.Add(_label);
             AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);

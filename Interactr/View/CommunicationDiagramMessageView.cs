@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -47,6 +49,12 @@ namespace Interactr.View
 
             //TODO: Draw the arrow correctly when dragging a party!!!
             //TODO: Fix bugs!!!
+            
+            // Change the size of the arrow views.
+            WidthChanged.Subscribe(newWidth =>
+                _arrow.PreferredWidth= newWidth);
+
+            HeightChanged.Subscribe(newHeight => _arrow.PreferredHeight = newHeight);
 
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
