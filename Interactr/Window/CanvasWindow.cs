@@ -107,14 +107,23 @@ namespace Interactr.Window
 
         /// <summary>
         /// Call this method if the canvas is out of date and needs to be repainted.
-        /// This will cause method <see cref="Paint"/> to be called after the current call of method <see cref="HandleMouseEvent"/> or <see cref="HandleKeyEvent"/> finishes.
+        /// This function will invoke <see cref="Paint"/>, unless <see cref="Show"/> has not been called yet, or the window has been closed.
+        /// The invocation of <see cref="Paint"/> will occur on the UI thread, regardless of which thread calls this function.
+        /// The repaint is always handled synchronously. (This function returns after the repaint has occured.)
         /// </summary>
         public void Repaint()
         {
-            _form.Invoke((Action)(() =>
+            if (_form.IsHandleCreated && !_form.IsDisposed)
             {
-                _form.Refresh();
-            }));
+                if (_form.InvokeRequired)
+                {
+                    _form.Invoke((Action)(() => _form.Refresh()));
+                }
+                else
+                {
+                    _form.Refresh();
+                }
+            }
         }
 
         /// <summary>
