@@ -47,9 +47,6 @@ namespace Interactr.View
                 .Select(partyView => partyView.Position)
                 .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
 
-            //TODO: Draw the arrow correctly when dragging a party!!!
-            //TODO: Fix bugs!!!
-            
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
                 _arrow.PreferredWidth= newWidth);
