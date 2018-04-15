@@ -106,7 +106,6 @@ namespace Interactr.View
                 .Subscribe(mv => mv.Element.PreferredWidth = Width);
         }
 
-
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
