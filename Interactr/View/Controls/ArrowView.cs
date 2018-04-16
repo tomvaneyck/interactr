@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive;
@@ -50,11 +51,11 @@ namespace Interactr.View.Controls
         public IObservable<Point> EndPointChanged => _endPoint.Changed;
 
         #endregion
-        
+
         #region ArrowHeadSize
 
         private readonly ReactiveProperty<float> _arrowHeadSize = new ReactiveProperty<float>();
-        
+
         /// <summary>
         /// The size of the arrowhead at the end of the line.
         /// </summary>
@@ -67,7 +68,7 @@ namespace Interactr.View.Controls
         public IObservable<float> ArrowHeadSizeChanged => _arrowHeadSize.Changed;
 
         #endregion
-        
+
         #region LineThickness
 
         private readonly ReactiveProperty<float> _lineThickness = new ReactiveProperty<float>();
@@ -105,7 +106,7 @@ namespace Interactr.View.Controls
         public ArrowView()
         {
             // Default values.
-            ArrowHeadSize = 5;
+            ArrowHeadSize = 10;
             LineThickness = 1;
             Color = Color.Black;
 
@@ -118,12 +119,12 @@ namespace Interactr.View.Controls
                 ColorChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => Repaint());
         }
-        
+
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             // Draw line
-            g.DrawLine(new Pen(Color, LineThickness), 
+            g.DrawLine(new Pen(Color, LineThickness),
                 StartPoint.X,
                 StartPoint.Y,
                 EndPoint.X,
@@ -137,24 +138,28 @@ namespace Interactr.View.Controls
             float yDiff = EndPoint.Y - StartPoint.Y; // Length of line projected on Y-axis.
 
             // Angle between x-axis and line.
-            float arrowAngle = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
-            
+            float check = (float)Math.Asin(yDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float angleCalc = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float arrowAngle = check < 0 ? -1 * angleCalc : angleCalc;
+
             // If line has length 0, assume an angle of 0.
             arrowAngle = float.IsNaN(arrowAngle) ? 0 : arrowAngle;
 
             // Find points to use for drawing the wings of the arrow.
             // The wings will be drawn from EndPoint to each of these points.
-            
+
             // Calculate point 1
             int x1 = (int)Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y1 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
+
 
             // Calculate point 2, on the other side of the line.
             int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
+
             // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
-            g.FillPolygon(new SolidBrush(Color), new []
+            g.FillPolygon(new SolidBrush(Color), new[]
             {
                 new System.Drawing.Point(EndPoint.X, EndPoint.Y),
                 new System.Drawing.Point(x1, y1),
