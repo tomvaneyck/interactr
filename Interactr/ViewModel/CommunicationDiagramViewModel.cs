@@ -39,13 +39,15 @@ namespace Interactr.ViewModel
         {
             try
             {
+                int messageNumber = 1;
                 foreach (var stackFrame in MessageStackWalker.Walk(
                     MessageViewModels))
                 {
                     if (stackFrame.InvocationMessage != null)
                     {
-                        stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
-                        SetMessageNumbers(stackFrame, stackFrame.Level.ToString());
+                        stackFrame.InvocationMessage.MessageNumber = messageNumber.ToString();
+                        SetMessageNumbers(stackFrame, messageNumber.ToString(),1);
+                        messageNumber++;
                     }
                 }
             }
@@ -55,14 +57,13 @@ namespace Interactr.ViewModel
             }
         }
 
-        private static void SetMessageNumbers(MessageStack.StackFrame frame, string accumulatedMessageNumber)
+        private static void SetMessageNumbers(MessageStack.StackFrame frame, string accumulatedMessageNumber,int messageNumber)
         {
-
-            accumulatedMessageNumber = accumulatedMessageNumber + "." + frame.Level;
+            accumulatedMessageNumber = accumulatedMessageNumber + "." + messageNumber;
             frame.InvocationMessage.MessageNumber = accumulatedMessageNumber;
             foreach (var subFrame in frame.SubFrames)
             {
-                SetMessageNumbers(subFrame, accumulatedMessageNumber);
+                SetMessageNumbers(subFrame, accumulatedMessageNumber,messageNumber++);
             }
         }
     }
