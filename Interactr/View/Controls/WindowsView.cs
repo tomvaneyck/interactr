@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Interactr.Reactive;
 using Interactr.View.Framework;
@@ -39,19 +40,19 @@ namespace Interactr.View.Controls
             BackgroundColor = Color.FromArgb(0x33, 0x33, 0x33);
 
             // When a window (or a subchild) is clicked, bring the window to the front.
-            Children.ObserveWhere(window => window.MouseEventOccured, elem => elem is Window).Subscribe(e =>
-            {
-                if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
+            FocusedElementChanged
+                .Where(elem => elem != null)
+                .Select(elem => elem.WalkToRoot().FirstOrDefault(n => n is Window))
+                .Where(window => window != null)
+                .Subscribe(window =>
                 {
-                    e.Element.Focus();
-                    int curIndex = Children.IndexOf(e.Element);
+                    int curIndex = Children.IndexOf(window);
                     if (curIndex != Children.Count - 1)
                     {
                         Children.RemoveAt(curIndex);
-                        Children.Add(e.Element);
+                        Children.Add(window);
                     }
-                }
-            });
+                });
 
             // When the close button of a window is clicked, notify WindowCloseRequested
             Children.ObserveWhere(window => ((Window)window).CloseButton.MouseEventOccured, elem => elem is Window).Subscribe(e =>
@@ -164,16 +165,15 @@ namespace Interactr.View.Controls
                 AnchorsProperty.SetValue(CloseButton, Anchors.Top | Anchors.Right);
                 MarginsProperty.SetValue(CloseButton, new Margins(top: 7, right: 7, bottom: 7));
                 this.Children.Add(CloseButton);
-            }
 
-            protected override bool OnMouseEventPreview(MouseEventData eventData)
-            {
-                if (!InnerElement.IsFocused && InnerElement.CanBeFocused)
+                //Focus child if this window is clicked.
+                this.FocusChanged.Subscribe(focused =>
                 {
-                    InnerElement.Focus();
-                    return true;
-                }
-                return false;
+                    if (focused && InnerElement.CanBeFocused)
+                    {
+                        InnerElement.Focus();
+                    }
+                });
             }
 
             public override void PaintElement(Graphics g)

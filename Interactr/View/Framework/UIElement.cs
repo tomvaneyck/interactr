@@ -17,6 +17,10 @@ namespace Interactr.View.Framework
     /// </summary>
     public class UIElement
     {
+        #region FocusedElement
+
+        private static readonly ReactiveProperty<UIElement> _focusedElement = new ReactiveProperty<UIElement>();
+
         /// <summary>
         /// The UI element that currently has the keyboard focus.
         /// </summary>
@@ -24,7 +28,15 @@ namespace Interactr.View.Framework
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
-        public static UIElement FocusedElement { get; private set; }
+        public static UIElement FocusedElement
+        {
+            get => _focusedElement.Value;
+            private set => _focusedElement.Value = value;
+        }
+
+        public static IObservable<UIElement> FocusedElementChanged => _focusedElement.Changed;
+
+        #endregion
 
         /// <summary>
         /// The child-elements of this element in the view-tree.
