@@ -186,13 +186,13 @@ namespace Interactr.ViewModel
                 .OrderByDescending(bar => bar.Level)
                 .FirstOrDefault();
 
-// If no activation bar was found, create a dummy one.
+            // If no activation bar was found, create a dummy one.
             if (targetActivationBar == null)
             {
                 targetActivationBar = new ActivationBarViewModel(sender, suggestedTick, suggestedTick, 0);
             }
 
-// Set pending message.
+            // Set pending message.
             PendingMessageViewModel pendingMsg = new PendingMessageViewModel
             {
                 Tick = suggestedTick,
