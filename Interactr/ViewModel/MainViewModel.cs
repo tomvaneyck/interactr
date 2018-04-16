@@ -1,48 +1,25 @@
 ﻿using Interactr.Model;
+using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    /// <summary>
-    /// The ViewModel for the mainView, which contains the sequence and the diagram view models.
-    /// </summary>
-    /// <remarks> A view model represents the data you want to display on your view
-    /// and is responsible for interaction with the data objects from the model.</remarks>
     public class MainViewModel
     {
-        /// <summary>
-        /// The communication diagram view model.
-        /// </summary>
-        public CommunicationDiagramViewModel CommDiagramVM { get; }
+        public ReactiveList<DiagramEditorViewModel> DiagramEditors { get; } = new ReactiveArrayList<DiagramEditorViewModel>();
 
-        /// <summary>
-        /// The sequence diagram view model.
-        /// </summary>
-        public SequenceDiagramViewModel SeqDiagramVM { get; }
-
-        public MainViewModel(Diagram diagram)
+        public void EditNewDiagram()
         {
-            CommDiagramVM = new CommunicationDiagramViewModel(diagram);
-            SeqDiagramVM = new SequenceDiagramViewModel(diagram)
-            {
-                IsVisible = true
-            };
+            DiagramEditors.Add(new DiagramEditorViewModel(new Diagram()));
         }
 
-        /// <summary>
-        /// Switch the views from communication diagram to sequence diagram and vice versa.
-        /// </summary>
-        public void SwitchViews()
+        public void EditDiagram(Diagram diagram)
         {
-            if (CommDiagramVM.IsVisible)
-            {
-                CommDiagramVM.IsVisible = false;
-                SeqDiagramVM.IsVisible = true;
-            }
-            else //If SeqDiagramVM or neither is visible
-            {
-                CommDiagramVM.IsVisible = true;
-                SeqDiagramVM.IsVisible = false;
-            }
+            DiagramEditors.Add(new DiagramEditorViewModel(diagram));
+        }
+
+        public void CloseEditor(DiagramEditorViewModel editor)
+        {
+            DiagramEditors.Remove(editor);
         }
     }
 }

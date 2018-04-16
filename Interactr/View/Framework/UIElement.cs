@@ -459,6 +459,13 @@ namespace Interactr.View.Framework
             // Render first to last, so last element is on top
             foreach (UIElement child in Children)
             {
+                if (child.Position.X > this.Width || child.Position.Y > this.Height || 
+                    child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
+                {
+                    // Child is out of bounds, don't render.
+                    continue;
+                }
+
                 // Save current transform and clip
                 Matrix currentTransform = g.Transform;
                 Region currentClip = g.Clip;
@@ -530,11 +537,14 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child =>
-                child.IsVisible &&
-                point.X >= child.Position.X && point.Y >= child.Position.Y &&
-                point.X < (child.Position.X + child.Width) &&
-                point.Y < (child.Position.Y + child.Height));
+            UIElement childContainingPoint = Children
+                .Reverse()
+                .FirstOrDefault(child =>
+                    child.IsVisible &&
+                    point.X >= child.Position.X && point.Y >= child.Position.Y &&
+                    point.X < (child.Position.X + child.Width) &&
+                    point.Y < (child.Position.Y + child.Height)
+                );
 
             if (childContainingPoint == null)
             {

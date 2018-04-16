@@ -24,11 +24,11 @@ namespace Interactr.View
 
         public MainWindow() : base("Interactr")
         {
-            this.Size = new Size(1200, 800);
+            this.Size = new Size(1800, 900);
             View.Width = Size.Width;
             View.Height = Size.Height;
 
-            View.ViewModel = new MainViewModel(new Diagram());
+            View.ViewModel = new MainViewModel();
             View.Focus();
 
             //View.RepaintRequested.Subscribe(_ => Repaint());
@@ -37,7 +37,9 @@ namespace Interactr.View
 
         public override void HandleKeyEvent(int id, int keyCode, char keyChar)
         {
-            UIElement.HandleKeyEvent(new KeyEventData(id, keyCode, keyChar));
+            KeyEventData e = new KeyEventData(id, keyCode, keyChar);
+            Keyboard.HandleEvent(e);
+            UIElement.HandleKeyEvent(e);
         }
 
         public override void HandleMouseEvent(int id, int x, int y, int clickCount)
