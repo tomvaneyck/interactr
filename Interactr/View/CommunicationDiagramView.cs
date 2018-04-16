@@ -72,7 +72,7 @@ namespace Interactr.View
             // Create a list of message views based on the message viewmodels.
             MessageViews = ViewModelChanged
                 .Where(vm => vm != null)
-                .Select(vm => vm.MessageViewModels)
+                .Select(vm => vm.InvocationMessageViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width, Height) {ViewModel = vm})
                 .ResultList;
 

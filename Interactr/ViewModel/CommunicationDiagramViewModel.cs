@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -14,11 +16,10 @@ namespace Interactr.ViewModel
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new CommunicationDiagramMessageViewModel(msg),
-                msg => msg.Type == Message.MessageType.Invocation).ResultList;
+            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new CommunicationDiagramMessageViewModel(msg)).ResultList;
+            InvocationMessageViewModels = MessageViewModels.CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
-            MessageViewModels.OnAdd.Subscribe(_ => SetMessageViewModelNumbers());
-            
+            MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result).Subscribe(_ => SetMessageViewModelNumbers());
         }
 
         /// <summary>
@@ -29,6 +30,11 @@ namespace Interactr.ViewModel
         /// </remarks>
         public readonly IReadOnlyReactiveList<CommunicationDiagramMessageViewModel> MessageViewModels;
 
+        /// <summary>
+        /// The invocataion messages view models.
+        /// </summary>
+        public IReadOnlyReactiveList<CommunicationDiagramMessageViewModel> InvocationMessageViewModels { get; set; }
+
         private void SetMessageViewModelNumbers()
         {
             try
@@ -36,8 +42,11 @@ namespace Interactr.ViewModel
                 foreach (var stackFrame in MessageStackWalker.Walk(
                     MessageViewModels))
                 {
-                    stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
-                    SetMessageNumbers(stackFrame, stackFrame.Level.ToString());
+                    if (stackFrame.InvocationMessage != null)
+                    {
+                        stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
+                        SetMessageNumbers(stackFrame, stackFrame.Level.ToString());
+                    }
                 }
             }
             catch (UnbalancedStackException)
