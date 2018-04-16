@@ -55,12 +55,22 @@ namespace Interactr.View
                 }
             });
 
+            // Create a copy of the current diagram when the user presses CTRL+D.
+            diagramEditors.ObserveEach(diagramEditor => diagramEditor.KeyEventOccurred).Subscribe(e =>
+            {
+                KeyEventData eventData = e.Value;
+                if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_D && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
+                {
+                    ViewModel.EditDiagram(e.Element.ViewModel.Diagram);
+                }
+            });
+
             this.Children.Add(Windows);
         }
 
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
-            // Create a new diagram when the user presses CTRL+N
+            // Create a new diagram when the user presses CTRL+N.
             if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_N && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
             {
                 ViewModel.EditNewDiagram();
