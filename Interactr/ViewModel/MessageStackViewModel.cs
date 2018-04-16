@@ -166,13 +166,13 @@ namespace Interactr.ViewModel
                 throw new ArgumentNullException(nameof(sender));
             }
 
-// Get the frame on the top of the stack at suggestedTick
+            // Get the frame on the top of the stack at suggestedTick
             var stackFrame = MessageStack.MessageStackWalker.Walk(MessageViewModels)
                 .FirstOrDefault(f => f.StartTick < suggestedTick && suggestedTick <= f.EndTick);
 
-// If sender is not on the top of the message stack at suggestedTick, then don't create a new message. 
-// If there is no frame on the top of the stack at that time, make sure that the message is sent by the initiator,
-// unless there are no messages in the diagram (because then no initiator has been assigned yet.)
+            // If sender is not on the top of the message stack at suggestedTick, then don't create a new message. 
+            // If there is no frame on the top of the stack at that time, make sure that the message is sent by the initiator,
+            // unless there are no messages in the diagram (because then no initiator has been assigned yet.)
             if ((stackFrame != null && stackFrame.Party != sender) ||
                 (stackFrame == null && MessageViewModels.Count > 0 &&
                  sender != MessageViewModels.First().SenderActivationBar.Party))
@@ -180,7 +180,7 @@ namespace Interactr.ViewModel
                 return;
             }
 
-// Find the matching activation bar for this party and tick, if any.
+            // Find the matching activation bar for this party and tick, if any.
             var targetActivationBar = ActivationBars
                 .Where(bar => bar.Party == sender && suggestedTick > bar.StartTick && bar.EndTick > suggestedTick)
                 .OrderByDescending(bar => bar.Level)
@@ -214,11 +214,11 @@ namespace Interactr.ViewModel
                 throw new InvalidOperationException("There is no active pending message.");
             }
 
-// Reset pending message to null.
+            // Reset pending message to null.
             var pendingMsg = PendingInvokingMessageVM;
             PendingInvokingMessageVM = null;
 
-// Make sure the pending message has a valid sender and receiver combination.
+            // Make sure the pending message has a valid sender and receiver combination.
             if (pendingMsg.SenderActivationBar == null || pendingMsg.Receiver == null ||
                 pendingMsg.SenderActivationBar.Party ==
                 pendingMsg.Receiver)
@@ -226,7 +226,7 @@ namespace Interactr.ViewModel
                 return;
             }
 
-// Find index in messages list where the new messages should be inserted.
+            // Find index in messages list where the new messages should be inserted.
             int i = 0;
             for (; i < MessageViewModels.Count; i++)
             {
@@ -236,14 +236,14 @@ namespace Interactr.ViewModel
                 }
             }
 
-// Add invocation message.
+            // Add invocation message.
             Message message =
                     new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver,
                         Message.MessageType.Invocation, pendingMsg.Label)
                 ;
             Diagram.Messages.Insert(i, message);
 
-// Add return message.
+            // Add return message.
             Message returnMessage =
                 new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "");
             Diagram.Messages.Insert(i + 1, returnMessage);
