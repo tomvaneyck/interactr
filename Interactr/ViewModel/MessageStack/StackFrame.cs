@@ -10,7 +10,6 @@ namespace Interactr.ViewModel.MessageStack
     /// </summary>
     public class StackFrame : IEquatable<StackFrame>
     {
-        
         /// <summary>
         /// The amount of frames on the stack below this one with the same party.
         /// </summary>
