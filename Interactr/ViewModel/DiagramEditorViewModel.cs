@@ -10,6 +10,12 @@ namespace Interactr.ViewModel
     public class DiagramEditorViewModel
     {
         /// <summary>
+        /// The underlying diagram associated with the diagram view model.
+        /// </summary>
+        /// <remarks>The underlying diagram can not be changed after the diagramViewModel construction.</remarks>
+        public Diagram Diagram { get; }
+
+        /// <summary>
         /// The communication diagram view model.
         /// </summary>
         public CommunicationDiagramViewModel CommDiagramVM { get; }
@@ -21,6 +27,7 @@ namespace Interactr.ViewModel
 
         public DiagramEditorViewModel(Diagram diagram)
         {
+            Diagram = diagram;
             CommDiagramVM = new CommunicationDiagramViewModel(diagram);
             SeqDiagramVM = new SequenceDiagramViewModel(diagram)
             {
