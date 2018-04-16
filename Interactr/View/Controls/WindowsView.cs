@@ -166,6 +166,16 @@ namespace Interactr.View.Controls
                 this.Children.Add(CloseButton);
             }
 
+            protected override bool OnMouseEventPreview(MouseEventData eventData)
+            {
+                if (!InnerElement.IsFocused && InnerElement.CanBeFocused)
+                {
+                    InnerElement.Focus();
+                    return true;
+                }
+                return false;
+            }
+
             public override void PaintElement(Graphics g)
             {
                 // Draw background.
