@@ -103,8 +103,8 @@ namespace Interactr.ViewModel
 
                     foreach (var subFrame in frame.SubFrames)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) subFrame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel) subFrame.ReturnMessage;
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel)subFrame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel)subFrame.ReturnMessage;
 
                         // Each subinvocation is sent from this bar.
                         seqInvocationMessage.SenderActivationBar = bar;
@@ -116,8 +116,8 @@ namespace Interactr.ViewModel
                     // If this frame is not the initiator frame
                     if (frame.InvocationMessage != null && frame.ReturnMessage != null)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) frame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel) frame.ReturnMessage;
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel)frame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel)frame.ReturnMessage;
 
                         // The invocation message that starts this activation should arrive at this bar.
                         seqInvocationMessage.ReceiverActivationBar = bar;
@@ -239,8 +239,7 @@ namespace Interactr.ViewModel
             // Add invocation message.
             Message message =
                     new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver,
-                        Message.MessageType.Invocation, pendingMsg.Label)
-                ;
+                        Message.MessageType.Invocation, pendingMsg.Label);
             Diagram.Messages.Insert(i, message);
 
             // Add return message.

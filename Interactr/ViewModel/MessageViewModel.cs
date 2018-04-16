@@ -4,12 +4,12 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class MessageViewModel { 
-    
+    public class MessageViewModel
+    {
         /// <summary>
         /// Reference to the Message model.
         /// </summary>
-        public Message Message {get;}
+        public Message Message { get; }
 
         #region MessageNumber
         private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
