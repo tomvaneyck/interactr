@@ -537,7 +537,7 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children
+            UIElement childContainingPoint = Children
                 .Reverse()
                 .FirstOrDefault(child =>
                     child.IsVisible &&
