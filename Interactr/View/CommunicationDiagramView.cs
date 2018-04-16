@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.ViewModel.MessageStack;
 using Interactr.Window;
+using StackFrame = Interactr.ViewModel.MessageStack.StackFrame;
 
 namespace Interactr.View
 {
@@ -15,6 +19,8 @@ namespace Interactr.View
     /// </summary>
     public class CommunicationDiagramView : DragPanel
     {
+        private IReadOnlyReactiveList<CommunicationDiagramMessageView> MessageViews;
+
         #region ViewModel
 
         private readonly ReactiveProperty<CommunicationDiagramViewModel> _viewModel =
@@ -64,26 +70,28 @@ namespace Interactr.View
             PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
             // Create a list of message views based on the message viewmodels.
-            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
+            MessageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width,Height) {ViewModel = vm}).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width, Height) {ViewModel = vm})
+                .ResultList;
 
             // Automatically add and remove message views to Children.
-            messageViews.OnAdd.Subscribe(e =>
+            MessageViews.OnAdd.Subscribe(e =>
             {
                 // Make message views the size of the communication diagram view.
                 e.Element.PreferredWidth = Width;
                 e.Element.PreferredHeight = Height;
 
                 Children.Add(e.Element);
+                SetMessageViewModelNumbers();
             });
-            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            MessageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
-            // Keep messageviews the size of the communication diagram view when resized.
+            // Keep message views the size of the communication diagram view when resized.
             WidthChanged.Subscribe(newWidth =>
             {
-                foreach (var messageView in messageViews)
+                foreach (var messageView in MessageViews)
                 {
                     messageView.PreferredWidth = newWidth;
                 }
@@ -91,7 +99,7 @@ namespace Interactr.View
 
             HeightChanged.Subscribe(newHeight =>
             {
-                foreach (var messageView in messageViews)
+                foreach (var messageView in MessageViews)
                 {
                     messageView.PreferredHeight = newHeight;
                 }
@@ -112,6 +120,27 @@ namespace Interactr.View
             else
             {
                 return base.OnMouseEvent(e);
+            }
+        }
+
+        private void SetMessageViewModelNumbers()
+        {
+            foreach (var stackFrame in MessageStackWalker.Walk(
+                (IReadOnlyList<MessageViewModel>) MessageViews.Select(mv => (MessageViewModel) mv.ViewModel)))
+            {
+                stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
+                SetMessageNumbers(stackFrame,stackFrame.Level.ToString());
+            }
+        }
+
+        private static void SetMessageNumbers(StackFrame frame,string accumulatedMessageNumber)
+        {
+            
+            accumulatedMessageNumber = accumulatedMessageNumber + "." + frame.Level;
+            frame.InvocationMessage.MessageNumber = accumulatedMessageNumber;
+            foreach (var subFrame in frame.SubFrames)
+            {
+                SetMessageNumbers(subFrame, accumulatedMessageNumber);
             }
         }
 

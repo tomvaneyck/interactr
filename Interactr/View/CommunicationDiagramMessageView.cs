@@ -38,7 +38,6 @@ namespace Interactr.View
 
             Children.Add(_arrow);
             Children.Add(_label);
-            //AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
 
             // Put the arrow starting point on the sender.
             ObservePartyPosition(vm => vm.Message.SenderChanged)
@@ -71,7 +70,7 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-               // MarginsProperty.SetValue(_label, new Margins(textPos.X, textPos.Y));
+              //  _label.Position = diff;
             });
         }
 

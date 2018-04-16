@@ -7,6 +7,11 @@ namespace Interactr.ViewModel
     public class MessageViewModel
     {
         /// <summary>
+        /// The messageNumber to be displayed on the label.
+        /// </summary>
+        public string MessageNumber;
+
+        /// <summary>
         /// Reference to the Message model.
         /// </summary>
         public Message Message { get; }
