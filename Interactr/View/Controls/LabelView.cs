@@ -60,6 +60,26 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        #region Color
+
+        private readonly ReactiveProperty<Color> _color = new ReactiveProperty<Color>();
+
+        /// <summary>
+        /// The color of the label text.
+        /// </summary>
+        public Color Color
+        {
+            get => _color.Value;
+            set => _color.Value = value;
+        }
+
+        /// <summary>
+        /// Emit the new Color when it changes.
+        /// </summary>
+        public IObservable<Color> ColorChanged => _color.Changed;
+
+        #endregion
+
         #region IsInEditMode
 
         private readonly ReactiveProperty<bool> _isInEditMode = new ReactiveProperty<bool>();
@@ -105,7 +125,7 @@ namespace Interactr.View.Controls
         private bool _cursorIsVisible;
 
         #endregion
-
+        
         private bool _isFocusing;
 
         public LabelView()
@@ -117,8 +137,10 @@ namespace Interactr.View.Controls
             Font = new Font("Arial", 11);
 
             // When a property changes, repaint.
-            TextChanged.Select(_ => Unit.Default).Merge(
-                FontChanged.Select(_ => Unit.Default)
+            Observable.Merge(
+                TextChanged.Select(_ => Unit.Default),
+                FontChanged.Select(_ => Unit.Default),
+                ColorChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => Repaint());
 
             // Blink cursor if label is in edit mode.
@@ -171,18 +193,25 @@ namespace Interactr.View.Controls
             PreferredWidth = (int) Math.Ceiling(preferredSize.Width);
             PreferredHeight = (int) Math.Ceiling(preferredSize.Height);
 
-            if (IsFocused)
-            {
-                g.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
-            }
-
             // Draw the string.
-            g.DrawString(Text, Font, Brushes.Black, 0, 0);
-
-            // Draw cursor.
-            if (_cursorIsVisible)
+            using (Brush brush = new SolidBrush(Color))
             {
-                g.DrawLine(Pens.Black, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                g.DrawString(Text, Font, brush, 0, 0);
+            }
+            
+            using (Pen pen = new Pen(Color))
+            {
+                // Draw editing rectangle
+                if (IsFocused)
+                {
+                    g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+                }
+
+                // Draw cursor.
+                if (_cursorIsVisible)
+                {
+                    g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                }
             }
         }
 
