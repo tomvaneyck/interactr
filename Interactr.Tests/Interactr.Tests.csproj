@@ -62,7 +62,7 @@
     <Compile Include="Model\Messagetests.cs" />
     <Compile Include="Model\PartyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\MainViewModelTests.cs" />
+    <Compile Include="ViewModel\DiagramEditorViewModelTests.cs" />
     <Compile Include="ViewModel\MessageStackWalkerTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
