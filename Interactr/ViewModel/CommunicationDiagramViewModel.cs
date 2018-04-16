@@ -35,6 +35,9 @@ namespace Interactr.ViewModel
         /// </summary>
         public IReadOnlyReactiveList<CommunicationDiagramMessageViewModel> InvocationMessageViewModels { get; set; }
 
+        /// <summary>
+        /// Calculate the new message view model numbers and set them for every invocation message in communication diagram view.
+        /// </summary>
         private void SetMessageViewModelNumbers()
         {
             try
