@@ -43,7 +43,6 @@ namespace Interactr.ViewModel
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {
-                        
                         int subFrameNum = 1;
                         foreach (var subFrame in stackFrame.SubFrames)
                         {
