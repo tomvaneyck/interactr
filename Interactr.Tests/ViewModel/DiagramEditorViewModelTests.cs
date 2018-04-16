@@ -1,19 +1,18 @@
 ﻿using Interactr.Model;
 using Interactr.ViewModel;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Interactr.Tests.ViewModel
 {
     [TestFixture]
-    public class MainViewModelTests
+    public class DiagramEditorViewModelTests
     {
-        private MainViewModel _mainViewModel;
+        private DiagramEditorViewModel _mainViewModel;
 
         [SetUp]
         public void Before()
         {
-            _mainViewModel = new MainViewModel(new Diagram());
+            _mainViewModel = new DiagramEditorViewModel(new Diagram());
         }
 
         [Test]
