@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive;
@@ -105,7 +106,7 @@ namespace Interactr.View.Controls
         public ArrowView()
         {
             // Default values.
-            ArrowHeadSize = 5;
+            ArrowHeadSize = 10;
             LineThickness = 1;
             Color = Color.Black;
 
@@ -137,7 +138,9 @@ namespace Interactr.View.Controls
             float yDiff = EndPoint.Y - StartPoint.Y; // Length of line projected on Y-axis.
 
             // Angle between x-axis and line.
-            float arrowAngle = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float check = (float)Math.Asin(yDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float angleCalc = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float arrowAngle = check < 0 ? -1 * angleCalc : angleCalc;
             
             // If line has length 0, assume an angle of 0.
             arrowAngle = float.IsNaN(arrowAngle) ? 0 : arrowAngle;
@@ -149,9 +152,12 @@ namespace Interactr.View.Controls
             int x1 = (int)Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y1 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
+                
+
             // Calculate point 2, on the other side of the line.
             int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
+
 
             // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
             g.FillPolygon(new SolidBrush(Color), new []
