@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
@@ -35,6 +30,12 @@ namespace Interactr.View
 
         #endregion
 
+        #region PartyViews
+
+        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
+
+        #endregion
+
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -42,14 +43,14 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
+            PartyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
             // Automatically enter label editing mode when adding a party
-            partyViews.OnAdd.Subscribe(elem =>
+            PartyViews.OnAdd.Subscribe(elem =>
             {
                 if (IsVisible && (IsFocused || HasChildInFocus()))
                 {
@@ -59,8 +60,42 @@ namespace Interactr.View
             });
 
             // Automatically add and remove party views to Children.
-            partyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            partyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            // Create a list of message views based on the message viewmodels.
+            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.MessageViewModels)
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width,Height) {ViewModel = vm}).ResultList;
+
+            // Automatically add and remove message views to Children.
+            messageViews.OnAdd.Subscribe(e =>
+            {
+                // Make message views the size of the communication diagram view.
+                e.Element.PreferredWidth = Width;
+                e.Element.PreferredHeight = Height;
+
+                Children.Add(e.Element);
+            });
+            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            // Keep messageviews the size of the communication diagram view when resized.
+            WidthChanged.Subscribe(newWidth =>
+            {
+                foreach (var messageView in messageViews)
+                {
+                    messageView.PreferredWidth = newWidth;
+                }
+            });
+
+            HeightChanged.Subscribe(newHeight =>
+            {
+                foreach (var messageView in messageViews)
+                {
+                    messageView.PreferredHeight = newHeight;
+                }
+            });
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -86,7 +121,7 @@ namespace Interactr.View
             // Delete party.
             // The commented check is an extra safety, but not yet possible due
             // to the need of a recursive search.
-            if (eventData.Id == KeyEvent.KEY_RELEASED && 
+            if (eventData.Id == KeyEvent.KEY_RELEASED &&
                 eventData.KeyCode == KeyCodes.Delete &&
                 /*Children.Contains(FocusedElement) &&*/
                 FocusedElement.GetType() == typeof(LabelView)
@@ -97,7 +132,6 @@ namespace Interactr.View
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
-
                 return true;
             }
 
