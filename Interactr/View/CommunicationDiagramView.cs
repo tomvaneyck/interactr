@@ -84,7 +84,6 @@ namespace Interactr.View
                 e.Element.PreferredHeight = Height;
 
                 Children.Add(e.Element);
-                SetMessageViewModelNumbers();
             });
             MessageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
@@ -120,27 +119,6 @@ namespace Interactr.View
             else
             {
                 return base.OnMouseEvent(e);
-            }
-        }
-
-        private void SetMessageViewModelNumbers()
-        {
-            foreach (var stackFrame in MessageStackWalker.Walk(
-                (IReadOnlyList<MessageViewModel>) MessageViews.Select(mv => (MessageViewModel) mv.ViewModel)))
-            {
-                stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
-                SetMessageNumbers(stackFrame,stackFrame.Level.ToString());
-            }
-        }
-
-        private static void SetMessageNumbers(StackFrame frame,string accumulatedMessageNumber)
-        {
-            
-            accumulatedMessageNumber = accumulatedMessageNumber + "." + frame.Level;
-            frame.InvocationMessage.MessageNumber = accumulatedMessageNumber;
-            foreach (var subFrame in frame.SubFrames)
-            {
-                SetMessageNumbers(subFrame, accumulatedMessageNumber);
             }
         }
 

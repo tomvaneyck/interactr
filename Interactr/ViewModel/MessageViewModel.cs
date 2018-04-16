@@ -4,17 +4,31 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class MessageViewModel
-    {
-        /// <summary>
-        /// The messageNumber to be displayed on the label.
-        /// </summary>
-        public string MessageNumber;
-
+    public class MessageViewModel { 
+    
         /// <summary>
         /// Reference to the Message model.
         /// </summary>
-        public Message Message { get; }
+        public Message Message {get;}
+
+        #region MessageNumber
+        private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
+
+        /// <summary> A label.
+        /// <example> instance_name;class_name </example>
+        /// </summary>
+        public string MessageNumber
+        {
+            get => _messageNumber.Value;
+            set => _messageNumber.Value = value;
+        }
+
+        /// <summary>
+        /// An observable that emits the new label when it has changed.
+        /// </summary>
+        public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
+
+        #endregion
 
         #region Tick
 

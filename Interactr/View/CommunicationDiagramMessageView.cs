@@ -56,7 +56,8 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = ViewModel.MessageNumber + label);
+
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
@@ -70,7 +71,9 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-              //  _label.Position = diff;
+                _label.Position = textPos;
+                _label.Width = _label.PreferredWidth;
+                _label.Height = _label.PreferredHeight;
             });
         }
 

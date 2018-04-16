@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+using Interactr.ViewModel.MessageStack;
 
 namespace Interactr.ViewModel
 {
@@ -14,6 +16,9 @@ namespace Interactr.ViewModel
             // Create message view models for every invocation message in the diagram model.
             MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new CommunicationDiagramMessageViewModel(msg),
                 msg => msg.Type == Message.MessageType.Invocation).ResultList;
+
+            MessageViewModels.OnAdd.Subscribe(_ => SetMessageViewModelNumbers());
+            
         }
 
         /// <summary>
@@ -23,5 +28,33 @@ namespace Interactr.ViewModel
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
         public readonly IReadOnlyReactiveList<CommunicationDiagramMessageViewModel> MessageViewModels;
+
+        private void SetMessageViewModelNumbers()
+        {
+            try
+            {
+                foreach (var stackFrame in MessageStackWalker.Walk(
+                    MessageViewModels))
+                {
+                    stackFrame.InvocationMessage.MessageNumber = stackFrame.Level.ToString();
+                    SetMessageNumbers(stackFrame, stackFrame.Level.ToString());
+                }
+            }
+            catch (UnbalancedStackException)
+            {
+                Debug.Print("Stack was unbalanced.");
+            }
+        }
+
+        private static void SetMessageNumbers(MessageStack.StackFrame frame, string accumulatedMessageNumber)
+        {
+
+            accumulatedMessageNumber = accumulatedMessageNumber + "." + frame.Level;
+            frame.InvocationMessage.MessageNumber = accumulatedMessageNumber;
+            foreach (var subFrame in frame.SubFrames)
+            {
+                SetMessageNumbers(subFrame, accumulatedMessageNumber);
+            }
+        }
     }
 }
