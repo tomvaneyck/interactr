@@ -82,6 +82,7 @@
     <Compile Include="ViewModel\ActivationBarViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
+    <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -100,6 +101,9 @@
     <Compile Include="View\Controls\AnchorPanel.cs" />
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\ArrowView.cs" />
+    <Compile Include="View\Controls\Button.cs" />
+    <Compile Include="View\DiagramEditorView.cs" />
+    <Compile Include="View\Framework\Keyboard.cs" />
     <Compile Include="View\LifeLineView.cs" />
     <Compile Include="View\Controls\DragPanel.cs" />
     <Compile Include="View\Controls\Margins.cs" />
@@ -120,6 +124,7 @@
     <Compile Include="View\SequenceDiagramColumnView.cs" />
     <Compile Include="View\SequenceDiagramMessageView.cs" />
     <Compile Include="View\SequenceDiagramView.cs" />
+    <Compile Include="View\Controls\WindowsView.cs" />
     <Compile Include="Window\CanvasWindow.cs" />
     <Compile Include="Window\CanvasWindowRecording.cs" />
     <Compile Include="Window\InputMapper.cs" />
