@@ -67,7 +67,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width,Height) {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
@@ -96,14 +96,6 @@ namespace Interactr.View
                     messageView.PreferredHeight = newHeight;
                 }
             });
-
-            // Make the size of the message views unchangable.
-            // This is necessary because the anchorpanel overrides the size otherwise.
-            messageViews.ObserveEach(mv => mv.PreferredHeightChanged)
-                .Subscribe(mv => mv.Element.PreferredHeight = Height);
-
-            messageViews.ObserveEach(mv => mv.PreferredWidthChanged)
-                .Subscribe(mv => mv.Element.PreferredWidth = Width);
         }
 
         /// <see cref="OnMouseEvent"/>

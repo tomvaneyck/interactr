@@ -11,7 +11,7 @@ using Interactr.ViewModel;
 
 namespace Interactr.View
 {
-    public class CommunicationDiagramMessageView : AnchorPanel
+    public class CommunicationDiagramMessageView : UIElement
     {
         #region CommunicationDiagramMessageViewModel
 
@@ -31,11 +31,14 @@ namespace Interactr.View
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
-        public CommunicationDiagramMessageView()
+        public CommunicationDiagramMessageView(int width, int height)
         {
+            PreferredWidth = width;
+            PreferredHeight = height;
+
             Children.Add(_arrow);
             Children.Add(_label);
-            AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
+            //AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
 
             // Put the arrow starting point on the sender.
             ObservePartyPosition(vm => vm.Message.SenderChanged)
@@ -49,9 +52,9 @@ namespace Interactr.View
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
-                _arrow.PreferredWidth = newWidth);
+                _arrow.Width = newWidth);
 
-            HeightChanged.Subscribe(newHeight => _arrow.PreferredHeight = newHeight);
+            HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
@@ -68,7 +71,7 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                MarginsProperty.SetValue(_label, new Margins(textPos.X, textPos.Y));
+               // MarginsProperty.SetValue(_label, new Margins(textPos.X, textPos.Y));
             });
         }
 
