@@ -17,9 +17,8 @@ namespace Interactr.View
     /// </summary>
     public class MainView : AnchorPanel
     {
-        public CommunicationDiagramView CommDiagView { get; } = new CommunicationDiagramView();
-        public SequenceDiagramView SeqDiagView { get; } = new SequenceDiagramView();
-
+        public WindowsView Windows { get; } = new WindowsView();
+        
         #region ViewModel
 
         private readonly ReactiveProperty<MainViewModel> _viewModel = new ReactiveProperty<MainViewModel>();
@@ -36,24 +35,45 @@ namespace Interactr.View
 
         public MainView()
         {
-            ViewModelChanged.Subscribe(viewModel =>
+            // Create DiagramEditorViews for each Diagram
+            var diagramEditors = ViewModelChanged
+                .Where(vm => vm != null)
+                .Select(vm => vm.DiagramEditors)
+                .CreateDerivedListBinding(diagramVm => new DiagramEditorView {ViewModel = diagramVm})
+                .ResultList;
+
+            // Add the diagram views to the view tree.
+            diagramEditors.OnAdd.Subscribe(e => Windows.AddWindow(e.Element));
+            diagramEditors.OnDelete.Subscribe(e => Windows.RemoveWindowWith(e.Element));
+
+            // Remove a diagram editor when its window closes.
+            Windows.WindowCloseRequested.Subscribe(window =>
             {
-                //Retrieve the viewmodels for the child views from this elements viewmodel
-                CommDiagView.ViewModel = viewModel?.CommDiagramVM;
-                SeqDiagView.ViewModel = viewModel?.SeqDiagramVM;
+                if (window.InnerElement is DiagramEditorView editor)
+                {
+                    ViewModel.CloseEditor(editor.ViewModel);
+                }
             });
 
-            //Add the views to the view tree.
-            this.Children.Add(CommDiagView);
-            this.Children.Add(SeqDiagView);
+            // Create a copy of the current diagram when the user presses CTRL+D.
+            diagramEditors.ObserveEach(diagramEditor => diagramEditor.KeyEventOccurred).Subscribe(e =>
+            {
+                KeyEventData eventData = e.Value;
+                if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_D && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
+                {
+                    ViewModel.EditDiagram(e.Element.ViewModel.Diagram);
+                }
+            });
+
+            this.Children.Add(Windows);
         }
 
-        /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData e)
+        protected override bool OnKeyEvent(KeyEventData eventData)
         {
-            if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)
+            // Create a new diagram when the user presses CTRL+N.
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_N && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
             {
-                ViewModel?.SwitchViews();
+                ViewModel.EditNewDiagram();
                 return true;
             }
 

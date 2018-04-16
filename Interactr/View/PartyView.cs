@@ -22,6 +22,9 @@ namespace Interactr.View
     /// </summary>
     public class PartyView : AnchorPanel
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region ViewModel
 
         private readonly ReactiveProperty<PartyViewModel> _viewModel = new ReactiveProperty<PartyViewModel>();
@@ -89,6 +92,10 @@ namespace Interactr.View
             // Bind CanApplyLabel and CanLeaveEditMode.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
+
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
 
             // Bind text of label between this and PartyViewModel.
             _labelView.TextChanged.Subscribe(text =>
