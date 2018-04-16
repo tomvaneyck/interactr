@@ -38,32 +38,24 @@ namespace Interactr.ViewModel
         private void SetMessageViewModelNumbers()
         {
             try
-            {
-                int messageNumber = 1;
-                foreach (var stackFrame in MessageStackWalker.Walk(
-                    MessageViewModels))
+            { 
+                foreach (var stackFrame in MessageStackWalker.Walk(MessageViewModels))
                 {
-                    if (stackFrame.InvocationMessage != null)
+                    if (stackFrame.SubFrames.Count != 0)
                     {
-                        stackFrame.InvocationMessage.MessageNumber = messageNumber.ToString();
-                        SetMessageNumbers(stackFrame, messageNumber.ToString(),1);
-                        messageNumber++;
+                        
+                        int subFrameNum = 1;
+                        foreach (var subFrame in stackFrame.SubFrames)
+                        {
+                            subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString() + subFrame.InvocationMessage.MessageNumber;
+                            subFrameNum++;
+                        }
                     }
                 }
             }
             catch (UnbalancedStackException)
             {
                 Debug.Print("Stack was unbalanced.");
-            }
-        }
-
-        private static void SetMessageNumbers(MessageStack.StackFrame frame, string accumulatedMessageNumber,int messageNumber)
-        {
-            accumulatedMessageNumber = accumulatedMessageNumber + "." + messageNumber;
-            frame.InvocationMessage.MessageNumber = accumulatedMessageNumber;
-            foreach (var subFrame in frame.SubFrames)
-            {
-                SetMessageNumbers(subFrame, accumulatedMessageNumber,messageNumber++);
             }
         }
     }
