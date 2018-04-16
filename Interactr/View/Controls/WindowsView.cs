@@ -41,11 +41,15 @@ namespace Interactr.View.Controls
             // When a window (or a subchild) is clicked, bring the window to the front.
             Children.ObserveWhere(window => window.MouseEventOccured, elem => elem is Window).Subscribe(e =>
             {
-                int curIndex = Children.IndexOf(e.Element);
-                if (curIndex != Children.Count-1)
+                if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 {
-                    Children.RemoveAt(curIndex);
-                    Children.Add(e.Element);
+                    e.Element.Focus();
+                    int curIndex = Children.IndexOf(e.Element);
+                    if (curIndex != Children.Count - 1)
+                    {
+                        Children.RemoveAt(curIndex);
+                        Children.Add(e.Element);
+                    }
                 }
             });
 
