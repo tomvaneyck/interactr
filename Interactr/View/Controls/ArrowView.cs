@@ -152,11 +152,9 @@ namespace Interactr.View.Controls
             int x1 = (int)Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y1 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
-
             // Calculate point 2, on the other side of the line.
             int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
-
 
             // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
             g.FillPolygon(new SolidBrush(Color), new[]
