@@ -9,22 +9,14 @@ namespace Interactr.ViewModel
     /// </summary>
     public class SequenceDiagramMessageViewModel : MessageViewModel
     {
-        #region Tick
-
-        private readonly ReactiveProperty<int> _tick = new ReactiveProperty<int>();
-
         /// <summary>
         /// This marks the position of this call in the sequence of messages.
         /// </summary>
-        public int Tick
+        public new int Tick
         {
             get => _tick.Value;
             set => _tick.Value = value;
         }
-
-        public IObservable<int> TickChanged => _tick.Changed;
-
-        #endregion
 
         #region SenderActivationBar
 

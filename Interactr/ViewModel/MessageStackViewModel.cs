@@ -33,11 +33,13 @@ namespace Interactr.ViewModel
         /// <summary>
         /// The activation bar view models.
         /// </summary>
-        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } = new ReactiveArrayList<ActivationBarViewModel>();
+        public ReactiveList<ActivationBarViewModel> ActivationBars { get; } =
+            new ReactiveArrayList<ActivationBarViewModel>();
 
         #region PendingInvokingMessageVM
 
-        private readonly ReactiveProperty<PendingMessageViewModel> _pendingInvokingMessageVM = new ReactiveProperty<PendingMessageViewModel>();
+        private readonly ReactiveProperty<PendingMessageViewModel> _pendingInvokingMessageVM =
+            new ReactiveProperty<PendingMessageViewModel>();
 
         /// <summary>
         /// Viewmodel for the message that is currently being created by the user.
@@ -48,7 +50,8 @@ namespace Interactr.ViewModel
             set => _pendingInvokingMessageVM.Value = value;
         }
 
-        public IObservable<PendingMessageViewModel> PendingInvokingMessageVMChanged => _pendingInvokingMessageVM.Changed;
+        public IObservable<PendingMessageViewModel> PendingInvokingMessageVMChanged =>
+            _pendingInvokingMessageVM.Changed;
 
         #endregion
 
@@ -57,7 +60,8 @@ namespace Interactr.ViewModel
             Diagram = diagram;
 
             // Create MessageViewModels from messages.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new SequenceDiagramMessageViewModel(msg, 0)).ResultList;
+            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new SequenceDiagramMessageViewModel(msg, 0))
+                .ResultList;
 
             // When the diagram changes, recalculate layout.
             Observable.Merge(
@@ -99,20 +103,26 @@ namespace Interactr.ViewModel
 
                     foreach (var subFrame in frame.SubFrames)
                     {
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) subFrame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel) subFrame.ReturnMessage;
+
                         // Each subinvocation is sent from this bar.
-                        subFrame.InvocationMessage.SenderActivationBar = bar;
+                        seqInvocationMessage.SenderActivationBar = bar;
 
                         // Each return message is received on this bar.
-                        subFrame.ReturnMessage.ReceiverActivationBar = bar;
+                        seqReturnMessage.ReceiverActivationBar = bar;
                     }
-                    
+
                     // If this frame is not the initiator frame
                     if (frame.InvocationMessage != null && frame.ReturnMessage != null)
                     {
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) frame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel) frame.ReturnMessage;
+
                         // The invocation message that starts this activation should arrive at this bar.
-                        frame.InvocationMessage.ReceiverActivationBar = bar;
+                        seqInvocationMessage.ReceiverActivationBar = bar;
                         // The return message that ends this activation should be sent from this bar.
-                        frame.ReturnMessage.SenderActivationBar = bar;
+                        seqReturnMessage.SenderActivationBar = bar;
                     }
                 }
 
@@ -139,7 +149,8 @@ namespace Interactr.ViewModel
                 throw new ArgumentNullException(nameof(party));
             }
 
-            return new LifeLineViewModel(this, party);
+            return
+                new LifeLineViewModel(this, party);
         }
 
         /// <summary>
@@ -155,32 +166,33 @@ namespace Interactr.ViewModel
                 throw new ArgumentNullException(nameof(sender));
             }
 
-            // Get the frame on the top of the stack at suggestedTick
+// Get the frame on the top of the stack at suggestedTick
             var stackFrame = MessageStack.MessageStackWalker.Walk(MessageViewModels)
                 .FirstOrDefault(f => f.StartTick < suggestedTick && suggestedTick <= f.EndTick);
 
-            // If sender is not on the top of the message stack at suggestedTick, then don't create a new message. 
-            // If there is no frame on the top of the stack at that time, make sure that the message is sent by the initiator,
-            // unless there are no messages in the diagram (because then no initiator has been assigned yet.)
-            if ((stackFrame != null && stackFrame.Party != sender) || 
-                (stackFrame == null && MessageViewModels.Count > 0 && sender != MessageViewModels.First().SenderActivationBar.Party))
+// If sender is not on the top of the message stack at suggestedTick, then don't create a new message. 
+// If there is no frame on the top of the stack at that time, make sure that the message is sent by the initiator,
+// unless there are no messages in the diagram (because then no initiator has been assigned yet.)
+            if ((stackFrame != null && stackFrame.Party != sender) ||
+                (stackFrame == null && MessageViewModels.Count > 0 &&
+                 sender != MessageViewModels.First().SenderActivationBar.Party))
             {
                 return;
             }
 
-            // Find the matching activation bar for this party and tick, if any.
+// Find the matching activation bar for this party and tick, if any.
             var targetActivationBar = ActivationBars
                 .Where(bar => bar.Party == sender && suggestedTick > bar.StartTick && bar.EndTick > suggestedTick)
                 .OrderByDescending(bar => bar.Level)
                 .FirstOrDefault();
 
-            // If no activation bar was found, create a dummy one.
+// If no activation bar was found, create a dummy one.
             if (targetActivationBar == null)
             {
                 targetActivationBar = new ActivationBarViewModel(sender, suggestedTick, suggestedTick, 0);
             }
 
-            // Set pending message.
+// Set pending message.
             PendingMessageViewModel pendingMsg = new PendingMessageViewModel
             {
                 Tick = suggestedTick,
@@ -202,17 +214,19 @@ namespace Interactr.ViewModel
                 throw new InvalidOperationException("There is no active pending message.");
             }
 
-            // Reset pending message to null.
+// Reset pending message to null.
             var pendingMsg = PendingInvokingMessageVM;
             PendingInvokingMessageVM = null;
 
-            // Make sure the pending message has a valid sender and receiver combination.
-            if (pendingMsg.SenderActivationBar == null || pendingMsg.Receiver == null || pendingMsg.SenderActivationBar.Party == pendingMsg.Receiver)
+// Make sure the pending message has a valid sender and receiver combination.
+            if (pendingMsg.SenderActivationBar == null || pendingMsg.Receiver == null ||
+                pendingMsg.SenderActivationBar.Party ==
+                pendingMsg.Receiver)
             {
                 return;
             }
 
-            // Find index in messages list where the new messages should be inserted.
+// Find index in messages list where the new messages should be inserted.
             int i = 0;
             for (; i < MessageViewModels.Count; i++)
             {
@@ -222,13 +236,17 @@ namespace Interactr.ViewModel
                 }
             }
 
-            // Add invocation message.
-            Message message = new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver, Message.MessageType.Invocation, pendingMsg.Label);
+// Add invocation message.
+            Message message =
+                    new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver,
+                        Message.MessageType.Invocation, pendingMsg.Label)
+                ;
             Diagram.Messages.Insert(i, message);
 
-            // Add return message.
-            Message returnMessage = new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "");
-            Diagram.Messages.Insert(i+1, returnMessage);
+// Add return message.
+            Message returnMessage =
+                new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "");
+            Diagram.Messages.Insert(i + 1, returnMessage);
         }
     }
 }
