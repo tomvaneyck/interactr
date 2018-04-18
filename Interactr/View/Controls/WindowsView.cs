@@ -136,6 +136,11 @@ namespace Interactr.View.Controls
             public IObservable<String> TitleChanged => _title.Changed;
 
             #endregion
+
+            /// <summary>
+            /// How many pixels wide/high is the border
+            /// </summary>
+            private const int BorderSize = 5;
             
             /// <summary>
             /// The UIElement that is put inside this window
@@ -193,25 +198,28 @@ namespace Interactr.View.Controls
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
+                    // Which sides of the window is the mouse over?
                     _resizeMode = ResizeMode.None;
-                    if (eventData.MousePosition.X < 5)
+                    if (eventData.MousePosition.X < BorderSize)
                     {
                         _resizeMode |= ResizeMode.Left;
                     }
-                    else if (eventData.MousePosition.X > Width - 5)
+                    else if (eventData.MousePosition.X > Width - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Right;
                     }
 
-                    if (eventData.MousePosition.Y < 5)
+                    if (eventData.MousePosition.Y < BorderSize)
                     {
                         _resizeMode |= ResizeMode.Top;
                     }
-                    else if (eventData.MousePosition.Y > Height - 5)
+                    else if (eventData.MousePosition.Y > Height - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Bottom;
                     }
 
+                    // If the user has clicked on a window side, capture the mouse so the user
+                    // can drag outside the window border and the window will still receive events.
                     if (_resizeMode != ResizeMode.None)
                     {
                         CaptureMouse();
@@ -220,11 +228,13 @@ namespace Interactr.View.Controls
                 }
                 else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
                 {
+                    // Dragging finished, release mouse capture.
                     ReleaseMouseCapture();
                     return true;
                 }
                 else if(eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
                 {
+                    // User has dragged the mouse. Resize/reposition the window.
                     if ((_resizeMode & ResizeMode.Left) != 0)
                     {
                         this.Width -= eventData.MousePosition.X;
