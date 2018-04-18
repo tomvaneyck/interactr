@@ -146,5 +146,26 @@ namespace Interactr.View
             return false;
         }
 
+        private void ConnectAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
+        {
+            // Connect to the sender
+
+            var senderPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
+            var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
+
+            // Set and attach the positions to eachother.
+            messageView.Position = anchor.Position;
+            anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
+
+            // Connect to the Receiver
+
+            var receiverPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
+            anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
+
+            // Set and attach the positions to eachother.
+            messageView.Position = anchor.Position;
+            anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
+        }
+
     }
 }

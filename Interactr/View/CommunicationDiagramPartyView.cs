@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 
@@ -15,7 +16,7 @@ namespace Interactr.View
 
         public MessageArrowStack LeftArrowStack { get; set; }
         public MessageArrowStack RighArrowStack { get; set; }
-        
+
         #endregion
 
         public CommunicationDiagramPartyView() : base()
@@ -40,15 +41,24 @@ namespace Interactr.View
             /// Add a new anchor element to attack an arrow start or end point to in the MessageArrowStack.
             /// </summary>
             /// <returns> The new UIElement that was added to the MessageArrowStack</returns>
-            public UIElement AddArrowAnchorElement()
+            public ArrowAnchor AddArrowAnchorElement()
             {
                 // A UIElement that can be used to attach a message arrow to.
-                var arrowAnchorElement = new UIElement();
+                var arrowAnchorElement = new ArrowAnchor();
 
                 // Add the element to the MessageArrow StackPanel
                 Children.Add(arrowAnchorElement);
 
                 return arrowAnchorElement;
+            }
+        }
+
+        public class ArrowAnchor : UIElement
+        {
+            public ArrowAnchor() : base()
+            {
+                PreferredWidth = 1;
+                PreferredHeight = 1;
             }
         }
     }
