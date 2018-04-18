@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
@@ -138,7 +137,7 @@ namespace Interactr.View.Controls
             #endregion
 
             /// <summary>
-            /// How many pixels wide/high is the border
+            /// The width/height of the border.
             /// </summary>
             private const int BorderSize = 5;
             
@@ -200,20 +199,20 @@ namespace Interactr.View.Controls
                 {
                     // Which sides of the window is the mouse over?
                     _resizeMode = ResizeMode.None;
-                    if (eventData.MousePosition.X < BorderSize)
+                    if (eventData.MousePosition.X <= BorderSize)
                     {
                         _resizeMode |= ResizeMode.Left;
                     }
-                    else if (eventData.MousePosition.X > Width - BorderSize)
+                    else if (eventData.MousePosition.X >= Width - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Right;
                     }
 
-                    if (eventData.MousePosition.Y < BorderSize)
+                    if (eventData.MousePosition.Y <= BorderSize)
                     {
                         _resizeMode |= ResizeMode.Top;
                     }
-                    else if (eventData.MousePosition.Y > Height - BorderSize)
+                    else if (eventData.MousePosition.Y >= Height - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Bottom;
                     }
