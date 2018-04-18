@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using Interactr.Model;
 using NUnit.Framework;
-using System.Reactive.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
 using System.Reactive.Concurrency;
 using Microsoft.Reactive.Testing;
-using static System.Object;
 
 namespace Interactr.Tests.Model
 {
