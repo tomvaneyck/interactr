@@ -37,6 +37,27 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        #region MouseCapturingElement
+
+        private static readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
+
+        /// <summary>
+        /// The UI element that has captured the mouse.
+        /// </summary>
+        /// <remarks>
+        /// If an element captures the mouse, it will receive all mouse events, regardless of the current mouse position.
+        /// Use UIElement.CaptureMouse() to capture the mouse.
+        /// </remarks>
+        public static UIElement MouseCapturingElement
+        {
+            get => _mouseCapturingElement.Value;
+            private set => _mouseCapturingElement.Value = value;
+        }
+
+        public static IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
+
+        #endregion
+
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
@@ -361,17 +382,17 @@ namespace Interactr.View.Framework
         /// <returns>True if the event was handled by an element.</returns>
         public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
-            UIElement mouseoverElement = rootElement.FindElementAt(eventData.MousePosition);
+            UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
 
-            if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, eventData))
+            if (TunnelDownMouseEventPreview(rootElement, targetElement, eventData))
             {
                 // Event was handled.
                 return true;
             }
 
             // Bubble up event from FocusedElement to root.
-            Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
-            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
+            Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
+            return targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
                 eventData.ClickCount));
         }
 
@@ -450,6 +471,19 @@ namespace Interactr.View.Framework
             }
 
             return false;
+        }
+
+        public void CaptureMouse()
+        {
+            MouseCapturingElement = this;
+        }
+
+        public void ReleaseMouseCapture()
+        {
+            if (MouseCapturingElement == this)
+            {
+                MouseCapturingElement = null;
+            }
         }
 
         #endregion
