@@ -33,7 +33,6 @@ namespace Interactr.Tests.View
                 ReactiveTest.OnNext(1, false),
                 ReactiveTest.OnNext(10, true)
             };
-
             var actual = _scheduler.Start(() => _communicationDiagramView.IsVisibleChanged, 0, 0, 1000).Messages;
 
             // Assert that the visibility changed as expected.
@@ -52,14 +51,12 @@ namespace Interactr.Tests.View
 
         private class TestableCommunicationDiagramView : CommunicationDiagramView
         {
-
             public IReadOnlyReactiveList<PartyView> PartyViews => partyViews;
 
             public bool RunOnMouseEvent(MouseEventData e)
             {
                 return OnMouseEvent(e);
             }
-
         }
     }
 }
