@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Model;
-using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
