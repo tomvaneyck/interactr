@@ -97,6 +97,7 @@ namespace Interactr.Tests.Model
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
+            Assert.AreEqual(MessageLabel1, _defaultTestMessage.Label);
         }
 
         [Test]

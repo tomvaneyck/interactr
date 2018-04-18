@@ -71,6 +71,7 @@
     <Compile Include="ViewModel\PartyViewModelTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
     <Compile Include="View\PartyViewTests.cs" />
+    <Compile Include="View\Controls\ArrowViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
