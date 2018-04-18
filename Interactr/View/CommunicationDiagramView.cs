@@ -50,7 +50,7 @@ namespace Interactr.View
             PartyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
+                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm })
                 .ResultList;
 
             // Automatically enter label editing mode when adding a party
@@ -71,7 +71,7 @@ namespace Interactr.View
             MessageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.InvocationMessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width, Height) {ViewModel = vm})
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width, Height) { ViewModel = vm })
                 .ResultList;
 
             // Automatically add and remove message views to Children.
@@ -89,7 +89,7 @@ namespace Interactr.View
                 CalculateArrowStartPositions();
             });
 
-        // Keep message views the size of the communication diagram view when resized.
+            // Keep message views the size of the communication diagram view when resized.
             WidthChanged.Subscribe(newWidth =>
             {
                 foreach (var messageView in MessageViews)
@@ -136,7 +136,7 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView) FocusedElement.Parent;
+                PartyView partyView = (PartyView)FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
@@ -157,9 +157,9 @@ namespace Interactr.View
                     MessageViews.Where(mv => mv.ViewModel.Message.Sender == message.Sender).ToList();
 
                 int numSenders = messagesWithSameSender.Count;
-                for (int i = 0;i<numSenders-1;i+=2)
+                for (int i = 0; i < numSenders - 1; i += 2)
                 {
-                    messagesWithSameSender[i + 1].Position = TranslatePointTo(messagesWithSameSender[i],messagesWithSameSender[i+1].Position);
+                    messagesWithSameSender[i + 1].Position = TranslatePointTo(messagesWithSameSender[i], messagesWithSameSender[i + 1].Position);
                 }
             }
         }
