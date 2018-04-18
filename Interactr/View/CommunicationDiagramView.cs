@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
-using Interactr.ViewModel.MessageStack;
 using Interactr.Window;
-using StackFrame = Interactr.ViewModel.MessageStack.StackFrame;
 
 namespace Interactr.View
 {
