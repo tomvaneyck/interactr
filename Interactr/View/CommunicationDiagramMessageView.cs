@@ -70,6 +70,11 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
+                
+                // Set the label position
+                _label.Position = textPos;
+                _label.Width = _label.PreferredWidth;
+                _label.Height = _label.PreferredHeight; 
             });
         }
 
