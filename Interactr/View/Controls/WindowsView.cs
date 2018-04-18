@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
@@ -6,6 +7,7 @@ using System.Reactive.Subjects;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.Window;
+using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View.Controls
 {
@@ -174,6 +176,76 @@ namespace Interactr.View.Controls
                         InnerElement.Focus();
                     }
                 });
+            }
+
+            [Flags]
+            private enum ResizeMode
+            {
+                None = 0,
+                Left = 1,
+                Top = 2,
+                Right = 4,
+                Bottom = 8
+            }
+
+            private ResizeMode _resizeMode;
+            protected override bool OnMouseEvent(MouseEventData eventData)
+            {
+                if (eventData.Id == MouseEvent.MOUSE_PRESSED)
+                {
+                    _resizeMode = ResizeMode.None;
+                    if (eventData.MousePosition.X < 5)
+                    {
+                        _resizeMode |= ResizeMode.Left;
+                    }else if (eventData.MousePosition.X > Width - 5)
+                    {
+                        _resizeMode |= ResizeMode.Right;
+                    }
+
+                    if (eventData.MousePosition.Y < 5)
+                    {
+                        _resizeMode |= ResizeMode.Top;
+                    }else if (eventData.MousePosition.Y > Height - 5)
+                    {
+                        _resizeMode |= ResizeMode.Bottom;
+                    }
+
+                    if (_resizeMode != ResizeMode.None)
+                    {
+                        CaptureMouse();
+                        return true;
+                    }
+                }
+                else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
+                {
+                    ReleaseMouseCapture();
+                    return true;
+                }
+                else if(_resizeMode != ResizeMode.None)
+                {
+                    if ((_resizeMode & ResizeMode.Left) != 0)
+                    {
+                        this.Width -= eventData.MousePosition.X;
+                        this.Position += new Point(eventData.MousePosition.X, 0);
+                    }
+                    if ((_resizeMode & ResizeMode.Top) != 0)
+                    {
+                        this.Height -= eventData.MousePosition.Y;
+                        this.Position += new Point(0, eventData.MousePosition.Y);
+                    }
+                    if ((_resizeMode & ResizeMode.Right) != 0)
+                    {
+                        this.Width = eventData.MousePosition.X;
+                    }
+                    if ((_resizeMode & ResizeMode.Bottom) != 0)
+                    {
+                        this.Height = eventData.MousePosition.Y;
+                    }
+
+                    return true;
+                }
+
+                return base.OnMouseEvent(eventData);
             }
 
             public override void PaintElement(Graphics g)
