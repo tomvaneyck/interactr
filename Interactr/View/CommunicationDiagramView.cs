@@ -86,7 +86,6 @@ namespace Interactr.View
             MessageViews.OnDelete.Subscribe(e =>
             {
                 Children.Remove(e.Element);
-                CalculateArrowStartPositions();
             });
 
             // Keep message views the size of the communication diagram view when resized.
@@ -147,21 +146,5 @@ namespace Interactr.View
             return false;
         }
 
-        private void CalculateArrowStartPositions()
-        {
-            foreach (var messageView in MessageViews)
-            {
-                Message message = messageView.ViewModel.Message;
-
-                var messagesWithSameSender =
-                    MessageViews.Where(mv => mv.ViewModel.Message.Sender == message.Sender).ToList();
-
-                int numSenders = messagesWithSameSender.Count;
-                for (int i = 0; i < numSenders - 1; i += 2)
-                {
-                    messagesWithSameSender[i + 1].Position = TranslatePointTo(messagesWithSameSender[i], messagesWithSameSender[i + 1].Position);
-                }
-            }
-        }
     }
 }
