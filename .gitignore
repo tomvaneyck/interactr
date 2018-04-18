@@ -324,3 +324,7 @@ Desktop.ini
 
 Interactr/Documentation_build
 Interactr/log.txt
+
+# Code coverage ignore
+Generate coverage report\.ps1
+Reports/
