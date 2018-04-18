@@ -113,7 +113,7 @@ namespace Interactr.Window
         /// </summary>
         public void Repaint()
         {
-            if (_form.IsHandleCreated && !_form.IsDisposed)
+            if (_form.IsHandleCreated && !_form.IsDisposed && !_contentPanel.IsDisposed)
             {
                 if (_form.InvokeRequired)
                 {
