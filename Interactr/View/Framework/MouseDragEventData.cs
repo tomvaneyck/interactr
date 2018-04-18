@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interactr.View.Framework
+﻿namespace Interactr.View.Framework
 {
     /// <summary>
     /// Information about a mouse drag event.
