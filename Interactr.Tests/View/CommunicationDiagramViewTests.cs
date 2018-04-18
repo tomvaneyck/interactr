@@ -10,7 +10,6 @@ namespace Interactr.Tests.View
 {
     class CommunicationDiagramViewTests
     {
-
         private TestScheduler _scheduler;
         private TestableCommunicationDiagramView _communicationDiagramView;
 
@@ -60,4 +59,3 @@ namespace Interactr.Tests.View
         }
     }
 }
-
