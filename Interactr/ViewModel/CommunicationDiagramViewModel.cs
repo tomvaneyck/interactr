@@ -5,7 +5,7 @@ using Interactr.View.Framework;
 
 namespace Interactr.ViewModel
 {
-    /// <summary> The diagram view model for the sequence diagram </summary>
+    /// <summary> The diagram view model for the communication diagram </summary>
     /// <see cref="DiagramViewModel"/>
     public class CommunicationDiagramViewModel : DiagramViewModel
     {
