@@ -197,7 +197,8 @@ namespace Interactr.View.Controls
                     if (eventData.MousePosition.X < 5)
                     {
                         _resizeMode |= ResizeMode.Left;
-                    }else if (eventData.MousePosition.X > Width - 5)
+                    }
+		    else if (eventData.MousePosition.X > Width - 5)
                     {
                         _resizeMode |= ResizeMode.Right;
                     }
@@ -205,7 +206,8 @@ namespace Interactr.View.Controls
                     if (eventData.MousePosition.Y < 5)
                     {
                         _resizeMode |= ResizeMode.Top;
-                    }else if (eventData.MousePosition.Y > Height - 5)
+                    }
+		    else if (eventData.MousePosition.Y > Height - 5)
                     {
                         _resizeMode |= ResizeMode.Bottom;
                     }

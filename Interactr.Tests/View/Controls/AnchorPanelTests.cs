@@ -1,5 +1,4 @@
-﻿using System;
-using Interactr.View.Controls;
+﻿using Interactr.View.Controls;
 using Interactr.View.Framework;
 using NUnit.Framework;
 namespace Interactr.Tests.View.Controls
