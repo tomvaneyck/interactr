@@ -105,6 +105,8 @@ namespace Interactr.View.Controls
 
         public ArrowView()
         {
+            CanBeFocused = false;
+
             // Default values.
             ArrowHeadSize = 10;
             LineThickness = 1;
