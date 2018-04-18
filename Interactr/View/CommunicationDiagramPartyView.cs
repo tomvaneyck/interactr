@@ -33,6 +33,12 @@ namespace Interactr.View
                 LeftArrowStack.Height = newHeight;
                 RighArrowStack.Height = newHeight;
             });
+
+            LeftArrowStack.Position = new Point(0,0);
+            RighArrowStack.Position = new Point(Width-3,0);
+
+            Children.Add(LeftArrowStack);
+            Children.Add(RighArrowStack);
         }
 
         public class MessageArrowStack : StackPanel
