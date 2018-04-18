@@ -221,7 +221,7 @@ namespace Interactr.View.Controls
                     ReleaseMouseCapture();
                     return true;
                 }
-                else if(_resizeMode != ResizeMode.None)
+                else if(eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
                 {
                     if ((_resizeMode & ResizeMode.Left) != 0)
                     {
