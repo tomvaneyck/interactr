@@ -72,6 +72,7 @@
     <Compile Include="View\Framework\UIElementTests.cs" />
     <Compile Include="View\PartyViewTests.cs" />
     <Compile Include="View\Controls\ArrowViewTests.cs" />
+    <Compile Include="View\Controls\DragPanelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
