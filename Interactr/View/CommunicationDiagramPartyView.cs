@@ -8,11 +8,15 @@ using Interactr.View.Framework;
 
 namespace Interactr.View
 {
-    class CommunicationDiagramPartyView : PartyView
+    public class CommunicationDiagramPartyView : PartyView
     {
+
+        #region MessageArrowStacks
 
         public MessageArrowStack LeftArrowStack { get; set; }
         public MessageArrowStack RighArrowStack { get; set; }
+        
+        #endregion
 
         public CommunicationDiagramPartyView() : base()
         {

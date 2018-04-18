@@ -36,7 +36,7 @@ namespace Interactr.View
 
         #region PartyViews
 
-        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
+        public readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews;
 
         #endregion
 
@@ -50,7 +50,7 @@ namespace Interactr.View
             PartyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm })
+                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
                 .ResultList;
 
             // Automatically enter label editing mode when adding a party
