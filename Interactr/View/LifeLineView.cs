@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
