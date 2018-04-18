@@ -47,18 +47,8 @@ namespace Interactr.View
             get => _labelView;
         }
 
-        public MessageArrowStack LeftArrowStack { get; set; }
-        public MessageArrowStack RighArrowStack { get; set; }
-
         public PartyView()
-        {
-
-            //Set the arrow stack size;
-            LeftArrowStack.PreferredWidth = 3;
-            LeftArrowStack.PreferredHeight = Height;
-            RighArrowStack.PreferredWidth = 3;
-            RighArrowStack.PreferredHeight = Height;
-
+        { 
             // Set the image
             _actorImage.Image = Resources.StickFigure;
             _actorImage.PreferredWidth = 125;
@@ -76,13 +66,6 @@ namespace Interactr.View
                 Debug.WriteLine("Switch type");
                 _actorImage.IsVisible = partyType == Party.PartyType.Actor;
                 _objectRectangle.IsVisible = partyType == Party.PartyType.Object;
-            });
-
-            // Define the left and right arrow stack to be the height of the partyview.
-            HeightChanged.Subscribe(newHeight =>
-            {
-                LeftArrowStack.Height = newHeight;
-                RighArrowStack.Height = newHeight;
             });
 
             // Bi-directional bind party label to view
@@ -150,24 +133,7 @@ namespace Interactr.View
                 Parent.Repaint();
                 return true;
             }
-
             return false;
-        }
-    }
-
-    public class MessageArrowStack : StackPanel
-    {
-
-        public ArrowAnchorElement GetArrowStartPosition()
-        {
-            var arrowAnchorElement = new ArrowAnchorElement();
-            Children.Add(arrowAnchorElement);
-            return arrowAnchorElement.Position;
-        }
-
-        public class ArrowAnchorElement : UIElement
-        {
-
         }
     }
 }
