@@ -146,7 +146,7 @@ namespace Interactr.View
             return false;
         }
 
-        private void ConnectAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
+        private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
             // Connect to the sender
 
@@ -167,5 +167,8 @@ namespace Interactr.View
             anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
         }
 
+        // TODO: a function for coupling loose an arrow from its anchor point.
     }
+
+
 }
