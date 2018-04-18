@@ -17,6 +17,10 @@ namespace Interactr.View.Framework
     /// </summary>
     public class UIElement
     {
+        #region FocusedElement
+
+        private static readonly ReactiveProperty<UIElement> _focusedElement = new ReactiveProperty<UIElement>();
+
         /// <summary>
         /// The UI element that currently has the keyboard focus.
         /// </summary>
@@ -24,7 +28,15 @@ namespace Interactr.View.Framework
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
-        public static UIElement FocusedElement { get; private set; }
+        public static UIElement FocusedElement
+        {
+            get => _focusedElement.Value;
+            private set => _focusedElement.Value = value;
+        }
+
+        public static IObservable<UIElement> FocusedElementChanged => _focusedElement.Changed;
+
+        #endregion
 
         /// <summary>
         /// The child-elements of this element in the view-tree.
@@ -144,6 +156,25 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        #region IsVisibleToMouse
+
+        private readonly ReactiveProperty<bool> _isVisibleToMouse = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If this property is false, this element will be ignored when searching the mouseover element.
+        /// Both IsVisible and IsVisibleToMouse must be true for this element to receive mouse events.
+        /// True by default.
+        /// </summary>
+        public bool IsVisibleToMouse
+        {
+            get => _isVisibleToMouse.Value;
+            set => _isVisibleToMouse.Value = value;
+        }
+
+        public IObservable<bool> IsVisibleToMouseChanged => _isVisibleToMouse.Changed;
+
+        #endregion
+        
         #region Focus
 
         public bool IsFocused => FocusedElement == this;
@@ -176,6 +207,7 @@ namespace Interactr.View.Framework
         public UIElement()
         {
             this.IsVisible = true;
+            this.IsVisibleToMouse = true;
 
             //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
             //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
@@ -541,6 +573,7 @@ namespace Interactr.View.Framework
                 .Reverse()
                 .FirstOrDefault(child =>
                     child.IsVisible &&
+                    child.IsVisibleToMouse &&
                     point.X >= child.Position.X && point.Y >= child.Position.Y &&
                     point.X < (child.Position.X + child.Width) &&
                     point.Y < (child.Position.Y + child.Height)
