@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.ViewModel.MessageStack;

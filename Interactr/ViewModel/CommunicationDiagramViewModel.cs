@@ -6,6 +6,8 @@ using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.ViewModel.MessageStack;
+﻿using Interactr.Model;
+
 
 namespace Interactr.ViewModel
 {
