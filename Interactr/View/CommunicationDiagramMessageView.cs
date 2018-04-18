@@ -11,6 +11,9 @@ using Interactr.ViewModel;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// A view for a communication diagram message.
+    /// </summary>
     public class CommunicationDiagramMessageView : UIElement
     {
         #region CommunicationDiagramMessageViewModel
@@ -72,12 +75,19 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
+                
+                // Set the label position
                 _label.Position = textPos;
                 _label.Width = _label.PreferredWidth;
-                _label.Height = _label.PreferredHeight;
+                _label.Height = _label.PreferredHeight; 
             });
         }
 
+        /// <summary>
+        /// Observe the position of the party given by the party selector.
+        /// </summary>
+        /// <param name="partySelector">The selector of the party.</param>
+        /// <returns>An observable with the partyview of the party where the position changed.</returns>
         private IObservable<PartyView> ObservePartyPosition(
             Func<CommunicationDiagramMessageViewModel, IObservable<Party>> partySelector)
         {

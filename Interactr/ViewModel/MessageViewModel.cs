@@ -4,7 +4,10 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class MessageViewModel
+    /// <summary>
+    /// Contain the shared functionality and properties of message view models.
+    /// </summary>
+    public abstract class MessageViewModel
     {
         /// <summary>
         /// Reference to the Message model.
