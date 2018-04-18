@@ -11,6 +11,9 @@ using Interactr.ViewModel;
 
 namespace Interactr.View
 {
+    /// <summary>
+    /// A view for a communication diagram message.
+    /// </summary>
     public class CommunicationDiagramMessageView : UIElement
     {
         #region CommunicationDiagramMessageViewModel
@@ -78,6 +81,11 @@ namespace Interactr.View
             });
         }
 
+        /// <summary>
+        /// Observe the position of the party given by the party selector.
+        /// </summary>
+        /// <param name="partySelector">The selector of the party.</param>
+        /// <returns>An observable with the partyview of the party where the position changed.</returns>
         private IObservable<PartyView> ObservePartyPosition(
             Func<CommunicationDiagramMessageViewModel, IObservable<Party>> partySelector)
         {
