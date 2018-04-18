@@ -33,7 +33,10 @@ namespace Interactr.View
         public IReadOnlyReactiveList<SequenceDiagramColumnView> ColumnViews { get; private set; }
 
         /// View for the message currently being dragged by the user.
-        private readonly ArrowView _pendingMessageView = new ArrowView();
+        private readonly ArrowView _pendingMessageView = new ArrowView
+        {
+            IsVisibleToMouse = false
+        };
 
         public SequenceDiagramView()
         {
@@ -172,19 +175,14 @@ namespace Interactr.View
                 return true;
             }
 
-            return base.OnMouseEvent(e);
-        }
-
-        /// <see cref="OnMouseEventPreview"/>
-        protected override bool OnMouseEventPreview(MouseEventData eventData)
-        {
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
-            if (eventData.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
+            if (e.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
-                _pendingMessageView.EndPoint = new Point(eventData.MousePosition.X, _pendingMessageView.StartPoint.Y);
+                _pendingMessageView.EndPoint = new Point(e.MousePosition.X, _pendingMessageView.StartPoint.Y);
+                return true;
             }
-
-            return base.OnMouseEventPreview(eventData);
+            
+            return base.OnMouseEvent(e);
         }
     }
 }
