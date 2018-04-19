@@ -117,7 +117,7 @@ namespace Interactr.View.Framework
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Invalid width value: "+value);
+                    throw new ArgumentException("Invalid width value: " + value);
                 }
                 _width.Value = value;
             }
