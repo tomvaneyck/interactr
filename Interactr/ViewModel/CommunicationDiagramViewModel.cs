@@ -14,7 +14,7 @@ namespace Interactr.ViewModel
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new CommunicationDiagramMessageViewModel(msg),
+            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg),
                 msg => msg.Type == Message.MessageType.Invocation).ResultList;
         }
 
@@ -24,6 +24,6 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        public readonly IReadOnlyReactiveList<CommunicationDiagramMessageViewModel> MessageViewModels;
+        public readonly IReadOnlyReactiveList<MessageViewModel> MessageViewModels;
     }
 }
