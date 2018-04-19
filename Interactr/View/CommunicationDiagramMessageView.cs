@@ -34,7 +34,7 @@ namespace Interactr.View
         public Point ArrowStartPoint
         {
             get => _arrow.StartPoint;
-            set => _arrow.EndPoint = value;
+            set => _arrow.StartPoint= value;
         }
 
         /// <summary>

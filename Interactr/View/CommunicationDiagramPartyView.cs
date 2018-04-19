@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 
@@ -70,12 +71,14 @@ namespace Interactr.View
         /// <summary>
         /// An element used for attaching Arrows start and endpoints to.
         /// </summary>
-        public class ArrowAnchor : UIElement
+        public class ArrowAnchor : RectangleView
         {
+            
             public ArrowAnchor()
             {
                 PreferredWidth = 3;
                 PreferredHeight = 10;
+                BackgroundColor = Color.Aqua;
             }
         }
     }
