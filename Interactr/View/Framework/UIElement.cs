@@ -113,7 +113,14 @@ namespace Interactr.View.Framework
         public int Width
         {
             get => _width.Value;
-            set => _width.Value = value;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Invalid width value: "+value);
+                }
+                _width.Value = value;
+            }
         }
 
         public IObservable<int> WidthChanged => _width.Changed;
@@ -127,7 +134,14 @@ namespace Interactr.View.Framework
         public int Height
         {
             get => _height.Value;
-            set => _height.Value = value;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Invalid height value: " + value);
+                }
+                _height.Value = value;
+            }
         }
 
         public IObservable<int> HeightChanged => _height.Changed;
@@ -496,12 +510,75 @@ namespace Interactr.View.Framework
         /// <param name="g">The graphics object</param>
         public void Paint(Graphics g)
         {
-            if (IsVisible)
+            // Create drawing stack
+            Stack<PaintingStackFrame> stack = new Stack<PaintingStackFrame>();
+
+            // Put this element on the stack
+            stack.Push(new PaintingStackFrame
             {
-                ValidateLayout();
-                PaintElement(g);
-                PaintChildren(g);
+                Element = this,
+                Origin = new Point(0, 0),
+                RenderHeight = Height,
+                RenderWidth = Width
+            });
+
+            // Save current transform and clip
+            Matrix defaultTransform = g.Transform;
+            Region defaultClip = g.Clip;
+
+            // Draw elements
+            while (stack.Count > 0)
+            {
+                // Get current stack frame
+                PaintingStackFrame f = stack.Pop();
+                UIElement curElement = f.Element;
+
+                // Push visible children of curElement onto stack
+                // We use Children.Reverse() because the usage of the stack reverses.
+                foreach (UIElement child in curElement.Children.Reverse().Where(c => c.IsVisible))
+                {
+                    // Check if the element is completely outside the available space.
+                    if (child.Position.X > f.RenderWidth || child.Position.Y > f.RenderHeight ||
+                        child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
+                    {
+                        // Child is out of bounds, don't render.
+                        continue;
+                    }
+
+                    stack.Push(new PaintingStackFrame
+                    {
+                        Element = child,
+                        Origin = f.Origin + child.Position,
+                        RenderWidth = Math.Min(child.Width, f.RenderWidth - child.Position.X),
+                        RenderHeight = Math.Min(child.Height, f.RenderHeight - child.Position.Y)
+                    });
+                }
+
+                g.SetClip(new RectangleF(f.Origin.X, f.Origin.Y, f.RenderWidth, f.RenderHeight));
+                // Map x, y coordinates to child space (relative to child origin)
+                g.TranslateTransform(f.Origin.X, f.Origin.Y);
+                // Set max drawing width and height
+                //g.SetClip(new RectangleF(0, 0, f.RenderWidth, f.RenderHeight));
+
+                // Paint
+                curElement.PaintElement(g);
+
+                // Reset clip and transform
+                g.Transform = defaultTransform;
+                g.Clip = defaultClip;
             }
+        }
+
+        private class PaintingStackFrame
+        {
+            // Element to be painted.
+            public UIElement Element { get; set; }
+            // Origin point of this element.
+            public Point Origin { get; set; }
+            // Actual width in pixels to render the Element at.
+            public int RenderWidth { get; set; }
+            // Actual height in pixels to render the Element at.
+            public int RenderHeight { get; set; }
         }
 
         /// <summary>
@@ -514,56 +591,6 @@ namespace Interactr.View.Framework
         public void Repaint()
         {
             _repaintRequested.OnNext(Unit.Default);
-        }
-
-        /// <summary>
-        /// Draw the children of this element
-        /// </summary>
-        private void PaintChildren(Graphics g)
-        {
-            // Render first to last, so last element is on top
-            foreach (UIElement child in Children)
-            {
-                if (child.Position.X > this.Width || child.Position.Y > this.Height || 
-                    child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
-                {
-                    // Child is out of bounds, don't render.
-                    continue;
-                }
-
-                // Save current transform and clip
-                Matrix currentTransform = g.Transform;
-                Region currentClip = g.Clip;
-
-                // Map x, y coordinates to child space (relative to child origin)
-                g.TranslateTransform(child.Position.X, child.Position.Y);
-                g.SetClip(new RectangleF(0, 0, child.Width, child.Height));
-
-                // Paint
-                child.Paint(g);
-
-                // Reset clip and transform
-                g.Transform = currentTransform;
-                g.Clip = currentClip;
-            }
-        }
-
-        protected void ValidateLayout()
-        {
-            foreach (UIElement child in Children)
-            {
-                int availableWidth = this.Width - child.Position.X;
-                if (availableWidth < child.Width)
-                {
-                    child.Width = availableWidth;
-                }
-
-                int availableHeight = this.Height - child.Position.Y;
-                if (availableHeight < child.Height)
-                {
-                    child.Height = availableHeight;
-                }
-            }
         }
 
         /// <summary>
