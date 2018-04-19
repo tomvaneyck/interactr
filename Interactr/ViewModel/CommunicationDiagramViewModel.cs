@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Linq;
+﻿using Interactr.Model;
+﻿using System.Linq;
+﻿using System.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+﻿using Interactr.Model;
 using Interactr.ViewModel.MessageStack;
 ﻿using Interactr.Model;
 

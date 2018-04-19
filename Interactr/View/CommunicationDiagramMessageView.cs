@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;

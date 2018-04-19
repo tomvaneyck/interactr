@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
-using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;

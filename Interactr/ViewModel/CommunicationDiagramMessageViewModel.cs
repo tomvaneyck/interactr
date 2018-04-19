@@ -4,7 +4,6 @@ using Interactr.ViewModel.MessageStack;
 
 namespace Interactr.ViewModel
 {
-    
     /// <summary>
     /// A view model for the message in communication diagram.
     /// </summary>
