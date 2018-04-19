@@ -165,9 +165,6 @@ namespace Interactr.View
             messageView.Position = anchor.Position;
             anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
         }
-
         // TODO: a function for coupling loose an arrow from its anchor point.
     }
-
-
 }
