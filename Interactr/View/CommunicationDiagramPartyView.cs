@@ -15,6 +15,9 @@ namespace Interactr.View
 
         public CommunicationDiagramPartyView() : base()
         {
+            LeftArrowStack = new MessageArrowStack();
+            RighArrowStack = new MessageArrowStack();
+
             //Set the arrow stack size;
             LeftArrowStack.PreferredWidth = 3;
             LeftArrowStack.PreferredHeight = Height;
