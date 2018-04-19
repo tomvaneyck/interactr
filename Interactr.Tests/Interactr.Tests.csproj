@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModelTests.cs" />
     <Compile Include="ViewModel\MessageStackWalkerTests.cs" />
+    <Compile Include="View\CommunicationDiagramViewTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
     <Compile Include="View\Framework\AttachedPropertyTests.cs" />
