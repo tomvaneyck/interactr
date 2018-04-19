@@ -30,7 +30,7 @@ namespace Interactr.View
 
         #endregion
 
-        private readonly PartyViewsDragPanel _partyViewsDragPanel;
+        public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         public CommunicationDiagramView()
         {
@@ -46,8 +46,8 @@ namespace Interactr.View
                 .ResultList;
 
             // Create the partyviews drag panel and add as a child.
-            _partyViewsDragPanel = new PartyViewsDragPanel(partyViews);
-            Children.Add(_partyViewsDragPanel);
+            PartyViewsDragPanel = new PartyViewsDragPanel(partyViews);
+            Children.Add(PartyViewsDragPanel);
 
             // Create a list of message views based on the message viewmodels.
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
