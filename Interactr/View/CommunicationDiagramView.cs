@@ -42,7 +42,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm })
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
             // Create the partyviews drag panel and add as a child.
@@ -53,7 +53,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
@@ -113,13 +113,14 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView)FocusedElement.Parent;
+                PartyView partyView = (PartyView) FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
                 return true;
             }
+
             return false;
         }
     }
