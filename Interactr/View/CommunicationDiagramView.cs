@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
@@ -41,7 +42,7 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
+            IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
@@ -140,7 +141,7 @@ namespace Interactr.View
         private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
             // Connect to the sender
-            var senderPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
+            var senderPartyView = PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
             var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
@@ -148,7 +149,7 @@ namespace Interactr.View
             anchor.PositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
 
             // Connect to the Receiver
-            var receiverPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
+            var receiverPartyView = PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
             anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
@@ -162,9 +163,9 @@ namespace Interactr.View
     /// </summary>
     public class PartyViewsDragPanel : DragPanel
     {
-        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
+        public readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews;
 
-        public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews) : base()
+        public PartyViewsDragPanel(IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews) : base()
         {
             PartyViews = partyViews;
 
