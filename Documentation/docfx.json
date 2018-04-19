@@ -4,12 +4,12 @@
       "src": [
         {
           "files": [
-            "**.csproj"
+            "Interactr/**.csproj"
           ],
-          "src": "./"
+          "src": "../"
         }
       ],
-      "dest": "Documentation/api",
+      "dest": "api",
       "disableGitFeatures": false
     }
   ],
@@ -17,38 +17,38 @@
     "content": [
       {
         "files": [
-          "Documentation/api/**.yml",
-          "Documentation/api/index.md"
+          "api/**.yml",
+          "api/index.md"
         ]
       },
       {
         "files": [
-          "Documentation/articles/**.md",
-          "Documentation/articles/**/toc.yml",
-          "Documentation/toc.yml",
-          "Documentation/*.md"
+          "articles/**.md",
+          "articles/**/toc.yml",
+          "toc.yml",
+          "*.md"
         ]
       }
     ],
     "resource": [
       {
         "files": [
-          "Documentation/images/**"
+          "images/**"
         ]
       }
     ],
     "overwrite": [
       {
         "files": [
-          "Documentation/apidoc/**.md"
+          "apidoc/**.md"
         ],
         "exclude": [
           "obj/**",
-          "Documentation_build/**"
+          "_site/**"
         ]
       }
     ],
-    "dest": "Documentation_build",
+    "dest": "_site",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
