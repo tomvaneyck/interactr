@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Reactive;
@@ -33,8 +34,29 @@ namespace Interactr.View.Controls
         public static AttachedProperty<Margins> MarginsProperty { get; } 
             = new AttachedProperty<Margins>(new Margins());
 
+        #region AutoCompactEnabled
+
+        private readonly ReactiveProperty<bool> _autoCompactEnabled = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If true, this panel will set its preferred size to the minimal size needed to display its contents.
+        /// If false, the panel will not update its preferred size.
+        /// True by default.
+        /// </summary>
+        public bool AutoCompactEnabled
+        {
+            get => _autoCompactEnabled.Value;
+            set => _autoCompactEnabled.Value = value;
+        }
+
+        public IObservable<bool> AutoCompactEnabledChanged => _autoCompactEnabled.Changed;
+
+        #endregion
+        
         public AnchorPanel()
         {
+            AutoCompactEnabled = true;
+
             InitializeObservables();
         }
 
@@ -70,9 +92,12 @@ namespace Interactr.View.Controls
 
         private void UpdatePreferredSize()
         {
-            // Set preferred size to the largest sum of child position and size
-            PreferredWidth = Children.Max(child => child.Position.X + child.PreferredWidth);
-            PreferredHeight = Children.Max(child => child.Position.Y + child.PreferredHeight);
+            if (AutoCompactEnabled)
+            {
+                // Set preferred size to the largest sum of child position and size
+                PreferredWidth = Children.Max(child => child.Position.X + child.PreferredWidth);
+                PreferredHeight = Children.Max(child => child.Position.Y + child.PreferredHeight);
+            }
         }
 
         private void UpdateLayout()
@@ -97,7 +122,7 @@ namespace Interactr.View.Controls
                 {
                     // Stretch element horizontally
                     x = childMargins.Left;
-                    child.Width = this.Width - (childMargins.Left + childMargins.Right);
+                    child.Width = this.Width - Math.Min(Width, childMargins.Left + childMargins.Right);
                 }
                 else
                 {
@@ -117,7 +142,7 @@ namespace Interactr.View.Controls
                 {
                     // Stretch element vertically
                     y = childMargins.Top;
-                    child.Height = this.Height - (childMargins.Top + childMargins.Bottom);
+                    child.Height = this.Height - Math.Min(Height, childMargins.Top + childMargins.Bottom);
                 }
                 else
                 {

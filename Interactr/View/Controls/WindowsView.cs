@@ -78,10 +78,16 @@ namespace Interactr.View.Controls
         /// Add a new window to this view, with the specified element as its InnerElement.
         /// </summary>
         /// <param name="windowContents">The element to put inside the window.</param>
+        /// <param name="width">The initial width of the window.</param>
+        /// <param name="height">The initial height of the window.</param>
         /// <returns>The new window.</returns>
-        public Window AddWindow(UIElement windowContents)
+        public Window AddWindow(UIElement windowContents, int width = 500, int height = 500)
         {
-            Window window = new Window(windowContents);
+            Window window = new Window(windowContents)
+            {
+                PreferredWidth = width,
+                PreferredHeight = height
+            };
             // Give each window a different offset, like Windows does.
             int stacks = 7;
             int windowsPerStack = 10;
@@ -153,6 +159,8 @@ namespace Interactr.View.Controls
 
             public Window(UIElement innerElement)
             {
+                this.AutoCompactEnabled = false;
+
                 // Title
                 Title = "New Window";
                 TitleChanged.Subscribe(_ => Repaint());
@@ -236,21 +244,21 @@ namespace Interactr.View.Controls
                     // User has dragged the mouse. Resize/reposition the window.
                     if ((_resizeMode & ResizeMode.Left) != 0)
                     {
-                        this.Width -= eventData.MousePosition.X;
+                        this.PreferredWidth -= eventData.MousePosition.X;
                         this.Position += new Point(eventData.MousePosition.X, 0);
                     }
                     if ((_resizeMode & ResizeMode.Top) != 0)
                     {
-                        this.Height -= eventData.MousePosition.Y;
+                        this.PreferredHeight -= eventData.MousePosition.Y;
                         this.Position += new Point(0, eventData.MousePosition.Y);
                     }
                     if ((_resizeMode & ResizeMode.Right) != 0)
                     {
-                        this.Width = eventData.MousePosition.X;
+                        this.PreferredWidth = eventData.MousePosition.X;
                     }
                     if ((_resizeMode & ResizeMode.Bottom) != 0)
                     {
-                        this.Height = eventData.MousePosition.Y;
+                        this.PreferredHeight = eventData.MousePosition.Y;
                     }
 
                     return true;
