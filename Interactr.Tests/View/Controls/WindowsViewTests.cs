@@ -46,7 +46,6 @@ namespace Interactr.Tests.View.Controls
             WindowsView.Window wv2 = wv.AddWindow(r2);
             wv.RemoveWindowWith(r2);
             Assert.AreEqual(false,wv.Children.Contains(wv2));
-        }
-        
+        } 
     }
 }
