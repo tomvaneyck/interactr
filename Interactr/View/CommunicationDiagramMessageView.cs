@@ -33,6 +33,8 @@ namespace Interactr.View
 
         public CommunicationDiagramMessageView(int width, int height)
         {
+            IsVisibleToMouse = false;
+
             PreferredWidth = width;
             PreferredHeight = height;
 
