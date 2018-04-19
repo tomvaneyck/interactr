@@ -6,6 +6,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
+using NUnit.Framework.Constraints;
 
 namespace Interactr.Tests.View.Framework
 {
@@ -243,6 +244,30 @@ namespace Interactr.Tests.View.Framework
             Assert.True(decendants.Contains(childElement3));
             Assert.True(decendants.Contains(childElement4));
             Assert.True(decendants.Contains(childElement5));
+        }
+
+        [Test]
+        public void AbsolutePositionElementItSelfChanged()
+        {
+            var scheduler = new TestScheduler();
+
+            var root = new UIElement();
+            var element = new TestableUIElement();
+
+            // Add element to root as a child.
+            root.Children.Add(element);
+
+            // Change the position of the element.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(86, 4));
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, new Point(0, 0)),
+                ReactiveTest.OnNext(10, new Point(86, 4))
+            };
+
+            var actual = scheduler.Start(() => element.AbsolutePositionChanged, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected,actual);
         }
 
         class TestableUIElement : UIElement
