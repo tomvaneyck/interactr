@@ -16,8 +16,10 @@ $output = ".\Documentation\Tools\docfx.zip"
 if (!(Test-Path $outputdir)) {
     New-Item -ItemType Directory -Force -Path $path
 }
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-WebRequest -Uri $url -OutFile $output
+if (!(Test-Path $output)) {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri $url -OutFile $output
+}
 
 
 # Unzip tools
