@@ -30,8 +30,8 @@ namespace Interactr.View
             // Define the left and right arrow stack to be the height of the partyview.
             HeightChanged.Subscribe(newHeight =>
             {
-                LeftArrowStack.Height = newHeight;
-                RighArrowStack.Height = newHeight;
+                LeftArrowStack.PreferredHeight = newHeight;
+                RighArrowStack.PreferredHeight = newHeight;
             });
 
             Children.Add(LeftArrowStack);
