@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
+using Interactr.View;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
@@ -30,6 +32,7 @@ namespace Interactr.View
 
         #endregion
 
+
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         public CommunicationDiagramView()
@@ -39,10 +42,10 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
+            IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
+                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() {ViewModel = vm})
                 .ResultList;
 
             // Create the partyviews drag panel.
@@ -106,6 +109,37 @@ namespace Interactr.View
 
             return false;
         }
+
+        /// <summary>
+        /// Assign an two anchor points to the message.
+        /// The arrow startpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the sender.
+        /// The arrow endpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the receiver.
+        /// This provides automatic placement of the message arrows between a sender and a receiver.
+        /// </summary>
+        /// <param name="messageView"></param>
+        private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
+        {
+            // Connect to the sender
+            var senderPartyView =
+                PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
+
+            var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
+
+            // Set and attach the positions to eachother.
+            messageView.ArrowStartPoint = anchor.Position;
+            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
+
+            // Connect to the Receiver
+            var receiverPartyView =
+                PartyViewsDragPanel.PartyViews.First(pv =>
+                    pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
+
+            anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
+
+            // Set and attach the positions to eachother.
+            messageView.ArrowEndPoint = anchor.Position;
+            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+        }
     }
 
     /// <summary>
@@ -113,9 +147,9 @@ namespace Interactr.View
     /// </summary>
     public class PartyViewsDragPanel : DragPanel
     {
-        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
+        public readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews;
 
-        public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews)
+        public PartyViewsDragPanel(IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews)
         {
             PartyViews = partyViews;
 

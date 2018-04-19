@@ -28,6 +28,25 @@ namespace Interactr.View
 
         #endregion
 
+        /// <summary>
+        /// The start point of the message arrow.
+        /// </summary>
+        public Point ArrowStartPoint
+        {
+            get => _arrow.StartPoint;
+            set => _arrow.EndPoint = value;
+        }
+
+        /// <summary>
+        /// The end point of the message arrow.
+        /// </summary>
+        public Point ArrowEndPoint
+        {
+            get => _arrow.EndPoint;
+            set => _arrow.EndPoint = value;
+        }
+
+
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 

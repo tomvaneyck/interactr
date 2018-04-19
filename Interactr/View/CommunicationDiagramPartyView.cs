@@ -73,7 +73,7 @@ namespace Interactr.View
         /// </summary>
         public class ArrowAnchor : UIElement
         {
-            public ArrowAnchor() : base()
+            public ArrowAnchor() 
             {
                 PreferredWidth = 3;
                 PreferredHeight = 3;
