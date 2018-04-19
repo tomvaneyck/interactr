@@ -30,8 +30,8 @@ namespace Interactr.View
             });
 
             // Set the positions of the ArrowStacks relative to the party views.
-            LeftArrowStack.Position = new Point(0,0);
-            RighArrowStack.Position = new Point(Width-3,0);
+            LeftArrowStack.Position = new Point(0, 0);
+            RighArrowStack.Position = new Point(Width - 3, 0);
 
             Children.Add(LeftArrowStack);
             Children.Add(RighArrowStack);
