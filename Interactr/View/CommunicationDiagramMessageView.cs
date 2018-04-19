@@ -57,21 +57,21 @@ namespace Interactr.View
             Children.Add(_arrow);
             Children.Add(_label);
 
-            // Put the arrow starting point on the sender.
-            ObservePartyPosition(vm => vm.Message.SenderChanged)
-                .Select(partyview => partyview.Position)
-                .Subscribe(newStartPoint => _arrow.StartPoint = newStartPoint);
-
-            // Put the arrow ending point on the receiver.
-            ObservePartyPosition(vm => vm.Message.ReceiverChanged)
-                .Select(partyView => partyView.Position)
-                .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
+//            // Put the arrow starting point on the sender.
+//            ObservePartyPosition(vm => vm.Message.SenderChanged)
+//                .Select(partyview => partyview.Position)
+//                .Subscribe(newStartPoint => _arrow.StartPoint = newStartPoint);
+//
+//            // Put the arrow ending point on the receiver.
+//            ObservePartyPosition(vm => vm.Message.ReceiverChanged)
+//                .Select(partyView => partyView.Position)
+//                .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
                 _arrow.Width = newWidth);
 
-            HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
+           HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Assign value to the label
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);

@@ -60,7 +60,7 @@ namespace Interactr.View
                 return arrowAnchorElement;
             }
 
-            public MessageArrowStack() : base()
+            public MessageArrowStack()
             {
                 // Stack the elements vertically.
                 StackOrientation = Orientation.Vertical;
@@ -75,7 +75,7 @@ namespace Interactr.View
             public ArrowAnchor()
             {
                 PreferredWidth = 3;
-                PreferredHeight = 3;
+                PreferredHeight = 10;
             }
         }
     }

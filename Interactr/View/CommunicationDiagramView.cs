@@ -64,6 +64,9 @@ namespace Interactr.View
                 // Make message views the size of the communication diagram view.
                 e.Element.PreferredWidth = Width;
                 e.Element.PreferredHeight = Height;
+                
+                // Assing arrow start and end points on the message.
+                AssignAnchorPointsToMessage(e.Element);
 
                 Children.Add(e.Element);
             });
@@ -126,8 +129,7 @@ namespace Interactr.View
             var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
-            messageView.ArrowStartPoint = anchor.Position;
-            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
+            anchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
 
             // Connect to the Receiver
             var receiverPartyView =
@@ -137,8 +139,7 @@ namespace Interactr.View
             anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
-            messageView.ArrowEndPoint = anchor.Position;
-            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+            anchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
         }
     }
 
