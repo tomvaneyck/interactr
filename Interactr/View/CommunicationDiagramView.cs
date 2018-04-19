@@ -146,6 +146,12 @@ namespace Interactr.View
                 }
             });
 
+            // Two-way binding between the viewmodel and view position.
+            partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
+                .Subscribe(e => e.Element.Position = e.Value);
+            partyViews.ObserveEach(partyView => partyView.PositionChanged)
+                .Subscribe(e => e.Element.ViewModel.Position = e.Value);
+
             // Automatically add and remove party views to Children.
             PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
