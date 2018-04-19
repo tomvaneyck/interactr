@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Model;
+﻿using Interactr.Model;
 
 namespace Interactr.ViewModel
 {
     /// <summary>
     /// A viewModel for the activationBar.
-    /// the activation bar is immutable.
+    /// <remarks>The activation bar is immutable after creation.</remarks>
     /// </summary>
     /// <remarks>There is no underlying model for the activationBar viewModel.</remarks>
     public class ActivationBarViewModel
@@ -29,11 +24,17 @@ namespace Interactr.ViewModel
         /// </summary>
         public int EndTick { get; }
 
-        public ActivationBarViewModel(Party party, int startTick, int endTick)
+        /// <summary>
+        /// The level of nesting of this activation bar.
+        /// </summary>
+        public int Level { get; }
+
+        public ActivationBarViewModel(Party party, int startTick, int endTick, int level)
         {
             Party = party;
             StartTick = startTick;
             EndTick = endTick;
+            Level = level;
         }
     }
 }

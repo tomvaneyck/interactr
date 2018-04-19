@@ -1,12 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Reactive;
 using Microsoft.Reactive.Testing;
 
@@ -18,7 +15,7 @@ namespace Interactr.Tests.Reactive
         [Test]
         public void TestAdding()
         {
-            ReactiveList<string> list = new ReactiveList<string>();
+            ReactiveList<string> list = new ReactiveArrayList<string>();
             Assert.AreEqual(0, list.Count);
             list.Add("B");
             Assert.AreEqual(1, list.Count);
@@ -30,7 +27,7 @@ namespace Interactr.Tests.Reactive
         [Test]
         public void TestRemoving()
         {
-            ReactiveList<string> list = new ReactiveList<string> {"A", "B", "C"};
+            ReactiveList<string> list = new ReactiveArrayList<string> {"A", "B", "C"};
             Assert.AreEqual(3, list.Count);
             Assert.IsTrue(list.Remove("B"));
             Assert.AreEqual(2, list.Count);
@@ -42,7 +39,7 @@ namespace Interactr.Tests.Reactive
         [Test]
         public void TestContains()
         {
-            ReactiveList<string> list = new ReactiveList<string> {"A", "B", "C"};
+            ReactiveList<string> list = new ReactiveArrayList<string> {"A", "B", "C"};
             Assert.IsTrue(list.Contains("A"));
             Assert.IsFalse(list.Contains("Z"));
         }
@@ -51,7 +48,7 @@ namespace Interactr.Tests.Reactive
         public void TestCopyTo()
         {
             string[] copy = new string[4];
-            ReactiveList<string> list = new ReactiveList<string> {"A", "B", "C"};
+            ReactiveList<string> list = new ReactiveArrayList<string> {"A", "B", "C"};
             list.CopyTo(copy, 1);
             Assert.IsTrue(copy.SequenceEqual(new string[] {null, "A", "B", "C"}));
         }
@@ -61,7 +58,7 @@ namespace Interactr.Tests.Reactive
         {
             //Setup
             var scheduler = new TestScheduler();
-            ReactiveList<string> list = new ReactiveList<string>();
+            ReactiveList<string> list = new ReactiveArrayList<string>();
 
             //Define actions
             scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Add("A"));
@@ -84,7 +81,7 @@ namespace Interactr.Tests.Reactive
         {
             //Setup
             var scheduler = new TestScheduler();
-            ReactiveList<string> list = new ReactiveList<string>
+            ReactiveList<string> list = new ReactiveArrayList<string>
             {
                 "A",
                 "B",
@@ -112,7 +109,7 @@ namespace Interactr.Tests.Reactive
         {
             //Setup
             var scheduler = new TestScheduler();
-            ReactiveList<string> list = new ReactiveList<string>
+            ReactiveList<string> list = new ReactiveArrayList<string>
             {
                 "A",
                 "B",
@@ -138,7 +135,7 @@ namespace Interactr.Tests.Reactive
         {
             //Setup
             var scheduler = new TestScheduler();
-            ReactiveList<string> list = new ReactiveList<string>
+            ReactiveList<string> list = new ReactiveArrayList<string>
             {
                 "A",
                 "B",
@@ -169,7 +166,7 @@ namespace Interactr.Tests.Reactive
             var scheduler = new TestScheduler();
             var dummy1 = new DummyTestingClass {Identifier = "A"};
             var dummy2 = new DummyTestingClass {Identifier = "B"};
-            ReactiveList<DummyTestingClass> list = new ReactiveList<DummyTestingClass>
+            ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
             {
                 dummy1
             };

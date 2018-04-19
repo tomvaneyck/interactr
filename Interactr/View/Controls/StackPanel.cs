@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 
@@ -46,6 +43,12 @@ namespace Interactr.View.Controls
                 Children.ObserveEach(child => child.PreferredHeightChanged),
                 Children.ObserveEach(child => child.PreferredWidthChanged)
             ).Subscribe(p => UpdateLayout());
+
+            // Update the positions of the children when a child is added or removed.
+            Observable.Merge(
+                Children.OnDelete,
+                Children.OnAdd
+            ).Subscribe(_ => UpdateLayout());
         }
 
         /// <summary>

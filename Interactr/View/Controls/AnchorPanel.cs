@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Interactr.Reactive;
 using Interactr.View.Framework;
 
 namespace Interactr.View.Controls

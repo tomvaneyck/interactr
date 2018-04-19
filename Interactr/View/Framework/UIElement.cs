@@ -16,6 +16,10 @@ namespace Interactr.View.Framework
     /// </summary>
     public class UIElement
     {
+        #region FocusedElement
+
+        private static readonly ReactiveProperty<UIElement> _focusedElement = new ReactiveProperty<UIElement>();
+
         /// <summary>
         /// The UI element that currently has the keyboard focus.
         /// </summary>
@@ -23,17 +27,59 @@ namespace Interactr.View.Framework
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
-        public static UIElement FocusedElement { get; private set; }
+        public static UIElement FocusedElement
+        {
+            get => _focusedElement.Value;
+            private set => _focusedElement.Value = value;
+        }
+
+        public static IObservable<UIElement> FocusedElementChanged => _focusedElement.Changed;
+
+        #endregion
+
+        #region MouseCapturingElement
+
+        private static readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
+
+        /// <summary>
+        /// The UI element that has captured the mouse.
+        /// </summary>
+        /// <remarks>
+        /// If an element captures the mouse, it will receive all mouse events, regardless of the current mouse position.
+        /// Use UIElement.CaptureMouse() to capture the mouse.
+        /// </remarks>
+        public static UIElement MouseCapturingElement
+        {
+            get => _mouseCapturingElement.Value;
+            private set => _mouseCapturingElement.Value = value;
+        }
+
+        public static IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
+
+        #endregion
 
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
-        public ReactiveList<UIElement> Children { get; } = new ReactiveList<UIElement>();
+        public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
+
+        #region Parent
+
+        private readonly ReactiveProperty<UIElement> _parent = new ReactiveProperty<UIElement>();
 
         /// <summary>
         /// The parent element of this element in the view-tree.
+        /// This property is set automatically when the element is added to another elements Children.
         /// </summary>
-        public UIElement Parent { get; private set; }
+        public UIElement Parent
+        {
+            get => _parent.Value;
+            private set => _parent.Value = value;
+        }
+
+        public IObservable<UIElement> ParentChanged => _parent.Changed;
+
+        #endregion
 
         /// <summary>
         /// The properties that are attached to this element.
@@ -57,6 +103,8 @@ namespace Interactr.View.Framework
         public IObservable<Point> PositionChanged => _position.Changed;
 
         #endregion
+
+        public IObservable<Point> AbsolutePositionChanged { get; }
 
         #region Width
 
@@ -128,6 +176,25 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        #region IsVisibleToMouse
+
+        private readonly ReactiveProperty<bool> _isVisibleToMouse = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If this property is false, this element will be ignored when searching the mouseover element.
+        /// Both IsVisible and IsVisibleToMouse must be true for this element to receive mouse events.
+        /// True by default.
+        /// </summary>
+        public bool IsVisibleToMouse
+        {
+            get => _isVisibleToMouse.Value;
+            set => _isVisibleToMouse.Value = value;
+        }
+
+        public IObservable<bool> IsVisibleToMouseChanged => _isVisibleToMouse.Changed;
+
+        #endregion
+        
         #region Focus
 
         public bool IsFocused => FocusedElement == this;
@@ -145,7 +212,7 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        #region Event observables
+        #region Input event observables
 
         private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
         public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
@@ -160,6 +227,14 @@ namespace Interactr.View.Framework
         public UIElement()
         {
             this.IsVisible = true;
+            this.IsVisibleToMouse = true;
+
+            //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
+            //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
+            AbsolutePositionChanged = Observable.Merge(
+                PositionChanged,
+                ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
+            ).Select(_ => GetPositionRelativeToRoot()).DistinctUntilChanged();
 
             this.PositionChanged.Subscribe(_ => Repaint());
             this.WidthChanged.Subscribe(_ => Repaint());
@@ -307,17 +382,17 @@ namespace Interactr.View.Framework
         /// <returns>True if the event was handled by an element.</returns>
         public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
-            UIElement mouseoverElement = rootElement.FindElementAt(eventData.MousePosition);
+            UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
 
-            if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, eventData))
+            if (TunnelDownMouseEventPreview(rootElement, targetElement, eventData))
             {
                 // Event was handled.
                 return true;
             }
 
             // Bubble up event from FocusedElement to root.
-            Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
-            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
+            Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
+            return targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
                 eventData.ClickCount));
         }
 
@@ -398,6 +473,19 @@ namespace Interactr.View.Framework
             return false;
         }
 
+        public void CaptureMouse()
+        {
+            MouseCapturingElement = this;
+        }
+
+        public void ReleaseMouseCapture()
+        {
+            if (MouseCapturingElement == this)
+            {
+                MouseCapturingElement = null;
+            }
+        }
+
         #endregion
 
         #region Painting
@@ -436,6 +524,13 @@ namespace Interactr.View.Framework
             // Render first to last, so last element is on top
             foreach (UIElement child in Children)
             {
+                if (child.Position.X > this.Width || child.Position.Y > this.Height || 
+                    child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
+                {
+                    // Child is out of bounds, don't render.
+                    continue;
+                }
+
                 // Save current transform and clip
                 Matrix currentTransform = g.Transform;
                 Region currentClip = g.Clip;
@@ -489,9 +584,9 @@ namespace Interactr.View.Framework
         /// <returns>Transformed point</returns>
         public Point TranslatePointTo(UIElement e, Point p)
         {
-            Point pRoot = RelativeToRoot(p);
+            Point pRoot = GetPositionRelativeToRoot(p);
 
-            Point uiElementPosition = e.RelativeToRoot();
+            Point uiElementPosition = e.GetPositionRelativeToRoot();
 
             return new Point(
                 pRoot.X - uiElementPosition.X,
@@ -507,11 +602,15 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child =>
-                child.IsVisible &&
-                point.X >= child.Position.X && point.Y >= child.Position.Y &&
-                point.X < (child.Position.X + child.Width) &&
-                point.Y < (child.Position.Y + child.Height));
+            UIElement childContainingPoint = Children
+                .Reverse()
+                .FirstOrDefault(child =>
+                    child.IsVisible &&
+                    child.IsVisibleToMouse &&
+                    point.X >= child.Position.X && point.Y >= child.Position.Y &&
+                    point.X < (child.Position.X + child.Width) &&
+                    point.Y < (child.Position.Y + child.Height)
+                );
 
             if (childContainingPoint == null)
             {
@@ -527,7 +626,7 @@ namespace Interactr.View.Framework
         /// Return coördinates relative to the root of this UIElement.
         /// </summary>
         /// <returns>Given point relative to the root.</returns>
-        private Point RelativeToRoot(Point p = default(Point))
+        private Point GetPositionRelativeToRoot(Point p = default(Point))
         {
             return WalkToRoot().Select(c => c.Position).Aggregate((p1, p2) => p1 + p2) + p;
         }
@@ -545,6 +644,35 @@ namespace Interactr.View.Framework
                 ancestor = ancestor.Parent;
                 yield return ancestor;
             }
+        }
+
+        /// <summary>
+        /// Return all the decendants of this element.
+        /// </summary>
+        /// <returns>All decendants of this element.</returns>
+        public IEnumerable<UIElement> GetDecendants()
+        {
+            foreach (var child in Children)
+            {
+                yield return child;
+            }
+
+            foreach (var child in Children)
+            {
+                foreach (var subChild in child.GetDecendants())
+                {
+                    yield return subChild;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Walk through the children of the UIElement to check if one of them is in focus.
+        /// </summary>
+        /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
+        public bool HasChildInFocus()
+        {
+            return GetDecendants().Any(d => d.IsFocused);
         }
     }
 }

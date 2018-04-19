@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interactr.Reactive
 {
@@ -34,10 +32,13 @@ namespace Interactr.Reactive
         /// <param name="sourceList">The list from which to take elements.</param>
         /// <param name="selectorFunc">The function that maps elements to a different type.</param>
         /// <returns>Returns the resulting list and an IDisposable that can be used to stop the updating of the derived list.</returns>
-        public static (IDisposable Binding, ReactiveList<TResult> ResultList) CreateDerivedList<TInput, TResult>
-            (this ReactiveList<TInput> sourceList, Func<TInput, TResult> selectorFunc)
+        public static (IDisposable Binding, IReadOnlyReactiveList<TResult> ResultList) CreateDerivedList<TInput, TResult>(
+            this IReadOnlyReactiveList<TInput> sourceList, 
+            Func<TInput, TResult> selectorFunc, 
+            Func<TInput, bool> filterFunc = null
+        )
         {
-            return CreateDerivedListBinding(Observable.Return(sourceList), selectorFunc);
+            return CreateDerivedListBinding(Observable.Return(sourceList), selectorFunc, filterFunc);
         }
 
         /// <summary>
@@ -50,10 +51,57 @@ namespace Interactr.Reactive
         /// <param name="sourceListObservable">An observable of reactive lists from which to take elements.</param>
         /// <param name="selectorFunc">The function that maps elements to a different type.</param>
         /// <returns>Returns the resulting list and an IDisposable that can be used to stop the updating of the derived list.</returns>
-        public static (IDisposable Binding, ReactiveList<TResult> ResultList) CreateDerivedListBinding<TInput, TResult>
-            (this IObservable<ReactiveList<TInput>> sourceListObservable, Func<TInput, TResult> selectorFunc)
+        public static (IDisposable Binding, IReadOnlyReactiveList<TResult> ResultList) CreateDerivedListBinding<TInput, TResult>(
+            this IObservable<IReadOnlyReactiveList<TInput>> sourceListObservable, 
+            Func<TInput, TResult> selectorFunc, 
+            Func<TInput, bool> filterFunc = null
+        )
         {
-            ReactiveList<TResult> targetList = new ReactiveList<TResult>();
+            ReactiveList<TResult> targetList = new ReactiveArrayList<TResult>();
+            IList<bool> isFilteredIn = new List<bool>();
+
+            void InsertElement(int index, TInput element)
+            {
+                if (filterFunc == null)
+                {
+                    targetList.Insert(index, selectorFunc(element));
+                }
+                else
+                {
+                    if (filterFunc(element))
+                    {
+                        isFilteredIn.Insert(index, true);
+                        int indexInTargetList = SourceListIndexToTargetListIndex(index);
+                        targetList.Insert(indexInTargetList, selectorFunc(element));
+                    }
+                    else
+                    {
+                        isFilteredIn.Insert(index, false);
+                    }
+                }
+            }
+
+            void RemoveElement(int index)
+            {
+                if (filterFunc == null)
+                {
+                    targetList.RemoveAt(index);
+                }
+                else
+                {
+                    int indexInList = isFilteredIn[index] ? SourceListIndexToTargetListIndex(index) : -1;
+                    isFilteredIn.RemoveAt(index);
+                    if (indexInList != -1)
+                    {
+                        targetList.RemoveAt(indexInList);
+                    }
+                }
+            }
+
+            int SourceListIndexToTargetListIndex(int sourceIndex)
+            {
+                return isFilteredIn.Take(sourceIndex + 1).Count(isIn => isIn) - 1;
+            }
 
             CompositeDisposable disposable = new CompositeDisposable(
                 sourceListObservable.Subscribe(newList =>
@@ -62,9 +110,9 @@ namespace Interactr.Reactive
                     targetList.AddRange(newList.Select(selectorFunc));
                 }),
                 sourceListObservable.ObserveNested(list => list.OnAdd)
-                    .Select(added => (Index: added.Index, Element: selectorFunc(added.Element)))
-                    .Subscribe(mapped => targetList.Insert(mapped.Index, mapped.Element)),
-                sourceListObservable.ObserveNested(list => list.OnDelete).Subscribe(e => targetList.RemoveAt(e.Index))
+                    .Subscribe(e => InsertElement(e.Index, e.Element)),
+                sourceListObservable.ObserveNested(list => list.OnDelete)
+                    .Subscribe(e => RemoveElement(e.Index))
             );
             return (disposable, targetList);
         }

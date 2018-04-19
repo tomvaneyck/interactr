@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Reactive;
 using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
 
@@ -15,7 +12,6 @@ namespace Interactr.Tests.View.Framework
     [TestFixture]
     public class UIElementTests : ReactiveTest
     {
-
         [Test]
         public void TestTreeStructure()
         {
@@ -34,7 +30,7 @@ namespace Interactr.Tests.View.Framework
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement();
 
-            
+
             elem1.Focus();
             Assert.AreEqual(elem1, UIElement.FocusedElement);
             Assert.IsTrue(elem1.IsFocused);
@@ -193,6 +189,60 @@ namespace Interactr.Tests.View.Framework
 
             Assert.AreEqual(50, child4.Width);
             Assert.AreEqual(50, child4.Height);
+        }
+
+        [Test]
+        public void TestGetDecendantsOneLevelDown()
+        {
+            // Build a UIElement tree with two children one level down the root element.
+
+            UIElement root = new UIElement();
+            UIElement childElement = new UIElement();
+            UIElement childElement2 = new UIElement();
+            root.Children.Add(childElement);
+            root.Children.Add(childElement2);
+
+            IEnumerable<UIElement> decendants = root.GetDecendants();
+
+            // The number of decendants is correct.
+            Assert.AreEqual(2, decendants.Count());
+
+            // The decendants contain the expected elements.
+            Assert.True(decendants.Contains(childElement));
+            Assert.True(decendants.Contains(childElement2));
+        }
+
+        [Test]
+        public void TestGetDecendantsMultipleLevelsDown()
+        {
+            // Build a UIElement tree with two children one level down the root element.
+            UIElement root = new UIElement();
+            UIElement childElement = new UIElement();
+            UIElement childElement2 = new UIElement();
+            root.Children.Add(childElement);
+            root.Children.Add(childElement2);
+
+            // Add elements to the two levels down.
+            UIElement childElement3 = new UIElement();
+            UIElement childElement4 = new UIElement();
+            childElement.Children.Add(childElement3);
+            childElement.Children.Add(childElement4);
+
+            // Add an element 3 levels down.
+            UIElement childElement5 = new UIElement();
+            childElement3.Children.Add(childElement5);
+
+            IEnumerable<UIElement> decendants = root.GetDecendants();
+
+            // The number of decendants is correct.
+            Assert.AreEqual(5, decendants.Count());
+
+            // The decendants contain the expected elements.
+            Assert.True(decendants.Contains(childElement));
+            Assert.True(decendants.Contains(childElement2));
+            Assert.True(decendants.Contains(childElement3));
+            Assert.True(decendants.Contains(childElement4));
+            Assert.True(decendants.Contains(childElement5));
         }
 
         class TestableUIElement : UIElement

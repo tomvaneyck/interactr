@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Model;
-using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -24,11 +18,11 @@ namespace Interactr.View
 
         public MainWindow() : base("Interactr")
         {
-            this.Size = new Size(1200, 800);
+            this.Size = new Size(1800, 900);
             View.Width = Size.Width;
             View.Height = Size.Height;
 
-            View.ViewModel = new MainViewModel(new Diagram());
+            View.ViewModel = new MainViewModel();
             View.Focus();
 
             //View.RepaintRequested.Subscribe(_ => Repaint());
@@ -37,7 +31,9 @@ namespace Interactr.View
 
         public override void HandleKeyEvent(int id, int keyCode, char keyChar)
         {
-            UIElement.HandleKeyEvent(new KeyEventData(id, keyCode, keyChar));
+            KeyEventData e = new KeyEventData(id, keyCode, keyChar);
+            Keyboard.HandleEvent(e);
+            UIElement.HandleKeyEvent(e);
         }
 
         public override void HandleMouseEvent(int id, int x, int y, int clickCount)

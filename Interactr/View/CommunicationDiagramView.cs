@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -41,7 +38,7 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            ReactiveList<PartyView> partyViews = ViewModelChanged
+            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
@@ -50,8 +47,11 @@ namespace Interactr.View
             // Automatically enter label editing mode when adding a party
             partyViews.OnAdd.Subscribe(elem =>
             {
-                elem.Element.LabelView.IsInEditMode = true;
-                elem.Element.LabelView.Focus();
+                if (IsVisible && (IsFocused || HasChildInFocus()))
+                {
+                    elem.Element.LabelView.IsInEditMode = true;
+                    elem.Element.LabelView.Focus();
+                }
             });
 
             // Automatically add and remove party views to Children.
@@ -63,7 +63,7 @@ namespace Interactr.View
         protected override bool OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
                 Debug.WriteLine("Add Party.");
                 //Add a new Party.
@@ -74,6 +74,30 @@ namespace Interactr.View
             {
                 return base.OnMouseEvent(e);
             }
+        }
+
+        /// <see cref="OnKeyEvent"/>
+        protected override bool OnKeyEvent(KeyEventData eventData)
+        {
+            // Delete party.
+            // The commented check is an extra safety, but not yet possible due
+            // to the need of a recursive search.
+            if (eventData.Id == KeyEvent.KEY_RELEASED && 
+                eventData.KeyCode == KeyCodes.Delete &&
+                /*Children.Contains(FocusedElement) &&*/
+                FocusedElement.GetType() == typeof(LabelView)
+            )
+            {
+                PartyView partyView = (PartyView) FocusedElement.Parent;
+
+                // Delete the party from the viewmodel. This automatically
+                // propagates to the view and the model.
+                ViewModel.DeleteParty(partyView.ViewModel.Party);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

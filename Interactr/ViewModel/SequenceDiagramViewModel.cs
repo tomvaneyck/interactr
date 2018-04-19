@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Model;
-using Interactr.Reactive;
+﻿using Interactr.Model;
 
 namespace Interactr.ViewModel
 {
@@ -13,6 +6,9 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class SequenceDiagramViewModel : DiagramViewModel
     {
+        /// <summary>
+        /// The message stack view model associated with the diagram.
+        /// </summary>
         public MessageStackViewModel StackVM { get; }
 
         public SequenceDiagramViewModel(Diagram diagram) : base(diagram)

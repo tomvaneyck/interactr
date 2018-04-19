@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
@@ -22,6 +18,9 @@ namespace Interactr.View
     /// </summary>
     public class PartyView : AnchorPanel
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region ViewModel
 
         private readonly ReactiveProperty<PartyViewModel> _viewModel = new ReactiveProperty<PartyViewModel>();
@@ -90,6 +89,10 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+
             // Bind text of label between this and PartyViewModel.
             _labelView.TextChanged.Subscribe(text =>
             {
@@ -120,25 +123,10 @@ namespace Interactr.View
             });
         }
 
-        /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData e)
-        {
-            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
-            {
-                // Delete this party from the parent view.
-                UIElement parent = Parent;
-                Parent.Children.Remove(this);
-                parent.Repaint();
-                return true;
-            }
-
-            return false;
-        }
-
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
                 Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();
