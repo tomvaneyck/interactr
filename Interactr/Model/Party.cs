@@ -1,7 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Interactr.Reactive;
 
 namespace Interactr.Model

@@ -2,6 +2,8 @@
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+﻿using Interactr.Model;
+
 
 namespace Interactr.ViewModel
 {

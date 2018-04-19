@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
