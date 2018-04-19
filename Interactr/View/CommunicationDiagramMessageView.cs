@@ -15,16 +15,16 @@ namespace Interactr.View
     {
         #region CommunicationDiagramMessageViewModel
 
-        private readonly ReactiveProperty<CommunicationDiagramMessageViewModel> _viewModel =
-            new ReactiveProperty<CommunicationDiagramMessageViewModel>();
+        private readonly ReactiveProperty<MessageViewModel> _viewModel =
+            new ReactiveProperty<MessageViewModel>();
 
-        public CommunicationDiagramMessageViewModel ViewModel
+        public MessageViewModel ViewModel
         {
             get => _viewModel.Value;
             set => _viewModel.Value = value;
         }
 
-        public IObservable<CommunicationDiagramMessageViewModel> ViewModelChanged => _viewModel.Changed;
+        public IObservable<MessageViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
 
@@ -85,7 +85,7 @@ namespace Interactr.View
         /// <param name="partySelector">The selector of the party.</param>
         /// <returns>An observable with the partyview of the party where the position changed.</returns>
         private IObservable<PartyView> ObservePartyPosition(
-            Func<CommunicationDiagramMessageViewModel, IObservable<Party>> partySelector)
+            Func<MessageViewModel, IObservable<Party>> partySelector)
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>

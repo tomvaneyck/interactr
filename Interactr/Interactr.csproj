@@ -80,7 +80,6 @@
     <Compile Include="Reactive\ReactiveList.cs" />
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\ActivationBarViewModel.cs" />
-    <Compile Include="ViewModel\CommunicationDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />

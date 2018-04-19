@@ -7,7 +7,7 @@ namespace Interactr.ViewModel
     /// <summary>
     /// Contain the shared functionality and properties of message view models.
     /// </summary>
-    public abstract class MessageViewModel
+    public class MessageViewModel
     {
         /// <summary>
         /// Reference to the Message model.
@@ -47,7 +47,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        protected MessageViewModel(Message message)
+        public MessageViewModel(Message message)
         {
             Message = message;
 

@@ -45,7 +45,7 @@ namespace Interactr.View
                 .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
-            // Create the partyviews drag panel and add as a child.
+            // Create the partyviews drag panel.
             PartyViewsDragPanel = new PartyViewsDragPanel(partyViews);
             Children.Add(PartyViewsDragPanel);
 
@@ -65,23 +65,6 @@ namespace Interactr.View
                 Children.Add(e.Element);
             });
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
-
-            // Keep messageviews the size of the communication diagram view when resized.
-            WidthChanged.Subscribe(newWidth =>
-            {
-                foreach (var messageView in messageViews)
-                {
-                    messageView.PreferredWidth = newWidth;
-                }
-            });
-
-            HeightChanged.Subscribe(newHeight =>
-            {
-                foreach (var messageView in messageViews)
-                {
-                    messageView.PreferredHeight = newHeight;
-                }
-            });
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -132,7 +115,7 @@ namespace Interactr.View
     {
         public readonly IReadOnlyReactiveList<PartyView> PartyViews;
 
-        public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews) : base()
+        public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews)
         {
             PartyViews = partyViews;
 
