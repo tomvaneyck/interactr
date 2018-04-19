@@ -66,9 +66,6 @@ namespace Interactr.View
             });
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
 
-            //Set the width and height of the 
-
-
             // Keep messageviews the size of the communication diagram view when resized.
             WidthChanged.Subscribe(newWidth =>
             {
@@ -123,7 +120,6 @@ namespace Interactr.View
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
                 return true;
             }
-
             return false;
         }
     }
