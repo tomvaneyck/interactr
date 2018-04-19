@@ -29,6 +29,7 @@ namespace Interactr.View
                 RighArrowStack.Height = newHeight;
             });
 
+            // Set the positions of the ArrowStacks relative to the party views.
             LeftArrowStack.Position = new Point(0,0);
             RighArrowStack.Position = new Point(Width-3,0);
 
@@ -36,6 +37,11 @@ namespace Interactr.View
             Children.Add(RighArrowStack);
         }
 
+        /// <summary>
+        /// A StackPanel that is contains ArrowAnchor UIElements.
+        /// The ArrowAnchors are used to attach a start or end point of an arrow too
+        /// and the StackPanel stacks the ArrowAnchor elements vertically.
+        /// </summary>
         public class MessageArrowStack : StackPanel
         {
             /// <summary>
@@ -54,12 +60,15 @@ namespace Interactr.View
             }
         }
 
+        /// <summary>
+        /// An element used for attaching Arrows start and endpoints to.
+        /// </summary>
         public class ArrowAnchor : UIElement
         {
             public ArrowAnchor() : base()
             {
-                PreferredWidth = 1;
-                PreferredHeight = 1;
+                PreferredWidth = 3;
+                PreferredHeight = 3;
             }
         }
     }
