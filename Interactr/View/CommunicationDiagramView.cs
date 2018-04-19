@@ -145,26 +145,30 @@ namespace Interactr.View
             return false;
         }
 
+        /// <summary>
+        /// Assign an two anchor points to the message.
+        /// The arrow startpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the sender.
+        /// The arrow endpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the receiver.
+        /// This provides automatic placement of the message arrows between a sender and a receiver.
+        /// </summary>
+        /// <param name="messageView"></param>
         private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
             // Connect to the sender
-
             var senderPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
             var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
             messageView.Position = anchor.Position;
-            anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
+            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
 
             // Connect to the Receiver
-
             var receiverPartyView = PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
             anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
             messageView.Position = anchor.Position;
-            anchor.PositionChanged.Subscribe(newPos => messageView.Position = newPos);
+            anchor.PositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
         }
-        // TODO: a function for coupling loose an arrow from its anchor point.
     }
 }

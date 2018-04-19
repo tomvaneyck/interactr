@@ -73,12 +73,30 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                
+
                 // Set the label position
                 _label.Position = textPos;
                 _label.Width = _label.PreferredWidth;
-                _label.Height = _label.PreferredHeight; 
+                _label.Height = _label.PreferredHeight;
             });
+        }
+
+        /// <summary>
+        /// The start point of the message arrow.
+        /// </summary>
+        public Point ArrowStartPoint
+        {
+            get => _arrow.StartPoint;
+            set => _arrow.EndPoint = value;
+        }
+
+        /// <summary>
+        /// The end point of the message arrow.
+        /// </summary>
+        public Point ArrowEndPoint
+        {
+            get => _arrow.EndPoint;
+            set => _arrow.EndPoint = value;
         }
 
         /// <summary>
@@ -91,9 +109,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                // and the latest viewmodel
+                    // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching sender
+                            // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
