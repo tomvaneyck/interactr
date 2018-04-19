@@ -67,7 +67,9 @@
     <Compile Include="ViewModel\MessageStackWalkerTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
     <Compile Include="View\Controls\LineViewTests.cs" />
+    <Compile Include="View\Controls\MarginTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
+    <Compile Include="View\Controls\WindowsViewTests.cs" />
     <Compile Include="View\Framework\AttachedPropertyTests.cs" />
     <Compile Include="View\Controls\AnchorPanelTests.cs" />
     <Compile Include="ViewModel\PartyViewModelTests.cs" />
