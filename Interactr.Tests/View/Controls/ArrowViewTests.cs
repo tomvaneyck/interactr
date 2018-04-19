@@ -27,7 +27,6 @@ namespace Interactr.Tests.View.Controls
             av.EndPoint = new Point(3, 2);
             Assert.AreEqual((new Point(1, -8), new Point(-7, 4)), av.CalculateWingPoints());
         }
-        // (Point p1, Point p2) = av.CalculateWingPoints();
 
         [Test]
         public void CalculateWingPointsTest3()
