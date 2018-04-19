@@ -6,7 +6,6 @@ namespace Interactr.View
 {
     public class CommunicationDiagramPartyView : PartyView
     {
-
         #region MessageArrowStacks
 
         public MessageArrowStack LeftArrowStack { get; set; }
