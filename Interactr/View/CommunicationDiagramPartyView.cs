@@ -8,15 +8,18 @@ namespace Interactr.View
     {
         #region MessageArrowStacks
 
-        public MessageArrowStack LeftArrowStack { get; set; }
-        public MessageArrowStack RighArrowStack { get; set; }
+        public MessageArrowStack LeftArrowStack { get; set; } = new MessageArrowStack();
+        public MessageArrowStack RighArrowStack { get; set; } = new MessageArrowStack();
 
         #endregion
 
-        public CommunicationDiagramPartyView() : base()
+        public CommunicationDiagramPartyView()
         {
-            LeftArrowStack = new MessageArrowStack();
-            RighArrowStack = new MessageArrowStack();
+            // Set layout
+            MarginsProperty.SetValue(LeftArrowStack, new Margins(0, 0, 0, 0));
+            MarginsProperty.SetValue(RighArrowStack, new Margins(0, 0, 0, 0));
+            AnchorsProperty.SetValue(LeftArrowStack, Anchors.Left);
+            AnchorsProperty.SetValue(RighArrowStack, Anchors.Right);
 
             //Set the arrow stack size;
             LeftArrowStack.PreferredWidth = 3;
@@ -30,10 +33,6 @@ namespace Interactr.View
                 LeftArrowStack.Height = newHeight;
                 RighArrowStack.Height = newHeight;
             });
-
-            // Set the positions of the ArrowStacks relative to the party views.
-            LeftArrowStack.Position = new Point(0, 0);
-            RighArrowStack.Position = new Point(Width - 3, 0);
 
             Children.Add(LeftArrowStack);
             Children.Add(RighArrowStack);
@@ -73,7 +72,7 @@ namespace Interactr.View
         /// </summary>
         public class ArrowAnchor : UIElement
         {
-            public ArrowAnchor() 
+            public ArrowAnchor()
             {
                 PreferredWidth = 3;
                 PreferredHeight = 3;
