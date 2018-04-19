@@ -159,7 +159,7 @@ namespace Interactr.View
             var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
-            messageView.Position = anchor.Position;
+            messageView.ArrowStartPoint = anchor.Position;
             anchor.PositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
 
             // Connect to the Receiver
@@ -167,7 +167,7 @@ namespace Interactr.View
             anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
 
             // Set and attach the positions to eachother.
-            messageView.Position = anchor.Position;
+            messageView.ArrowEndPoint= anchor.Position;
             anchor.PositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
         }
     }
