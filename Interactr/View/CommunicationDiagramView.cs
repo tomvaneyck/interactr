@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
 using Interactr.Reactive;
@@ -14,7 +13,7 @@ namespace Interactr.View
     /// <summary>
     /// The view for the communication diagram.
     /// </summary>
-    public class CommunicationDiagramView : DragPanel
+    public class CommunicationDiagramView : AnchorPanel
     {
         private IReadOnlyReactiveList<CommunicationDiagramMessageView> MessageViews;
 
@@ -33,11 +32,7 @@ namespace Interactr.View
 
         #endregion
 
-        #region PartyViews
-
-        public readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews;
-
-        #endregion
+        public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         public CommunicationDiagramView()
         {
@@ -46,25 +41,15 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            PartyViews = ViewModelChanged
+            IReadOnlyReactiveList<PartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
                 .ResultList;
 
-            // Automatically enter label editing mode when adding a party
-            PartyViews.OnAdd.Subscribe(elem =>
-            {
-                if (IsVisible && (IsFocused || HasChildInFocus()))
-                {
-                    elem.Element.LabelView.IsInEditMode = true;
-                    elem.Element.LabelView.Focus();
-                }
-            });
-
-            // Automatically add and remove party views to Children.
-            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            // Create the partyviews drag panel and add as a child.
+            PartyViewsDragPanel = new PartyViewsDragPanel(partyViews);
+            Children.Add(PartyViewsDragPanel);
 
             // Create a list of message views based on the message viewmodels.
             MessageViews = ViewModelChanged
@@ -169,6 +154,39 @@ namespace Interactr.View
             // Set and attach the positions to eachother.
             messageView.ArrowEndPoint= anchor.Position;
             anchor.PositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+        }
+    }
+
+    /// <summary>
+    /// A drag panel to enable dragging of the parties in Communication diagram view.
+    /// </summary>
+    public class PartyViewsDragPanel : DragPanel
+    {
+        public readonly IReadOnlyReactiveList<PartyView> PartyViews;
+
+        public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews) : base()
+        {
+            PartyViews = partyViews;
+
+            // Automatically enter label editing mode when adding a party
+            PartyViews.OnAdd.Subscribe(elem =>
+            {
+                if (IsVisible && (IsFocused || HasChildInFocus()))
+                {
+                    elem.Element.LabelView.IsInEditMode = true;
+                    elem.Element.LabelView.Focus();
+                }
+            });
+
+            // Two-way binding between the viewmodel and view position.
+            partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
+                .Subscribe(e => e.Element.Position = e.Value);
+            partyViews.ObserveEach(partyView => partyView.PositionChanged)
+                .Subscribe(e => e.Element.ViewModel.Position = e.Value);
+
+            // Automatically add and remove party views to Children.
+            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
     }
 }

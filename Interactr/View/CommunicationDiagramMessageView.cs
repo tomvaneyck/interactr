@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -34,6 +33,8 @@ namespace Interactr.View
 
         public CommunicationDiagramMessageView(int width, int height)
         {
+            IsVisibleToMouse = false;
+
             PreferredWidth = width;
             PreferredHeight = height;
 
@@ -115,7 +116,7 @@ namespace Interactr.View
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
-                                return parent.PartyViews.ObserveWhere(
+                                return parent.PartyViewsDragPanel.PartyViews.ObserveWhere(
                                     party => party.PositionChanged,
                                     party => party.ViewModel.Party == targetParty).Select(e => e.Element);
                             }).Switch()

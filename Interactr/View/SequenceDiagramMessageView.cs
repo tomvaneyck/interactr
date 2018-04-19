@@ -30,6 +30,8 @@ namespace Interactr.View
 
         public SequenceDiagramMessageView()
         {
+            this.IsVisibleToMouse = false;
+
             Children.Add(_arrow);
             Children.Add(_label);
             AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);

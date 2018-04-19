@@ -76,10 +76,6 @@ namespace Interactr.View
                 if (ViewModel != null) ViewModel.Label = newText;
             });
 
-            // On position change in the viewmodel change the position in the view.
-            ViewModelChanged.ObserveNested(vm => vm.PositionChanged)
-                .Subscribe(newPosition => this.Position = newPosition);
-
             // Add child elements
             Children.Add(_actorImage);
             Children.Add(_objectRectangle);
