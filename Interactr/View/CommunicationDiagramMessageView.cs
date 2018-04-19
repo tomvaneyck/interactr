@@ -31,12 +31,9 @@ namespace Interactr.View
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
-        public CommunicationDiagramMessageView(int width, int height)
+        public CommunicationDiagramMessageView()
         {
             IsVisibleToMouse = false;
-
-            PreferredWidth = width;
-            PreferredHeight = height;
 
             Children.Add(_arrow);
             Children.Add(_label);
@@ -57,8 +54,10 @@ namespace Interactr.View
 
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
-            // Put the label under the arrow.
+            // Assign value to the label
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            
+            // Put the label under the arrow.
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged

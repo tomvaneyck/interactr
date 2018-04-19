@@ -53,7 +53,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(Width, Height) { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
@@ -65,6 +65,9 @@ namespace Interactr.View
                 Children.Add(e.Element);
             });
             messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            //Set the width and height of the 
+
 
             // Keep messageviews the size of the communication diagram view when resized.
             WidthChanged.Subscribe(newWidth =>
