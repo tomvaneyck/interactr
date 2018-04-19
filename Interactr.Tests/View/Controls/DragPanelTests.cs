@@ -51,7 +51,6 @@ namespace Interactr.Tests.View.Controls
             mev = new MouseEventData(MouseEvent.MOUSE_DRAGGED, new Point(1, 1), 1);
             UIElement.HandleMouseEvent(r,mev);
             Assert.AreEqual(new Point(1,1),r.Position);
-        }
-        
+        } 
     }
 }
