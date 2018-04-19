@@ -270,6 +270,35 @@ namespace Interactr.Tests.View.Framework
             ReactiveAssert.AreElementsEqual(expected,actual);
         }
 
+        [Test]
+        public void AbsolutePositionParentChanged()
+        {
+            var scheduler = new TestScheduler();
+
+            var root = new UIElement();
+            var element = new UIElement();
+            var child = new UIElement();
+
+            // Add element to root as a child.
+            root.Children.Add(element);
+            element.Children.Add(child);
+
+            // Change the position of the element.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(86, 4));
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, new Point(0, 0)),
+                ReactiveTest.OnNext(10, new Point(86, 4))
+            };
+
+            
+            var actual = scheduler.Start(() => child.AbsolutePositionChanged, 0, 0, 1000).Messages;
+           // System.Threading.Thread.Sleep(4000);
+           // scheduler.Stop();
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
         class TestableUIElement : UIElement
         {
             public void RunValidateLayout()
