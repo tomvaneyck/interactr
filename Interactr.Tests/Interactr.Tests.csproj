@@ -40,6 +40,7 @@
       <HintPath>..\Interactr\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\Interactr\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -65,12 +66,17 @@
     <Compile Include="ViewModel\DiagramEditorViewModelTests.cs" />
     <Compile Include="ViewModel\MessageStackWalkerTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
+    <Compile Include="View\Controls\LineViewTests.cs" />
+    <Compile Include="View\Controls\MarginTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
+    <Compile Include="View\Controls\WindowsViewTests.cs" />
     <Compile Include="View\Framework\AttachedPropertyTests.cs" />
     <Compile Include="View\Controls\AnchorPanelTests.cs" />
     <Compile Include="ViewModel\PartyViewModelTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
     <Compile Include="View\PartyViewTests.cs" />
+    <Compile Include="View\Controls\ArrowViewTests.cs" />
+    <Compile Include="View\Controls\DragPanelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
