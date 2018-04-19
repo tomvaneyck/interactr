@@ -50,6 +50,5 @@ namespace Interactr.Tests.View.Controls
             lv.PointB = new Point(11, 11);
             Assert.AreEqual(11,lv.PreferredHeight);
         }
-        
     }
 }

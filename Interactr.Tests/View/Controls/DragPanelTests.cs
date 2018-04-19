@@ -53,6 +53,5 @@ namespace Interactr.Tests.View.Controls
             Assert.AreEqual(new Point(1,1),r.Position);
         }
         
-
     }
 }
