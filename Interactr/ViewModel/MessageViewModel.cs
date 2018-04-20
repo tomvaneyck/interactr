@@ -35,12 +35,12 @@ namespace Interactr.ViewModel
 
         #region Tick
 
-        protected readonly ReactiveProperty<int> _tick = new ReactiveProperty<int>();
+        private readonly ReactiveProperty<int> _tick = new ReactiveProperty<int>();
 
         /// <summary>
         /// Mark the position of this call in the sequence of messages.
         /// </summary>
-        public int Tick => _tick.Value;
+        public int Tick { get => _tick.Value; set => _tick.Value = value; }
 
         public IObservable<int> TickChanged => _tick.Changed;
 
