@@ -57,6 +57,10 @@ namespace Interactr.View
             // Assign value to the label
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
 
+            // Update the label
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = ViewModel.MessageNumber + ":" + label);
+            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged).Subscribe(mn => _label.Text = mn + ":" + ViewModel.Label);
+
             // Put the label under the arrow.
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
@@ -74,6 +78,8 @@ namespace Interactr.View
 
                 // Set the label position
                 _label.Position = textPos;
+                _label.Width = _label.PreferredWidth;
+                _label.Height = _label.PreferredHeight;
             });
         }
 

@@ -46,8 +46,10 @@ namespace Interactr.View
                 .Select(activationBarView => GetArrowAnchorPoint(activationBarView, _arrow.StartPoint))
                 .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
 
+            // Set the value of the label
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = ViewModel.MessageNumber + ":" + label);
+
             // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
