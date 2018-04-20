@@ -24,7 +24,7 @@ namespace Interactr.Reactive
         /// <remarks>
         /// Stream is readonly.
         /// </remarks>
-        public IObservable<T> Changed => _changed.StartWith(Value);
+        public IObservable<T> Changed => Observable.Defer(() => _changed.StartWith(Value));
 
         /// <summary>
         /// Represents the value of the property, the value has a type T. 
