@@ -58,7 +58,6 @@ namespace Interactr.ViewModel
                     }
                 }
             }
-
             catch (UnbalancedStackException)
             {
                 Debug.Print("Stack was unbalanced.");

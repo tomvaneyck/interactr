@@ -9,7 +9,6 @@ namespace Interactr.ViewModel
     /// </summary>
     public class SequenceDiagramMessageViewModel : MessageViewModel
     {
-
         #region SenderActivationBar
 
         private readonly ReactiveProperty<ActivationBarViewModel> _senderActivationBar =
