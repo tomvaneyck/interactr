@@ -55,7 +55,7 @@ namespace Interactr.View
             // Create a list of message views based on the message viewmodels.
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
-                .Select(vm => vm.MessageViewModels)
+                .Select(vm => vm.InvocationMessageViewModels)
                 .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
 
             // Automatically add and remove message views to Children.
