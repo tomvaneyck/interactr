@@ -131,6 +131,7 @@ namespace Interactr.View.Controls
 
             // Set the default font.
             Font = new Font("Arial", 11);
+            Color = Color.Black;
 
             // When a property changes, repaint.
             Observable.Merge(
