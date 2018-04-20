@@ -5,6 +5,7 @@ using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.Window;
 
 namespace Interactr.View
 {
@@ -89,9 +90,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                // and the latest viewmodel
+                    // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching sender
+                            // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
