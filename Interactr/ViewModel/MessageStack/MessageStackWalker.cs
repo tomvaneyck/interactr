@@ -15,7 +15,7 @@ namespace Interactr.ViewModel.MessageStack
         /// Because stack frames are returned when they are popped, the deepest frames are returned first.
         /// </remarks>
         /// <param name="messages">The messages to build a stack with.</param>
-        public static IEnumerable<StackFrame> Walk(IReadOnlyList<SequenceDiagramMessageViewModel> messages)
+        public static IEnumerable<StackFrame> Walk(IReadOnlyList<MessageViewModel> messages)
         {
             // Handle edge case where there are no messages.
             if (messages.Count == 0)

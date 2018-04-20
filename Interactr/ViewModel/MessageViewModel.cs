@@ -14,6 +14,38 @@ namespace Interactr.ViewModel
         /// </summary>
         public Message Message { get; }
 
+        #region MessageNumber
+        private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
+
+        /// <summary> A label.
+        /// <example> instance_name;class_name </example>
+        /// </summary>
+        public string MessageNumber
+        {
+            get => _messageNumber.Value;
+            set => _messageNumber.Value = value;
+        }
+
+        /// <summary>
+        /// An observable that emits the new label when it has changed.
+        /// </summary>
+        public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
+
+        #endregion
+
+        #region Tick
+
+        protected readonly ReactiveProperty<int> _tick = new ReactiveProperty<int>();
+
+        /// <summary>
+        /// Mark the position of this call in the sequence of messages.
+        /// </summary>
+        public int Tick => _tick.Value;
+
+        public IObservable<int> TickChanged => _tick.Changed;
+
+        #endregion
+
         #region Label
 
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
