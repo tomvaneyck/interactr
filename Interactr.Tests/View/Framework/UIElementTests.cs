@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
-using NUnit.Framework.Constraints;
 
 namespace Interactr.Tests.View.Framework
 {
@@ -276,8 +276,8 @@ namespace Interactr.Tests.View.Framework
             var scheduler = new TestScheduler();
 
             var root = new UIElement();
-            var element = new UIElement();
-            var child = new UIElement();
+            var element = new RectangleView();
+            var child = new Button();
 
             // Add element to root as a child.
             root.Children.Add(element);
@@ -291,9 +291,33 @@ namespace Interactr.Tests.View.Framework
                 ReactiveTest.OnNext(1, new Point(0, 0)),
                 ReactiveTest.OnNext(10, new Point(86, 4))
             };
-
-
+            
             var actual = scheduler.Start(() => child.AbsolutePositionChanged, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
+        [Test]
+        public void ObserveParentWidth()
+        {
+            var scheduler = new TestScheduler();
+
+            var parent = new UIElement();
+            var child = new RectangleView();
+            var observable = child.ParentChanged.Where(t => t != null && child.IsVisible).Select(p => p.WidthChanged).Switch();
+            
+            // Setup parent child relationship
+            parent.Children.Add(child);
+
+            // Change the width of the parent.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => parent.Width = 500);
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, 0),
+                ReactiveTest.OnNext(10, 500)
+            };
+
+            var actual = scheduler.Start(() => observable, 0, 0, 1000).Messages;
             ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
