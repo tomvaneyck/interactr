@@ -32,7 +32,6 @@ namespace Interactr.View
 
         #endregion
 
-
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         public CommunicationDiagramView()

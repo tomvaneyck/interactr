@@ -107,7 +107,10 @@ namespace Interactr.Reactive
                 sourceListObservable.Subscribe(newList =>
                 {
                     targetList.Clear();
-                    targetList.AddRange(newList.Select(selectorFunc));
+                    for (int i = 0; i < newList.Count; i++)
+                    {
+                        InsertElement(i, newList[i]);
+                    }
                 }),
                 sourceListObservable.ObserveNested(list => list.OnAdd)
                     .Subscribe(e => InsertElement(e.Index, e.Element)),
