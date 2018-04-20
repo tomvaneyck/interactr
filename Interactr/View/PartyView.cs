@@ -48,7 +48,7 @@ namespace Interactr.View
         }
 
         public PartyView()
-        {
+        { 
             // Set the image
             _actorImage.Image = Resources.StickFigure;
             _actorImage.PreferredWidth = 125;
@@ -129,7 +129,6 @@ namespace Interactr.View
                 Parent.Repaint();
                 return true;
             }
-
             return false;
         }
     }
