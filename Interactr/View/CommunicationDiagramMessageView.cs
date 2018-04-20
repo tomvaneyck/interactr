@@ -70,7 +70,7 @@ namespace Interactr.View
                 // Get the vector from the leftmost to the rightmost point.
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
-                Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
+                Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
 
                 // Set the label position
                 _label.Position = textPos;
