@@ -19,21 +19,13 @@ namespace Interactr.View
         /// </summary>
         public MessageArrowStack RightArrowStack { get; set; } = new MessageArrowStack(Orientation.Vertical);
 
-        /// <summary>
-        /// The Top arrow stack for attaching arrows to the party.
-        /// </summary>
-        public MessageArrowStack TopArrowStack { get; set; } = new MessageArrowStack(Orientation.Horizontal);
-
-        /// <summary>
-        /// The bottom arrow stack for attaching arrows to the party.
-        /// </summary>
-        public MessageArrowStack BottomArrowStack { get; set; } = new MessageArrowStack(Orientation.Horizontal);
-
         #endregion
 
         public CommunicationDiagramPartyView()
         {
             // Set layout
+            MarginsProperty.SetValue(LeftArrowStack, new Margins(0,0,0,0));
+            MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, 0, 0));
 
             AnchorsProperty.SetValue(LeftArrowStack, Anchors.Left);
             AnchorsProperty.SetValue(RightArrowStack, Anchors.Right);

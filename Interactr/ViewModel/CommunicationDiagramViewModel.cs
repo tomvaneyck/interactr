@@ -52,7 +52,7 @@ namespace Interactr.ViewModel
                         foreach (var subFrame in stackFrame.SubFrames)
                         {
                             subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString();
-                            PrependNumAllSubFrames(subFrame.SubFrames,subFrameNum.ToString());
+                            PrependNumberToAllSubFrames(subFrame.SubFrames,subFrameNum.ToString());
                             subFrameNum++;
                         }
                     }
@@ -65,7 +65,13 @@ namespace Interactr.ViewModel
             }
         }
 
-        private void PrependNumAllSubFrames(IReadOnlyList<StackFrame> subFrames,string messageNumber)
+        /// <summary>
+        /// Prepend the given messageNumber string to the messagNumber of
+        /// all the subframes and nested subframes in subFrames.
+        /// </summary>
+        /// <param name="subFrames"> The subframes to prepend the messageNumber to</param>
+        /// <param name="messageNumber">The messageNumber to prepend</param>
+        private void PrependNumberToAllSubFrames(IReadOnlyList<StackFrame> subFrames,string messageNumber)
         {
             if (subFrames.Count == 0)
             {
@@ -77,7 +83,7 @@ namespace Interactr.ViewModel
                 subsubFrame.InvocationMessage.MessageNumber =
                     messageNumber.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
 
-                PrependNumAllSubFrames(subsubFrame.SubFrames,messageNumber);
+                PrependNumberToAllSubFrames(subsubFrame.SubFrames,messageNumber);
             }
         }
     }
