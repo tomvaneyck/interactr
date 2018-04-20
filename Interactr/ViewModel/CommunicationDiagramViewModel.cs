@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Interactr.Model;
@@ -50,19 +52,32 @@ namespace Interactr.ViewModel
                         foreach (var subFrame in stackFrame.SubFrames)
                         {
                             subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString();
-                            foreach (var subsubFrame in subFrame.SubFrames)
-                            {
-                                subsubFrame.InvocationMessage.MessageNumber =
-                                    subFrameNum.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
-                            }
+                            PrependNumAllSubFrames(subFrame.SubFrames,subFrameNum.ToString());
                             subFrameNum++;
                         }
                     }
                 }
             }
+
             catch (UnbalancedStackException)
             {
                 Debug.Print("Stack was unbalanced.");
+            }
+        }
+
+        private void PrependNumAllSubFrames(IReadOnlyList<StackFrame> subFrames,string messageNumber)
+        {
+            if (subFrames.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var subsubFrame in subFrames)
+            {
+                subsubFrame.InvocationMessage.MessageNumber =
+                    messageNumber.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
+
+                PrependNumAllSubFrames(subsubFrame.SubFrames,messageNumber);
             }
         }
     }
