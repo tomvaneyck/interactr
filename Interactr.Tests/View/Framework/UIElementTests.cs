@@ -139,59 +139,6 @@ namespace Interactr.Tests.View.Framework
         }
 
         [Test]
-        public void TestValidateLayout()
-        {
-            TestableUIElement parent = new TestableUIElement
-            {
-                Width = 100,
-                Height = 100
-            };
-
-            UIElement child1 = new UIElement
-            {
-                Width = 200,
-                Height = 200
-            };
-            parent.Children.Add(child1);
-
-            UIElement child2 = new UIElement
-            {
-                Width = 100,
-                Height = 100
-            };
-            parent.Children.Add(child2);
-
-            UIElement child3 = new UIElement
-            {
-                Position = new Point(90, 90),
-                Width = 50,
-                Height = 50
-            };
-            parent.Children.Add(child3);
-
-            UIElement child4 = new UIElement
-            {
-                Width = 50,
-                Height = 50
-            };
-            parent.Children.Add(child4);
-
-            parent.RunValidateLayout();
-
-            Assert.AreEqual(100, child1.Width);
-            Assert.AreEqual(100, child1.Height);
-
-            Assert.AreEqual(100, child2.Width);
-            Assert.AreEqual(100, child2.Height);
-
-            Assert.AreEqual(10, child3.Width);
-            Assert.AreEqual(10, child3.Height);
-
-            Assert.AreEqual(50, child4.Width);
-            Assert.AreEqual(50, child4.Height);
-        }
-
-        [Test]
         public void TestGetDecendantsOneLevelDown()
         {
             // Build a UIElement tree with two children one level down the root element.
@@ -243,14 +190,6 @@ namespace Interactr.Tests.View.Framework
             Assert.True(decendants.Contains(childElement3));
             Assert.True(decendants.Contains(childElement4));
             Assert.True(decendants.Contains(childElement5));
-        }
-
-        class TestableUIElement : UIElement
-        {
-            public void RunValidateLayout()
-            {
-                ValidateLayout();
-            }
         }
     }
 }
