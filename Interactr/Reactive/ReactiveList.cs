@@ -43,7 +43,7 @@ namespace Interactr.Reactive
 
         public void RemoveAll(IEnumerable<T> items)
         {
-            items.ToList();
+            items = items.ToList();
             foreach (T item in items)
             {
                 Remove(item);
