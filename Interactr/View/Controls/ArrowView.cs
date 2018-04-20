@@ -128,6 +128,20 @@ namespace Interactr.View.Controls
                 EndPoint.X,
                 EndPoint.Y);
 
+            (Point pointL,Point pointR) = CalculateWingPoints();
+
+
+            // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
+            g.FillPolygon(new SolidBrush(Color), new[]
+            {
+                new System.Drawing.Point(EndPoint.X, EndPoint.Y),
+                new System.Drawing.Point(pointL.X, pointL.Y),
+                new System.Drawing.Point(pointR.X, pointR.Y)
+            });
+        }
+
+        public (Point Point1, Point Point2) CalculateWingPoints()
+        {
             // Draw arrowhead triangle.
             float radius = ArrowHeadSize;
             float wingAngle = (float)(Math.PI / 4d); // Angle between line and arrow wings.
@@ -154,13 +168,10 @@ namespace Interactr.View.Controls
             int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
             int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
-            // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
-            g.FillPolygon(new SolidBrush(Color), new[]
-            {
-                new System.Drawing.Point(EndPoint.X, EndPoint.Y),
-                new System.Drawing.Point(x1, y1),
-                new System.Drawing.Point(x2, y2),
-            });
+            Point pointL = new Point(x1, y1);
+            Point pointR = new Point(x2, y2);
+
+            return (pointL, pointR);
         }
     }
 }
