@@ -24,12 +24,12 @@ namespace Interactr.ViewModel.MessageStack
         /// <summary>
         /// The message that started this frame. Can be null for the initiator.
         /// </summary>
-        public SequenceDiagramMessageViewModel InvocationMessage { get; }
+        public MessageViewModel InvocationMessage { get; }
 
         /// <summary>
         /// The message that ended this frame. Can be null for the initiator.
         /// </summary>
-        public SequenceDiagramMessageViewModel ReturnMessage { get; }
+        public MessageViewModel ReturnMessage { get; }
 
         /// <summary>
         /// The list sub-frames that were invoked from this frame.
@@ -61,10 +61,10 @@ namespace Interactr.ViewModel.MessageStack
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Level == other.Level && 
-                   Equals(Party, other.Party) && 
-                   Equals(InvocationMessage, other.InvocationMessage) && 
-                   Equals(ReturnMessage, other.ReturnMessage) && 
+            return Level == other.Level &&
+                   Equals(Party, other.Party) &&
+                   Equals(InvocationMessage, other.InvocationMessage) &&
+                   Equals(ReturnMessage, other.ReturnMessage) &&
                    Enumerable.SequenceEqual(SubFrames, other.SubFrames);
         }
 
@@ -73,7 +73,7 @@ namespace Interactr.ViewModel.MessageStack
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((StackFrame) obj);
+            return Equals((StackFrame)obj);
         }
 
         public override int GetHashCode()
@@ -99,7 +99,7 @@ namespace Interactr.ViewModel.MessageStack
         }
 
         #endregion
-        
+
         public class Builder
         {
             /// <summary>
@@ -116,12 +116,12 @@ namespace Interactr.ViewModel.MessageStack
             /// <summary>
             /// The message that started this frame. Can be null for the initiator.
             /// </summary>
-            public SequenceDiagramMessageViewModel InvocationMessage { get; set; }
+            public MessageViewModel InvocationMessage { get; set; }
 
             /// <summary>
             /// The message that ended this frame. Can be null for the initiator.
             /// </summary>
-            public SequenceDiagramMessageViewModel ReturnMessage { get; set; }
+            public MessageViewModel ReturnMessage { get; set; }
 
             /// <summary>
             /// The list sub-frames that were invoked from this frame.
