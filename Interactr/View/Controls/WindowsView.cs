@@ -240,6 +240,7 @@ namespace Interactr.View.Controls
                 {
                     // Dragging finished, release mouse capture.
                     ReleaseMouseCapture();
+                    _resizeMode = ResizeMode.None;
                     return true;
                 }
                 else if(eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
