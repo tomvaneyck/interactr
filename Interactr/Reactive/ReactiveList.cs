@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Interactr.Reactive
 {
@@ -39,6 +40,15 @@ namespace Interactr.Reactive
         public abstract bool Contains(T item);
 
         public abstract bool Remove(T item);
+
+        public void RemoveAll(IEnumerable<T> items)
+        {
+            items.ToList();
+            foreach (T item in items)
+            {
+                Remove(item);
+            }
+        }
 
         public abstract void CopyTo(T[] array, int arrayIndex);
 
