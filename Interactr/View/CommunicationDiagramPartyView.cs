@@ -71,14 +71,13 @@ namespace Interactr.View
         /// <summary>
         /// An element used for attaching Arrows start and endpoints to.
         /// </summary>
-        public class ArrowAnchor : RectangleView
+        public class ArrowAnchor : UIElement
         {
             
             public ArrowAnchor()
             {
                 PreferredWidth = 3;
                 PreferredHeight = 10;
-                BackgroundColor = Color.Aqua;
             }
         }
     }
