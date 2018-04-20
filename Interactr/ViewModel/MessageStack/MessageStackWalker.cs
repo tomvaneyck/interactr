@@ -23,12 +23,6 @@ namespace Interactr.ViewModel.MessageStack
                 yield break;
             }
 
-            // Check if first message is invocation message.
-            if (messages[0].MessageType != Message.MessageType.Invocation)
-            {
-                throw new UnbalancedStackException("First message is not an invocation message!");
-            }
-
             // Store invocation information on a call stack.
             Stack<StackFrame.Builder> stack = new Stack<StackFrame.Builder>();
 
@@ -63,7 +57,7 @@ namespace Interactr.ViewModel.MessageStack
                     // the stack is unbalanced.
                     if (frame.InvocationMessage == null)
                     {
-                        throw new UnbalancedStackException("Temp");
+                        throw new UnbalancedStackException("No invocation message for this result message found!");
                     }
 
                     // Integrity check: each invocation message must have a matching return message.

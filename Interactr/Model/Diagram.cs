@@ -18,8 +18,7 @@ namespace Interactr.Model
             Parties.OnDelete.Subscribe(e =>
             {
                 var messagesToBeRemoved = Messages
-                    .Where(message => message.Sender == e.Element || message.Receiver == e.Element)
-                    .ToList();
+                    .Where(message => message.Sender == e.Element || message.Receiver == e.Element);
                 Messages.RemoveAll(messagesToBeRemoved);
             });
         }
