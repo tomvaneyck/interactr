@@ -64,6 +64,7 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Assign value to the label
+            _label.Text = "Invocation";
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
 
             // Put the label under the arrow.
