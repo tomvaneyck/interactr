@@ -23,6 +23,12 @@ namespace Interactr.ViewModel.MessageStack
                 yield break;
             }
 
+            // Check if first message is invocation message.
+            if (messages[0].MessageType != Message.MessageType.Invocation)
+            {
+                throw new UnbalancedStackException("First message is not an invocation message!");
+            }
+
             // Store invocation information on a call stack.
             Stack<StackFrame.Builder> stack = new Stack<StackFrame.Builder>();
 
@@ -52,6 +58,13 @@ namespace Interactr.ViewModel.MessageStack
                 {
                     // Pop invocation from call stack.
                     StackFrame.Builder frame = stack.Pop();
+
+                    // If there is a result message but no invocation message for this result message,
+                    // the stack is unbalanced.
+                    if (frame.InvocationMessage == null)
+                    {
+                        throw new UnbalancedStackException("Temp");
+                    }
 
                     // Integrity check: each invocation message must have a matching return message.
                     Party invocator = frame.InvocationMessage.Message.Sender;
