@@ -267,7 +267,7 @@ namespace Interactr.Tests.View.Framework
             };
 
             var actual = scheduler.Start(() => element.AbsolutePositionChanged, 0, 0, 1000).Messages;
-            ReactiveAssert.AreElementsEqual(expected,actual);
+            ReactiveAssert.AreElementsEqual(expected, actual);
         }
 
         [Test]
