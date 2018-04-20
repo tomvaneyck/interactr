@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
@@ -32,8 +33,9 @@ namespace Interactr.View
 
         #endregion
 
-
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
+
+        private IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
 
         public CommunicationDiagramView()
         {
@@ -45,7 +47,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() {ViewModel = vm})
+                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
                 .ResultList;
 
             // Create the partyviews drag panel.
@@ -53,24 +55,24 @@ namespace Interactr.View
             Children.Add(PartyViewsDragPanel);
 
             // Create a list of message views based on the message viewmodels.
-            IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
+            _messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.InvocationMessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
 
             // Automatically add and remove message views to Children.
-            messageViews.OnAdd.Subscribe(e =>
+            _messageViews.OnAdd.Subscribe(e =>
             {
                 // Make message views the size of the communication diagram view.
                 e.Element.PreferredWidth = Width;
                 e.Element.PreferredHeight = Height;
-                
+
                 // Assing arrow start and end points on the message.
                 AssignAnchorPointsToMessage(e.Element);
 
                 Children.Add(e.Element);
             });
-            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -102,7 +104,7 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView) FocusedElement.Parent;
+                PartyView partyView = (PartyView)FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
@@ -122,24 +124,29 @@ namespace Interactr.View
         /// <param name="messageView"></param>
         private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
-            // Connect to the sender
+            // Get the sender and receiver party views.
             var senderPartyView =
                 PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
 
-            var anchor = senderPartyView.RighArrowStack.AddArrowAnchorElement();
-
-            // Set and attach the positions to eachother.
-            anchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
-
-            // Connect to the Receiver
             var receiverPartyView =
                 PartyViewsDragPanel.PartyViews.First(pv =>
                     pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
 
-            anchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement();
+            // Anchor to the sender.
+            var senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
+            senderAnchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
 
-            // Set and attach the positions to eachother.
-            anchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+            // Anchor to the Receiver
+            var receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
+            receiverAnchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+
+            // Delete the anchors when the message gets deleted.
+            _messageViews.OnDelete.Where(mv => mv.Element == messageView)
+                .Subscribe(_ =>
+                {
+                    senderPartyView.RightArrowStack.Children.Remove(senderAnchor);
+                    receiverPartyView.LeftArrowStack.Children.Remove(receiverAnchor);
+                });
         }
     }
 

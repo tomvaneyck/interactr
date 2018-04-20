@@ -46,7 +46,6 @@ namespace Interactr.View
             set => _arrow.EndPoint = value;
         }
 
-
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
