@@ -310,6 +310,7 @@ namespace Interactr.Tests.View.Framework
             // Add element to root as a child.
             root.Children.Add(element);
             element.Children.Add(child);
+            child.Children.Add(grandChild);
 
             // Change the position of the element.
             scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(10, 10));
