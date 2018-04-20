@@ -53,6 +53,13 @@ namespace Interactr.ViewModel.MessageStack
                     // Pop invocation from call stack.
                     StackFrame.Builder frame = stack.Pop();
 
+                    // If there is a result message but no invocation message for this result message,
+                    // the stack is unbalanced.
+                    if (frame.InvocationMessage == null)
+                    {
+                        throw new UnbalancedStackException("No invocation message for this result message found!");
+                    }
+
                     // Integrity check: each invocation message must have a matching return message.
                     Party invocator = frame.InvocationMessage.Message.Sender;
                     if (invocator != messageVM.Message.Receiver)
