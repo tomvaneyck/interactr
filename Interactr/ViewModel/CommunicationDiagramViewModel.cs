@@ -24,6 +24,6 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        public readonly IReadOnlyReactiveList<MessageViewModel> MessageViewModels;
+        public IReadOnlyReactiveList<MessageViewModel> MessageViewModels { get;}
     }
 }

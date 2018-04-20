@@ -35,6 +35,9 @@ namespace Interactr.View
 
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
+        protected IReadOnlyReactiveList<PartyView> partyViews;
+
+
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -56,7 +59,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
@@ -102,7 +105,7 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView) FocusedElement.Parent;
+                PartyView partyView = (PartyView)FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
