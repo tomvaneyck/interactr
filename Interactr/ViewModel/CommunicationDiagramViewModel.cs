@@ -11,6 +11,14 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class CommunicationDiagramViewModel : DiagramViewModel
     {
+        /// <summary>
+        /// The Messages view models for messages that will be drawn in the communication diagram.
+        /// </summary>
+        /// <remarks>
+        /// Only invocation messages get drawn in the communication diagram.
+        /// </remarks>
+        public IReadOnlyReactiveList<MessageViewModel> MessageViewModels { get; }
+
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
@@ -19,11 +27,13 @@ namespace Interactr.ViewModel
         }
 
         /// <summary>
-        /// The Messages view models for messages that will be drawn in the communication diagram.
+        /// Delete a message from the model.
         /// </summary>
-        /// <remarks>
-        /// Only invocation messages get drawn in the communication diagram.
-        /// </remarks>
-        public IReadOnlyReactiveList<MessageViewModel> MessageViewModels { get;}
+        /// <remarks></remarks>
+        /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
+        public void DeleteMessage(Message message)
+        {
+            Diagram.Messages.Remove(message);
+        }
     }
 }
