@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Interactr.Reactive;
+using System.Linq;
+using System;
 
 namespace Interactr.Model
 {
@@ -12,6 +14,13 @@ namespace Interactr.Model
         {
             Messages = new ReactiveArrayList<Message>();
             Parties = new ReactiveArrayList<Party>();
+
+            Parties.OnDelete.Subscribe(e =>
+            {
+                var messagesToBeRemoved = Messages
+                    .Where(message => message.Sender == e.Element || message.Receiver == e.Element);
+                Messages.RemoveAll(messagesToBeRemoved);
+            });
         }
 
         /// <summary>

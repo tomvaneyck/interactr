@@ -125,6 +125,9 @@ namespace Interactr.View.Controls
         /// </summary>
         public class Window : AnchorPanel
         {
+            private const int MinWindowWidth = 100;
+            private const int MinWindowHeight = 100;
+
             #region Title
 
             private readonly ReactiveProperty<String> _title = new ReactiveProperty<String>();
@@ -159,7 +162,7 @@ namespace Interactr.View.Controls
 
             public Window(UIElement innerElement)
             {
-                this.AutoCompactEnabled = false;
+                AutoCompactEnabled = false;
 
                 // Title
                 Title = "New Window";
@@ -178,10 +181,10 @@ namespace Interactr.View.Controls
                 };
                 AnchorsProperty.SetValue(CloseButton, Anchors.Top | Anchors.Right);
                 MarginsProperty.SetValue(CloseButton, new Margins(top: 7, right: 7, bottom: 7));
-                this.Children.Add(CloseButton);
+                Children.Add(CloseButton);
 
                 //Focus child if this window is clicked.
-                this.FocusChanged.Subscribe(focused =>
+                FocusChanged.Subscribe(focused =>
                 {
                     if (focused && InnerElement.CanBeFocused)
                     {
@@ -244,22 +247,25 @@ namespace Interactr.View.Controls
                     // User has dragged the mouse. Resize/reposition the window.
                     if ((_resizeMode & ResizeMode.Left) != 0)
                     {
-                        this.PreferredWidth -= eventData.MousePosition.X;
-                        this.Position += new Point(eventData.MousePosition.X, 0);
+                        PreferredWidth -= eventData.MousePosition.X;
+                        Position += new Point(eventData.MousePosition.X, 0);
                     }
                     if ((_resizeMode & ResizeMode.Top) != 0)
                     {
-                        this.PreferredHeight -= eventData.MousePosition.Y;
-                        this.Position += new Point(0, eventData.MousePosition.Y);
+                        PreferredHeight -= eventData.MousePosition.Y;
+                        Position += new Point(0, eventData.MousePosition.Y);
                     }
                     if ((_resizeMode & ResizeMode.Right) != 0)
                     {
-                        this.PreferredWidth = eventData.MousePosition.X;
+                        PreferredWidth = eventData.MousePosition.X;
                     }
                     if ((_resizeMode & ResizeMode.Bottom) != 0)
                     {
-                        this.PreferredHeight = eventData.MousePosition.Y;
+                        PreferredHeight = eventData.MousePosition.Y;
                     }
+
+                    PreferredWidth = Math.Max(MinWindowWidth, PreferredWidth);
+                    PreferredHeight = Math.Max(MinWindowHeight, PreferredHeight);
 
                     return true;
                 }

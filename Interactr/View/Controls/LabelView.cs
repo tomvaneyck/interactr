@@ -131,6 +131,7 @@ namespace Interactr.View.Controls
 
             // Set the default font.
             Font = new Font("Arial", 11);
+            Color = Color.Black;
 
             // When a property changes, repaint.
             Observable.Merge(
@@ -209,14 +210,6 @@ namespace Interactr.View.Controls
                     g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
                 }
             }
-        }
-
-        /// <summary>
-        /// public accessor for focusing this label.
-        /// </summary>
-        public void FocusLabel()
-        {
-            Focus();
         }
 
         /// <see cref="OnKeyEvent"/>
