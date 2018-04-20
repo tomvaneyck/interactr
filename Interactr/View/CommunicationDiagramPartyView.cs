@@ -77,7 +77,7 @@ namespace Interactr.View
             public ArrowAnchor()
             {
                 PreferredWidth = 3;
-                PreferredHeight = 10;
+                PreferredHeight = 17;
             }
         }
     }
