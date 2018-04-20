@@ -63,7 +63,10 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Assign value to the label
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = ViewModel.MessageNumber + ":" + label);
+
+            //Update the message number
+            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged).Subscribe(mn => _label.Text = mn + ":" + ViewModel.Label);
 
             // Put the label under the arrow.
             Observable.CombineLatest(

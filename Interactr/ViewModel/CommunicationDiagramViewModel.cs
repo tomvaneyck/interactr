@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Interactr.Model;
 using System.Reactive.Linq;
 using Interactr.Reactive;
 using Interactr.ViewModel.MessageStack;
+using StackFrame = Interactr.ViewModel.MessageStack.StackFrame;
 
 namespace Interactr.ViewModel
 {
@@ -47,7 +49,12 @@ namespace Interactr.ViewModel
                         int subFrameNum = 1;
                         foreach (var subFrame in stackFrame.SubFrames)
                         {
-                            subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString() + subFrame.InvocationMessage.MessageNumber;
+                            subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString();
+                            foreach (var subsubFrame in subFrame.SubFrames)
+                            {
+                                subsubFrame.InvocationMessage.MessageNumber =
+                                    subFrameNum.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
+                            }
                             subFrameNum++;
                         }
                     }
