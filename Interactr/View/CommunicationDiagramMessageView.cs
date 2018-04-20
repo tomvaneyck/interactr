@@ -74,8 +74,6 @@ namespace Interactr.View
 
                 // Set the label position
                 _label.Position = textPos;
-                _label.Width = _label.PreferredWidth;
-                _label.Height = _label.PreferredHeight;
             });
         }
 
