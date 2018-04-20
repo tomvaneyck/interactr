@@ -212,14 +212,6 @@ namespace Interactr.View.Controls
             }
         }
 
-        /// <summary>
-        /// public accessor for focusing this label.
-        /// </summary>
-        public void FocusLabel()
-        {
-            Focus();
-        }
-
         /// <see cref="OnKeyEvent"/>
         protected override bool OnKeyEvent(KeyEventData eventData)
         {
