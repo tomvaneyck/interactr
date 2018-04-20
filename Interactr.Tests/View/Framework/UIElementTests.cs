@@ -199,7 +199,7 @@ namespace Interactr.Tests.View.Framework
             var scheduler = new TestScheduler();
 
             var root = new UIElement();
-            var element = new TestableUIElement();
+            var element = new UIElement();
 
             // Add element to root as a child.
             root.Children.Add(element);
@@ -295,15 +295,6 @@ namespace Interactr.Tests.View.Framework
 
             var actual = scheduler.Start(() => grandChild.AbsolutePositionChanged, 0, 0, 1000).Messages;
             ReactiveAssert.AreElementsEqual(expected, actual);
-        }
-
-
-        class TestableUIElement : UIElement
-        {
-            public void RunValidateLayout()
-            {
-                ValidateLayout();
-            }
         }
     }
 }
