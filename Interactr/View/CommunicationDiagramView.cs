@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive;
 using System.Diagnostics;
 using System.Linq;
@@ -125,20 +126,28 @@ namespace Interactr.View
         private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
             // Get the sender and receiver party views.
-            var senderPartyView =
+            CommunicationDiagramPartyView senderPartyView =
                 PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
 
-            var receiverPartyView =
+            CommunicationDiagramPartyView receiverPartyView =
                 PartyViewsDragPanel.PartyViews.First(pv =>
                     pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
 
+            // The position of the window view relative to the mainview.
+            Point windowViewPosition = (Parent?.Parent.Position ?? new Point(0, 0));
+
+            // The position of the diagramEditor view relative to the windowViewPosition.
+            Point diagramEditorViewPosition = (Parent?.Position ?? new Point(0, 0));
+
             // Anchor to the sender.
             var senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
-            senderAnchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowStartPoint = newPos);
+            senderAnchor.AbsolutePositionChanged.Subscribe(newPos =>
+                messageView.ArrowStartPoint = newPos - diagramEditorViewPosition - windowViewPosition); 
 
             // Anchor to the Receiver
             var receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
-            receiverAnchor.AbsolutePositionChanged.Subscribe(newPos => messageView.ArrowEndPoint = newPos);
+            receiverAnchor.AbsolutePositionChanged.Subscribe(newPos =>
+                messageView.ArrowEndPoint = newPos - windowViewPosition - diagramEditorViewPosition); 
 
             // Delete the anchors when the message gets deleted.
             _messageViews.OnDelete.Where(mv => mv.Element == messageView)
