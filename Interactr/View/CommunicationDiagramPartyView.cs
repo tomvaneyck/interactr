@@ -8,7 +8,7 @@ namespace Interactr.View
     public class CommunicationDiagramPartyView : PartyView
     {
         #region MessageArrowStacks
-     
+
         /// <summary>
         /// The left arrow stack for attaching arrows to the party.
         /// </summary>
@@ -24,8 +24,8 @@ namespace Interactr.View
         public CommunicationDiagramPartyView()
         {
             // Set layout
-            MarginsProperty.SetValue(LeftArrowStack, new Margins(0,0,0,0));
-            MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, 0, 0));
+            MarginsProperty.SetValue(LeftArrowStack, new Margins(Width / 3, 0, 0, 0));
+            MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, Width / 3, 0));
 
             AnchorsProperty.SetValue(LeftArrowStack, Anchors.Left);
             AnchorsProperty.SetValue(RightArrowStack, Anchors.Right);
@@ -42,6 +42,13 @@ namespace Interactr.View
             {
                 LeftArrowStack.PreferredHeight = newHeight;
                 RightArrowStack.PreferredHeight = newHeight;
+            });
+
+            // Change the margin size on a change of width
+            WidthChanged.Subscribe(newWidth =>
+            {
+                MarginsProperty.SetValue(LeftArrowStack, new Margins(newWidth / 3, 0, 0, 0));
+                MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, newWidth / 3, 0));
             });
 
             Children.Add(LeftArrowStack);
@@ -62,7 +69,7 @@ namespace Interactr.View
             public ArrowAnchor AddArrowAnchorElement(int width, int height)
             {
                 // A UIElement that can be used to attach a message arrow to.
-                var arrowAnchorElement = new ArrowAnchor(width,height);
+                var arrowAnchorElement = new ArrowAnchor(width, height);
 
                 // Add the element to the MessageArrow StackPanel
                 Children.Add(arrowAnchorElement);
