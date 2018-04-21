@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interactr.Model;
 using Interactr.View;
 using Interactr.View.Framework;
+using Interactr.ViewModel;
 using Interactr.Window;
 using NUnit.Framework;
 
@@ -23,6 +25,11 @@ namespace Interactr.Tests.View
         [Test]
         public void SwitchViewsOnTab()
         {
+            _diagramEditorView.SeqDiagView.IsVisible = true;
+            _diagramEditorView.CommDiagView.IsVisible = false;
+
+            _diagramEditorView.ViewModel = new DiagramEditorViewModel(new Diagram());
+
             var expectedSeqDiagVisible = !_diagramEditorView.SeqDiagView.IsVisible;
             var expectedCommDiagVisible = !_diagramEditorView.CommDiagView.IsVisible;
 
