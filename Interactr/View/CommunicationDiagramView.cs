@@ -59,7 +59,7 @@ namespace Interactr.View
             _messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.InvocationMessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(vm)).ResultList;
 
             // Automatically add and remove message views to Children.
             _messageViews.OnAdd.Subscribe(e =>

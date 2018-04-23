@@ -49,12 +49,17 @@ namespace Interactr.View
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
-        public CommunicationDiagramMessageView()
+        public CommunicationDiagramMessageView(MessageViewModel viewModel)
         {
             IsVisibleToMouse = false;
 
+            ViewModel = viewModel;
+
             Children.Add(_arrow);
             Children.Add(_label);
+
+            // Set the text of the label
+            _label.Text = ViewModel.MessageNumber + ":" + _label.Text;
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
