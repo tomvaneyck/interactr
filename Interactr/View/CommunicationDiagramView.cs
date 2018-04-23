@@ -133,15 +133,57 @@ namespace Interactr.View
                 PartyViewsDragPanel.PartyViews.First(pv =>
                     pv.ViewModel.Party == messageView.ViewModel.Message.Receiver);
 
+            CommunicationDiagramPartyView.ArrowAnchor senderAnchor;
+            CommunicationDiagramPartyView.ArrowAnchor receiverAnchor;
+
+            if (receiverPartyView.Position.X < senderPartyView.Position.X)
+            {
+                senderAnchor = senderPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
+                receiverAnchor = receiverPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
+            }
+            else
+            {
+                senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
+                receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
+            }
+
             // Anchor to the sender.
-            var senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
             senderAnchor.AbsolutePositionChanged.Subscribe(newPos =>
-                messageView.ArrowStartPoint = newPos - (Parent?.Position ?? new Point(0, 0)) - (Parent?.Parent?.Position ?? new Point(0, 0)));
+                messageView.ArrowStartPoint = newPos - (Parent?.Position ?? new Point(0, 0)) -
+                                              (Parent?.Parent?.Position ?? new Point(0, 0)));
 
             // Anchor to the Receiver
-            var receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
             receiverAnchor.AbsolutePositionChanged.Subscribe(newPos =>
-                messageView.ArrowEndPoint = newPos - (Parent?.Position ?? new Point(0, 0)) - (Parent?.Parent?.Position ?? new Point(0, 0))); 
+                messageView.ArrowEndPoint = newPos - (Parent?.Position ?? new Point(0, 0)) -
+                                            (Parent?.Parent?.Position ?? new Point(0, 0)));
+
+            // Dynamically change if the message is achored to the left or right arrowStack in the partyview.
+            receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(
+                newPos =>
+                {
+                    // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
+                    if (receiverPartyView.Position.X < senderPartyView.Position.X && senderPartyView.RightArrowStack.Children.Contains(senderAnchor) && receiverPartyView.LeftArrowStack.Children.Contains(receiverAnchor))
+                    {
+                        // Switch anchors from stacks.
+                        senderPartyView.RightArrowStack.Children.Remove(senderAnchor);
+                        receiverPartyView.LeftArrowStack.Children.Remove(receiverAnchor);
+
+                        senderPartyView.LeftArrowStack.Children.Add(senderAnchor);
+                        receiverPartyView.RightArrowStack.Children.Add(receiverAnchor);
+                    }
+                    // If the receiver is to the right of the  sender and the sender has an arrow starting on it's leftArrowStack.
+                    else if (receiverPartyView.Position.X > senderPartyView.Position.X && senderPartyView.LeftArrowStack.Children.Contains(senderAnchor) && receiverPartyView.RightArrowStack.Children.Contains(receiverAnchor))
+                    {
+                        // Switch anchors from stacks.
+                        senderPartyView.LeftArrowStack.Children.Remove(senderAnchor);
+                        receiverPartyView.RightArrowStack.Children.Remove(receiverAnchor);
+
+                        senderPartyView.RightArrowStack.Children.Add(senderAnchor);
+                        receiverPartyView.LeftArrowStack.Children.Add(receiverAnchor);
+                    }
+
+                }
+            );
 
             // Delete the anchors when the message gets deleted.
             _messageViews.OnDelete.Where(mv => mv.Element == messageView)
