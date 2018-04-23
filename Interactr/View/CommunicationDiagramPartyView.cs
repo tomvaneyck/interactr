@@ -47,8 +47,8 @@ namespace Interactr.View
             // Change the margin size on a change of width
             WidthChanged.Subscribe(newWidth =>
             {
-                MarginsProperty.SetValue(LeftArrowStack, new Margins(newWidth / 3, 0, 0, 0));
-                MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, newWidth / 3, 0));
+                MarginsProperty.SetValue(LeftArrowStack, new Margins(newWidth / 4, 0, 0, 0));
+                MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, newWidth / 4, 0));
             });
 
             Children.Add(LeftArrowStack);
