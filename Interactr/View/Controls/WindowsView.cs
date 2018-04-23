@@ -204,7 +204,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-            protected override bool OnMouseEvent(MouseEventData eventData)
+            protected override bool OnMouseEventPreview(MouseEventData eventData)
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
@@ -271,7 +271,7 @@ namespace Interactr.View.Controls
                     return true;
                 }
 
-                return base.OnMouseEvent(eventData);
+                return base.OnMouseEventPreview(eventData);
             }
 
             public override void PaintElement(Graphics g)
