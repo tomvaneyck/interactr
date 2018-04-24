@@ -58,9 +58,6 @@ namespace Interactr.View
             Children.Add(_arrow);
             Children.Add(_label);
 
-            // Set the text of the label
-            _label.Text = ViewModel.MessageNumber + ":" + _label.Text;
-
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth =>
                 _arrow.Width = newWidth);
