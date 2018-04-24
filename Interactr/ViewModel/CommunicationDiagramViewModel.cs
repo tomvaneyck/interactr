@@ -21,6 +21,8 @@ namespace Interactr.ViewModel
             MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
             InvocationMessageViewModels = MessageViewModels.CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
+            // Set the message view models.
+            SetMessageViewModelNumbers();
             MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result).Subscribe(_ => SetMessageViewModelNumbers());
         }
 
