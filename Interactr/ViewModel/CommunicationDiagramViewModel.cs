@@ -21,7 +21,7 @@ namespace Interactr.ViewModel
             MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
             InvocationMessageViewModels = MessageViewModels.CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
-            // Set the message view models.
+            // Set the numbers for the messages in the message view models.
             SetMessageViewModelNumbers();
             MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result).Subscribe(_ => SetMessageViewModelNumbers());
         }
@@ -35,12 +35,12 @@ namespace Interactr.ViewModel
         public readonly IReadOnlyReactiveList<MessageViewModel> MessageViewModels;
 
         /// <summary>
-        /// The invocataion messages view models.
+        /// The view models of invocation messages.
         /// </summary>
         public IReadOnlyReactiveList<MessageViewModel> InvocationMessageViewModels { get; set; }
 
         /// <summary>
-        /// Calculate the new message view model numbers and set them for every invocation message in communication diagram view.
+        /// Calculate the new message view model numbers and set them for every invocation message in communication diagram view model.
         /// </summary>
         private void SetMessageViewModelNumbers()
         {
@@ -81,9 +81,11 @@ namespace Interactr.ViewModel
 
             foreach (var subsubFrame in subFrames)
             {
+                // Set the message Number of the invocationMessage in the subsubFrame.
                 subsubFrame.InvocationMessage.MessageNumber =
                     messageNumber.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
 
+                // Recursively call PrependNumberToAllSubFrames untill the number of subframes is zero.
                 PrependNumberToAllSubFrames(subsubFrame.SubFrames,messageNumber);
             }
         }

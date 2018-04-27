@@ -44,7 +44,7 @@ namespace Interactr.View
                 RightArrowStack.PreferredHeight = newHeight;
             });
 
-            // Change the margin size on a change of width
+            // Change the margin size on a change of width.
             WidthChanged.Subscribe(newWidth =>
             {
                 MarginsProperty.SetValue(LeftArrowStack, new Margins(newWidth / 4, 0, 0, 0));
@@ -56,7 +56,7 @@ namespace Interactr.View
         }
 
         /// <summary>
-        /// A StackPanel that is contains ArrowAnchor UIElements.
+        /// A StackPanel that contains ArrowAnchor UIElements.
         /// The ArrowAnchors are used to attach a start or end point of an arrow too
         /// and the StackPanel stacks the ArrowAnchor elements vertically.
         /// </summary>
@@ -68,10 +68,10 @@ namespace Interactr.View
             /// <returns> The new UIElement that was added to the MessageArrowStack</returns>
             public ArrowAnchor AddArrowAnchorElement(int width, int height)
             {
-                // A UIElement that can be used to attach a message arrow to.
+                // A UIElement to attach a messsage arrow to.
                 var arrowAnchorElement = new ArrowAnchor(width, height);
 
-                // Add the element to the MessageArrow StackPanel
+                // Add the arrowAnchor to the MessageArrow StackPanel
                 Children.Add(arrowAnchorElement);
 
                 return arrowAnchorElement;
@@ -84,7 +84,7 @@ namespace Interactr.View
         }
 
         /// <summary>
-        /// An element used for attaching Arrows start and endpoints to.
+        /// A UIelement for attaching Arrow start and endpoints to.
         /// </summary>
         public class ArrowAnchor : UIElement
         {

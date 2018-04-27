@@ -140,9 +140,8 @@ namespace Interactr.View.Controls
                 ColorChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => Repaint());
 
-            // Set the preferred width and height of the labelView, by measuring
-            // how much space it would take to fully render the
-            // the string.
+            // Set the preferred width and height of the labelView by measuring
+            // how much space it would take to fully render the string.
             TextChanged.Subscribe(text =>
             {
                 PreferredWidth = TextRenderer.MeasureText(text, Font).Width;
