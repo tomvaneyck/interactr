@@ -36,7 +36,9 @@ namespace Interactr.View
 
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
-        private IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
+        private readonly IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
+
+        private readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
 
         public CommunicationDiagramView()
         {
@@ -45,14 +47,14 @@ namespace Interactr.View
                 .Subscribe(isVisible => { this.IsVisible = isVisible; });
 
             // Create a list of party views based on the party viewmodel.
-            IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews = ViewModelChanged
-                .Where(vm => vm != null)
-                .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
-                .ResultList;
+            _partyViews = ViewModelChanged
+                          .Where(vm => vm != null)
+                          .Select(vm => vm.PartyViewModels)
+                          .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
+                          .ResultList;
 
             // Create the partyviews drag panel.
-            PartyViewsDragPanel = new PartyViewsDragPanel(partyViews);
+            PartyViewsDragPanel = new PartyViewsDragPanel(_partyViews);
             Children.Add(PartyViewsDragPanel);
 
             // Create a list of message views based on the message viewmodels.
@@ -73,6 +75,8 @@ namespace Interactr.View
 
                 Children.Add(e.Element);
             });
+
+            // Remove a message view from the children when deleted.
             _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
@@ -117,15 +121,15 @@ namespace Interactr.View
         }
 
         /// <summary>
-        /// Assign an two anchor points to the message.
+        /// Assign two anchor points to a messageview.
         /// The arrow startpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the sender.
         /// The arrow endpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the receiver.
-        /// This provides automatic placement of the message arrows between a sender and a receiver.
+        /// This provides automatic placement  and ordering of the message arrows between a sender and a receiver.
         /// </summary>
-        /// <param name="messageView"></param>
+        /// <param name="messageView"> The message view to assign anchors to</param>
         private void AssignAnchorPointsToMessage(CommunicationDiagramMessageView messageView)
         {
-            // Get the sender and receiver party views.
+            // Retrieve the sender and receiver party views.
             CommunicationDiagramPartyView senderPartyView =
                 PartyViewsDragPanel.PartyViews.First(pv => pv.ViewModel.Party == messageView.ViewModel.Message.Sender);
 
@@ -136,6 +140,9 @@ namespace Interactr.View
             CommunicationDiagramPartyView.ArrowAnchor senderAnchor;
             CommunicationDiagramPartyView.ArrowAnchor receiverAnchor;
 
+            // Choose the arrowStack to attach the arrowAnchorElements to, 
+            // and attach them to this arrowStack. This happens for both the sender
+            // and the receiver.
             if (receiverPartyView.Position.X < senderPartyView.Position.X)
             {
                 senderAnchor = senderPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
@@ -164,7 +171,7 @@ namespace Interactr.View
                     // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
                     if (receiverPartyView.Position.X < senderPartyView.Position.X && senderPartyView.RightArrowStack.Children.Contains(senderAnchor) && receiverPartyView.LeftArrowStack.Children.Contains(receiverAnchor))
                     {
-                        // Switch anchors from stacks.
+                        // Switch the anchors from a left to a right stack or vice versa.
                         senderPartyView.RightArrowStack.Children.Remove(senderAnchor);
                         receiverPartyView.LeftArrowStack.Children.Remove(receiverAnchor);
 
@@ -174,14 +181,13 @@ namespace Interactr.View
                     // If the receiver is to the right of the  sender and the sender has an arrow starting on it's leftArrowStack.
                     else if (receiverPartyView.Position.X > senderPartyView.Position.X && senderPartyView.LeftArrowStack.Children.Contains(senderAnchor) && receiverPartyView.RightArrowStack.Children.Contains(receiverAnchor))
                     {
-                        // Switch anchors from stacks.
+                        // Switch the anchors from a left to a right stack or vice versa.
                         senderPartyView.LeftArrowStack.Children.Remove(senderAnchor);
                         receiverPartyView.RightArrowStack.Children.Remove(receiverAnchor);
 
                         senderPartyView.RightArrowStack.Children.Add(senderAnchor);
                         receiverPartyView.LeftArrowStack.Children.Add(receiverAnchor);
                     }
-
                 }
             );
 

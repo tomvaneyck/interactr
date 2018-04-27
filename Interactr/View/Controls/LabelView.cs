@@ -191,7 +191,6 @@ namespace Interactr.View.Controls
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-
             // Draw the string.
             using (Brush brush = new SolidBrush(Color))
             {
