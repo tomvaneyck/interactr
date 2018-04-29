@@ -121,7 +121,7 @@ namespace Interactr.View.Controls
         private bool _cursorIsVisible;
 
         #endregion
-        
+
         private bool _isFocusing;
 
         public LabelView()
@@ -139,6 +139,14 @@ namespace Interactr.View.Controls
                 FontChanged.Select(_ => Unit.Default),
                 ColorChanged.Select(_ => Unit.Default)
             ).Subscribe(_ => Repaint());
+
+            // Set the preferred width and height of the labelView by measuring
+            // how much space it would take to fully render the string.
+            TextChanged.Subscribe(text =>
+            {
+                PreferredWidth = TextRenderer.MeasureText(text, Font).Width;
+                PreferredHeight = TextRenderer.MeasureText(text, Font).Height;
+            });
 
             // Blink cursor if label is in edit mode.
             EditModeChanged.Select(editMode =>
@@ -183,19 +191,12 @@ namespace Interactr.View.Controls
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-            // Measure how much space it would take to fully render the
-            // the string. Must be done in this function because it requires
-            // a Graphics object.
-            var preferredSize = g.MeasureString(Text, Font);
-            PreferredWidth = (int) Math.Ceiling(preferredSize.Width);
-            PreferredHeight = (int) Math.Ceiling(preferredSize.Height);
-
             // Draw the string.
             using (Brush brush = new SolidBrush(Color))
             {
                 g.DrawString(Text, Font, brush, 0, 0);
             }
-            
+
             using (Pen pen = new Pen(Color))
             {
                 // Draw editing rectangle
