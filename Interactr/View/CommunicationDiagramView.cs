@@ -48,10 +48,10 @@ namespace Interactr.View
 
             // Create a list of party views based on the party viewmodel.
             _partyViews = ViewModelChanged
-                          .Where(vm => vm != null)
-                          .Select(vm => vm.PartyViewModels)
-                          .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() { ViewModel = vm })
-                          .ResultList;
+                .Where(vm => vm != null)
+                .Select(vm => vm.PartyViewModels)
+                .CreateDerivedListBinding(vm => new CommunicationDiagramPartyView() {ViewModel = vm})
+                .ResultList;
 
             // Create the partyviews drag panel.
             PartyViewsDragPanel = new PartyViewsDragPanel(_partyViews);
@@ -109,7 +109,7 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView)FocusedElement.Parent;
+                PartyView partyView = (PartyView) FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
@@ -140,18 +140,23 @@ namespace Interactr.View
             CommunicationDiagramPartyView.ArrowAnchor senderAnchor;
             CommunicationDiagramPartyView.ArrowAnchor receiverAnchor;
 
+            var anchorWidth = 3;
+            var anchorHeight = 17;
+
             // Choose the arrowStack to attach the arrowAnchorElements to, 
             // and attach them to this arrowStack. This happens for both the sender
             // and the receiver.
             if (receiverPartyView.Position.X < senderPartyView.Position.X)
             {
-                senderAnchor = senderPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
-                receiverAnchor = receiverPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
+                senderAnchor =
+                    senderPartyView.LeftArrowStack.AddArrowAnchorElement(anchorWidth, anchorHeight);
+                receiverAnchor =
+                    receiverPartyView.RightArrowStack.AddArrowAnchorElement(anchorWidth, anchorHeight);
             }
             else
             {
-                senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(3, 17);
-                receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(3, 17);
+                senderAnchor = senderPartyView.RightArrowStack.AddArrowAnchorElement(anchorWidth, anchorHeight);
+                receiverAnchor = receiverPartyView.LeftArrowStack.AddArrowAnchorElement(anchorWidth, anchorHeight);
             }
 
             // Anchor to the sender.
@@ -169,7 +174,9 @@ namespace Interactr.View
                 newPos =>
                 {
                     // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
-                    if (receiverPartyView.Position.X < senderPartyView.Position.X && senderPartyView.RightArrowStack.Children.Contains(senderAnchor) && receiverPartyView.LeftArrowStack.Children.Contains(receiverAnchor))
+                    if (receiverPartyView.Position.X < senderPartyView.Position.X &&
+                        senderPartyView.RightArrowStack.Children.Contains(senderAnchor) &&
+                        receiverPartyView.LeftArrowStack.Children.Contains(receiverAnchor))
                     {
                         // Switch the anchors from a left to a right stack or vice versa.
                         senderPartyView.RightArrowStack.Children.Remove(senderAnchor);
@@ -179,7 +186,9 @@ namespace Interactr.View
                         receiverPartyView.RightArrowStack.Children.Add(receiverAnchor);
                     }
                     // If the receiver is to the right of the  sender and the sender has an arrow starting on it's leftArrowStack.
-                    else if (receiverPartyView.Position.X > senderPartyView.Position.X && senderPartyView.LeftArrowStack.Children.Contains(senderAnchor) && receiverPartyView.RightArrowStack.Children.Contains(receiverAnchor))
+                    else if (receiverPartyView.Position.X > senderPartyView.Position.X &&
+                             senderPartyView.LeftArrowStack.Children.Contains(senderAnchor) &&
+                             receiverPartyView.RightArrowStack.Children.Contains(receiverAnchor))
                     {
                         // Switch the anchors from a left to a right stack or vice versa.
                         senderPartyView.LeftArrowStack.Children.Remove(senderAnchor);
