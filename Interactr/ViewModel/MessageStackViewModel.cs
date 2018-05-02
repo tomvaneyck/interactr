@@ -56,8 +56,8 @@ namespace Interactr.ViewModel
             Diagram = diagram;
 
             // Create MessageViewModels from messages.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new SequenceDiagramMessageViewModel(msg, 0))
-                .ResultList;
+            MessageViewModels = Diagram.Messages.CreateDerivedList(msg =>
+                new SequenceDiagramMessageViewModel(msg, 0)).ResultList;
 
             // When the diagram changes, recalculate layout.
             Observable.Merge(
@@ -99,8 +99,8 @@ namespace Interactr.ViewModel
 
                     foreach (var subFrame in frame.SubFrames)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel)subFrame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel)subFrame.ReturnMessage;
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) subFrame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel) subFrame.ReturnMessage;
 
                         // Each subinvocation is sent from this bar.
                         seqInvocationMessage.SenderActivationBar = bar;
@@ -112,8 +112,8 @@ namespace Interactr.ViewModel
                     // If this frame is not the initiator frame
                     if (frame.InvocationMessage != null && frame.ReturnMessage != null)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel)frame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel)frame.ReturnMessage;
+                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) frame.InvocationMessage;
+                        var seqReturnMessage = (SequenceDiagramMessageViewModel) frame.ReturnMessage;
 
                         // The invocation message that starts this activation should arrive at this bar.
                         seqInvocationMessage.ReceiverActivationBar = bar;
@@ -145,8 +145,7 @@ namespace Interactr.ViewModel
                 throw new ArgumentNullException(nameof(party));
             }
 
-            return
-                new LifeLineViewModel(this, party);
+            return new LifeLineViewModel(this, party);
         }
 
         /// <summary>
@@ -216,8 +215,7 @@ namespace Interactr.ViewModel
 
             // Make sure the pending message has a valid sender and receiver combination.
             if (pendingMsg.SenderActivationBar == null || pendingMsg.Receiver == null ||
-                pendingMsg.SenderActivationBar.Party ==
-                pendingMsg.Receiver)
+                pendingMsg.SenderActivationBar.Party == pendingMsg.Receiver)
             {
                 return;
             }
@@ -234,8 +232,8 @@ namespace Interactr.ViewModel
 
             // Add invocation message.
             Message message =
-                    new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver,
-                        Message.MessageType.Invocation, pendingMsg.Label);
+                new Message(pendingMsg.SenderActivationBar.Party, pendingMsg.Receiver,
+                    Message.MessageType.Invocation, pendingMsg.Label);
             Diagram.Messages.Insert(i, message);
 
             // Add return message.
