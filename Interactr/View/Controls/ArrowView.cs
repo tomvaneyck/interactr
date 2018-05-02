@@ -114,7 +114,7 @@ namespace Interactr.View.Controls
                 EndPointChanged,
                 ArrowHeadSizeChanged,
                 LineThicknessChanged,
-                ColorChanged,
+                ColorChanged
             ).Subscribe(_ => Repaint());
         }
 
