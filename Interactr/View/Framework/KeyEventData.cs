@@ -20,6 +20,12 @@
         /// </summary>
         public char KeyChar { get; }
 
+        /// <summary>
+        /// True when the propagation of an event has to be stopped.
+        /// This enable stopping event propagation in observables.
+        /// </summary>
+        public bool IsCancelled { get; set; }
+
         public KeyEventData(int id, int keyCode, char keyChar)
         {
             Id = id;

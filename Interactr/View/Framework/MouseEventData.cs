@@ -20,6 +20,12 @@
         /// </summary>
         public int ClickCount { get; }
 
+        /// <summary>
+        /// True when the propagation of an event has to be stopped.
+        /// This enable stopping event propagation in observables.
+        /// </summary>
+        public bool IsCancelled { get; set; }
+
         public MouseEventData(int id, Point mousePosition, int clickCount)
         {
             Id = id;
