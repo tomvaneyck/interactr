@@ -19,13 +19,13 @@ namespace Interactr.View.Controls
         public DragPanel()
         {
             // Update layout when the width or height is changed.
-            Observable.Merge(
-                WidthChanged.Select(_ => Unit.Default),
-                HeightChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                WidthChanged,
+                HeightChanged
             ).Subscribe(_ => UpdateLayout());
 
             // Update layout when a child changes its preferred width or height.
-            Observable.Merge(
+            ReactiveExtensions.MergeEvents(
                 Children.ObserveEach(child => child.PreferredWidthChanged),
                 Children.ObserveEach(child => child.PreferredHeightChanged)
             ).Subscribe(_ => UpdateLayout());

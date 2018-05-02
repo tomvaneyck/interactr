@@ -245,17 +245,19 @@ namespace Interactr.View.Framework
 
             //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
             //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
-            AbsolutePositionChanged = Observable.Merge(
+            AbsolutePositionChanged = ReactiveExtensions.MergeEvents(
                 PositionChanged,
                 ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
             ).Select(_ => GetPositionRelativeToRoot()).DistinctUntilChanged();
 
-            this.PositionChanged.Subscribe(_ => Repaint());
-            this.WidthChanged.Subscribe(_ => Repaint());
-            this.HeightChanged.Subscribe(_ => Repaint());
-            this.IsVisibleChanged.Subscribe(_ => Repaint());
-            this.Children.OnDelete.Subscribe(_ => Repaint());
-            this.Children.OnAdd.Subscribe(_ => Repaint());
+            ReactiveExtensions.MergeEvents(
+                PositionChanged,
+                WidthChanged,
+                HeightChanged,
+                IsVisibleChanged,
+                Children.OnDelete,
+                Children.OnAdd
+            ).Subscribe(_ => Repaint());
 
             SetupParentChildRelationship();
         }

@@ -109,12 +109,12 @@ namespace Interactr.View.Controls
             Color = Color.Black;
 
             // Repaint when a property changes.
-            Observable.Merge(
-                StartPointChanged.Select(_ => Unit.Default),
-                EndPointChanged.Select(_ => Unit.Default),
-                ArrowHeadSizeChanged.Select(_ => Unit.Default),
-                LineThicknessChanged.Select(_ => Unit.Default),
-                ColorChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                StartPointChanged,
+                EndPointChanged,
+                ArrowHeadSizeChanged,
+                LineThicknessChanged,
+                ColorChanged,
             ).Subscribe(_ => Repaint());
         }
 

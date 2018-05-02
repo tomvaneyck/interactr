@@ -83,10 +83,10 @@ namespace Interactr.View.Controls
             PointB = new Point(10, 10);
 
             // Repaint on property change.
-            Observable.Merge(
-                PenChanged.Select(_ => Unit.Default),
-                PointAChanged.Select(_ => Unit.Default),
-                PointBChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                PenChanged,
+                PointAChanged,
+                PointBChanged
             ).Subscribe(_ => Repaint());
 
             // Resize preferred size to fit line.
