@@ -28,7 +28,7 @@ namespace Interactr.View
         public IObservable<LifeLineViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
-        
+
         /// <summary>
         /// Width of each bar, in pixels
         /// </summary>
@@ -53,7 +53,7 @@ namespace Interactr.View
                     TickHeight = TickHeight
                 }, bar => bar.Party == ViewModel.PartyVM.Party)
                 .ResultList;
-            
+
             // Add activation bar views to Children.
             ActivationBarViews.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
             ActivationBarViews.OnDelete.Subscribe(e => Children.RemoveAt(e.Index));
@@ -68,9 +68,9 @@ namespace Interactr.View
         private void UpdateLayout()
         {
             foreach (ActivationBarView barView in ActivationBarViews)
-            { 
+            {
                 // Horizontally center bar on lifeline and add offset for the nesting level of the bar.
-                int x = ((Width - BarWidth) / 2) + (barView.ViewModel.Level * (BarWidth/2));
+                int x = ((Width - BarWidth) / 2) + (barView.ViewModel.Level * (BarWidth / 2));
                 int y = barView.ViewModel.StartTick * TickHeight;
                 barView.Position = new Framework.Point(x, y);
                 barView.Width = BarWidth;
@@ -79,7 +79,7 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
 
@@ -90,16 +90,16 @@ namespace Interactr.View
                     // Create a new pending message to store this information.
                     ViewModel.MessageStackVM.CreatePendingMessage(
                         ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
-                    return true;
+                    eventData.IsCancelled = true;
+                    return;
                 case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
                     // User released mouse on this lifeline while dragging a new pending message.
                     // Try to create and add an actual message to the diagram.
                     pendingMessage.Receiver = ViewModel.PartyVM.Party;
                     ViewModel.MessageStackVM.FinishPendingMessage();
-                    return true;
+                    eventData.IsCancelled = true;
+                    return;
             }
-
-            return false;
         }
 
         /// <see cref="PaintElement"/>

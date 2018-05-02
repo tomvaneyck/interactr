@@ -165,24 +165,26 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);
-                return true;
+                e.IsCancelled = true;
+                return;
             }
 
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
             if (e.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
                 _pendingMessageView.EndPoint = new Point(e.MousePosition.X, _pendingMessageView.StartPoint.Y);
-                return true;
+                e.IsCancelled = true;
+                return;
             }
-            
-            return base.OnMouseEvent(e);
+
+            base.OnMouseEvent(e);
         }
     }
 }

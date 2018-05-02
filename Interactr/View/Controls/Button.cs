@@ -14,7 +14,7 @@ namespace Interactr.View.Controls
         #region Label
 
         private readonly ReactiveProperty<String> _label = new ReactiveProperty<String>();
-        
+
         /// <summary>
         /// The text displayed on this button.
         /// </summary>
@@ -44,7 +44,7 @@ namespace Interactr.View.Controls
         public IObservable<Font> LabelFontChanged => _labelFont.Changed;
 
         #endregion
-        
+
         public Button()
         {
             Label = "";
@@ -55,7 +55,7 @@ namespace Interactr.View.Controls
 
         private bool _isPressed; // Is the mouse down on this element?
 
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             if (eventData.Id == MouseEvent.MOUSE_PRESSED)
             {
@@ -67,15 +67,16 @@ namespace Interactr.View.Controls
                 _isPressed = false;
                 Repaint();
             }
-            return true;
+
+            eventData.IsCancelled = true;
         }
 
         public override void PaintElement(Graphics g)
         {
             // Set preferred size based on size of label.
             var labelSize = g.MeasureString(Label, LabelFont);
-            PreferredWidth = (int)labelSize.Width + 2;
-            PreferredHeight = (int)labelSize.Height + 2;
+            PreferredWidth = (int) labelSize.Width + 2;
+            PreferredHeight = (int) labelSize.Height + 2;
 
             // Render background.
             using (Brush brush = new SolidBrush(Color.FromArgb(195, 199, 203)))

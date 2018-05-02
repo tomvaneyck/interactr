@@ -80,7 +80,7 @@ namespace Interactr.Tests.View.Controls
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(_labelView.Width + 1, _labelView.Height + 1), 1);
 
-            var result = _labelView.RunOnMouseEvent((mouseEventData));
+            _labelView.RunOnMouseEvent((mouseEventData));
 
             // Edit mode should still be false.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -183,9 +183,9 @@ namespace Interactr.Tests.View.Controls
                 return OnKeyEvent(keyEventData);
             }
 
-            public bool RunOnMouseEvent(MouseEventData mouseEventData)
+            public void RunOnMouseEvent(MouseEventData mouseEventData)
             {
-                return OnMouseEvent(mouseEventData);
+                OnMouseEvent(mouseEventData);
             }
         }
     }

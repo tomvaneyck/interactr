@@ -119,6 +119,7 @@ namespace Interactr.View.Framework
                 {
                     throw new ArgumentException("Invalid width value: " + value);
                 }
+
                 _width.Value = value;
             }
         }
@@ -140,6 +141,7 @@ namespace Interactr.View.Framework
                 {
                     throw new ArgumentException("Invalid height value: " + value);
                 }
+
                 _height.Value = value;
             }
         }
@@ -208,7 +210,7 @@ namespace Interactr.View.Framework
         public IObservable<bool> IsVisibleToMouseChanged => _isVisibleToMouse.Changed;
 
         #endregion
-        
+
         #region Focus
 
         public bool IsFocused => FocusedElement == this;
@@ -398,7 +400,8 @@ namespace Interactr.View.Framework
         {
             UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
 
-            if (TunnelDownMouseEventPreview(rootElement, targetElement, eventData))
+            TunnelDownMouseEventPreview(rootElement, targetElement, eventData);
+            if (eventData.IsCancelled)
             {
                 // Event was handled.
                 return true;
@@ -406,8 +409,8 @@ namespace Interactr.View.Framework
 
             // Bubble up event from FocusedElement to root.
             Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
-            return targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
-                eventData.ClickCount));
+            targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+            return eventData.IsCancelled;
         }
 
         /// <summary>
@@ -418,20 +421,20 @@ namespace Interactr.View.Framework
         /// <param name="mouseoverElement">The element the mouse is over.</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
         /// <returns>True if the event was handled by an element.</returns>
-        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
+        private static void TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
             MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
-                if (element.OnMouseEventPreview(
-                    new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
+                element.OnMouseEventPreview(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+
+                if (eventData.IsCancelled)
                 {
-                    return true;
+                    // Stop event propagation.
+                    return;
                 }
             }
-
-            return false;
         }
 
         /// <summary>
@@ -439,21 +442,19 @@ namespace Interactr.View.Framework
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if the event was handled by an element.</returns>
-        private bool BubbleUpMouseEvent(MouseEventData eventData)
+        private void BubbleUpMouseEvent(MouseEventData eventData)
         {
             _mouseEventOccured.OnNext(eventData);
-            if (this.OnMouseEvent(eventData))
+            OnMouseEvent(eventData);
+            if (eventData.IsCancelled || Parent == null)
             {
-                return true;
-            }
-
-            if (Parent == null)
-            {
-                return false;
+                // Stop event propagation.
+                eventData.IsCancelled = true;
+                return;
             }
 
             Point relativeMousePos = this.TranslatePointTo(Parent, eventData.MousePosition);
-            return Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+            Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
@@ -463,9 +464,9 @@ namespace Interactr.View.Framework
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEventPreview(MouseEventData eventData)
+        protected virtual void OnMouseEventPreview(MouseEventData eventData)
         {
-            return false;
+            eventData.IsCancelled = true;
         }
 
         /// <summary>
@@ -475,16 +476,14 @@ namespace Interactr.View.Framework
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEvent(MouseEventData eventData)
+        protected virtual void OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
             if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
-                this.Focus();
-                return true;
+                Focus();
+                eventData.IsCancelled = true;
             }
-
-            return false;
         }
 
         public void CaptureMouse()
@@ -573,10 +572,13 @@ namespace Interactr.View.Framework
         {
             // Element to be painted.
             public UIElement Element { get; set; }
+
             // Origin point of this element.
             public Point Origin { get; set; }
+
             // Actual width in pixels to render the Element at.
             public int RenderWidth { get; set; }
+
             // Actual height in pixels to render the Element at.
             public int RenderHeight { get; set; }
         }

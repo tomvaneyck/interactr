@@ -247,19 +247,21 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 _isFocusing = false;
+                eventData.IsCancelled = true;
             }
             else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
-                return true;
+                eventData.IsCancelled = true;
+                return ;
             }
 
-            return base.OnMouseEvent(eventData);
+            base.OnMouseEvent(eventData);
         }
     }
 }

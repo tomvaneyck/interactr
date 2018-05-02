@@ -204,7 +204,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-            protected override bool OnMouseEvent(MouseEventData eventData)
+            protected override void OnMouseEvent(MouseEventData eventData)
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
@@ -233,7 +233,8 @@ namespace Interactr.View.Controls
                     if (_resizeMode != ResizeMode.None)
                     {
                         CaptureMouse();
-                        return true;
+                        eventData.IsCancelled = true;
+                        return;
                     }
                 }
                 else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
@@ -241,7 +242,8 @@ namespace Interactr.View.Controls
                     // Dragging finished, release mouse capture.
                     ReleaseMouseCapture();
                     _resizeMode = ResizeMode.None;
-                    return true;
+                    eventData.IsCancelled = true;
+                    return ;
                 }
                 else if(eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
                 {
@@ -267,11 +269,11 @@ namespace Interactr.View.Controls
 
                     PreferredWidth = Math.Max(MinWindowWidth, PreferredWidth);
                     PreferredHeight = Math.Max(MinWindowHeight, PreferredHeight);
-
-                    return true;
+                    eventData.IsCancelled = true;
+                    return;
                 }
 
-                return base.OnMouseEvent(eventData);
+                base.OnMouseEvent(eventData);
             }
 
             public override void PaintElement(Graphics g)

@@ -45,7 +45,7 @@ namespace Interactr.View
             partyViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.PartyViewModels)
-                .CreateDerivedListBinding(vm => new PartyView { ViewModel = vm })
+                .CreateDerivedListBinding(vm => new PartyView {ViewModel = vm})
                 .ResultList;
 
             // Create the partyviews drag panel.
@@ -56,7 +56,7 @@ namespace Interactr.View
             IReadOnlyReactiveList<CommunicationDiagramMessageView> messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.MessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() { ViewModel = vm }).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView() {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
             messageViews.OnAdd.Subscribe(e =>
@@ -71,7 +71,7 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
@@ -79,12 +79,11 @@ namespace Interactr.View
                 Debug.WriteLine("Add Party.");
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);
-                return true;
+                e.IsCancelled = true;
+                return;
             }
-            else
-            {
-                return base.OnMouseEvent(e);
-            }
+
+            base.OnMouseEvent(e);
         }
 
         /// <see cref="OnKeyEvent"/>
@@ -99,7 +98,7 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                PartyView partyView = (PartyView)FocusedElement.Parent;
+                PartyView partyView = (PartyView) FocusedElement.Parent;
 
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
