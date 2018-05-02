@@ -19,11 +19,13 @@ namespace Interactr.ViewModel
         {
             // Create message view models for every invocation message in the diagram model.
             MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
-            InvocationMessageViewModels = MessageViewModels.CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
+            InvocationMessageViewModels = MessageViewModels
+                .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
             // Set the numbers for the messages in the message view models.
             SetMessageViewModelNumbers();
-            MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result).Subscribe(_ => SetMessageViewModelNumbers());
+            MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
+                .Subscribe(_ => SetMessageViewModelNumbers());
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace Interactr.ViewModel
                         foreach (var subFrame in stackFrame.SubFrames)
                         {
                             subFrame.InvocationMessage.MessageNumber = subFrameNum.ToString();
-                            PrependNumberToAllSubFrames(subFrame.SubFrames,subFrameNum.ToString());
+                            PrependNumberToAllSubFrames(subFrame.SubFrames, subFrameNum.ToString());
                             subFrameNum++;
                         }
                     }
@@ -72,21 +74,17 @@ namespace Interactr.ViewModel
         /// </summary>
         /// <param name="subFrames"> The subframes to prepend the messageNumber to</param>
         /// <param name="messageNumber">The messageNumber to prepend</param>
-        private void PrependNumberToAllSubFrames(IReadOnlyList<StackFrame<MessageViewModel>> subFrames,string messageNumber)
+        private void PrependNumberToAllSubFrames(IReadOnlyList<StackFrame<MessageViewModel>> subFrames,
+            string messageNumber)
         {
-            if (subFrames.Count == 0)
-            {
-                return;
-            }
-
             foreach (var subsubFrame in subFrames)
             {
                 // Set the message Number of the invocationMessage in the subsubFrame.
                 subsubFrame.InvocationMessage.MessageNumber =
-                    messageNumber.ToString() + "." + subsubFrame.InvocationMessage.MessageNumber;
+                    messageNumber + "." + subsubFrame.InvocationMessage.MessageNumber;
 
                 // Recursively call PrependNumberToAllSubFrames untill the number of subframes is zero.
-                PrependNumberToAllSubFrames(subsubFrame.SubFrames,messageNumber);
+                PrependNumberToAllSubFrames(subsubFrame.SubFrames, messageNumber);
             }
         }
     }
