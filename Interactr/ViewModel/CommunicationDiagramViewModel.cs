@@ -37,7 +37,7 @@ namespace Interactr.ViewModel
         /// <summary>
         /// The view models of invocation messages.
         /// </summary>
-        public IReadOnlyReactiveList<MessageViewModel> InvocationMessageViewModels { get; set; }
+        public IReadOnlyReactiveList<MessageViewModel> InvocationMessageViewModels { get; }
 
         /// <summary>
         /// Calculate the new message view model numbers and set them for every invocation message in communication diagram view model.
