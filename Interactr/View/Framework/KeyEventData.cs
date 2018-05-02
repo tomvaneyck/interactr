@@ -1,4 +1,8 @@
-﻿namespace Interactr.View.Framework
+﻿using System;
+using System.Reactive.Linq;
+using Interactr.Reactive;
+
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// Information about a keyboard input event.
@@ -20,11 +24,26 @@
         /// </summary>
         public char KeyChar { get; }
 
+        #region IsCancelled
+
+        private ReactiveProperty<bool> _isCancelled = new ReactiveProperty<bool>();
+
         /// <summary>
         /// True when the propagation of an event has to be stopped.
         /// This enable stopping event propagation in observables.
         /// </summary>
-        public bool IsCancelled { get; set; }
+        public bool IsCancelled
+        {
+            get => _isCancelled.Value;
+            set => _isCancelled.Value = value;
+        }
+
+        /// <summary>
+        /// Observe the IsCancelledProperty.
+        /// </summary>
+        public IObservable<bool> IsCancelledChanged => _isCancelled.Changed;
+
+        #endregion
 
         public KeyEventData(int id, int keyCode, char keyChar)
         {
