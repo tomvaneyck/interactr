@@ -65,7 +65,7 @@ namespace Interactr.Model
         public string LabelText
         {
             get => _labelText.Value;
-            protected set => _labelText.Value = value;
+            set => _labelText.Value = value;
         }
 
         public IObservable<string> LabelTextChanged => _labelText.Changed;

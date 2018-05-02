@@ -55,7 +55,7 @@ namespace Interactr.Tests.Model
         {
             // Subsription on LabelChanged happens on tick 0, tick 1 gives the value of the label.
             var expected = new[] {ReactiveTest.OnNext(1, MessageLabel1)};
-            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelTextChanged, 0, 0, 1000).Messages;
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
@@ -65,14 +65,14 @@ namespace Interactr.Tests.Model
         public void AddOneLabelObservableTest()
         {
             // Define the actions. 
-            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Label = MessageLabel2);
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.LabelText = MessageLabel2);
 
             var expected = new[]
             {
                 ReactiveTest.OnNext(1, MessageLabel1),
                 ReactiveTest.OnNext(10, MessageLabel2)
             };
-            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelTextChanged, 0, 0, 1000).Messages;
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
@@ -82,8 +82,8 @@ namespace Interactr.Tests.Model
         public void AddTwoLabelsObservableTest()
         {
             // Define the actions. 
-            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.Label = MessageLabel2);
-            _scheduler.Schedule(TimeSpan.FromTicks(20), () => _defaultTestMessage.Label = MessageLabel1);
+            _scheduler.Schedule(TimeSpan.FromTicks(10), () => _defaultTestMessage.LabelText = MessageLabel2);
+            _scheduler.Schedule(TimeSpan.FromTicks(20), () => _defaultTestMessage.LabelText = MessageLabel1);
 
             var expected = new[]
             {
@@ -91,11 +91,11 @@ namespace Interactr.Tests.Model
                 ReactiveTest.OnNext(10, MessageLabel2),
                 ReactiveTest.OnNext(20, MessageLabel1)
             };
-            var actual = _scheduler.Start(() => _defaultTestMessage.LabelChanged, 0, 0, 1000).Messages;
+            var actual = _scheduler.Start(() => _defaultTestMessage.LabelTextChanged, 0, 0, 1000).Messages;
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
-            Assert.AreEqual(MessageLabel1, _defaultTestMessage.Label);
+            Assert.AreEqual(MessageLabel1, _defaultTestMessage.LabelText);
         }
 
         [Test]
