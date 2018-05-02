@@ -1,4 +1,7 @@
-﻿namespace Interactr.View.Framework
+﻿using System;
+using Interactr.Reactive;
+
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// Information about a mouse input event.
@@ -20,11 +23,26 @@
         /// </summary>
         public int ClickCount { get; }
 
+        #region IsCancelled
+
+        private ReactiveProperty<bool> _isCancelled = new ReactiveProperty<bool>();
+
         /// <summary>
         /// True when the propagation of an event has to be stopped.
         /// This enable stopping event propagation in observables.
         /// </summary>
-        public bool IsCancelled { get; set; }
+        public bool IsCancelled
+        {
+            get => _isCancelled.Value;
+            set => _isCancelled.Value = value;
+        }
+
+        /// <summary>
+        /// Observe the IsCancelledProperty.
+        /// </summary>
+        public IObservable<bool> IsCancelledChanged => _isCancelled.Changed;
+
+        #endregion
 
         public MouseEventData(int id, Point mousePosition, int clickCount)
         {
