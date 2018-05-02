@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
@@ -27,22 +28,12 @@ namespace Interactr.View
             MarginsProperty.SetValue(LeftArrowStack, new Margins(Width / 3, 0, 0, 0));
             MarginsProperty.SetValue(RightArrowStack, new Margins(0, 0, Width / 3, 0));
 
-            AnchorsProperty.SetValue(LeftArrowStack, Anchors.Left);
-            AnchorsProperty.SetValue(RightArrowStack, Anchors.Right);
+            AnchorsProperty.SetValue(LeftArrowStack, Anchors.Bottom | Anchors.Top | Anchors.Left);
+            AnchorsProperty.SetValue(RightArrowStack, Anchors.Bottom | Anchors.Top | Anchors.Right);
 
             //Set the arrow stack size;
             LeftArrowStack.PreferredWidth = 3;
-            LeftArrowStack.PreferredHeight = Height;
-
             RightArrowStack.PreferredWidth = 3;
-            RightArrowStack.PreferredHeight = Height;
-
-            // Define the left and right arrow stack to be the height of the partyview.
-            HeightChanged.Subscribe(newHeight =>
-            {
-                LeftArrowStack.PreferredHeight = newHeight;
-                RightArrowStack.PreferredHeight = newHeight;
-            });
 
             // Change the margin size on a change of width.
             WidthChanged.Subscribe(newWidth =>
