@@ -19,8 +19,8 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
 
-        /// <summary> A label.
-        /// <example> instance_name;class_name </example>
+        /// <summary>
+        /// The number of this message, used for displaying in the label.
         /// </summary>
         public string MessageNumber
         {

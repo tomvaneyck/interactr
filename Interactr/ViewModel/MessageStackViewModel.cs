@@ -112,8 +112,8 @@ namespace Interactr.ViewModel
                     // If this frame is not the initiator frame
                     if (frame.InvocationMessage != null && frame.ReturnMessage != null)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) frame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel) frame.ReturnMessage;
+                        var seqInvocationMessage = frame.InvocationMessage;
+                        var seqReturnMessage = frame.ReturnMessage;
 
                         // The invocation message that starts this activation should arrive at this bar.
                         seqInvocationMessage.ReceiverActivationBar = bar;
