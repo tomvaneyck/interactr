@@ -31,6 +31,9 @@ namespace Interactr.View
         /// <summary>
         /// The start point of the message arrow.
         /// </summary>
+        /// <remarks>
+        ///  This is an accessor for the endpoint of the private variable _arrow.
+        /// </remarks>
         public Point ArrowStartPoint
         {
             get => _arrow.StartPoint;
@@ -40,6 +43,9 @@ namespace Interactr.View
         /// <summary>
         /// The end point of the message arrow.
         /// </summary>
+        /// <remarks>
+        /// This is an accessor for the endpoint of the private variable _arrow.
+        /// </remarks>
         public Point ArrowEndPoint
         {
             get => _arrow.EndPoint;
