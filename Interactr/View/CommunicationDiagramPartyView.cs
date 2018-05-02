@@ -12,12 +12,12 @@ namespace Interactr.View
         /// <summary>
         /// The left arrow stack for attaching arrows to the party.
         /// </summary>
-        public MessageArrowStack LeftArrowStack { get; set; } = new MessageArrowStack(Orientation.Vertical);
+        public MessageArrowStack LeftArrowStack { get; } = new MessageArrowStack(Orientation.Vertical);
 
         /// <summary>
         /// The right arrow stack for attaching arrows to the party.
         /// </summary>
-        public MessageArrowStack RightArrowStack { get; set; } = new MessageArrowStack(Orientation.Vertical);
+        public MessageArrowStack RightArrowStack { get; } = new MessageArrowStack(Orientation.Vertical);
 
         #endregion
 
