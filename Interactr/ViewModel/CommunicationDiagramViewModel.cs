@@ -7,7 +7,7 @@ using Interactr.Model;
 using System.Reactive.Linq;
 using Interactr.Reactive;
 using Interactr.ViewModel.MessageStack;
-using StackFrame = Interactr.ViewModel.MessageStack.StackFrame;
+using StackFrame = Interactr.ViewModel.MessageStack.StackFrame<Interactr.ViewModel.MessageViewModel>;
 
 namespace Interactr.ViewModel
 {
@@ -46,7 +46,7 @@ namespace Interactr.ViewModel
         {
             try
             {
-                foreach (var stackFrame in MessageStackWalker.Walk(MessageViewModels))
+                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(MessageViewModels))
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {
@@ -72,7 +72,7 @@ namespace Interactr.ViewModel
         /// </summary>
         /// <param name="subFrames"> The subframes to prepend the messageNumber to</param>
         /// <param name="messageNumber">The messageNumber to prepend</param>
-        private void PrependNumberToAllSubFrames(IReadOnlyList<StackFrame> subFrames,string messageNumber)
+        private void PrependNumberToAllSubFrames(IReadOnlyList<StackFrame<MessageViewModel>> subFrames,string messageNumber)
         {
             if (subFrames.Count == 0)
             {

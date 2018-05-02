@@ -85,7 +85,7 @@ namespace Interactr.ViewModel
             try
             {
                 // For every stack frame, create a new activation bar
-                foreach (StackFrame frame in MessageStackWalker.Walk(MessageViewModels))
+                foreach (StackFrame<SequenceDiagramMessageViewModel> frame in MessageStackWalker.Walk(MessageViewModels))
                 {
                     // This activation bar starts when the party is invoked, 
                     // or on the first sub-invocation in case of the initiator.
@@ -99,8 +99,8 @@ namespace Interactr.ViewModel
 
                     foreach (var subFrame in frame.SubFrames)
                     {
-                        var seqInvocationMessage = (SequenceDiagramMessageViewModel) subFrame.InvocationMessage;
-                        var seqReturnMessage = (SequenceDiagramMessageViewModel) subFrame.ReturnMessage;
+                        var seqInvocationMessage = subFrame.InvocationMessage;
+                        var seqReturnMessage = subFrame.ReturnMessage;
 
                         // Each subinvocation is sent from this bar.
                         seqInvocationMessage.SenderActivationBar = bar;

@@ -15,7 +15,7 @@ namespace Interactr.ViewModel.MessageStack
         /// Because stack frames are returned when they are popped, the deepest frames are returned first.
         /// </remarks>
         /// <param name="messages">The messages to build a stack with.</param>
-        public static IEnumerable<StackFrame> Walk(IReadOnlyList<MessageViewModel> messages)
+        public static IEnumerable<StackFrame<T>> Walk<T>(IReadOnlyList<T> messages) where T : MessageViewModel
         {
             // Handle edge case where there are no messages.
             if (messages.Count == 0)
@@ -24,10 +24,10 @@ namespace Interactr.ViewModel.MessageStack
             }
 
             // Store invocation information on a call stack.
-            Stack<StackFrame.Builder> stack = new Stack<StackFrame.Builder>();
+            Stack<StackFrame<T>.Builder> stack = new Stack<StackFrame<T>.Builder>();
 
             // The initiator starts and ends the message sequence, and so is always on the stack.
-            stack.Push(new StackFrame.Builder
+            stack.Push(new StackFrame<T>.Builder
             {
                 Party = messages[0].Message.Sender
             });
@@ -39,7 +39,7 @@ namespace Interactr.ViewModel.MessageStack
             {
                 if (messageVM.MessageType == Message.MessageType.Invocation)
                 {
-                    StackFrame.Builder subFrame = new StackFrame.Builder
+                    StackFrame<T>.Builder subFrame = new StackFrame<T>.Builder
                     {
                         InvocationMessage = messageVM,
                         Party = messageVM.Message.Receiver
@@ -51,7 +51,7 @@ namespace Interactr.ViewModel.MessageStack
                 else
                 {
                     // Pop invocation from call stack.
-                    StackFrame.Builder frame = stack.Pop();
+                    StackFrame<T>.Builder frame = stack.Pop();
 
                     // If there is a result message but no invocation message for this result message,
                     // the stack is unbalanced.
@@ -72,7 +72,7 @@ namespace Interactr.ViewModel.MessageStack
                     frame.ReturnMessage = messageVM;
                     frame.Level = stack.Count(f => f.InvocationMessage?.Message.Sender == frame.InvocationMessage.Message.Receiver);
 
-                    StackFrame completedFrame = frame.Build();
+                    StackFrame<T> completedFrame = frame.Build();
 
                     // Add the new frame to the list of sub-frames on the current activation.
                     // This list is useful because each frame is handled when it is popped from the stack,
@@ -91,7 +91,7 @@ namespace Interactr.ViewModel.MessageStack
             }
 
             // Pop initiator stack frame
-            StackFrame initiatorFrame = stack.Pop().Build();
+            StackFrame<T> initiatorFrame = stack.Pop().Build();
             yield return initiatorFrame;
         }
     }

@@ -8,7 +8,7 @@ namespace Interactr.ViewModel.MessageStack
     /// <summary>
     /// Represents an activation frame in the call stack.
     /// </summary>
-    public class StackFrame : IEquatable<StackFrame>
+    public class StackFrame<T> : IEquatable<StackFrame<T>> where T : MessageViewModel
     {
         /// <summary>
         /// The amount of frames on the stack below this one with the same party.
@@ -24,17 +24,17 @@ namespace Interactr.ViewModel.MessageStack
         /// <summary>
         /// The message that started this frame. Can be null for the initiator.
         /// </summary>
-        public MessageViewModel InvocationMessage { get; }
+        public T InvocationMessage { get; }
 
         /// <summary>
         /// The message that ended this frame. Can be null for the initiator.
         /// </summary>
-        public MessageViewModel ReturnMessage { get; }
+        public T ReturnMessage { get; }
 
         /// <summary>
         /// The list sub-frames that were invoked from this frame.
         /// </summary>
-        public IReadOnlyList<StackFrame> SubFrames { get; }
+        public IReadOnlyList<StackFrame<T>> SubFrames { get; }
 
         /// <summary>
         /// The tick at which Party becomes active for this frame.
@@ -57,7 +57,7 @@ namespace Interactr.ViewModel.MessageStack
 
         #region Equality & HashCode
 
-        public bool Equals(StackFrame other)
+        public bool Equals(StackFrame<T> other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -73,7 +73,7 @@ namespace Interactr.ViewModel.MessageStack
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((StackFrame)obj);
+            return Equals((StackFrame<T>)obj);
         }
 
         public override int GetHashCode()
@@ -88,12 +88,12 @@ namespace Interactr.ViewModel.MessageStack
             }
         }
 
-        public static bool operator ==(StackFrame left, StackFrame right)
+        public static bool operator ==(StackFrame<T> left, StackFrame<T> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(StackFrame left, StackFrame right)
+        public static bool operator !=(StackFrame<T> left, StackFrame<T> right)
         {
             return !Equals(left, right);
         }
@@ -116,21 +116,21 @@ namespace Interactr.ViewModel.MessageStack
             /// <summary>
             /// The message that started this frame. Can be null for the initiator.
             /// </summary>
-            public MessageViewModel InvocationMessage { get; set; }
+            public T InvocationMessage { get; set; } 
 
             /// <summary>
             /// The message that ended this frame. Can be null for the initiator.
             /// </summary>
-            public MessageViewModel ReturnMessage { get; set; }
+            public T ReturnMessage { get; set; }
 
             /// <summary>
             /// The list sub-frames that were invoked from this frame.
             /// </summary>
-            public IList<StackFrame> SubFrames { get; } = new List<StackFrame>();
+            public IList<StackFrame<T>> SubFrames { get; } = new List<StackFrame<T>>();
 
-            public StackFrame Build()
+            public StackFrame<T> Build()
             {
-                return new StackFrame(this);
+                return new StackFrame<T>(this);
             }
         }
     }
