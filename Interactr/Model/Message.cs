@@ -12,7 +12,7 @@ namespace Interactr.Model
         {
             Sender = sender;
             Receiver = receiver;
-            Label = label;
+            LabelText = label;
             Type = type;
         }
 
@@ -52,6 +52,23 @@ namespace Interactr.Model
             get => _label.Value;
             set => _label.Value = value;
         }
+
+        private readonly ReactiveProperty<string> _labelText = new ReactiveProperty<string>();
+
+        /// <summary>
+        /// The text of the Label stored in message view model.
+        /// </summary>
+        /// <remarks>This should not necessarily be the same as the label in the message model.
+        /// If the changes of viewModel are not propogated to the model for example.
+        /// Any changes to the model are however immediately propagated to the viewmodel.
+        /// </remarks>
+        public string LabelText
+        {
+            get => _labelText.Value;
+            protected set => _labelText.Value = value;
+        }
+
+        public IObservable<string> LabelTextChanged => _labelText.Changed;
 
         #endregion
 

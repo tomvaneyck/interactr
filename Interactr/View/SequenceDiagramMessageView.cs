@@ -47,7 +47,7 @@ namespace Interactr.View
                 .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
 
             // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelTextChanged).Subscribe(label => _label.Text = label);
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged

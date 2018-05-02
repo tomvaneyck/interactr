@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 
@@ -15,6 +16,7 @@ namespace Interactr.ViewModel
         public Message Message { get; }
 
         #region MessageNumber
+
         private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
 
         /// <summary> A label.
@@ -40,7 +42,11 @@ namespace Interactr.ViewModel
         /// <summary>
         /// Mark the position of this call in the sequence of messages.
         /// </summary>
-        public int Tick { get => _tick.Value; set => _tick.Value = value; }
+        public int Tick
+        {
+            get => _tick.Value;
+            set => _tick.Value = value;
+        }
 
         public IObservable<int> TickChanged => _tick.Changed;
 
@@ -51,19 +57,32 @@ namespace Interactr.ViewModel
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
         /// <summary>
-        /// The Label stored in message view model.
+        /// The label to be displayed, includes the messageNumber and the labelText.
+        /// </summary>
+        public string Label
+        {
+            get => _label.Value;
+            private set => _label.Value = value;
+        }
+
+        public IObservable<string> LabelChanged => _label.Changed;
+
+        private readonly ReactiveProperty<string> _labelText = new ReactiveProperty<string>();
+
+        /// <summary>
+        /// The text of the Label stored in message view model.
         /// </summary>
         /// <remarks>This should not necessarily be the same as the label in the message model.
         /// If the changes of viewModel are not propogated to the model for example.
         /// Any changes to the model are however immediately propagated to the viewmodel.
         /// </remarks>
-        public string Label
+        public string LabelText
         {
-            get => _label.Value;
-            protected set => _label.Value = value;
+            get => _labelText.Value;
+            protected set => _labelText.Value = value;
         }
 
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<string> LabelTextChanged => _labelText.Changed;
 
         #endregion
 
@@ -84,7 +103,12 @@ namespace Interactr.ViewModel
             Message = message;
 
             // Propagate changes in the model to the viewmodel.
+            message.LabelTextChanged.Subscribe(newLabelText => { LabelText = newLabelText; });
             message.LabelChanged.Subscribe(newLabel => Label = newLabel);
+
+            // Change the label value on a change of the messageNumber or the LabelText.
+            Observable.Merge(MessageNumberChanged, LabelTextChanged).Subscribe(
+                _ => Label = MessageNumber + ":" + LabelText);
         }
     }
 }
