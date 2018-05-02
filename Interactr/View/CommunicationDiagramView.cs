@@ -87,7 +87,7 @@ namespace Interactr.View
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             // Delete party.
             // The commented check is an extra safety, but not yet possible due
@@ -103,10 +103,10 @@ namespace Interactr.View
                 // Delete the party from the viewmodel. This automatically
                 // propagates to the view and the model.
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
-                return true;
-            }
 
-            return false;
+                // Stop the event propagation.
+                eventData.IsCancelled = true;
+            }
         }
     }
 

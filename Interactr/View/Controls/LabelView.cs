@@ -121,7 +121,7 @@ namespace Interactr.View.Controls
         private bool _cursorIsVisible;
 
         #endregion
-        
+
         private bool _isFocusing;
 
         public LabelView()
@@ -195,7 +195,7 @@ namespace Interactr.View.Controls
             {
                 g.DrawString(Text, Font, brush, 0, 0);
             }
-            
+
             using (Pen pen = new Pen(Color))
             {
                 // Draw editing rectangle
@@ -213,7 +213,7 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (IsInEditMode)
             {
@@ -240,10 +240,9 @@ namespace Interactr.View.Controls
                     }
                 }
 
-                return true;
+                // Cancel event propagation.
+                eventData.IsCancelled = true;
             }
-
-            return false;
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -258,7 +257,7 @@ namespace Interactr.View.Controls
             {
                 IsInEditMode = true;
                 eventData.IsCancelled = true;
-                return ;
+                return;
             }
 
             base.OnMouseEvent(eventData);

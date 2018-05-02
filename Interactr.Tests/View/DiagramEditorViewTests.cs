@@ -46,9 +46,9 @@ namespace Interactr.Tests.View
 
         private class TestableDiagramEditorView : DiagramEditorView
         {
-            public bool RunOnKeyEvent(KeyEventData eventData)
+            public void RunOnKeyEvent(KeyEventData eventData)
             {
-                return OnKeyEvent(eventData);
+                OnKeyEvent(eventData);
             }
         }
     }

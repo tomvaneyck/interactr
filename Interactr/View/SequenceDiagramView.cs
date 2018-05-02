@@ -93,7 +93,7 @@ namespace Interactr.View
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (eventData.Id == KeyEvent.KEY_RELEASED &&
                 eventData.KeyCode == KeyCodes.Delete &&
@@ -104,10 +104,9 @@ namespace Interactr.View
                 PartyView partyView = (PartyView) FocusedElement.Parent;
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
 
-                return true;
+                // Cancel the event propagation.
+                eventData.IsCancelled = true;
             }
-
-            return false;
         }
 
         private void SetupPendingMessage()

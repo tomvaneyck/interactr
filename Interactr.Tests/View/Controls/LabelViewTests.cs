@@ -30,10 +30,10 @@ namespace Interactr.Tests.View.Controls
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
 
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsCancelled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -47,10 +47,10 @@ namespace Interactr.Tests.View.Controls
                 -1, '\x1b');
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsCancelled);
 
             // Check if expected ESC action occurred.
             Assert.IsTrue(_labelView.IsInEditMode);
@@ -62,10 +62,10 @@ namespace Interactr.Tests.View.Controls
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
                 KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsFalse(result);
+            Assert.IsFalse(keyEventData.IsCancelled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -178,9 +178,9 @@ namespace Interactr.Tests.View.Controls
 
         private class TestableLabelView : LabelView
         {
-            public bool RunOnKeyEvent(KeyEventData keyEventData)
+            public void RunOnKeyEvent(KeyEventData keyEventData)
             {
-                return OnKeyEvent(keyEventData);
+                OnKeyEvent(keyEventData);
             }
 
             public void RunOnMouseEvent(MouseEventData mouseEventData)
