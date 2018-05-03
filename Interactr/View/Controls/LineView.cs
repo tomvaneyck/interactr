@@ -93,7 +93,7 @@ namespace Interactr.View.Controls
         private readonly ReactiveProperty<LineType> _style = new ReactiveProperty<LineType>();
 
         /// <summary>
-        /// The style of displaying for the lime.
+        /// The style of displaying for the line.
         /// </summary>
         public LineType Style
         {
