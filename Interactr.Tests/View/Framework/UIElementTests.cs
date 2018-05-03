@@ -296,5 +296,18 @@ namespace Interactr.Tests.View.Framework
             var actual = scheduler.Start(() => grandChild.AbsolutePositionChanged, 0, 0, 1000).Messages;
             ReactiveAssert.AreElementsEqual(expected, actual);
         }
+
+        [Test]
+        public void TestElementDeleted()
+        {
+            UIElement parent = new UIElement();
+            UIElement child = new UIElement();
+            parent.Children.Add(child);
+
+            child.Focus();
+            Assert.AreEqual(child, UIElement.FocusedElement);
+            parent.Children.Remove(child);
+            Assert.AreEqual(parent, UIElement.FocusedElement);
+        }
     }
 }
