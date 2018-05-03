@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.ViewModel;
@@ -45,6 +46,13 @@ namespace Interactr.View
             ObserveActivationBarPosition(vm => vm.ReceiverActivationBarChanged)
                 .Select(activationBarView => GetArrowAnchorPoint(activationBarView, _arrow.StartPoint))
                 .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
+
+            // Set the display style of the arrow.
+            ViewModelChanged.Where(vm => vm != null).Subscribe(vm =>
+            {
+                _arrow.Style = vm.MessageType == Message.MessageType.Invocation ?
+                    LineView.LineType.Solid : LineView.LineType.Dotted;
+            });
 
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
