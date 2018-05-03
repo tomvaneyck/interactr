@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Reactive;
-using Interactr.View.Framework;
 using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View.Controls
@@ -12,42 +11,8 @@ namespace Interactr.View.Controls
     /// <summary>
     /// A view that displays a line with an arrowhead at the end.
     /// </summary>
-    public class ArrowView : UIElement
+    public class ArrowView : LineView
     {
-        #region StartPoint
-
-        private readonly ReactiveProperty<Point> _startPoint = new ReactiveProperty<Point>();
-
-        /// <summary>
-        /// The point where the line starts.
-        /// </summary>
-        public Point StartPoint
-        {
-            get => _startPoint.Value;
-            set => _startPoint.Value = value;
-        }
-
-        public IObservable<Point> StartPointChanged => _startPoint.Changed;
-
-        #endregion
-
-        #region EndPoint
-
-        private readonly ReactiveProperty<Point> _endPoint = new ReactiveProperty<Point>();
-
-        /// <summary>
-        /// The point where the line ends and an arrowhead is drawn.
-        /// </summary>
-        public Point EndPoint
-        {
-            get => _endPoint.Value;
-            set => _endPoint.Value = value;
-        }
-
-        public IObservable<Point> EndPointChanged => _endPoint.Changed;
-
-        #endregion
-
         #region ArrowHeadSize
 
         private readonly ReactiveProperty<float> _arrowHeadSize = new ReactiveProperty<float>();
@@ -65,48 +30,12 @@ namespace Interactr.View.Controls
 
         #endregion
 
-        #region LineThickness
-
-        private readonly ReactiveProperty<float> _lineThickness = new ReactiveProperty<float>();
-
-        /// <summary>
-        /// The thickness of the line
-        /// </summary>
-        public float LineThickness
-        {
-            get => _lineThickness.Value;
-            set => _lineThickness.Value = value;
-        }
-
-        public IObservable<float> LineThicknessChanged => _lineThickness.Changed;
-
-        #endregion
-
-        #region Color
-
-        private readonly ReactiveProperty<Color> _color = new ReactiveProperty<Color>();
-
-        /// <summary>
-        /// The color of the line and arrowhead.
-        /// </summary>
-        public Color Color
-        {
-            get => _color.Value;
-            set => _color.Value = value;
-        }
-
-        public IObservable<Color> ColorChanged => _color.Changed;
-
-        #endregion
-
         public ArrowView()
         {
             CanBeFocused = false;
 
             // Default values.
             ArrowHeadSize = 10;
-            LineThickness = 1;
-            Color = Color.Black;
 
             // Repaint when a property changes.
             ReactiveExtensions.MergeEvents(
@@ -121,15 +50,9 @@ namespace Interactr.View.Controls
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-            // Draw line
-            g.DrawLine(new Pen(Color, LineThickness),
-                StartPoint.X,
-                StartPoint.Y,
-                EndPoint.X,
-                EndPoint.Y);
+            base.PaintElement(g);
 
-            (Point pointL,Point pointR) = CalculateWingPoints();
-
+            (Point pointL, Point pointR) = CalculateWingPoints();
 
             // Create a triangle with EndPoint and the 2 points we calculated above and fill it with Color.
             g.FillPolygon(new SolidBrush(Color), new[]

@@ -14,83 +14,113 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LineView : UIElement
     {
-        #region Pen
+        #region StartPoint
 
-        private readonly ReactiveProperty<Pen> _pen = new ReactiveProperty<Pen>();
-
-        /// <summary>
-        /// The pen that is used to draw the line.
-        /// Changing the color or thickness of the line can be done with this property.
-        /// </summary>
-        public Pen Pen
-        {
-            get => _pen.Value;
-            set => _pen.Value = value;
-        }
-
-        /// <summary>
-        /// Emit the new pen when the pen changes.
-        /// </summary>
-        public IObservable<Pen> PenChanged => _pen.Changed;
-
-        #endregion
-
-        #region PointA
-
-        private readonly ReactiveProperty<Point> _pointA = new ReactiveProperty<Point>();
+        private readonly ReactiveProperty<Point> _startPoint = new ReactiveProperty<Point>();
 
         /// <summary>
         /// The starting point of the line.
         /// </summary>
-        public Point PointA
+        public Point StartPoint
         {
-            get => _pointA.Value;
-            set => _pointA.Value = value;
+            get => _startPoint.Value;
+            set => _startPoint.Value = value;
         }
 
         /// <summary>
-        /// Emit the new point A when it changes.
+        /// Emit the new starting point when it changes.
         /// </summary>
-        public IObservable<Point> PointAChanged => _pointA.Changed;
+        public IObservable<Point> StartPointChanged => _startPoint.Changed;
 
         #endregion
 
-        #region PointB
+        #region EndPoint
 
-        private readonly ReactiveProperty<Point> _pointB = new ReactiveProperty<Point>();
+        private readonly ReactiveProperty<Point> _endPoint = new ReactiveProperty<Point>();
 
         /// <summary>
         /// The endpoint of this line.
         /// </summary>
-        public Point PointB
+        public Point EndPoint
         {
-            get => _pointB.Value;
-            set => _pointB.Value = value;
+            get => _endPoint.Value;
+            set => _endPoint.Value = value;
         }
 
         /// <summary>
-        /// Emit the new point B when it changes.
+        /// Emit the new end point when it changes.
         /// </summary>
-        public IObservable<Point> PointBChanged => _pointB.Changed;
+        public IObservable<Point> EndPointChanged => _endPoint.Changed;
+
+        #endregion
+
+        #region Color
+
+        private readonly ReactiveProperty<Color> _color = new ReactiveProperty<Color>();
+
+        /// <summary>
+        /// The color of the line and arrowhead.
+        /// </summary>
+        public Color Color
+        {
+            get => _color.Value;
+            set => _color.Value = value;
+        }
+
+        public IObservable<Color> ColorChanged => _color.Changed;
+
+        #endregion
+
+        #region LineThickness
+
+        private readonly ReactiveProperty<float> _lineThickness = new ReactiveProperty<float>();
+
+        /// <summary>
+        /// The thickness of the line
+        /// </summary>
+        public float LineThickness
+        {
+            get => _lineThickness.Value;
+            set => _lineThickness.Value = value;
+        }
+
+        public IObservable<float> LineThicknessChanged => _lineThickness.Changed;
+
+        #endregion
+
+        #region LineType
+
+        private readonly ReactiveProperty<LineType> _style = new ReactiveProperty<LineType>();
+
+        /// <summary>
+        /// The style of displaying for the line.
+        /// </summary>
+        public LineType Style
+        {
+            get => _style.Value;
+            set => _style.Value = value;
+        }
+
+        public IObservable<LineType> StyleChanged => _style.Changed;
 
         #endregion
 
         public LineView()
         {
             // Default values.
-            Pen = Pens.Black;
-            PointA = new Point();
-            PointB = new Point(10, 10);
+            Color = Color.Black;
+            LineThickness = 1;
 
             // Repaint on property change.
             ReactiveExtensions.MergeEvents(
-                PenChanged,
-                PointAChanged,
-                PointBChanged
+                ColorChanged,
+                LineThicknessChanged,
+                StartPointChanged,
+                EndPointChanged
             ).Subscribe(_ => Repaint());
 
             // Resize preferred size to fit line.
-            Observable.CombineLatest(PointAChanged, PointBChanged).Subscribe(points =>
+            Observable.CombineLatest(StartPointChanged, EndPointChanged).Subscribe(points =>
             {
                 PreferredWidth = points.Max(p => p.X);
                 PreferredHeight = points.Max(p => p.Y);
@@ -100,7 +130,29 @@ namespace Interactr.View.Controls
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-            g.DrawLine(Pen, PointA.X, PointA.Y, PointB.X, PointB.Y);
+            switch (Style)
+            {
+                case LineType.Solid:
+                    g.DrawLine(new Pen(Color, LineThickness), StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+                    break;
+                case LineType.Dotted:
+                    g.DrawLine(
+                        new Pen(Color, LineThickness)
+                        {
+                            DashPattern = new float[] {2, 2}
+                        },
+                        StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// The types of display for the line.
+        /// </summary>
+        public enum LineType
+        {
+            Solid,
+            Dotted
         }
     }
 }
