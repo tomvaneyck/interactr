@@ -277,7 +277,15 @@ namespace Interactr.View.Framework
             });
 
             // Remove parent-child relationship on child remove
-            Children.OnDelete.Subscribe(e => { e.Element.Parent = null; });
+            Children.OnDelete.Subscribe(e =>
+            {
+                e.Element.Parent = null;
+                if (FocusedElement == e.Element || (FocusedElement?.WalkToRoot().Contains(e.Element) ?? false))
+                {
+                    // Focused element will be removed from the visual tree, focus the first ancestor.
+                    this.Focus();
+                }
+            });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());
