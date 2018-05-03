@@ -54,7 +54,8 @@ namespace Interactr.View.Controls
             if (eventData.Id == MouseEvent.MOUSE_PRESSED)
             {
                 _previousCursorPosition = eventData.MousePosition;
-            }else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
+            }
+            else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
             {
                 UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
                 dragElement?.ReleaseMouseCapture();
