@@ -9,18 +9,11 @@ namespace Interactr.Tests.View.Controls
     public class LineViewTests
     {
         [Test]
-        public void TestPointB()
-        {
-            LineView lv = new LineView();
-            Assert.AreEqual(new Point(10,10),lv.PointB);
-        }
-        
-        [Test]
         public void TestObservableMergeWidth1()
         {
             LineView lv = new LineView();
-            Assert.AreEqual(Pens.Black, lv.Pen);
-            lv.PointB = new Point(9, 9);
+            Assert.AreEqual(Color.Black, lv.Color);
+            lv.EndPoint = new Point(9, 9);
             Assert.AreEqual(9,lv.PreferredWidth);
         }
         
@@ -28,8 +21,8 @@ namespace Interactr.Tests.View.Controls
         public void TestObservableMergeHeight1()
         {
             LineView lv = new LineView();
-            Assert.AreEqual(Pens.Black, lv.Pen);
-            lv.PointB = new Point(9, 9);
+            Assert.AreEqual(Color.Black, lv.Color);
+            lv.EndPoint = new Point(9, 9);
             Assert.AreEqual(9,lv.PreferredHeight);
         }
         
@@ -37,8 +30,8 @@ namespace Interactr.Tests.View.Controls
         public void TestObservableMergeWidth2()
         {
             LineView lv = new LineView();
-            Assert.AreEqual(Pens.Black, lv.Pen);
-            lv.PointB = new Point(11, 11);
+            Assert.AreEqual(Color.Black, lv.Color);
+            lv.EndPoint = new Point(11, 11);
             Assert.AreEqual(11,lv.PreferredWidth);
         }
         
@@ -46,8 +39,8 @@ namespace Interactr.Tests.View.Controls
         public void TestObservableMergeHeight2()
         {
             LineView lv = new LineView();
-            Assert.AreEqual(Pens.Black, lv.Pen);
-            lv.PointB = new Point(11, 11);
+            Assert.AreEqual(Color.Black, lv.Color);
+            lv.EndPoint = new Point(11, 11);
             Assert.AreEqual(11,lv.PreferredHeight);
         }
     }
