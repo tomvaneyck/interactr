@@ -13,6 +13,7 @@ namespace Interactr.View
     /// <summary>
     /// The view for the communication diagram.
     /// </summary>
+    /// <see cref="AnchorPanel"/>
     public class CommunicationDiagramView : AnchorPanel
     {
         #region ViewModel
@@ -33,7 +34,6 @@ namespace Interactr.View
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         protected IReadOnlyReactiveList<PartyView> partyViews;
-
 
         public CommunicationDiagramView()
         {
@@ -71,19 +71,20 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override void OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
-                Debug.WriteLine("Add Party.");
                 //Add a new Party.
-                ViewModel.AddParty(e.MousePosition);
-                e.IsHandled = true;
+                ViewModel.AddParty(eventData.MousePosition);
+                
+                // Stop event propagation if the event is handled.
+                eventData.IsHandled = true;
                 return;
             }
 
-            base.OnMouseEvent(e);
+            base.OnMouseEvent(eventData);
         }
 
         /// <see cref="OnKeyEvent"/>
@@ -106,13 +107,17 @@ namespace Interactr.View
 
                 // Stop the event propagation.
                 eventData.IsCancelled = true;
+                return;
             }
+            
+            base.OnKeyEvent(eventData);
         }
     }
 
     /// <summary>
     /// A drag panel to enable dragging of the parties in Communication diagram view.
     /// </summary>
+    /// <see cref="DragPanel"/>
     public class PartyViewsDragPanel : DragPanel
     {
         public IReadOnlyReactiveList<PartyView> PartyViews { get; }
