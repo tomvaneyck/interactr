@@ -325,7 +325,7 @@ namespace Interactr.View.Framework
         public static void HandleKeyEvent(KeyEventData eventData)
         {
             TunnelDownKeyEventPreview(eventData);
-            if (eventData.IsCancelled)
+            if (eventData.IsHandled)
             {
                 //Event was handled
                 return;
@@ -347,7 +347,7 @@ namespace Interactr.View.Framework
             foreach (UIElement element in UIElement.FocusedElement.WalkToRoot().Reverse())
             {
                 element.OnKeyEventPreview(eventData);
-                if (eventData.IsCancelled)
+                if (eventData.IsHandled)
                 {
                     return;
                 }
@@ -361,13 +361,13 @@ namespace Interactr.View.Framework
         private void BubbleUpKeyEvent(KeyEventData eventData)
         {
             OnKeyEvent(eventData);
-            if (eventData.IsCancelled)
+            if (eventData.IsHandled)
             {
                 return;
             }
 
             _keyEventOccurred.OnNext(eventData);
-            if (eventData.IsCancelled)
+            if (eventData.IsHandled)
             {
                 return;
             }

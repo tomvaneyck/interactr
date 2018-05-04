@@ -242,7 +242,7 @@ namespace Interactr.View.Controls
                 }
 
                 // Cancel event propagation.
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
         }
 

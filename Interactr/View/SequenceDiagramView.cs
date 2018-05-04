@@ -105,7 +105,7 @@ namespace Interactr.View
                 ViewModel.DeleteParty(partyView.ViewModel.Party);
 
                 // Cancel the event propagation.
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
         }
 

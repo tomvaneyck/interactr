@@ -57,7 +57,7 @@ namespace Interactr.View
                 ViewModel?.SwitchViews();
 
                 // Cancel the event propagation.
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
         }
     }

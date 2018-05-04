@@ -75,7 +75,7 @@ namespace Interactr.View
                 ViewModel.EditNewDiagram();
 
                 // Cancel the event propagation.
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
         }
     }

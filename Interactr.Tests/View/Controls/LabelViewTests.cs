@@ -33,7 +33,7 @@ namespace Interactr.Tests.View.Controls
             _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(keyEventData.IsCancelled);
+            Assert.IsTrue(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -50,7 +50,7 @@ namespace Interactr.Tests.View.Controls
             _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(keyEventData.IsCancelled);
+            Assert.IsTrue(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsTrue(_labelView.IsInEditMode);
@@ -65,7 +65,7 @@ namespace Interactr.Tests.View.Controls
             _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsFalse(keyEventData.IsCancelled);
+            Assert.IsFalse(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);

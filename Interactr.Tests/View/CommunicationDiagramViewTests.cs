@@ -5,6 +5,7 @@ using System.Reactive.Concurrency;
 using System;
 using Interactr.View.Framework;
 using Interactr.Reactive;
+using Interactr.ViewModel;
 
 namespace Interactr.Tests.View
 {
@@ -19,7 +20,7 @@ namespace Interactr.Tests.View
             _scheduler = new TestScheduler();
             _communicationDiagramView = new TestableCommunicationDiagramView();
             _communicationDiagramView.ViewModel =
-                new Interactr.ViewModel.CommunicationDiagramViewModel(new Interactr.Model.Diagram());
+                new CommunicationDiagramViewModel(new Interactr.Model.Diagram());
         }
 
         [Test]
