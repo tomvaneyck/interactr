@@ -72,10 +72,10 @@ namespace Interactr.View.Controls
             BorderWidth = 1;
 
             // When a property changes, repaint.
-            Observable.Merge(
-                BorderColorChanged.Select(_ => Unit.Default),
-                BackgroundColorChanged.Select(_ => Unit.Default),
-                BorderWidthChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                BorderColorChanged,
+                BackgroundColorChanged,
+                BorderWidthChanged
             ).Subscribe(_ => Repaint());
         }
 

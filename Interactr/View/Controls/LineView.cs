@@ -112,11 +112,11 @@ namespace Interactr.View.Controls
             LineThickness = 1;
 
             // Repaint on property change.
-            Observable.Merge(
-                ColorChanged.Select(_ => Unit.Default),
-                LineThicknessChanged.Select(_ => Unit.Default),
-                StartPointChanged.Select(_ => Unit.Default),
-                EndPointChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                ColorChanged,
+                LineThicknessChanged,
+                StartPointChanged,
+                EndPointChanged
             ).Subscribe(_ => Repaint());
 
             // Resize preferred size to fit line.

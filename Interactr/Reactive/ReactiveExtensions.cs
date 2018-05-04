@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -118,6 +119,56 @@ namespace Interactr.Reactive
                     .Subscribe(e => RemoveElement(e.Index))
             );
             return (disposable, targetList);
+        }
+
+        public static IObservable<Unit> MergeEvents<T1, T2>(this IObservable<T1> obs1, IObservable<T2> obs2)
+        {
+            return Observable.Merge(
+                obs1.Select(_ => Unit.Default),
+                obs2.Select(_ => Unit.Default)
+            );
+        }
+
+        public static IObservable<Unit> MergeEvents<T1, T2, T3>(this IObservable<T1> obs1, IObservable<T2> obs2, IObservable<T3> obs3)
+        {
+            return Observable.Merge(
+                obs1.Select(_ => Unit.Default),
+                obs2.Select(_ => Unit.Default),
+                obs3.Select(_ => Unit.Default)
+            );
+        }
+
+        public static IObservable<Unit> MergeEvents<T1, T2, T3, T4>(this IObservable<T1> obs1, IObservable<T2> obs2, IObservable<T3> obs3, IObservable<T4> obs4)
+        {
+            return Observable.Merge(
+                obs1.Select(_ => Unit.Default),
+                obs2.Select(_ => Unit.Default),
+                obs3.Select(_ => Unit.Default),
+                obs4.Select(_ => Unit.Default)
+            );
+        }
+
+        public static IObservable<Unit> MergeEvents<T1, T2, T3, T4, T5>(this IObservable<T1> obs1, IObservable<T2> obs2, IObservable<T3> obs3, IObservable<T4> obs4, IObservable<T5> obs5)
+        {
+            return Observable.Merge(
+                obs1.Select(_ => Unit.Default),
+                obs2.Select(_ => Unit.Default),
+                obs3.Select(_ => Unit.Default),
+                obs4.Select(_ => Unit.Default),
+                obs5.Select(_ => Unit.Default)
+            );
+        }
+
+        public static IObservable<Unit> MergeEvents<T1, T2, T3, T4, T5, T6>(this IObservable<T1> obs1, IObservable<T2> obs2, IObservable<T3> obs3, IObservable<T4> obs4, IObservable<T5> obs5, IObservable<T6> obs6)
+        {
+            return Observable.Merge(
+                obs1.Select(_ => Unit.Default),
+                obs2.Select(_ => Unit.Default),
+                obs3.Select(_ => Unit.Default),
+                obs4.Select(_ => Unit.Default),
+                obs5.Select(_ => Unit.Default),
+                obs6.Select(_ => Unit.Default)
+            );
         }
     }
 }

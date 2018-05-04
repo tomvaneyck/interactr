@@ -58,10 +58,10 @@ namespace Interactr.View
             ActivationBarViews.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
             ActivationBarViews.OnDelete.Subscribe(e => Children.RemoveAt(e.Index));
 
-            Observable.Merge(
-                ActivationBarViews.OnAdd.Select(_ => Unit.Default),
-                ActivationBarViews.OnDelete.Select(_ => Unit.Default),
-                WidthChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                ActivationBarViews.OnAdd,
+                ActivationBarViews.OnDelete,
+                WidthChanged
             ).Subscribe(_ => UpdateLayout());
         }
 

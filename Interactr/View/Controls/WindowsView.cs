@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
@@ -205,8 +205,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-
-            protected override void OnMouseEvent(MouseEventData eventData)
+            protected override bool OnMouseEventPreview(MouseEventData eventData)
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
@@ -277,8 +276,8 @@ namespace Interactr.View.Controls
                     eventData.IsCancelled = true;
                     return;
                 }
-
-                base.OnMouseEvent(eventData);
+                
+                base.OnMouseEventPreview(eventData);
             }
 
             public override void PaintElement(Graphics g)
