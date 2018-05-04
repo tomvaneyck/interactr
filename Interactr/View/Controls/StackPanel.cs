@@ -32,10 +32,10 @@ namespace Interactr.View.Controls
             CanBeFocused = false;
 
             // Update layout when the width, height or orientation of this panel changes.
-            Observable.Merge(
-                WidthChanged.Select(_ => Unit.Default),
-                HeightChanged.Select(_ => Unit.Default),
-                StackOrientationChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                WidthChanged,
+                HeightChanged,
+                StackOrientationChanged
             ).Subscribe(_ => UpdateLayout());
 
             // Update a child when its PreferredWidth/Height property changes.
@@ -45,7 +45,7 @@ namespace Interactr.View.Controls
             ).Subscribe(p => UpdateLayout());
 
             // Update the positions of the children when a child is added or removed.
-            Observable.Merge(
+            ReactiveExtensions.MergeEvents(
                 Children.OnDelete,
                 Children.OnAdd
             ).Subscribe(_ => UpdateLayout());

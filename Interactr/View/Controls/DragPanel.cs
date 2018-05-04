@@ -19,13 +19,13 @@ namespace Interactr.View.Controls
         public DragPanel()
         {
             // Update layout when the width or height is changed.
-            Observable.Merge(
-                WidthChanged.Select(_ => Unit.Default),
-                HeightChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                WidthChanged,
+                HeightChanged
             ).Subscribe(_ => UpdateLayout());
 
             // Update layout when a child changes its preferred width or height.
-            Observable.Merge(
+            ReactiveExtensions.MergeEvents(
                 Children.ObserveEach(child => child.PreferredWidthChanged),
                 Children.ObserveEach(child => child.PreferredHeightChanged)
             ).Subscribe(_ => UpdateLayout());
@@ -55,6 +55,11 @@ namespace Interactr.View.Controls
             {
                 _previousCursorPosition = eventData.MousePosition;
             }
+            else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
+            {
+                UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
+                dragElement?.ReleaseMouseCapture();
+            }
 
             return base.OnMouseEventPreview(eventData);
         }
@@ -70,9 +75,10 @@ namespace Interactr.View.Controls
         {
             // Only drag the direct descendents of this DragPanel.
             UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
-
             if (dragElement != null)
             {
+                dragElement.CaptureMouse();
+
                 Point newPosition = new Point(
                     (int) (dragElement.Position.X + dragEventData.DeltaX),
                     (int) (dragElement.Position.Y + dragEventData.DeltaY)

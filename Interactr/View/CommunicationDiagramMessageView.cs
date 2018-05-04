@@ -65,9 +65,7 @@ namespace Interactr.View
             Children.Add(_label);
 
             // Change the size of the arrow views.
-            WidthChanged.Subscribe(newWidth =>
-                _arrow.Width = newWidth);
-
+            WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
@@ -93,6 +91,30 @@ namespace Interactr.View
                 _label.Width = _label.PreferredWidth;
                 _label.Height = _label.PreferredHeight;
             });
+        }
+
+        /// <summary>
+        /// Observe the position of the party given by the party selector.
+        /// </summary>
+        /// <param name="partySelector">The selector of the party.</param>
+        /// <returns>An observable with the partyview of the party where the position changed.</returns>
+        private IObservable<PartyView> ObservePartyPosition(
+            Func<MessageViewModel, IObservable<Party>> partySelector)
+        {
+            // Select the latest parent view
+            return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
+                    // and the latest viewmodel
+                    ViewModelChanged.Where(vm => vm != null).Select(vm =>
+                            // and the latest matching sender
+                            partySelector(vm).Where(party => party != null).Select(targetParty =>
+                            {
+                                // and listen for the position changes of its view.
+                                return parent.PartyViewsDragPanel.PartyViews.ObserveWhere(
+                                    party => party.PositionChanged,
+                                    party => party.ViewModel.Party == targetParty).Select(e => e.Element);
+                            }).Switch()
+                    ).Switch()
+            ).Switch();
         }
     }
 }

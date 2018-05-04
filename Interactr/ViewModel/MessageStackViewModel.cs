@@ -60,11 +60,11 @@ namespace Interactr.ViewModel
                 new SequenceDiagramMessageViewModel(msg, 0)).ResultList;
 
             // When the diagram changes, recalculate layout.
-            Observable.Merge(
-                diagram.Messages.OnAdd.Select(_ => Unit.Default),
-                diagram.Messages.OnDelete.Select(_ => Unit.Default),
-                diagram.Messages.ObserveEach(msg => msg.ReceiverChanged).Select(_ => Unit.Default),
-                diagram.Messages.ObserveEach(msg => msg.SenderChanged).Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                diagram.Messages.OnAdd,
+                diagram.Messages.OnDelete,
+                diagram.Messages.ObserveEach(msg => msg.ReceiverChanged),
+                diagram.Messages.ObserveEach(msg => msg.SenderChanged)
             ).Subscribe(_ => CalculateLayout());
         }
 

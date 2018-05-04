@@ -134,10 +134,10 @@ namespace Interactr.View.Controls
             Color = Color.Black;
 
             // When a property changes, repaint.
-            Observable.Merge(
-                TextChanged.Select(_ => Unit.Default),
-                FontChanged.Select(_ => Unit.Default),
-                ColorChanged.Select(_ => Unit.Default)
+            ReactiveExtensions.MergeEvents(
+                TextChanged,
+                FontChanged,
+                ColorChanged
             ).Subscribe(_ => Repaint());
 
             // Set the preferred width and height of the labelView by measuring
