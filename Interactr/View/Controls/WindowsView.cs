@@ -205,7 +205,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-            protected override bool OnMouseEventPreview(MouseEventData eventData)
+            protected override void OnMouseEventPreview(MouseEventData eventData)
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
