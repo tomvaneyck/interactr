@@ -39,11 +39,8 @@ namespace Interactr.View
 
         private readonly IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
 
-<<<<<<< HEAD
-=======
         private readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
 
->>>>>>> 8651ac29bd5ec2b9e68b62122f206277b35a07e8
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
