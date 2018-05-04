@@ -42,6 +42,8 @@ namespace Interactr.View.Controls
                 );
                 ApplyDragToFocusedElement(dragEventData);
                 _previousCursorPosition = eventData.MousePosition;
+                
+                // Stop the propagation of the event.
                 eventData.IsHandled = true;
                 return;
             }

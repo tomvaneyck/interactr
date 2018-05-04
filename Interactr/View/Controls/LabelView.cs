@@ -243,7 +243,10 @@ namespace Interactr.View.Controls
 
                 // Cancel event propagation.
                 eventData.IsHandled = true;
+                return;
             }
+            
+            base.OnKeyEvent(eventData);
         }
 
         /// <see cref="OnMouseEvent"/>
