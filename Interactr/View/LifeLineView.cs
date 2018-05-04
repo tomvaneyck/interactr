@@ -90,14 +90,14 @@ namespace Interactr.View
                     // Create a new pending message to store this information.
                     ViewModel.MessageStackVM.CreatePendingMessage(
                         ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
-                    eventData.IsCancelled = true;
+                    eventData.IsHandled = true;
                     return;
                 case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
                     // User released mouse on this lifeline while dragging a new pending message.
                     // Try to create and add an actual message to the diagram.
                     pendingMessage.Receiver = ViewModel.PartyVM.Party;
                     ViewModel.MessageStackVM.FinishPendingMessage();
-                    eventData.IsCancelled = true;
+                    eventData.IsHandled = true;
                     return;
             }
         }

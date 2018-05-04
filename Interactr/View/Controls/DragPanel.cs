@@ -42,7 +42,7 @@ namespace Interactr.View.Controls
                 );
                 ApplyDragToFocusedElement(dragEventData);
                 _previousCursorPosition = eventData.MousePosition;
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
                 return;
             }
 

@@ -251,12 +251,12 @@ namespace Interactr.View.Controls
             if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 _isFocusing = false;
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
             else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
                 return;
             }
 

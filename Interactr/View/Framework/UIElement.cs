@@ -360,8 +360,13 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event.</param>
         private void BubbleUpKeyEvent(KeyEventData eventData)
         {
-            _keyEventOccurred.OnNext(eventData);
             OnKeyEvent(eventData);
+            if (eventData.IsCancelled)
+            {
+                return;
+            }
+
+            _keyEventOccurred.OnNext(eventData);
             if (eventData.IsCancelled)
             {
                 return;
@@ -405,7 +410,7 @@ namespace Interactr.View.Framework
             UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
 
             TunnelDownMouseEventPreview(rootElement, targetElement, eventData);
-            if (eventData.IsCancelled)
+            if (eventData.IsHandled)
             {
                 // Event was handled.
                 return;
@@ -414,7 +419,6 @@ namespace Interactr.View.Framework
             // Bubble up event from FocusedElement to root.
             Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
             targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
-            eventData.IsCancelled = true;
         }
 
         /// <summary>
@@ -433,7 +437,7 @@ namespace Interactr.View.Framework
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
                 element.OnMouseEventPreview(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
 
-                if (eventData.IsCancelled)
+                if (eventData.IsHandled)
                 {
                     // Stop event propagation.
                     return;
@@ -447,12 +451,18 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         private void BubbleUpMouseEvent(MouseEventData eventData)
         {
+            OnMouseEvent(eventData);
+            if (eventData.IsHandled)
+            {
+                return;
+            }
+
             _mouseEventOccured.OnNext(eventData);
             OnMouseEvent(eventData);
-            if (eventData.IsCancelled || Parent == null)
+            if (eventData.IsHandled || Parent == null)
             {
                 // Stop event propagation.
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
                 return;
             }
 
@@ -483,7 +493,7 @@ namespace Interactr.View.Framework
             if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 Focus();
-                eventData.IsCancelled = true;
+                eventData.IsHandled = true;
             }
         }
 

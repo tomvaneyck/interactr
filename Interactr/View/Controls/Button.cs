@@ -68,7 +68,7 @@ namespace Interactr.View.Controls
                 Repaint();
             }
 
-            eventData.IsCancelled = true;
+            eventData.IsHandled = true;
         }
 
         public override void PaintElement(Graphics g)

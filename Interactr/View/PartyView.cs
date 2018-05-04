@@ -127,7 +127,7 @@ namespace Interactr.View
                 Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
-                e.IsCancelled = true;
+                e.IsHandled = true;
             }
         }
     }

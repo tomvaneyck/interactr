@@ -234,7 +234,7 @@ namespace Interactr.View.Controls
                     if (_resizeMode != ResizeMode.None)
                     {
                         CaptureMouse();
-                        eventData.IsCancelled = true;
+                        eventData.IsHandled = true;
                         return;
                     }
                 }
@@ -243,7 +243,7 @@ namespace Interactr.View.Controls
                     // Dragging finished, release mouse capture.
                     ReleaseMouseCapture();
                     _resizeMode = ResizeMode.None;
-                    eventData.IsCancelled = true;
+                    eventData.IsHandled = true;
                     return;
                 }
                 else if (eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
@@ -273,7 +273,7 @@ namespace Interactr.View.Controls
 
                     PreferredWidth = Math.Max(MinWindowWidth, PreferredWidth);
                     PreferredHeight = Math.Max(MinWindowHeight, PreferredHeight);
-                    eventData.IsCancelled = true;
+                    eventData.IsHandled = true;
                     return;
                 }
                 

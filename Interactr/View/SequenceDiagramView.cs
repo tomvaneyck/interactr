@@ -171,7 +171,7 @@ namespace Interactr.View
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);
-                e.IsCancelled = true;
+                e.IsHandled = true;
                 return;
             }
 
@@ -179,7 +179,7 @@ namespace Interactr.View
             if (e.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
                 _pendingMessageView.EndPoint = new Point(e.MousePosition.X, _pendingMessageView.StartPoint.Y);
-                e.IsCancelled = true;
+                e.IsHandled = true;
                 return;
             }
 

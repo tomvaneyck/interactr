@@ -79,7 +79,7 @@ namespace Interactr.View
                 Debug.WriteLine("Add Party.");
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);
-                e.IsCancelled = true;
+                e.IsHandled = true;
                 return;
             }
 
