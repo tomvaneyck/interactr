@@ -95,6 +95,7 @@
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
     <Compile Include="View\ActivationBarView.cs" />
     <Compile Include="View\CommunicationDiagramMessageView.cs" />
+    <Compile Include="View\CommunicationDiagramPartyView.cs" />
     <Compile Include="View\CommunicationDiagramView.cs" />
     <Compile Include="ViewModel\PartyViewModel.cs" />
     <Compile Include="View\Controls\AnchorPanel.cs" />

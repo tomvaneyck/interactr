@@ -36,22 +36,16 @@ namespace Interactr.Model
 
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
-        ///<summary>
-        /// A stream of labels that have been changed.
-        /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
-
         /// <summary>
-        /// Represent the message label.
+        ///  The label of the message. 
         /// </summary>
-        /// <remarks>
-        /// There are no restrictions on the format of the label.
-        /// </remarks>
         public string Label
         {
             get => _label.Value;
             set => _label.Value = value;
         }
+
+        public IObservable<string> LabelChanged => _label.Changed;
 
         #endregion
 
