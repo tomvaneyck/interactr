@@ -85,7 +85,7 @@ namespace Interactr.View
                 0,
                 (ViewModel.Tick - bar.ViewModel.StartTick) * bar.TickHeight
             );
-            SequenceDiagramView parent = (SequenceDiagramView) Parent;
+            SequenceDiagramView parent = (SequenceDiagramView)Parent;
             Point anchorPointOnDiagram = bar.TranslatePointTo(parent, anchorPointOnBar);
 
             // Choose left or right side of bar based on which side the arrow is going.
@@ -98,9 +98,9 @@ namespace Interactr.View
         {
             // With the latest parent view
             return ParentChanged.OfType<SequenceDiagramView>().Select(parent =>
-                // and the latest viewmodel
+                    // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching activation bar
+                            // and the latest matching activation bar
                             barSelector(vm).Where(bar => bar != null).Select(targetBar =>
                             {
                                 // and listen for the position changes of its view.
