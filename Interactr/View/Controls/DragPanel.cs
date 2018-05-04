@@ -55,6 +55,11 @@ namespace Interactr.View.Controls
             {
                 _previousCursorPosition = eventData.MousePosition;
             }
+            else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
+            {
+                UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
+                dragElement?.ReleaseMouseCapture();
+            }
 
             return base.OnMouseEventPreview(eventData);
         }
@@ -70,9 +75,10 @@ namespace Interactr.View.Controls
         {
             // Only drag the direct descendents of this DragPanel.
             UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
-
             if (dragElement != null)
             {
+                dragElement.CaptureMouse();
+
                 Point newPosition = new Point(
                     (int) (dragElement.Position.X + dragEventData.DeltaX),
                     (int) (dragElement.Position.Y + dragEventData.DeltaY)
