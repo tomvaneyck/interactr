@@ -69,8 +69,9 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            ViewModel.LabelChanged.Subscribe(newLabel => _label.Text = newLabel);
-            
+            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
+                .Subscribe(_ => _label.Text = ViewModel.DisplayLabel);
+
             // Put the label under the arrow.
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
@@ -103,9 +104,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching sender
+                        // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
