@@ -48,7 +48,7 @@ namespace Interactr.View.Controls
                 return;
             }
 
-            base.OnMouseEvent(eventData);
+          base.OnMouseEvent(eventData);
         }
 
         /// <see cref="UIElement.OnMouseEventPreview(MouseEventData)"/>
