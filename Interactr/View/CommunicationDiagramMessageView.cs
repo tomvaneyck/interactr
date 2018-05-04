@@ -28,32 +28,49 @@ namespace Interactr.View
 
         #endregion
 
+        /// <summary>
+        /// The start point of the message arrow.
+        /// </summary>
+        /// <remarks>
+        ///  This is an accessor for the endpoint of the private variable _arrow.
+        /// </remarks>
+        public Point ArrowStartPoint
+        {
+            get => _arrow.StartPoint;
+            set => _arrow.StartPoint = value;
+        }
+
+        /// <summary>
+        /// The end point of the message arrow.
+        /// </summary>
+        /// <remarks>
+        /// This is an accessor for the endpoint of the private variable _arrow.
+        /// </remarks>
+        public Point ArrowEndPoint
+        {
+            get => _arrow.EndPoint;
+            set => _arrow.EndPoint = value;
+        }
+
         private readonly ArrowView _arrow = new ArrowView();
         private readonly LabelView _label = new LabelView();
 
-        public CommunicationDiagramMessageView()
+        public CommunicationDiagramMessageView(MessageViewModel viewModel)
         {
             IsVisibleToMouse = false;
 
+            ViewModel = viewModel;
+
             Children.Add(_arrow);
             Children.Add(_label);
-
-            // Put the arrow starting point on the sender.
-            ObservePartyPosition(vm => vm.Message.SenderChanged)
-                .Select(partyview => partyview.Position)
-                .Subscribe(newStartPoint => _arrow.StartPoint = newStartPoint);
-
-            // Put the arrow ending point on the receiver.
-            ObservePartyPosition(vm => vm.Message.ReceiverChanged)
-                .Select(partyView => partyView.Position)
-                .Subscribe(newEndPoint => _arrow.EndPoint = newEndPoint);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
-            // Assign value to the label
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            // Update the label on a change.
+            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
+                .Subscribe(_ => _label.Text = ViewModel.DisplayLabel);
 
             // Put the label under the arrow.
             Observable.CombineLatest(
@@ -87,9 +104,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching sender
+                        // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
