@@ -435,11 +435,13 @@ namespace Interactr.View.Framework
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
-                element.OnMouseEventPreview(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+                var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
+                element.OnMouseEventPreview(newMouseEventData);
 
-                if (eventData.IsHandled)
+                if (newMouseEventData.IsHandled)
                 {
                     // Stop event propagation.
+                    eventData.IsHandled = true;
                     return;
                 }
             }

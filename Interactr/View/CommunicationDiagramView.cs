@@ -118,10 +118,7 @@ namespace Interactr.View
 
                 // Stop the event propagation.
                 eventData.IsHandled = true;
-                return;
             }
-            
-            base.OnKeyEvent(eventData);
         }
 
         /// <summary>
