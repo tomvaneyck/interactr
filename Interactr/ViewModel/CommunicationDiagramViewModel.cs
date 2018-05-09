@@ -44,11 +44,7 @@ namespace Interactr.ViewModel
         public void DeleteMessage(Message message)
         {
             Diagram.Messages.Remove(message);
-            }
-        /// <remarks>
-        /// Only invocation messages get drawn in the communication diagram.
-        /// </remarks>
-        public readonly IReadOnlyReactiveList<MessageViewModel> MessageViewModels;
+        }
 
         /// <summary>
         /// The view models of invocation messages.
@@ -100,6 +96,6 @@ namespace Interactr.ViewModel
                 // Recursively call PrependNumberToAllSubFrames untill the number of subframes is zero.
                 PrependNumberToAllSubFrames(subsubFrame.SubFrames, messageNumber);
             }
-        
+        }
     }
 }

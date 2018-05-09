@@ -37,7 +37,9 @@ namespace Interactr.View
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         private readonly IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
-
+        
+        private IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
+        
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -124,7 +126,6 @@ namespace Interactr.View
             }
 
             return false;
-            }
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace Interactr.View
 
             // Dynamically change if the message is achored to the left or right arrowStack in the partyview.
             receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(
-                 _ =>
+                _ =>
                 {
                     // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
                     if (receiverPartyView.Position.X < senderPartyView.Position.X &&
@@ -226,9 +227,6 @@ namespace Interactr.View
 
         public PartyViewsDragPanel(IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews)
         {
-            public IReadOnlyReactiveList<PartyView> PartyViews { get; }
-
-            public PartyViewsDragPanel(IReadOnlyReactiveList<PartyView> partyViews)
             {
                 PartyViews = partyViews;
 
@@ -254,3 +252,4 @@ namespace Interactr.View
             }
         }
     }
+}
