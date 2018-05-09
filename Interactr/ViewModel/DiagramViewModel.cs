@@ -80,17 +80,19 @@ namespace Interactr.ViewModel
         }
 
         /// <summary>
-        /// Delete a message from the model.
+        /// Delete a message from the model, this results in the deletion of all the nested submessages
+        /// of this message as well.
         /// </summary>
         /// <remarks></remarks>
         /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
         public void DeleteMessage(Message message)
         {
             // Create a copy of messageViewModels because the original can be modified while iterating the elements.
+            // which results in a concurrent modification error.
             IReadOnlyList<MessageViewModel> copyMessageViewModels = MessageViewModels.ToList();
             try
             {
-                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(copyMessageViewModels))
+                foreach (var stackFrame in MessageStackWalker.Walk(copyMessageViewModels))
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {
@@ -98,12 +100,11 @@ namespace Interactr.ViewModel
                         {
                             if (subFrame.InvocationMessage != null && message == subFrame.InvocationMessage.Message)
                             {
-                                // Delete the invocation and return message
-                                Debug.Print("DeleteMessage.");
-                                Debug.Print(Diagram.ToString());
-                                Debug.Print(Diagram.Messages.ToString());
+                                // Delete the invocation and return message.
                                 DeleteSingleMessage(subFrame.InvocationMessage.Message);
                                 DeleteSingleMessage(subFrame.ReturnMessage.Message);
+                                
+                                // Delete the invocation and return message of all the subframes.
                                 foreach (var subsubFrame in subFrame.SubFrames)
                                 {
                                     DeleteMessage(subsubFrame.InvocationMessage.Message);
@@ -120,7 +121,7 @@ namespace Interactr.ViewModel
             }
         }
 
-        protected void DeleteSingleMessage(Message message)
+        private void DeleteSingleMessage(Message message)
         {
             Diagram.Messages.Remove(message);
         }
