@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Framework;
+using Interactr.ViewModel.MessageStack;
 
 namespace Interactr.ViewModel
 {
@@ -42,6 +45,11 @@ namespace Interactr.ViewModel
         public Diagram Diagram { get; }
 
         /// <summary>
+        /// An abstract property for the message viewmodels.
+        /// </summary>
+        protected abstract IReadOnlyList<MessageViewModel> MessageViewModels { get; }
+
+        /// <summary>
         /// The partyViewModels included in this diagram view model.
         /// </summary>
         public IReadOnlyReactiveList<PartyViewModel> PartyViewModels { get; }
@@ -69,6 +77,52 @@ namespace Interactr.ViewModel
         public void DeleteParty(Party party)
         {
             Diagram.Parties.Remove(party);
+        }
+
+        /// <summary>
+        /// Delete a message from the model.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
+        public void DeleteMessage(Message message)
+        {
+            // Create a copy of messageViewModels because the original can be modified while iterating the elements.
+            IReadOnlyList<MessageViewModel> copyMessageViewModels = MessageViewModels.ToList();
+            try
+            {
+                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(copyMessageViewModels))
+                {
+                    if (stackFrame.SubFrames.Count != 0)
+                    {
+                        foreach (var subFrame in stackFrame.SubFrames)
+                        {
+                            if (subFrame.InvocationMessage != null && message == subFrame.InvocationMessage.Message)
+                            {
+                                // Delete the invocation and return message
+                                Debug.Print("DeleteMessage.");
+                                Debug.Print(Diagram.ToString());
+                                Debug.Print(Diagram.Messages.ToString());
+                                DeleteSingleMessage(subFrame.InvocationMessage.Message);
+                                DeleteSingleMessage(subFrame.ReturnMessage.Message);
+                                foreach (var subsubFrame in subFrame.SubFrames)
+                                {
+                                    DeleteMessage(subsubFrame.InvocationMessage.Message);
+                                    DeleteMessage(subsubFrame.ReturnMessage.Message);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (UnbalancedStackException)
+            {
+                Debug.Print("Stack was unbalanced.");
+            }
+        }
+
+        protected void DeleteSingleMessage(Message message)
+        {
+            Diagram.Messages.Remove(message);
         }
     }
 }

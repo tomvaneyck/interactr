@@ -240,6 +240,7 @@ namespace Interactr.ViewModel
             Message returnMessage =
                 new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "");
             Diagram.Messages.Insert(i + 1, returnMessage);
+            
         }
     }
 }

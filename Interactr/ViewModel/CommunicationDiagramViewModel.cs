@@ -21,29 +21,31 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        public IReadOnlyReactiveList<MessageViewModel> MessageViewModels { get; }
+        private IReadOnlyReactiveList<MessageViewModel> MessageViewModelsReactive { get; }
+      
+        /// <summary>
+        /// The message view models for the communication diagram, but in IReadOnlyList form.
+        /// <remarks>
+        /// This is necessary because the compiler cannot derive inheritance for generic types
+        /// in DerivedList which causes the compiler to complain at compileTime when specifying IReadOnlyDerivedList.
+        /// </remarks>
+        /// </summary>
+        protected override IReadOnlyList<MessageViewModel> MessageViewModels
+        {
+            get => MessageViewModelsReactive;
+        }
 
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
-            InvocationMessageViewModels = MessageViewModels
+            MessageViewModelsReactive = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
+            InvocationMessageViewModels = MessageViewModelsReactive
                 .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
             // Set the numbers for the messages in the message view models.
             SetMessageViewModelNumbers();
-            MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
+            MessageViewModelsReactive.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
                 .Subscribe(_ => SetMessageViewModelNumbers());
-        }
-
-        /// <summary>
-        /// Delete a message from the model.
-        /// </summary>
-        /// <remarks></remarks>
-        /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
-        public void DeleteMessage(Message message)
-        {
-            Diagram.Messages.Remove(message);
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace Interactr.ViewModel
         {
             try
             {
-                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(MessageViewModels))
+                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(MessageViewModelsReactive))
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {
@@ -97,5 +99,6 @@ namespace Interactr.ViewModel
                 PrependNumberToAllSubFrames(subsubFrame.SubFrames, messageNumber);
             }
         }
+        
     }
 }

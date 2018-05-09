@@ -98,5 +98,6 @@ namespace Interactr.ViewModel
             // Propagate changes in the model to the viewmodel.
             message.LabelChanged.Subscribe(newLabelText => { Label = newLabelText; });
         }
+        
     }
 }
