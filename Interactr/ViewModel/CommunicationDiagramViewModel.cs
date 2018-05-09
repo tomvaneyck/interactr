@@ -20,7 +20,7 @@ namespace Interactr.ViewModel
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
         private IReadOnlyReactiveList<MessageViewModel> MessageViewModelsReactive { get; }
-      
+
         /// <summary>
         /// The message view models for the communication diagram, but in IReadOnlyList form.
         /// <remarks>
@@ -97,6 +97,5 @@ namespace Interactr.ViewModel
                 PrependNumberToAllSubFrames(subsubFrame.SubFrames, messageNumber);
             }
         }
-        
     }
 }
