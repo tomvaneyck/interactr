@@ -72,7 +72,7 @@ namespace Interactr.View.Controls
         private void InitializeObservables()
         {
             // Update layout when the width or height of this panel changes.
-            Observable.Merge(WidthChanged, HeightChanged).Subscribe(_ => UpdateLayout());
+            ReactiveExtensions.MergeEvents(WidthChanged, HeightChanged).Subscribe(_ => UpdateLayout());
 
             // Update a child when its Anchors or Margins property changes.
             Children.ObserveEach(child => child.AttachedProperties.OnValueChanged)

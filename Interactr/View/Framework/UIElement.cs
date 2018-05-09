@@ -245,17 +245,19 @@ namespace Interactr.View.Framework
 
             //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
             //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
-            AbsolutePositionChanged = Observable.Merge(
+            AbsolutePositionChanged = ReactiveExtensions.MergeEvents(
                 PositionChanged,
                 ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
             ).Select(_ => GetPositionRelativeToRoot()).DistinctUntilChanged();
 
-            this.PositionChanged.Subscribe(_ => Repaint());
-            this.WidthChanged.Subscribe(_ => Repaint());
-            this.HeightChanged.Subscribe(_ => Repaint());
-            this.IsVisibleChanged.Subscribe(_ => Repaint());
-            this.Children.OnDelete.Subscribe(_ => Repaint());
-            this.Children.OnAdd.Subscribe(_ => Repaint());
+            ReactiveExtensions.MergeEvents(
+                PositionChanged,
+                WidthChanged,
+                HeightChanged,
+                IsVisibleChanged,
+                Children.OnDelete,
+                Children.OnAdd
+            ).Subscribe(_ => Repaint());
 
             SetupParentChildRelationship();
         }
@@ -275,7 +277,15 @@ namespace Interactr.View.Framework
             });
 
             // Remove parent-child relationship on child remove
-            Children.OnDelete.Subscribe(e => { e.Element.Parent = null; });
+            Children.OnDelete.Subscribe(e =>
+            {
+                e.Element.Parent = null;
+                if (FocusedElement == e.Element || (FocusedElement?.WalkToRoot().Contains(e.Element) ?? false))
+                {
+                    // Focused element will be removed from the visual tree, focus the first ancestor.
+                    this.Focus();
+                }
+            });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());

@@ -26,12 +26,15 @@ namespace Interactr.Tests.View.Controls
             r.Position = new Point(1, 1);
             dp.Children.Add(r);
             MouseEventData mev = new MouseEventData(MouseEvent.MOUSE_PRESSED, new Point(1, 1), 1);
-            UIElement.HandleMouseEvent(r, mev);
+            UIElement.HandleMouseEvent(dp, mev);
             mev = new MouseEventData(MouseEvent.MOUSE_DRAGGED, new Point(0, 0), 1);
-            UIElement.HandleMouseEvent(r,mev);
-            Assert.AreEqual(new Point(0,0),r.Position);
+            UIElement.HandleMouseEvent(dp, mev);
+            Assert.AreEqual(new Point(0, 0), r.Position);
+            mev = new MouseEventData(MouseEvent.MOUSE_RELEASED, new Point(0, 0), 1);
+            UIElement.HandleMouseEvent(dp, mev);
+            Assert.AreEqual(new Point(0, 0), r.Position);
         }
-        
+
         [Test]
         public void Drag2()
         {
@@ -46,11 +49,15 @@ namespace Interactr.Tests.View.Controls
             r.CanLoseFocus = true;
             r.Position = new Point(3, 3);
             dp.Children.Add(r);
+            r.Focus();
             MouseEventData mev = new MouseEventData(MouseEvent.MOUSE_PRESSED, new Point(3, 3), 1);
-            UIElement.HandleMouseEvent(r, mev);
+            UIElement.HandleMouseEvent(dp, mev);
             mev = new MouseEventData(MouseEvent.MOUSE_DRAGGED, new Point(1, 1), 1);
-            UIElement.HandleMouseEvent(r,mev);
-            Assert.AreEqual(new Point(1,1),r.Position);
-        } 
+            UIElement.HandleMouseEvent(dp, mev);
+            Assert.AreEqual(new Point(1, 1), r.Position);
+            mev = new MouseEventData(MouseEvent.MOUSE_RELEASED, new Point(1, 1), 1);
+            UIElement.HandleMouseEvent(dp, mev);
+            Assert.AreEqual(new Point(1, 1), r.Position);
+        }
     }
 }

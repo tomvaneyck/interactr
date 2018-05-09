@@ -50,7 +50,7 @@ namespace Interactr.Tests.View
 
         private class TestableCommunicationDiagramView : CommunicationDiagramView
         {
-            public IReadOnlyReactiveList<PartyView> PartyViews => partyViews;
+            public IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews => PartyViewsDragPanel.PartyViews;
 
             public bool RunOnMouseEvent(MouseEventData e)
             {
