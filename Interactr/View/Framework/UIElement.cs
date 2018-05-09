@@ -453,13 +453,13 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         private void BubbleUpMouseEvent(MouseEventData eventData)
         {
+            _mouseEventOccured.OnNext(eventData);
             OnMouseEvent(eventData);
             if (eventData.IsHandled)
             {
                 return;
             }
 
-            _mouseEventOccured.OnNext(eventData);
             OnMouseEvent(eventData);
             if (eventData.IsHandled || Parent == null)
             {
