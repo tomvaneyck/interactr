@@ -325,3 +325,5 @@ Desktop.ini
 # Code coverage ignore
 Generate coverage report\.ps1
 Reports/
+
+venv/
