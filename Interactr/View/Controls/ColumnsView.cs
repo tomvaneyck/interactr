@@ -16,6 +16,7 @@ namespace Interactr.View.Controls
     public class ColumnsView : AnchorPanel
     {
         public StackPanel ColumnsPanel { get; } = new StackPanel();
+        private DragPanel _reorderingPanel;
         private UIElement _activeDummy;
 
         public ColumnsView()
@@ -23,14 +24,14 @@ namespace Interactr.View.Controls
             // Setup panels
             this.Children.Add(ColumnsPanel);
 
-            var reorderingPanel = new DragPanel
+            _reorderingPanel = new DragPanel
             {
                 IsVisibleToMouse = false
             };
-            this.Children.Add(reorderingPanel);
+            this.Children.Add(_reorderingPanel);
 
             // When a child receives MOUSE_PRESSED, start a drag.
-            ColumnsPanel.Children.ObserveEach(c => c.MouseEventOccured)
+            /*ColumnsPanel.Children.ObserveEach(c => c.MouseEventOccured)
                 .Where(e => e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 .Subscribe(e =>
                 {
@@ -42,36 +43,62 @@ namespace Interactr.View.Controls
                         PreferredHeight = e.Element.PreferredHeight
                     };
                     ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
-                    reorderingPanel.Children.Add(e.Element);
+                    _reorderingPanel.Children.Add(e.Element);
 
                     // Make sure dragpanel receives mouse events
-                    reorderingPanel.IsVisibleToMouse = true;
+                    _reorderingPanel.IsVisibleToMouse = true;
                 }
-            );
+            );*/
             
             // When the dragging finishes, move the element in the stack
-            reorderingPanel.OnDragFinished.Subscribe(dragElement =>
+            _reorderingPanel.OnDragFinished.Subscribe(dragElement =>
             {
                 // Reset the drag panel
-                reorderingPanel.Children.Remove(dragElement);
-                reorderingPanel.IsVisibleToMouse = false;
+                _reorderingPanel.Children.Remove(dragElement);
+                _reorderingPanel.IsVisibleToMouse = false;
 
                 // Find the position to insert the element at.
+                int insertionIndex = ColumnsPanel.Children.Count; // Append by default
                 int curX = 0;
                 for (var i = 0; i < ColumnsPanel.Children.Count; i++)
                 {
                     var child = ColumnsPanel.Children[i];
-                    curX += child.PreferredWidth;
-                    if (curX >= dragElement.Position.X)
+                    if (curX + (child.PreferredWidth/2) >= (dragElement.Position.X + (dragElement.PreferredWidth/2)))
                     {
                         // Insert dragged element at i.
-                        ColumnsPanel.Children.Insert(i, dragElement);
+                        insertionIndex = i;
+                        break;
                     }
+                    curX += child.PreferredWidth;
                 }
+                ColumnsPanel.Children.Insert(insertionIndex, dragElement);
 
                 // Remove dummy element.
                 ColumnsPanel.Children.Remove(_activeDummy);
             });
+        }
+
+        protected override bool OnMouseEventPreview(MouseEventData e)
+        {
+            UIElement column = this.FindElementAt(e.MousePosition).WalkToRoot().FirstOrDefault(c => c.Parent == ColumnsPanel);
+            if (column == null)
+            {
+                return base.OnMouseEventPreview(e);
+            }
+
+            // Replace the element from the stack with a dummy and the element to the dragpanel
+            int indexOfSelectedChild = ColumnsPanel.Children.IndexOf(column);
+            _activeDummy = new UIElement
+            {
+                PreferredWidth = column.PreferredWidth,
+                PreferredHeight = column.PreferredHeight
+            };
+            ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
+            _reorderingPanel.Children.Add(column);
+
+            // Make sure dragpanel receives mouse events
+            _reorderingPanel.IsVisibleToMouse = true;
+            return true;
         }
     }
 }
