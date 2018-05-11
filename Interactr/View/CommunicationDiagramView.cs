@@ -37,9 +37,9 @@ namespace Interactr.View
         public readonly PartyViewsDragPanel PartyViewsDragPanel;
 
         private readonly IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
-        
+
         private IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
-        
+
         public CommunicationDiagramView()
         {
             // Define the visibility of this view to be set to the visibility of the latest viewmodel assigned to this view.
@@ -110,18 +110,19 @@ namespace Interactr.View
             )
             {
                 var elementToDelete = FocusedElement.Parent;
-                if (elementToDelete is PartyView)
+                if (elementToDelete is PartyView partyViewToDelete)
                 {
                     // Delete the party from the viewmodel. This automatically
                     // propagates to the view and the model.
-                    ViewModel.DeleteParty(((PartyView) elementToDelete).ViewModel.Party);
+                    ViewModel.DeleteParty(partyViewToDelete.ViewModel.Party);
                     return true;
                 }
-                else if (elementToDelete is CommunicationDiagramMessageView)
+
+                if (elementToDelete is CommunicationDiagramMessageView messageViewToDelete)
                 {
                     // Delete the message from the viewmodel. This automatically propagates
                     // to the view and the model.
-                    ViewModel.DeleteMessage(((CommunicationDiagramMessageView) elementToDelete).ViewModel.Message);
+                    ViewModel.DeleteMessage(messageViewToDelete.ViewModel.Message);
                 }
             }
 

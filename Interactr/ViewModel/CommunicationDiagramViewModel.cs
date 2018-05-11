@@ -19,7 +19,7 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        private IReadOnlyReactiveList<MessageViewModel> MessageViewModelsReactive { get; }
+        private readonly IReadOnlyReactiveList<MessageViewModel> _messageViewModelsReactive; 
 
         /// <summary>
         /// The message view models for the communication diagram, but in IReadOnlyList form.
@@ -30,19 +30,19 @@ namespace Interactr.ViewModel
         /// </summary>
         protected override IReadOnlyList<MessageViewModel> MessageViewModels
         {
-            get => MessageViewModelsReactive;
+            get => _messageViewModelsReactive;
         }
 
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
-            MessageViewModelsReactive = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
-            InvocationMessageViewModels = MessageViewModelsReactive
+            _messageViewModelsReactive = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
+            InvocationMessageViewModels = _messageViewModelsReactive
                 .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 
             // Set the numbers for the messages in the message view models.
             SetMessageViewModelNumbers();
-            MessageViewModelsReactive.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
+            _messageViewModelsReactive.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
                 .Subscribe(_ => SetMessageViewModelNumbers());
         }
 
@@ -58,7 +58,7 @@ namespace Interactr.ViewModel
         {
             try
             {
-                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(MessageViewModelsReactive))
+                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(_messageViewModelsReactive))
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {

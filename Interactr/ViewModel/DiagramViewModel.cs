@@ -94,22 +94,20 @@ namespace Interactr.ViewModel
             {
                 foreach (var stackFrame in MessageStackWalker.Walk(copyMessageViewModels))
                 {
-                    if (stackFrame.SubFrames.Count != 0)
+
+                    foreach (var subFrame in stackFrame.SubFrames)
                     {
-                        foreach (var subFrame in stackFrame.SubFrames)
+                        if (subFrame.InvocationMessage != null && message == subFrame.InvocationMessage.Message)
                         {
-                            if (subFrame.InvocationMessage != null && message == subFrame.InvocationMessage.Message)
+                            // Delete the invocation and return message.
+                            DeleteSingleMessage(subFrame.InvocationMessage.Message);
+                            DeleteSingleMessage(subFrame.ReturnMessage.Message);
+
+                            // Delete the invocation and return message of all the subframes.
+                            foreach (var subsubFrame in subFrame.SubFrames)
                             {
-                                // Delete the invocation and return message.
-                                DeleteSingleMessage(subFrame.InvocationMessage.Message);
-                                DeleteSingleMessage(subFrame.ReturnMessage.Message);
-                                
-                                // Delete the invocation and return message of all the subframes.
-                                foreach (var subsubFrame in subFrame.SubFrames)
-                                {
-                                    DeleteMessage(subsubFrame.InvocationMessage.Message);
-                                    DeleteMessage(subsubFrame.ReturnMessage.Message);
-                                }
+                                DeleteMessage(subsubFrame.InvocationMessage.Message);
+                                DeleteMessage(subsubFrame.ReturnMessage.Message);
                             }
                         }
                     }

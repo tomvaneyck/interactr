@@ -119,6 +119,7 @@ namespace Interactr.View.Framework
                 {
                     throw new ArgumentException("Invalid width value: " + value);
                 }
+
                 _width.Value = value;
             }
         }
@@ -140,6 +141,7 @@ namespace Interactr.View.Framework
                 {
                     throw new ArgumentException("Invalid height value: " + value);
                 }
+
                 _height.Value = value;
             }
         }
@@ -208,7 +210,7 @@ namespace Interactr.View.Framework
         public IObservable<bool> IsVisibleToMouseChanged => _isVisibleToMouse.Changed;
 
         #endregion
-        
+
         #region Focus
 
         public bool IsFocused => FocusedElement == this;
@@ -583,10 +585,13 @@ namespace Interactr.View.Framework
         {
             // Element to be painted.
             public UIElement Element { get; set; }
+
             // Origin point of this element.
             public Point Origin { get; set; }
+
             // Actual width in pixels to render the Element at.
             public int RenderWidth { get; set; }
+
             // Actual height in pixels to render the Element at.
             public int RenderHeight { get; set; }
         }
@@ -650,22 +655,20 @@ namespace Interactr.View.Framework
 
             foreach (UIElement childContainingPoint in childrenContainingPoint)
             {
-                    Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
-                    var returnValue = childContainingPoint.FindElementAt(relativePosition);
-                    if (returnValue != null)
-                    {
+                Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
+                var returnValue = childContainingPoint.FindElementAt(relativePosition);
+                if (returnValue != null)
+                {
                     return returnValue;
-                    }
+                }
             }
 
             if (this.IsVisibleToMouse)
             {
                 return this;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>

@@ -100,19 +100,17 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                if (FocusedElement.Parent.GetType() == typeof(PartyView))
+                if (FocusedElement.Parent is PartyView partyView)
                 {
                     // Delete party.
-                    PartyView partyView = (PartyView) FocusedElement.Parent;
                     ViewModel.DeleteParty(partyView.ViewModel.Party);
 
                     return true;
                 }
-                
-                if (FocusedElement.Parent.GetType() == typeof(SequenceDiagramMessageView))
+
+                if (FocusedElement.Parent is SequenceDiagramMessageView messageView)
                 {
                     // Delete message.
-                    SequenceDiagramMessageView messageView = (SequenceDiagramMessageView) FocusedElement.Parent;
                     ViewModel.DeleteMessage(messageView.ViewModel.Message);
                     return true;
                 }
