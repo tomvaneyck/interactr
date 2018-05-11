@@ -90,36 +90,42 @@ namespace Interactr.ViewModel
             // Create a copy of messageViewModels because the original is not allowed to be modified while
             // iterating the elements, because it results in a concurrent modification error.
             IReadOnlyList<MessageViewModel> copyMessageViewModels = MessageViewModels.ToList();
-            try
-            {
-                foreach (var stackFrame in MessageStackWalker.Walk(copyMessageViewModels))
-                {
-                    if (stackFrame.InvocationMessage != null && message == stackFrame.InvocationMessage.Message)
-                    {
-                        DeleteSingleMessage(stackFrame.InvocationMessage.Message);
-                        DeleteSingleMessage(stackFrame.ReturnMessage.Message);
 
-                        foreach (var subFrame in stackFrame.SubFrames)
+            foreach (var messageToDelete in MessagesToDelete(message, copyMessageViewModels))
+            {
+                Diagram.Messages.Remove(messageToDelete);
+            }
+        }
+
+        private IEnumerable<Message> MessagesToDelete(Message message,
+            IReadOnlyList<MessageViewModel> messageList)
+        {
+            foreach (var stackFrame in MessageStackWalker.Walk(messageList))
+            {
+                if (stackFrame.InvocationMessage != null && message == stackFrame.InvocationMessage.Message)
+                {
+                    yield return stackFrame.InvocationMessage.Message;
+                    yield return stackFrame.ReturnMessage.Message;
+
+                    foreach (var subFrame in stackFrame.SubFrames)
+                    {
+                        if (subFrame.InvocationMessage != null)
                         {
-                            if (subFrame.InvocationMessage != null)
+                            foreach (var invToDelete in MessagesToDelete(subFrame.InvocationMessage.Message,
+                                messageList))
                             {
-                                // Delete the invocation and return message.
-                                DeleteMessage(subFrame.InvocationMessage.Message);
-                                DeleteMessage(subFrame.ReturnMessage.Message);
+                                yield return invToDelete;
+                            }
+
+                            foreach (var returnToDelete in
+                                MessagesToDelete(subFrame.ReturnMessage.Message, messageList))
+                            {
+                                yield return returnToDelete;
                             }
                         }
                     }
                 }
             }
-            catch (UnbalancedStackException)
-            {
-                Debug.Print("Stack was unbalanced.");
-            }
-        }
-
-        private void DeleteSingleMessage(Message message)
-        {
-            Diagram.Messages.Remove(message);
         }
     }
 }
