@@ -87,8 +87,8 @@ namespace Interactr.ViewModel
         /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
         public void DeleteMessage(Message message)
         {
-            // Create a copy of messageViewModels because the original can be modified while iterating the elements.
-            // which results in a concurrent modification error.
+            // Create a copy of messageViewModels because the original is not allowed to be modified while
+            // iterating the elements, because it results in a concurrent modification error.
             IReadOnlyList<MessageViewModel> copyMessageViewModels = MessageViewModels.ToList();
             try
             {
