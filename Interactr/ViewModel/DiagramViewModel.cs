@@ -87,10 +87,10 @@ namespace Interactr.ViewModel
         /// <param name="message">Also propagates to the viewmodel and deletes the message in the viewmodel.</param>
         public void DeleteMessage(Message message)
         {
-            Diagram.Messages.RemoveAll(MessagesToDelete(message, MessageViewModels));
+            Diagram.Messages.RemoveAll(GetMessagesToDelete(message, MessageViewModels));
         }
 
-        private IEnumerable<Message> MessagesToDelete(Message message,
+        private IEnumerable<Message> GetMessagesToDelete(Message message,
             IReadOnlyList<MessageViewModel> messageList)
         {
             var stackFrame = MessageStackWalker.Walk(messageList)
@@ -105,14 +105,14 @@ namespace Interactr.ViewModel
                 {
                     if (subFrame.InvocationMessage != null)
                     {
-                        foreach (var invToDelete in MessagesToDelete(subFrame.InvocationMessage.Message,
+                        foreach (var invToDelete in GetMessagesToDelete(subFrame.InvocationMessage.Message,
                             messageList))
                         {
                             yield return invToDelete;
                         }
 
                         foreach (var returnToDelete in
-                            MessagesToDelete(subFrame.ReturnMessage.Message, messageList))
+                            GetMessagesToDelete(subFrame.ReturnMessage.Message, messageList))
                         {
                             yield return returnToDelete;
                         }
