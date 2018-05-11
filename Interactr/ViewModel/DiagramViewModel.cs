@@ -94,20 +94,18 @@ namespace Interactr.ViewModel
             {
                 foreach (var stackFrame in MessageStackWalker.Walk(copyMessageViewModels))
                 {
-
-                    foreach (var subFrame in stackFrame.SubFrames)
+                    if (stackFrame.InvocationMessage != null && message == stackFrame.InvocationMessage.Message)
                     {
-                        if (subFrame.InvocationMessage != null && message == subFrame.InvocationMessage.Message)
-                        {
-                            // Delete the invocation and return message.
-                            DeleteSingleMessage(subFrame.InvocationMessage.Message);
-                            DeleteSingleMessage(subFrame.ReturnMessage.Message);
+                        DeleteSingleMessage(stackFrame.InvocationMessage.Message);
+                        DeleteSingleMessage(stackFrame.ReturnMessage.Message);
 
-                            // Delete the invocation and return message of all the subframes.
-                            foreach (var subsubFrame in subFrame.SubFrames)
+                        foreach (var subFrame in stackFrame.SubFrames)
+                        {
+                            if (subFrame.InvocationMessage != null)
                             {
-                                DeleteMessage(subsubFrame.InvocationMessage.Message);
-                                DeleteMessage(subsubFrame.ReturnMessage.Message);
+                                // Delete the invocation and return message.
+                                DeleteMessage(subFrame.InvocationMessage.Message);
+                                DeleteMessage(subFrame.ReturnMessage.Message);
                             }
                         }
                     }
