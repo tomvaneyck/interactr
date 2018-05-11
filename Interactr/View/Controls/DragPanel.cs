@@ -77,7 +77,12 @@ namespace Interactr.View.Controls
             }
             else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
             {
-                _childBeingDragged?.ReleaseMouseCapture();
+                if (_childBeingDragged != null)
+                {
+                    _childBeingDragged.ReleaseMouseCapture();
+                    _onDragFinished.OnNext(_childBeingDragged);
+                    _childBeingDragged = null;
+                }
             }
 
             return base.OnMouseEventPreview(eventData);
