@@ -326,4 +326,4 @@ Desktop.ini
 Generate coverage report\.ps1
 Reports/
 
-venv/
+venv*/
