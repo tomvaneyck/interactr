@@ -90,14 +90,24 @@ namespace Interactr.ViewModel
             Diagram.Messages.RemoveAll(GetMessagesToDelete(message, MessageViewModels));
         }
 
-        private IEnumerable<Message> GetMessagesToDelete(Message message,
+        /// <summary>
+        /// Retrieve all the messages that should be deleted as a consequence of one message that gets deleted.
+        /// This means all messages that present in the subframes of this message and the message itself.
+        /// </summary>
+        /// <param name="message">The message that is being deleted</param>
+        /// <param name="messageList"> The list we ant to delete from</param>
+        /// <returns></returns>
+        private static IEnumerable<Message> GetMessagesToDelete(Message message,
             IReadOnlyList<MessageViewModel> messageList)
         {
+            // There can only ever be one stackframe that has our message as an invocation message.
             var stackFrame = MessageStackWalker.Walk(messageList)
                 .FirstOrDefault(frame => frame.InvocationMessage?.Message == message);
 
             if (stackFrame != null)
             {
+                // The invocation message and it's corresponding return message 
+                // that should get deleted.
                 yield return stackFrame.InvocationMessage.Message;
                 yield return stackFrame.ReturnMessage.Message;
 
@@ -105,16 +115,13 @@ namespace Interactr.ViewModel
                 {
                     if (subFrame.InvocationMessage != null)
                     {
-                        foreach (var invToDelete in GetMessagesToDelete(subFrame.InvocationMessage.Message,
+                        // yield return all the messages that get deleted as a result of the deletion of message,
+                        // This happens through recursively calling GetMessagesToDelete with the invocation message 
+                        // of the subframe as the new target delete message.
+                        foreach (var messageToDelete in GetMessagesToDelete(subFrame.InvocationMessage.Message,
                             messageList))
                         {
-                            yield return invToDelete;
-                        }
-
-                        foreach (var returnToDelete in
-                            GetMessagesToDelete(subFrame.ReturnMessage.Message, messageList))
-                        {
-                            yield return returnToDelete;
+                            yield return messageToDelete;
                         }
                     }
                 }
