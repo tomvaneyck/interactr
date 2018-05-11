@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Properties;
@@ -122,7 +123,8 @@ namespace Interactr.View
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
             {
                 Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();

@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Interactr.Reactive;
+using Interactr.View.Controls;
 using Interactr.Window;
 
 namespace Interactr.View.Framework
@@ -215,8 +216,6 @@ namespace Interactr.View.Framework
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
 
-        public bool CanLoseFocus { get; set; } = true;
-
         #endregion
 
         #region RepaintRequested
@@ -297,7 +296,9 @@ namespace Interactr.View.Framework
         /// </summary>
         public void Focus()
         {
-            if (this == FocusedElement || (!FocusedElement?.CanLoseFocus ?? false))
+            WindowsView.Window window = WalkToRoot().OfType<WindowsView.Window>().FirstOrDefault();
+            LabelView labelBeingEdited = window != null ? LabelView.LabelBeingEdited.GetValue(window) : null; 
+            if (this == FocusedElement || ((!labelBeingEdited?.CanLeaveEditMode ?? false) && this != labelBeingEdited))
             {
                 // This is already focused
                 return;

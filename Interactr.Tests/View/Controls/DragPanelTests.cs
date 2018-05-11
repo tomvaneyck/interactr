@@ -22,7 +22,6 @@ namespace Interactr.Tests.View.Controls
             RectangleView r = new RectangleView();
             r.PreferredHeight = 1;
             r.PreferredWidth = 1;
-            r.CanLoseFocus = true;
             r.Position = new Point(1, 1);
             dp.Children.Add(r);
             MouseEventData mev = new MouseEventData(MouseEvent.MOUSE_PRESSED, new Point(1, 1), 1);
@@ -46,7 +45,6 @@ namespace Interactr.Tests.View.Controls
             RectangleView r = new RectangleView();
             r.PreferredHeight = 3;
             r.PreferredWidth = 3;
-            r.CanLoseFocus = true;
             r.Position = new Point(3, 3);
             dp.Children.Add(r);
             r.Focus();

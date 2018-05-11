@@ -116,7 +116,14 @@ namespace Interactr.View
             ViewModelChanged
                 .ObserveNested(vm => vm.StackVM.PendingInvokingMessageVMChanged)
                 .Select(vm => vm != null)
-                .Subscribe(hasPendingMessage => _pendingMessageView.IsVisible = hasPendingMessage);
+                .Subscribe(hasPendingMessage =>
+                {
+                    _pendingMessageView.IsVisible = hasPendingMessage;
+                    if (hasPendingMessage)
+                    {
+                        Focus();
+                    }
+                });
 
             // Set the correct start and endpoint for the pending message view.
             ViewModelChanged
@@ -162,13 +169,27 @@ namespace Interactr.View
                 });
 
             Children.Add(_pendingMessageView);
+
+            // Debugging code
+            ParentChanged.Where(parent => parent?.Parent != null).Subscribe(_ =>
+            {
+                WalkToRoot()
+                .OfType<WindowsView.Window>()
+                .First()
+                .AttachedProperties
+                .OnValueChanged
+                .Where(attachedProperty => attachedProperty.Key == LabelView.LabelBeingEdited)
+                .Subscribe(__ => { });
+            });
+            
         }
 
         /// <see cref="OnMouseEvent"/>
         protected override bool OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);

@@ -84,7 +84,8 @@ namespace Interactr.View
         protected override bool OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
             {
                 Debug.WriteLine("Add Party.");
                 //Add a new Party.
@@ -240,6 +241,19 @@ namespace Interactr.View
             // Automatically add and remove party views to Children.
             PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
             PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+        }
+
+        protected override bool OnMouseEvent(MouseEventData eventData)
+        {
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            if ((labelBeingEdited?.CanLeaveEditMode ?? true))
+            {
+                return base.OnMouseEvent(eventData); 
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

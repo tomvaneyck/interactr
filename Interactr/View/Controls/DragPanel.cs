@@ -34,7 +34,7 @@ namespace Interactr.View.Controls
         /// <see cref="UIElement.OnMouseEvent(MouseEventData)"/>
         protected override bool OnMouseEvent(MouseEventData eventData)
         {
-            if (eventData.Id == MouseEvent.MOUSE_DRAGGED && FocusedElement.CanLoseFocus)
+            if (eventData.Id == MouseEvent.MOUSE_DRAGGED)
             {
                 MouseDragEventData dragEventData = new MouseDragEventData(
                     eventData.MousePosition.X - _previousCursorPosition.X,

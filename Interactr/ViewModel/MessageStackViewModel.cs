@@ -127,7 +127,7 @@ namespace Interactr.ViewModel
                 newBars.Reverse(); // Fix for correct drawing order of activation bar.
                 ActivationBars.AddRange(newBars);
             }
-            catch (UnbalancedStackException ex)
+            catch (UnbalancedStackException)
             {
                 // The message stack is in an invalid state, dont update UI.
             }

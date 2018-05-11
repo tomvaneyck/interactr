@@ -16,6 +16,8 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LabelView : UIElement
     {
+        public static AttachedProperty<LabelView> LabelBeingEdited { get; } = new AttachedProperty<LabelView>(null);
+
         #region Text
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
@@ -169,22 +171,36 @@ namespace Interactr.View.Controls
                 Repaint();
             });
 
-            // Leave edit mode if focus is lost and Repaint.
-            FocusChanged.Subscribe(isFocused =>
+            // Set attached property on window when edit mode changed.
+            EditModeChanged.Subscribe(editMode =>
             {
-                if (!isFocused)
+                WindowsView.Window window = WalkToRoot().OfType<WindowsView.Window>().FirstOrDefault();
+
+                if (window != null)
+                {
+                    if (editMode)
+                    {
+                        LabelBeingEdited.SetValue(window, this);
+                    }
+                    else
+                    {
+                        LabelBeingEdited.SetValue(window, null);
+                    }
+                }
+            });
+
+            // Exit edit mode when focus is lost and the label can leave edit mode.
+            FocusChanged.Where(_ => !_).Subscribe(_ =>
+            {
+                if (CanLeaveEditMode)
                 {
                     IsInEditMode = false;
                 }
-
-                Repaint();
             });
 
             // Ignore mouse clicked when just received focus.
             FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
 
-            // Update canLoseFocus when the CanLeaveEditMode is changed.
-            CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
             CanLeaveEditMode = true;
         }
 
@@ -199,16 +215,24 @@ namespace Interactr.View.Controls
 
             using (Pen pen = new Pen(Color))
             {
-                // Draw editing rectangle
-                if (IsFocused)
+                // Draw editing rectangle.
+                if (IsInEditMode)
+                {
+                    using (Pen borderPen = new Pen(Color.DodgerBlue))
+                    {
+                        g.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
+                    }
+                
+                    // Draw cursor.
+                    if (_cursorIsVisible)
+                    {
+                        g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                    }
+                }
+                // Draw focusing rectangle.
+                else if (IsFocused)
                 {
                     g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-                }
-
-                // Draw cursor.
-                if (_cursorIsVisible)
-                {
-                    g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
                 }
             }
         }
