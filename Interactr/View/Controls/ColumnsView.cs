@@ -26,7 +26,8 @@ namespace Interactr.View.Controls
 
             _reorderingPanel = new DragPanel
             {
-                IsVisibleToMouse = false
+                IsVisibleToMouse = false,
+                DraggableOrientations = Orientation.Horizontal
             };
             this.Children.Add(_reorderingPanel);
 
@@ -98,6 +99,10 @@ namespace Interactr.View.Controls
 
             // Make sure dragpanel receives mouse events
             _reorderingPanel.IsVisibleToMouse = true;
+
+            // We need to focus the element for the dragging to work.
+            column.Focus();
+
             return true;
         }
     }

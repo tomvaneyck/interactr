@@ -36,6 +36,11 @@ namespace Interactr.View.Controls
         public IObservable<UIElement> OnDragFinished => _onDragFinished;
         #endregion
 
+        /// <summary>
+        /// On which axes should the children be movable?
+        /// </summary>
+        public Orientation DraggableOrientations { get; set; } = Orientation.Horizontal | Orientation.Vertical;
+
         public DragPanel()
         {
             // Update layout when the width or height is changed.
@@ -111,11 +116,19 @@ namespace Interactr.View.Controls
             {
                 _childBeingDragged.CaptureMouse();
 
-                Point newPosition = new Point(
-                    (int) (_childBeingDragged.Position.X + dragEventData.DeltaX),
-                    (int) (_childBeingDragged.Position.Y + dragEventData.DeltaY)
-                );
+                int newX = _childBeingDragged.Position.X;
+                if (DraggableOrientations.HasFlag(Orientation.Horizontal))
+                {
+                    newX += (int)dragEventData.DeltaX;
+                }
 
+                int newY = _childBeingDragged.Position.Y;
+                if (DraggableOrientations.HasFlag(Orientation.Vertical))
+                {
+                    newY += (int)dragEventData.DeltaY;
+                }
+
+                Point newPosition = new Point(newX, newY);
                 if (IsValidPosition(_childBeingDragged, newPosition))
                 {
                     _childBeingDragged.Position = newPosition;
