@@ -48,6 +48,9 @@ if not Path("./Documentation/docfx.json").exists:
 # Download tools.
 print("Downloading necessary tools...")
 
+if not os.path.exists("./Documentation/Tools/"):
+    os.makedirs("./Documentation/Tools/")
+
 with urllib.request.urlopen("https://api.github.com/repos/dotnet/docfx/releases/latest") as url:
     latestReleaseResponse = json.loads(url.read().decode())
     url = latestReleaseResponse["assets"][0]["browser_download_url"]
