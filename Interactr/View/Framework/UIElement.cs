@@ -677,24 +677,31 @@ namespace Interactr.View.Framework
         /// <returns></returns>
         public UIElement FindElementAt(Point point)
         {
-            UIElement childContainingPoint = Children
+            IEnumerable<UIElement> childrenContainingPoint = Children
                 .Reverse()
-                .FirstOrDefault(child =>
+                .Where(child =>
                     child.IsVisible &&
-                    child.IsVisibleToMouse &&
                     point.X >= child.Position.X && point.Y >= child.Position.Y &&
                     point.X < (child.Position.X + child.Width) &&
                     point.Y < (child.Position.Y + child.Height)
                 );
 
-            if (childContainingPoint == null)
+            foreach (UIElement childContainingPoint in childrenContainingPoint)
             {
-                //No child of this element contains 'point', so this is the deepest element that does.
+                Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
+                var returnValue = childContainingPoint.FindElementAt(relativePosition);
+                if (returnValue != null)
+                {
+                    return returnValue;
+                }
+            }
+
+            if (this.IsVisibleToMouse)
+            {
                 return this;
             }
 
-            Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
-            return childContainingPoint.FindElementAt(relativePosition);
+            return null;
         }
 
         /// <summary>

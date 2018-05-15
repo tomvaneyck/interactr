@@ -100,12 +100,25 @@ namespace Interactr.View
                 FocusedElement.GetType() == typeof(LabelView)
             )
             {
-                // Delete party.
-                PartyView partyView = (PartyView) FocusedElement.Parent;
-                ViewModel.DeleteParty(partyView.ViewModel.Party);
+                if (FocusedElement.Parent is PartyView partyView)
+                {
+                    // Delete party.
+                    ViewModel.DeleteParty(partyView.ViewModel.Party);
 
+//<<<<<<< feature/implementEventData
                 // Cancel the event propagation.
                 eventData.IsHandled = true;
+//=======
+                    return true;
+                }
+
+                if (FocusedElement.Parent is SequenceDiagramMessageView messageView)
+                {
+                    // Delete message.
+                    ViewModel.DeleteMessage(messageView.ViewModel.Message);
+                    return true;
+                }
+//>>>>>>> develop
             }
         }
 
@@ -182,7 +195,6 @@ namespace Interactr.View
                 e.IsHandled = true;
                 return;
             }
-
             base.OnMouseEvent(e);
         }
     }

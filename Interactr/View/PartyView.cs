@@ -89,15 +89,6 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
 
-            // Bind text of label between this and PartyViewModel.
-            _labelView.TextChanged.Subscribe(text =>
-            {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
-            });
-
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
 
