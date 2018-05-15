@@ -66,7 +66,7 @@ print("\nUnzipping tools...")
 with zipfile.ZipFile("./Documentation/Tools/docfx.zip", 'r') as docfxzip:
     docfxzip.extractall("./Documentation/Tools/docfx")
 
-exelocation = ".\Documentation\Tools\docfx\docfx.exe "
+exelocation = os.path.join(".", "Documentation", "Tools", "docfx", "docfx.exe ")
 if platform.system() != "Windows":
     exelocation = "mono " + exelocation
 
@@ -76,13 +76,13 @@ os.system(exelocation + "init -q -o Documentation")
 
 # Force build the metadata
 print("--------------------------\nForce building the metadata...\n")
-os.system(exelocation + "metadata .\Documentation\docfx.json -f")
+os.system(exelocation + "metadata " + os.path.join(".", "Documentation", "docfx.json") + " -f")
 
 # Force build the documentation
 print("--------------------------\nForce building the documentaion...\n")
-os.system(exelocation + "build .\Documentation\docfx.json -f")
+os.system(exelocation + "build " + os.path.join(".", "Documentation", "docfx.json") + " -f")
 
 # Serve the documentation if wanted by the user
 print("--------------------------\n")
 if yes_or_no("The documentation can be served on http://localhost:8080. Do you want this to happen?"):
-    os.system(exelocation + "serve .\Documentation\_site")
+    os.system(exelocation + "serve " + os.path.join(".", "Documentation", "_site"))
