@@ -37,6 +37,31 @@ namespace Interactr.View.Framework
 
         #endregion
 
+
+        #region InputEvents
+
+        #region Mouse
+
+        private readonly Subject<MouseEventData> _mouseEventPreviewOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventPreviewOccured => _mouseEventPreviewOccured;
+
+        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
+
+        #endregion
+
+        #region Key
+
+        private readonly Subject<KeyEventData> _keyEventPreviewOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventPreviewOccurred => _keyEventPreviewOccurred;
+
+        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
+
+        #endregion
+
+        #endregion
+
         #region MouseCapturingElement
 
         private static readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
@@ -228,15 +253,6 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        #region Input event observables
-
-        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
-        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
-
-        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
-        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
-
-        #endregion
 
         public bool CanBeFocused { get; protected set; } = true;
 
@@ -351,6 +367,12 @@ namespace Interactr.View.Framework
                 {
                     return;
                 }
+
+                element._keyEventPreviewOccurred.OnNext(eventData);
+                if (eventData.IsHandled)
+                {
+                    return;
+                }
             }
         }
 
@@ -436,8 +458,16 @@ namespace Interactr.View.Framework
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
                 var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
-                element.OnMouseEventPreview(newMouseEventData);
 
+                element.OnMouseEventPreview(newMouseEventData);
+                if (newMouseEventData.IsHandled)
+                {
+                    // Stop event propagation.
+                    eventData.IsHandled = true;
+                    return;
+                }
+
+                element._mouseEventOccured.OnNext(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
                     // Stop event propagation.
@@ -453,18 +483,21 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         private void BubbleUpMouseEvent(MouseEventData eventData)
         {
-            _mouseEventOccured.OnNext(eventData);
             OnMouseEvent(eventData);
             if (eventData.IsHandled)
             {
                 return;
             }
 
-            OnMouseEvent(eventData);
-            if (eventData.IsHandled || Parent == null)
+            _mouseEventOccured.OnNext(eventData);
+            if (eventData.IsHandled)
             {
-                // Stop event propagation.
-                eventData.IsHandled = true;
+                return;
+            }
+
+            // Return at root.
+            if (Parent == null)
+            {
                 return;
             }
 
