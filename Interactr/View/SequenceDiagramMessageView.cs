@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
+using LineType = Interactr.View.Controls.LineView.LineType;
 
 namespace Interactr.View
 {
@@ -50,9 +50,7 @@ namespace Interactr.View
             // Set the display style of the arrow.
             ViewModelChanged.Where(vm => vm != null).Subscribe(vm =>
             {
-                _arrow.Style = vm.MessageType == Message.MessageType.Invocation
-                    ? LineView.LineType.Solid
-                    : LineView.LineType.Dotted;
+                _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
             // Put the label under the arrow.

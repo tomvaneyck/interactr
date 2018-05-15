@@ -179,8 +179,7 @@ namespace Interactr.View
                                             (Parent?.Parent?.Position ?? new Point(0, 0)));
 
             // Dynamically change if the message is achored to the left or right arrowStack in the partyview.
-            receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(
-                _ =>
+            receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(_ =>
                 {
                     // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
                     if (receiverPartyView.Position.X < senderPartyView.Position.X &&
