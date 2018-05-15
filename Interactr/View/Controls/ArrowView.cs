@@ -33,6 +33,7 @@ namespace Interactr.View.Controls
         public ArrowView()
         {
             CanBeFocused = false;
+            IsVisibleToMouse = false;
 
             // Default values.
             ArrowHeadSize = 10;

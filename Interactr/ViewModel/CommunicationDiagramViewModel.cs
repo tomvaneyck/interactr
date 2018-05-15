@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Interactr.Model;
 using System.Reactive.Linq;
 using Interactr.Reactive;
@@ -15,26 +13,38 @@ namespace Interactr.ViewModel
     /// <see cref="DiagramViewModel"/>
     public class CommunicationDiagramViewModel : DiagramViewModel
     {
-        public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
-        {
-            // Create message view models for every invocation message in the diagram model.
-            MessageViewModels = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
-            InvocationMessageViewModels = MessageViewModels
-                .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
-
-            // Set the numbers for the messages in the message view models.
-            SetMessageViewModelNumbers();
-            MessageViewModels.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
-                .Subscribe(_ => SetMessageViewModelNumbers());
-        }
-
         /// <summary>
         /// The Messages view models for messages that will be drawn in the communication diagram.
         /// </summary>
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        public readonly IReadOnlyReactiveList<MessageViewModel> MessageViewModels;
+        private readonly IReadOnlyReactiveList<MessageViewModel> _messageViewModelsReactive; 
+
+        /// <summary>
+        /// The message view models for the communication diagram, but in IReadOnlyList form.
+        /// <remarks>
+        /// This is necessary because the compiler cannot derive inheritance for generic types
+        /// in DerivedList which causes the compiler to complain at compileTime when specifying IReadOnlyDerivedList.
+        /// </remarks>
+        /// </summary>
+        protected override IReadOnlyList<MessageViewModel> MessageViewModels
+        {
+            get => _messageViewModelsReactive;
+        }
+
+        public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
+        {
+            // Create message view models for every invocation message in the diagram model.
+            _messageViewModelsReactive = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
+            InvocationMessageViewModels = _messageViewModelsReactive
+                .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
+
+            // Set the numbers for the messages in the message view models.
+            SetMessageViewModelNumbers();
+            _messageViewModelsReactive.OnAdd.Where(mv => mv.Element.MessageType == Message.MessageType.Result)
+                .Subscribe(_ => SetMessageViewModelNumbers());
+        }
 
         /// <summary>
         /// The view models of invocation messages.
@@ -48,7 +58,7 @@ namespace Interactr.ViewModel
         {
             try
             {
-                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(MessageViewModels))
+                foreach (var stackFrame in MessageStackWalker.Walk<MessageViewModel>(_messageViewModelsReactive))
                 {
                     if (stackFrame.SubFrames.Count != 0)
                     {
