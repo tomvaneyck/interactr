@@ -123,11 +123,6 @@ namespace Interactr.View
             base.OnMouseEvent(eventData);
         }
 
-        /// <see cref="OnKeyEvent"/>
-        protected override void OnKeyEvent(KeyEventData eventData)
-        {
-        }
-
         /// <summary>
         /// Assign two anchor points to a messageview.
         /// The arrow startpoint of the message gets connected to an arrowAnchorElement on an arrowStack of the sender.

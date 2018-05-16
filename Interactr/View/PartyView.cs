@@ -115,7 +115,6 @@ namespace Interactr.View
         {
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
-                Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
                 e.IsHandled = true;
