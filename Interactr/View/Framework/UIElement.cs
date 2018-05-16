@@ -37,7 +37,6 @@ namespace Interactr.View.Framework
 
         #endregion
 
-
         #region InputEvents
 
         #region Mouse
@@ -252,7 +251,6 @@ namespace Interactr.View.Framework
         public IObservable<Unit> RepaintRequested => _repaintRequested;
 
         #endregion
-
 
         public bool CanBeFocused { get; protected set; } = true;
 
