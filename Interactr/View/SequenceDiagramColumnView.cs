@@ -32,6 +32,8 @@ namespace Interactr.View
             // Set up viewmodel subscription.
             parent.ViewModelChanged.Select(vm => vm.StackVM)
                 .Subscribe(stackVM => LifeLineView.ViewModel = stackVM.CreateLifeLineForParty(partyVM));
+            
+            
         }
     }
 }

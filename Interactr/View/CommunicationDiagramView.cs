@@ -79,17 +79,42 @@ namespace Interactr.View
 
             // Remove a message view from the children when deleted.
             _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            _partyViews.ObserveEach(pv => pv.LabelView.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteParty(e.Element.ViewModel.Party);
+                    }
+                }
+            );
+
+            _messageViews.ObserveEach(m => m.Label.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteMessage(e.Element.ViewModel.Message);
+                    }
+                }
+            );
         }
 
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEvent(MouseEventData eventData)
         {
             // Add a new party on double click
-            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 &&
+                FocusedElement.CanLoseFocus)
             {
                 //Add a new Party.
                 ViewModel.AddParty(eventData.MousePosition);
-                
+
                 // Stop event propagation if the event is handled.
                 eventData.IsHandled = true;
                 return;
@@ -101,41 +126,41 @@ namespace Interactr.View
         /// <see cref="OnKeyEvent"/>
         protected override void OnKeyEvent(KeyEventData eventData)
         {
-            // Delete party.
-            // The commented check is an extra safety, but not yet possible due
-            // to the need of a recursive search.
-            if (eventData.Id == KeyEvent.KEY_RELEASED &&
-                eventData.KeyCode == KeyCodes.Delete &&
-                /*Children.Contains(FocusedElement) &&*/
-                FocusedElement.GetType() == typeof(LabelView)
-            )
-            {
-                var elementToDelete = FocusedElement.Parent;
-                if (elementToDelete is PartyView partyViewToDelete)
-                {
-                    // Delete the party from the viewmodel. This automatically
-                    // propagates to the view and the model.
-                    ViewModel.DeleteParty(partyViewToDelete.ViewModel.Party);
-                    return true;
-                }
-
-//<<<<<<< feature/implementEventData
-                // Delete the party from the viewmodel. This automatically
-                // propagates to the view and the model.
-                ViewModel.DeleteParty(partyView.ViewModel.Party);
-//=======
-                if (elementToDelete is CommunicationDiagramMessageView messageViewToDelete)
-                {
-                    // Delete the message from the viewmodel. This automatically propagates
-                    // to the view and the model.
-                    ViewModel.DeleteMessage(messageViewToDelete.ViewModel.Message);
-                }
-            }
-//>>>>>>> develop
-
-                // Stop the event propagation.
-                eventData.IsHandled = true;
-            }
+//            // Delete party.
+//            // The commented check is an extra safety, but not yet possible due
+//            // to the need of a recursive search.
+//            if (eventData.Id == KeyEvent.KEY_RELEASED &&
+//                eventData.KeyCode == KeyCodes.Delete &&
+//                /*Children.Contains(FocusedElement) &&*/
+//                FocusedElement.GetType() == typeof(LabelView)
+//            )
+//            {
+//                var elementToDelete = FocusedElement.Parent;
+//                if (elementToDelete is PartyView partyViewToDelete)
+//                {
+//                    // Delete the party from the viewmodel. This automatically
+//                    // propagates to the view and the model.
+//                    ViewModel.DeleteParty(partyViewToDelete.ViewModel.Party);
+//                    return true;
+//                }
+//
+////<<<<<<< feature/implementEventData
+//                // Delete the party from the viewmodel. This automatically
+//                // propagates to the view and the model.
+//                ViewModel.DeleteParty(partyView.ViewModel.Party);
+////=======
+//                if (elementToDelete is CommunicationDiagramMessageView messageViewToDelete)
+//                {
+//                    // Delete the message from the viewmodel. This automatically propagates
+//                    // to the view and the model.
+//                    ViewModel.DeleteMessage(messageViewToDelete.ViewModel.Message);
+//                }
+//            }
+////>>>>>>> develop
+//
+//                // Stop the event propagation.
+//                eventData.IsHandled = true;
+            //          }
         }
 
         /// <summary>
