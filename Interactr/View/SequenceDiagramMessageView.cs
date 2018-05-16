@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;

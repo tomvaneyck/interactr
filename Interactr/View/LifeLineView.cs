@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive;
@@ -78,11 +79,14 @@ namespace Interactr.View
             }
         }
 
+        public static int i = 0;
+
         /// <see cref="OnMouseEvent"/>
-        protected override void OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEventPreview(MouseEventData eventData)
         {
             var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
-
+            i++;
+            Debug.Print("OnMouseEventPReview called." + i);
             switch (eventData.Id)
             {
                 case MouseEvent.MOUSE_PRESSED:
@@ -100,6 +104,8 @@ namespace Interactr.View
                     eventData.IsHandled = true;
                     return;
             }
+
+            base.OnMouseEventPreview(eventData);
         }
 
         /// <see cref="PaintElement"/>

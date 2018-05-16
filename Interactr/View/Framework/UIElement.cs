@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -457,9 +458,11 @@ namespace Interactr.View.Framework
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
                 var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
 
+                
                 element.OnMouseEventPreview(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
+                    Debug.Print("Event handled by" + element.ToString());
                     // Stop event propagation.
                     eventData.IsHandled = true;
                     return;
@@ -523,7 +526,7 @@ namespace Interactr.View.Framework
         protected virtual void OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused && FocusedElement != this)
             {
                 Focus();
                 eventData.IsHandled = true;
