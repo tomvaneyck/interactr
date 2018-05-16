@@ -126,41 +126,6 @@ namespace Interactr.View
         /// <see cref="OnKeyEvent"/>
         protected override void OnKeyEvent(KeyEventData eventData)
         {
-//            // Delete party.
-//            // The commented check is an extra safety, but not yet possible due
-//            // to the need of a recursive search.
-//            if (eventData.Id == KeyEvent.KEY_RELEASED &&
-//                eventData.KeyCode == KeyCodes.Delete &&
-//                /*Children.Contains(FocusedElement) &&*/
-//                FocusedElement.GetType() == typeof(LabelView)
-//            )
-//            {
-//                var elementToDelete = FocusedElement.Parent;
-//                if (elementToDelete is PartyView partyViewToDelete)
-//                {
-//                    // Delete the party from the viewmodel. This automatically
-//                    // propagates to the view and the model.
-//                    ViewModel.DeleteParty(partyViewToDelete.ViewModel.Party);
-//                    return true;
-//                }
-//
-////<<<<<<< feature/implementEventData
-//                // Delete the party from the viewmodel. This automatically
-//                // propagates to the view and the model.
-//                ViewModel.DeleteParty(partyView.ViewModel.Party);
-////=======
-//                if (elementToDelete is CommunicationDiagramMessageView messageViewToDelete)
-//                {
-//                    // Delete the message from the viewmodel. This automatically propagates
-//                    // to the view and the model.
-//                    ViewModel.DeleteMessage(messageViewToDelete.ViewModel.Message);
-//                }
-//            }
-////>>>>>>> develop
-//
-//                // Stop the event propagation.
-//                eventData.IsHandled = true;
-            //          }
         }
 
         /// <summary>

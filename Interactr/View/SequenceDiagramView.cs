@@ -120,31 +120,6 @@ namespace Interactr.View
         /// <see cref="OnKeyEvent"/>
         protected override void OnKeyEvent(KeyEventData eventData)
         {
-//            if (eventData.Id == KeyEvent.KEY_RELEASED &&
-//                eventData.KeyCode == KeyCodes.Delete &&
-//                FocusedElement.GetType() == typeof(LabelView)
-//            )
-//            {
-//                if (FocusedElement.Parent is PartyView partyView)
-//                {
-//                    // Delete party.
-//                    ViewModel.DeleteParty(partyView.ViewModel.Party);
-//
-////<<<<<<< feature/implementEventData
-//                // Cancel the event propagation.
-//                eventData.IsHandled = true;
-////=======
-//                    return true;
-//                }
-//
-//                if (FocusedElement.Parent is SequenceDiagramMessageView messageView)
-//                {
-//                    // Delete message.
-//                    ViewModel.DeleteMessage(messageView.ViewModel.Message);
-//                    return true;
-//                }
-////>>>>>>> develop
-//            }
         }
 
         private void SetupPendingMessage()
