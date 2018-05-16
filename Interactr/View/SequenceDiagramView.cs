@@ -117,11 +117,6 @@ namespace Interactr.View
             _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
-        /// <see cref="OnKeyEvent"/>
-        protected override void OnKeyEvent(KeyEventData eventData)
-        {
-        }
-
         private void SetupPendingMessage()
         {
             // Hide the pending message view if there is no pending message.

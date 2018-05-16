@@ -60,7 +60,7 @@ namespace Interactr.View.Controls
             }
             else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
             {
-                UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
+                UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault(element => element.Parent == this);
                 dragElement?.ReleaseMouseCapture();
             }
 
