@@ -14,7 +14,8 @@ namespace Interactr.View
     {
         #region ViewModel
 
-        private readonly ReactiveProperty<DiagramEditorViewModel> _viewModel = new ReactiveProperty<DiagramEditorViewModel>();
+        private readonly ReactiveProperty<DiagramEditorViewModel> _viewModel =
+            new ReactiveProperty<DiagramEditorViewModel>();
 
         public DiagramEditorViewModel ViewModel
         {
@@ -48,16 +49,16 @@ namespace Interactr.View
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData e)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             // Switch views on tab.
-            if (e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == KeyEvent.VK_TAB)
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
             {
                 ViewModel?.SwitchViews();
-                return true;
-            }
 
-            return false;
+                // Cancel the event propagation.
+                eventData.IsHandled = true;
+            }
         }
     }
 }

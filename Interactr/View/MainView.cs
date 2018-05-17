@@ -15,7 +15,7 @@ namespace Interactr.View
     public class MainView : AnchorPanel
     {
         public WindowsView Windows { get; } = new WindowsView();
-        
+
         #region ViewModel
 
         private readonly ReactiveProperty<MainViewModel> _viewModel = new ReactiveProperty<MainViewModel>();
@@ -56,7 +56,8 @@ namespace Interactr.View
             diagramEditors.ObserveEach(diagramEditor => diagramEditor.KeyEventOccurred).Subscribe(e =>
             {
                 KeyEventData eventData = e.Value;
-                if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_D && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
+                if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_D &&
+                    Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
                 {
                     ViewModel.EditDiagram(e.Element.ViewModel.Diagram);
                 }
@@ -65,16 +66,17 @@ namespace Interactr.View
             this.Children.Add(Windows);
         }
 
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             // Create a new diagram when the user presses CTRL+N.
-            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_N && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_N &&
+                Keyboard.IsKeyDown(KeyEvent.VK_CONTROL))
             {
                 ViewModel.EditNewDiagram();
-                return true;
-            }
 
-            return false;
+                // Cancel the event propagation.
+                eventData.IsHandled = true;
+            }
         }
     }
 }

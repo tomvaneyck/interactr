@@ -31,6 +31,7 @@ namespace Interactr.View
         #endregion
 
         public IReadOnlyReactiveList<SequenceDiagramColumnView> ColumnViews { get; private set; }
+        private IReadOnlyReactiveList<SequenceDiagramMessageView> _messageViews;
 
         /// View for the message currently being dragged by the user.
         private readonly ArrowView _pendingMessageView = new ArrowView
@@ -47,6 +48,30 @@ namespace Interactr.View
             SetupPartyColumns();
             SetupMessages();
             SetupPendingMessage();
+
+            ColumnViews.ObserveEach(cv => cv.PartyView.LabelView.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteParty(e.Element.PartyView.ViewModel.Party);
+                    }
+                }
+            );
+
+            _messageViews.ObserveEach(mv => mv.Label.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteMessage(e.Element.ViewModel.Message);
+                    }
+                }
+            );
         }
 
         private void SetupPartyColumns()
@@ -82,41 +107,14 @@ namespace Interactr.View
         private void SetupMessages()
         {
             // Create a list of message views based on the message viewmodels.
-            IReadOnlyReactiveList<SequenceDiagramMessageView> messageViews = ViewModelChanged
+            _messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.StackVM.MessageViewModels)
                 .CreateDerivedListBinding(vm => new SequenceDiagramMessageView {ViewModel = vm}).ResultList;
 
             // Automatically add and remove message views to Children.
-            messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
-        }
-
-        /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
-        {
-            if (eventData.Id == KeyEvent.KEY_RELEASED &&
-                eventData.KeyCode == KeyCodes.Delete &&
-                FocusedElement.GetType() == typeof(LabelView)
-            )
-            {
-                if (FocusedElement.Parent is PartyView partyView)
-                {
-                    // Delete party.
-                    ViewModel.DeleteParty(partyView.ViewModel.Party);
-
-                    return true;
-                }
-
-                if (FocusedElement.Parent is SequenceDiagramMessageView messageView)
-                {
-                    // Delete message.
-                    ViewModel.DeleteMessage(messageView.ViewModel.Message);
-                    return true;
-                }
-            }
-
-            return false;
+            _messageViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
 
         private void SetupPendingMessage()
@@ -194,7 +192,7 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
             LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
@@ -202,17 +200,19 @@ namespace Interactr.View
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);
-                return true;
+                e.IsHandled = true;
+                return;
             }
 
             // Update the endpoint position of the pending message when the mouse is dragged around the view.
             if (e.Id == MouseEvent.MOUSE_DRAGGED && ViewModel?.StackVM.PendingInvokingMessageVM != null)
             {
                 _pendingMessageView.EndPoint = new Point(e.MousePosition.X, _pendingMessageView.StartPoint.Y);
-                return true;
+                e.IsHandled = true;
+                return;
             }
 
-            return base.OnMouseEvent(e);
+            base.OnMouseEvent(e);
         }
     }
 }

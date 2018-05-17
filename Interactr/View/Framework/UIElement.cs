@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -35,6 +36,30 @@ namespace Interactr.View.Framework
         }
 
         public static IObservable<UIElement> FocusedElementChanged => _focusedElement.Changed;
+
+        #endregion
+
+        #region InputEvents
+
+        #region Mouse
+
+        private readonly Subject<MouseEventData> _mouseEventPreviewOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventPreviewOccured => _mouseEventPreviewOccured;
+
+        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
+
+        #endregion
+
+        #region Key
+
+        private readonly Subject<KeyEventData> _keyEventPreviewOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventPreviewOccurred => _keyEventPreviewOccurred;
+
+        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
+
+        #endregion
 
         #endregion
 
@@ -227,16 +252,6 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        #region Input event observables
-
-        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
-        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
-
-        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
-        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
-
-        #endregion
-
         public bool CanBeFocused { get; protected set; } = true;
 
         public UIElement()
@@ -323,78 +338,84 @@ namespace Interactr.View.Framework
         /// Emit a keyboard event.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        public static bool HandleKeyEvent(KeyEventData eventData)
+        public static void HandleKeyEvent(KeyEventData eventData)
         {
-            if (TunnelDownKeyEventPreview(eventData))
+            TunnelDownKeyEventPreview(eventData);
+            if (eventData.IsHandled)
             {
                 //Event was handled
-                return true;
+                return;
             }
 
             //Bubble up event from FocusedElement to root
-            return FocusedElement.BubbleUpKeyEvent(eventData);
+            FocusedElement.BubbleUpKeyEvent(eventData);
         }
 
         /// <summary>
-        /// Take a key event, call OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
+        /// Take a key event, call OnKeyEventPreview on every element from the root down until the event is canceled or FocusedElement is reached.
         /// </summary>
         /// <remarks>
         /// Only the ancestors of FocusedElement will receive the event.
         /// </remarks>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
-        private static bool TunnelDownKeyEventPreview(KeyEventData eventData)
+        private static void TunnelDownKeyEventPreview(KeyEventData eventData)
         {
             foreach (UIElement element in UIElement.FocusedElement.WalkToRoot().Reverse())
             {
-                if (element.OnKeyEventPreview(eventData))
+                element.OnKeyEventPreview(eventData);
+                if (eventData.IsHandled)
                 {
-                    return true;
+                    return;
+                }
+
+                element._keyEventPreviewOccurred.OnNext(eventData);
+                if (eventData.IsHandled)
+                {
+                    return;
                 }
             }
-
-            return false;
         }
 
         /// <summary>
         /// Take a key event, call OnKeyEvent and pass the event to the parent element until an element handles it.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if this element or one of its ancestors has handled the event</returns>
-        private bool BubbleUpKeyEvent(KeyEventData eventData)
+        private void BubbleUpKeyEvent(KeyEventData eventData)
         {
-            _keyEventOccurred.OnNext(eventData);
-            if (this.OnKeyEvent(eventData))
+            OnKeyEvent(eventData);
+            if (eventData.IsHandled)
             {
-                return true;
+                return;
             }
 
-            return Parent?.BubbleUpKeyEvent(eventData) ?? false;
+            _keyEventOccurred.OnNext(eventData);
+            if (eventData.IsHandled)
+            {
+                return;
+            }
+
+            Parent?.BubbleUpKeyEvent(eventData);
         }
 
         /// <summary>
         /// Is called when keyboard events are triggered.
         /// Can be overriden to intercept key events before they reach the FocusedElement.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set evenData.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEventPreview(KeyEventData eventData)
+        protected virtual void OnKeyEventPreview(KeyEventData eventData)
         {
-            return false;
         }
 
         /// <summary>
         /// Is called when keyboard events are triggered.
         /// Can be overridden to handle keyboard events.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set eventData.IsCancelled to true indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEvent(KeyEventData eventData)
+        protected virtual void OnKeyEvent(KeyEventData eventData)
         {
-            return false;
         }
 
         #endregion
@@ -406,98 +427,110 @@ namespace Interactr.View.Framework
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
+        public static void HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
             UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
 
-            if (TunnelDownMouseEventPreview(rootElement, targetElement, eventData))
+            TunnelDownMouseEventPreview(rootElement, targetElement, eventData);
+            if (eventData.IsHandled)
             {
                 // Event was handled.
-                return true;
+                return;
             }
 
             // Bubble up event from FocusedElement to root.
             Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
-            return targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
-                eventData.ClickCount));
+            targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
-        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
+        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until the evenData
+        /// is cancelled or mouseover-element is reached.
         /// Only the ancestors of the mouseover-element will receive the event.
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree.</param>
         /// <param name="mouseoverElement">The element the mouse is over.</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
+        private static void TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
             MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
-                if (element.OnMouseEventPreview(
-                    new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
+                var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
+
+                
+                element.OnMouseEventPreview(newMouseEventData);
+                if (newMouseEventData.IsHandled)
                 {
-                    return true;
+                    // Stop event propagation.
+                    eventData.IsHandled = true;
+                    return;
+                }
+
+                element._mouseEventOccured.OnNext(newMouseEventData);
+                if (newMouseEventData.IsHandled)
+                {
+                    // Stop event propagation.
+                    eventData.IsHandled = true;
+                    return;
                 }
             }
-
-            return false;
         }
 
         /// <summary>
         /// Take a mouse event, call OnMouseEvent and keep passing the event to the parent element until an element handles it.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        private bool BubbleUpMouseEvent(MouseEventData eventData)
+        private void BubbleUpMouseEvent(MouseEventData eventData)
         {
-            _mouseEventOccured.OnNext(eventData);
-            if (this.OnMouseEvent(eventData))
+            OnMouseEvent(eventData);
+            if (eventData.IsHandled)
             {
-                return true;
+                return;
             }
 
+            _mouseEventOccured.OnNext(eventData);
+            if (eventData.IsHandled)
+            {
+                return;
+            }
+
+            // Return at root.
             if (Parent == null)
             {
-                return false;
+                return;
             }
 
-            Point relativeMousePos = this.TranslatePointTo(Parent, eventData.MousePosition);
-            return Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+            Point relativeMousePos = TranslatePointTo(Parent, eventData.MousePosition);
+            Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Override this method to intercept mouse events before they reach the element the mouse is over.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set eventData.IsCancelled to true to indicate that the event has been handled and should not be pushed
+        /// to more UI elements.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEventPreview(MouseEventData eventData)
+        protected virtual void OnMouseEventPreview(MouseEventData eventData)
         {
-            return false;
         }
 
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Can be overriden to handle mouse events.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set eventData.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEvent(MouseEventData eventData)
+        protected virtual void OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused )
             {
-                this.Focus();
-                return true;
+                Focus();
+                eventData.IsHandled = true;
             }
-
-            return false;
         }
 
         public void CaptureMouse()
