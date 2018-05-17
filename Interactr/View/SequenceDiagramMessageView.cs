@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
+using LineType = Interactr.View.Controls.LineView.LineType;
 
 namespace Interactr.View
 {
@@ -50,8 +50,7 @@ namespace Interactr.View
             // Set the display style of the arrow.
             ViewModelChanged.Where(vm => vm != null).Subscribe(vm =>
             {
-                _arrow.Style = vm.MessageType == Message.MessageType.Invocation ?
-                    LineView.LineType.Solid : LineView.LineType.Dotted;
+                _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
             // Put the label under the arrow.
@@ -85,7 +84,7 @@ namespace Interactr.View
                 0,
                 (ViewModel.Tick - bar.ViewModel.StartTick) * bar.TickHeight
             );
-            SequenceDiagramView parent = (SequenceDiagramView)Parent;
+            SequenceDiagramView parent = (SequenceDiagramView) Parent;
             Point anchorPointOnDiagram = bar.TranslatePointTo(parent, anchorPointOnBar);
 
             // Choose left or right side of bar based on which side the arrow is going.
@@ -98,9 +97,9 @@ namespace Interactr.View
         {
             // With the latest parent view
             return ParentChanged.OfType<SequenceDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching activation bar
+                        // and the latest matching activation bar
                             barSelector(vm).Where(bar => bar != null).Select(targetBar =>
                             {
                                 // and listen for the position changes of its view.
