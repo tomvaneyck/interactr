@@ -110,7 +110,7 @@ namespace Interactr.View
         {
             // Add a new party on double click
             LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
             {
                 //Add a new Party.
                 ViewModel.AddParty(eventData.MousePosition);
@@ -247,16 +247,12 @@ namespace Interactr.View
             }
         }
 
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
             if ((labelBeingEdited?.CanLeaveEditMode ?? true))
             {
-                return base.OnMouseEvent(eventData); 
-            }
-            else
-            {
-                return false;
+                base.OnMouseEvent(eventData); 
             }
         }
     }
