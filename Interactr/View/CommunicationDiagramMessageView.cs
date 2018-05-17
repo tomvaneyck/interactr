@@ -70,7 +70,7 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
+            ObservableExtensions.(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
                 .Subscribe(_ => _label.Text = ViewModel.DisplayLabel);
 
             // Put the label under the arrow.

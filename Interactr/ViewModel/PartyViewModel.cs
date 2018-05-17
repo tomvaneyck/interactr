@@ -54,6 +54,8 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        public bool LabelInEditMode;
+
         #region CanApplyLabel
 
         private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
@@ -96,7 +98,14 @@ namespace Interactr.ViewModel
             party.TypeChanged.Subscribe(newType => Type = newType);
 
             // Define the label in the viewmodel to change when the label changes in the model.
-            party.LabelChanged.Subscribe(newLabel => Label = newLabel);
+            party.LabelChanged.Subscribe(newLabel =>
+            {
+                if (!LabelInEditMode)
+                {
+                    Label = newLabel;
+
+                }
+            });
 
             // Update CanApplyLabel when the label changes.
             LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);

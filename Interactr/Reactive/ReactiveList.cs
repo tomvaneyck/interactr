@@ -62,6 +62,10 @@ namespace Interactr.Reactive
 
         public abstract void RemoveAt(int index);
 
+        public abstract void Move(T item, int destinationIndex);
+
+        public abstract void MoveByIndex(int sourceIndex, int destinationIndex);
+
         public abstract int Count { get; }
 
         int IReadOnlyCollection<T>.Count => Count;
