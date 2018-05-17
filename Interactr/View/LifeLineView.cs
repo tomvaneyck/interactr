@@ -79,14 +79,10 @@ namespace Interactr.View
             }
         }
 
-        public static int i = 0;
-
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEventPreview(MouseEventData eventData)
         {
             var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
-            i++;
-            Debug.Print("OnMouseEventPReview called." + i);
             switch (eventData.Id)
             {
                 case MouseEvent.MOUSE_PRESSED:

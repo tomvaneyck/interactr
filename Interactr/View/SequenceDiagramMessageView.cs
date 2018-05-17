@@ -28,8 +28,12 @@ namespace Interactr.View
 
         #endregion
 
+        /// <summary>
+        /// The labelview of the message.
+        /// </summary>
+        public LabelView Label { get; } = new LabelView();
+
         private readonly ArrowView _arrow = new ArrowView();
-        public readonly LabelView Label = new LabelView();
 
         public SequenceDiagramMessageView()
         {

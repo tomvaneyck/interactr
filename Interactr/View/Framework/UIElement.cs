@@ -462,7 +462,6 @@ namespace Interactr.View.Framework
                 element.OnMouseEventPreview(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
-                    Debug.Print("Event handled by" + element.ToString());
                     // Stop event propagation.
                     eventData.IsHandled = true;
                     return;

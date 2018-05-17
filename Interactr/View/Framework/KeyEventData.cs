@@ -28,7 +28,7 @@ namespace Interactr.View.Framework
         /// True when the propagation of an event has to be stopped.
         /// This enable stopping event propagation in observables.
         /// </summary>
-        public bool IsHandled = false;
+        public bool IsHandled { get; set; } = false;
 
         public KeyEventData(int id, int keyCode, char keyChar)
         {
