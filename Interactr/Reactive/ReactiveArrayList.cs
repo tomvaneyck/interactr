@@ -82,12 +82,14 @@ namespace Interactr.Reactive
             _onDelete.OnNext((item, index));
         }
 
+        /// <see cref="ReactiveList.Move"/>
         public override void Move(T item, int destinationIndex)
         {
             int sourceIndex = IndexOf(item);
             MoveByIndex(sourceIndex, destinationIndex);
         }
 
+        /// <see cref="ReactiveList.MoveByIndex"/>
         public override void MoveByIndex(int sourceIndex, int destinationIndex)
         {
             T item = _contents[sourceIndex];

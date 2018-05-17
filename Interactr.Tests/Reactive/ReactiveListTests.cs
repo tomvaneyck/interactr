@@ -37,6 +37,20 @@ namespace Interactr.Tests.Reactive
         }
 
         [Test]
+        public void TestMoving()
+        {
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C" };
+            Assert.AreEqual(3, list.Count);
+            list.Move("B", list.Count);
+            Assert.AreEqual(3, list.Count);
+            Assert.IsTrue(list.SequenceEqual(new[] { "A", "C", "B" }));
+
+            list.Move("A", 0);
+            Assert.AreEqual(3, list.Count);
+            Assert.IsTrue(list.SequenceEqual(new[] { "A", "C", "B" }));
+        }
+
+        [Test]
         public void TestContains()
         {
             ReactiveList<string> list = new ReactiveArrayList<string> {"A", "B", "C"};

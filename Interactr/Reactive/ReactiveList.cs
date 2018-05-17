@@ -62,8 +62,24 @@ namespace Interactr.Reactive
 
         public abstract void RemoveAt(int index);
 
+        /// <summary>
+        /// Move an item to another position in the list.
+        /// </summary>
+        /// <remarks>
+        /// The destination index is the index in the list before calling this method.
+        /// </remarks>
+        /// <param name="item">The item to be moved.</param>
+        /// <param name="destinationIndex">The index the item needs to be moved to.</param>
         public abstract void Move(T item, int destinationIndex);
 
+        /// <summary>
+        /// Move an item, defined by an index, to another position in the list.
+        /// </summary>
+        /// <remarks>
+        /// The destination index is the index in the list before calling this method.
+        /// </remarks>
+        /// <param name="sourceIndex">The index of the item to be moved.</param>
+        /// <param name="destinationIndex">The index the item needs to be moved to.</param>
         public abstract void MoveByIndex(int sourceIndex, int destinationIndex);
 
         public abstract int Count { get; }
