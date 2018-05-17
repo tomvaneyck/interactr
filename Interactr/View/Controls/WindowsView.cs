@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
@@ -34,7 +34,7 @@ namespace Interactr.View.Controls
 
         private readonly Subject<Window> _windowCloseRequested = new Subject<Window>();
         public IObservable<Window> WindowCloseRequested => _windowCloseRequested;
-        
+
         public WindowsView()
         {
             // Set default values.
@@ -56,13 +56,14 @@ namespace Interactr.View.Controls
                 });
 
             // When the close button of a window is clicked, notify WindowCloseRequested
-            Children.ObserveWhere(window => ((Window)window).CloseButton.MouseEventOccured, elem => elem is Window).Subscribe(e =>
-            {
-                if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
+            Children.ObserveWhere(window => ((Window) window).CloseButton.MouseEventOccured, elem => elem is Window)
+                .Subscribe(e =>
                 {
-                    _windowCloseRequested.OnNext((Window)e.Element);
-                }
-            });
+                    if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
+                    {
+                        _windowCloseRequested.OnNext((Window) e.Element);
+                    }
+                });
         }
 
         public override void PaintElement(Graphics g)
@@ -131,7 +132,7 @@ namespace Interactr.View.Controls
             #region Title
 
             private readonly ReactiveProperty<String> _title = new ReactiveProperty<String>();
-            
+
             /// <summary>
             /// The text that should be displayed in the titlebar of the window.
             /// </summary>
@@ -149,7 +150,7 @@ namespace Interactr.View.Controls
             /// The width/height of the border.
             /// </summary>
             private const int BorderSize = 5;
-            
+
             /// <summary>
             /// The UIElement that is put inside this window
             /// </summary>
@@ -204,7 +205,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-            protected override bool OnMouseEventPreview(MouseEventData eventData)
+            protected override void OnMouseEvent(MouseEventData eventData)
             {
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
@@ -233,7 +234,8 @@ namespace Interactr.View.Controls
                     if (_resizeMode != ResizeMode.None)
                     {
                         CaptureMouse();
-                        return true;
+                        eventData.IsHandled = true;
+                        return;
                     }
                 }
                 else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
@@ -241,9 +243,10 @@ namespace Interactr.View.Controls
                     // Dragging finished, release mouse capture.
                     ReleaseMouseCapture();
                     _resizeMode = ResizeMode.None;
-                    return true;
+                    eventData.IsHandled = true;
+                    return;
                 }
-                else if(eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
+                else if (eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
                 {
                     // User has dragged the mouse. Resize/reposition the window.
                     if ((_resizeMode & ResizeMode.Left) != 0)
@@ -251,15 +254,18 @@ namespace Interactr.View.Controls
                         PreferredWidth -= eventData.MousePosition.X;
                         Position += new Point(eventData.MousePosition.X, 0);
                     }
+
                     if ((_resizeMode & ResizeMode.Top) != 0)
                     {
                         PreferredHeight -= eventData.MousePosition.Y;
                         Position += new Point(0, eventData.MousePosition.Y);
                     }
+
                     if ((_resizeMode & ResizeMode.Right) != 0)
                     {
                         PreferredWidth = eventData.MousePosition.X;
                     }
+
                     if ((_resizeMode & ResizeMode.Bottom) != 0)
                     {
                         PreferredHeight = eventData.MousePosition.Y;
@@ -267,11 +273,11 @@ namespace Interactr.View.Controls
 
                     PreferredWidth = Math.Max(MinWindowWidth, PreferredWidth);
                     PreferredHeight = Math.Max(MinWindowHeight, PreferredHeight);
-
-                    return true;
+                    eventData.IsHandled = true;
+                    return;
                 }
-
-                return base.OnMouseEventPreview(eventData);
+                
+                base.OnMouseEvent(eventData);
             }
 
             public override void PaintElement(Graphics g)
@@ -288,7 +294,7 @@ namespace Interactr.View.Controls
 
                 g.DrawLine(Pens.White, 1, 1, Width - 3, 1);
                 g.DrawLine(Pens.White, 1, 1, 1, Height - 3);
-                
+
                 using (Pen pen = new Pen(Color.FromArgb(134, 138, 142)))
                 {
                     g.DrawLine(pen, 1, Height - 2, Width - 2, Height - 2);
@@ -297,7 +303,7 @@ namespace Interactr.View.Controls
 
                 using (Brush brush = new SolidBrush(Color.FromArgb(0, 0, 170)))
                 {
-                    g.FillRectangle(brush, 4, 4, Width-8, 18);
+                    g.FillRectangle(brush, 4, 4, Width - 8, 18);
                 }
 
                 // Draw title.

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;
@@ -26,16 +28,20 @@ namespace Interactr.View
 
         #endregion
 
+        /// <summary>
+        /// The labelview of the message.
+        /// </summary>
+        public LabelView Label { get; } = new LabelView();
+
         private readonly ArrowView _arrow = new ArrowView();
-        private readonly LabelView _label = new LabelView();
 
         public SequenceDiagramMessageView()
         {
             this.IsVisibleToMouse = false;
 
             Children.Add(_arrow);
-            Children.Add(_label);
-            AnchorsProperty.SetValue(_label, Anchors.Left | Anchors.Top);
+            Children.Add(Label);
+            AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
 
             // Put the arrow starting point on the sender activation bar.
             ObserveActivationBarPosition(vm => vm.SenderActivationBarChanged)
@@ -54,7 +60,7 @@ namespace Interactr.View
             });
 
             // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => _label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
@@ -68,7 +74,7 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                MarginsProperty.SetValue(_label, new Margins(textPos.X, textPos.Y));
+                MarginsProperty.SetValue(Label, new Margins(textPos.X, textPos.Y));
             });
         }
 

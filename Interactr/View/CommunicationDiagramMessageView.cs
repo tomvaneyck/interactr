@@ -53,8 +53,12 @@ namespace Interactr.View
             set => _arrow.EndPoint = value;
         }
 
+        /// <summary>
+        /// The labelview of the message.
+        /// </summary>
+        public LabelView Label { get; } = new LabelView();
+
         private readonly ArrowView _arrow = new ArrowView();
-        private readonly LabelView _label = new LabelView();
 
         public CommunicationDiagramMessageView(MessageViewModel viewModel)
         {
@@ -63,7 +67,7 @@ namespace Interactr.View
             ViewModel = viewModel;
 
             Children.Add(_arrow);
-            Children.Add(_label);
+            Children.Add(Label);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
@@ -71,7 +75,7 @@ namespace Interactr.View
 
             // Update the label on a change.
             Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
-                .Subscribe(_ => _label.Text = ViewModel.DisplayLabel);
+                .Subscribe(_ => Label.Text = ViewModel.DisplayLabel);
 
             // Put the label under the arrow.
             Observable.CombineLatest(
@@ -89,9 +93,9 @@ namespace Interactr.View
                 Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
 
                 // Set the label position
-                _label.Position = textPos;
-                _label.Width = _label.PreferredWidth;
-                _label.Height = _label.PreferredHeight;
+                Label.Position = textPos;
+                Label.Width = Label.PreferredWidth;
+                Label.Height = Label.PreferredHeight;
             });
         }
 
@@ -105,9 +109,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching sender
+                        // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
