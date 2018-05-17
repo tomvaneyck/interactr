@@ -82,20 +82,6 @@ namespace Interactr.Reactive
             _onDelete.OnNext((item, index));
         }
 
-        public override void Move(T item, int destinationIndex)
-        {
-            int sourceIndex = IndexOf(item);
-            MoveByIndex(sourceIndex, destinationIndex);
-        }
-
-        public override void MoveByIndex(int sourceIndex, int destinationIndex)
-        {
-            T item = _contents[sourceIndex];
-            _contents.RemoveAt(sourceIndex);
-            destinationIndex -= sourceIndex < destinationIndex ? 1 : 0;
-            _contents.Insert(destinationIndex, item);
-        }
-
         #region DefaultImplementations
         public override int Count => _contents.Count;
 
