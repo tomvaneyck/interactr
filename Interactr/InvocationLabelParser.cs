@@ -18,6 +18,11 @@ namespace Interactr
         /// <returns></returns>
         public static string RetrieveMethodNameFromLabel(string label)
         {
+            if (label == null)
+            {
+                return null;
+            }
+
             // Split the label on opening parenthesis.
             var splitLabel = label.Split('(');
             return splitLabel.Length == 0 ? null : splitLabel[0];
@@ -31,6 +36,11 @@ namespace Interactr
         /// <returns></returns>
         public static List<string> RetrieveArgumentsFromLabel(string label)
         {
+            if (label == null)
+            {
+                return null;
+            }
+
             // Get the arguments enclosed in parenthesis.
             var argsMatch = Regex.Match(label, "(.*)");
             if (!argsMatch.Success)

@@ -137,9 +137,9 @@ namespace Interactr.ViewModel
 //            );
 //
 //            // Update the label on a change in the methodName or methodArguments.
-//            _methodArguments.Changed.MergeEvents(_messageNumber.Changed).Subscribe(_ =>
+//            _methodArguments.Changed.MergeEvents(_methodName.Changed).Subscribe(_ =>
 //            {
-//                var newLabel = MethodName;
+//                var newLabel = MethodName ?? "";
 //                newLabel += "(";
 //                foreach (var arg in MethodArguments)
 //                {
@@ -153,6 +153,6 @@ namespace Interactr.ViewModel
 //
 //                newLabel += ")";
 //            });
-        }
+//        }
     }
 }

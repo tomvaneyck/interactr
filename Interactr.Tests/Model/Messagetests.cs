@@ -12,8 +12,8 @@ namespace Interactr.Tests.Model
         private const Message.MessageType DefaultMessageType = Message.MessageType.Invocation;
 
         //Test labels
-        private const string MessageLabel1 = "testLabel1";
-        private const string MessageLabel2 = "testLabel2";
+        private const string MessageLabel1 = "testlabel()";
+        private const string MessageLabel2 = "testlabel()";
 
         private const string ValidPartyLabel1 = "instanceName:Classname";
         private const string ValidPartyLabel2 = "instanceName2:Classname2";
