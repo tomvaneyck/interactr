@@ -153,6 +153,6 @@ namespace Interactr.ViewModel
 //
 //                newLabel += ")";
 //            });
-//        }
+        }
     }
 }
