@@ -67,6 +67,7 @@ namespace Interactr.Reactive
         /// </summary>
         /// <remarks>
         /// The destination index is the index in the list before calling this method.
+        /// If this list contains the specified item more than once, the first occurance is moved.
         /// </remarks>
         /// <param name="item">The item to be moved.</param>
         /// <param name="destinationIndex">The index the item needs to be moved to.</param>

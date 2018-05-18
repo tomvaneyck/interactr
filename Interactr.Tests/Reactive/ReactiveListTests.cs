@@ -51,6 +51,14 @@ namespace Interactr.Tests.Reactive
         }
 
         [Test]
+        public void TestMovingMultipleOccurances()
+        {
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "A", "C" };
+            list.Move("A", list.Count);
+            Assert.IsTrue(list.SequenceEqual(new[] { "B", "A", "C", "A" }));
+        }
+
+        [Test]
         public void TestContains()
         {
             ReactiveList<string> list = new ReactiveArrayList<string> {"A", "B", "C"};
