@@ -54,6 +54,10 @@ namespace Interactr.ViewModel
 
         #region Label
 
+        private ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
+
+        private ReactiveList<string> _methodArguments = new ReactiveArrayList<string>();
+
         /// <summary>
         /// The label to be displayed, includes the messageNumber and the label if the messageNumber is present.
         /// Is equal to the Label when the messageNumber is not Present.
@@ -62,17 +66,24 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
-        /// <summary>
-        /// The text of the Label stored in message view model.
-        /// </summary>
-        /// <remarks>This should not necessarily be the same as the label in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public string Label
+        private string Label
         {
             get => _label.Value;
-            protected set => _label.Value = value;
+            set
+            {
+                if (MessageType == Message.MessageType.Invocation)
+                {
+                    // TODO: parse the text of the value field,
+                    // TODO: Set the methodName and arguments from the value input.
+                    // TODO: Make sure it has a valid format.
+                    // TODO: Automatically set the label when the methodName or argument changes,
+                    // TODO: this way the _label always contains the correct text for the message.
+                }
+
+                // Set the value  of _label as is without any restrictions 
+                // if the messageType is not Invocation.
+                _label.Value = value;
+            }
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
