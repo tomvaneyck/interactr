@@ -12,26 +12,26 @@ namespace Interactr
     {
         /// <summary>
         /// Return the method name out of an invocation label when given a valid label.
-        /// Return null if the label does not contain an opening bracket
+        /// Return null if the label does not contain an opening parenthesis.
         /// </summary>
         /// <param name="label"> The label of an invocation message.</param>
         /// <returns></returns>
         public static string RetrieveMethodNameFromLabel(string label)
         {
-            // Split the label on opening bracket.
+            // Split the label on opening parenthesis.
             var splitLabel = label.Split('(');
             return splitLabel.Length == 0 ? null : splitLabel[0];
         }
 
         /// <summary>
         /// Return the list of arguments of an invocation label when given a valid label.
-        /// Return null if the label does not contain an opening bracket and closing bracket
+        /// Return null if the label does not contain an opening parenthesis and closing parenthesis.
         /// </summary>
         /// <param name="label"></param>
         /// <returns></returns>
         public static List<string> RetrieveArgumentsFromLabel(string label)
         {
-            // Get the arguments enclosed in brackets
+            // Get the arguments enclosed in parenthesis.
             var argsMatch = Regex.Match(label, "(.*)");
             if (!argsMatch.Success)
             {

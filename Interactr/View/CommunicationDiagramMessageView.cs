@@ -73,9 +73,18 @@ namespace Interactr.View
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
-            // Update the label on a change.
+            // Update the label on a change .
             Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
                 .Subscribe(_ => Label.Text = ViewModel.DisplayLabel);
+
+//            // Bind text of label between this and ViewModel.
+//            Label.TextChanged.Subscribe(text =>
+//            {
+//                if (ViewModel != null)
+//                {
+//                    ViewModel.Label = text;
+//                }
+//            });
 
             // Put the label under the arrow.
             Observable.CombineLatest(

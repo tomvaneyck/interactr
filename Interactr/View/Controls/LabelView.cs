@@ -235,7 +235,10 @@ namespace Interactr.View.Controls
                         }
                     }
                     // If Keychar is not escape.
-                    else if (char.IsLetterOrDigit(eventData.KeyChar) || eventData.KeyChar == HexaDecimalKeyChars.Colon)
+                    else if (char.IsLetterOrDigit(eventData.KeyChar) ||
+                             eventData.KeyChar == HexaDecimalKeyChars.Colon ||
+                             eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
+                             eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis)
                     {
                         Text += eventData.KeyChar;
                     }
@@ -255,6 +258,7 @@ namespace Interactr.View.Controls
                 eventData.IsHandled = true;
                 return;
             }
+
             if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;

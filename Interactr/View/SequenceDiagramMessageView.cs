@@ -59,6 +59,16 @@ namespace Interactr.View
                 _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
+            //TODO: Fix crash!!!
+//            // Bind text of label between this and ViewModel.
+//            Label.TextChanged.Subscribe(text =>
+//            {
+//                if (ViewModel != null)
+//                {
+//                    ViewModel.Label = text;
+//                }
+//            });
+
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
             Observable.CombineLatest(

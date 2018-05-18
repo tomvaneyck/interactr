@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
@@ -80,7 +81,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
-        private string Label
+        public string Label
         {
             get => _label.Value;
             set => _label.Value = value;
@@ -107,7 +108,15 @@ namespace Interactr.ViewModel
             Message = message;
 
             // Propagate changes in the model to the viewmodel.
-            message.LabelChanged.Subscribe(newLabelText => { Label = newLabelText; });
+            message.LabelChanged.Subscribe(newLabelText =>
+            {
+                Debug.Print("---");
+                Debug.Print(Label);
+                if (Label != newLabelText)
+                {
+                    Label = newLabelText;
+                }
+            });
 
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             LabelChanged.Subscribe(newLabelText =>
