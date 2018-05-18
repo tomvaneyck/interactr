@@ -204,6 +204,31 @@ namespace Interactr.Tests.Reactive
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
         }
 
+        [Test]
+        public void TestObserveEachIndexChange()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            var dummy1 = new DummyTestingClass { Identifier = "A" };
+            var dummy2 = new DummyTestingClass { Identifier = "B" };
+            var dummy3 = new DummyTestingClass { Identifier = "B" };
+            ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
+            {
+                dummy2
+            };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Insert(0, dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Add(dummy1));
+            scheduler.Schedule(TimeSpan.FromTicks(30), () => list.Remove(dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(dummy1));
+            scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Test event"));
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(0, actual.Messages.Count);
+        }
+
         class DummyTestingClass
         {
             public string Identifier { get; set; }
