@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Interactr.Reactive;
 
@@ -113,6 +114,24 @@ namespace Interactr.Model
         public static bool IsValidMethodName(string methodName)
         {
             return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-z0-9_]*$");
+        }
+
+        public static bool IsValidArgumentsList(List<string> arguments)
+        {
+            if (arguments == null)
+            {
+                return false;
+            }
+
+            foreach (var arg in arguments)
+            {
+                if (!Regex.IsMatch(arg, "^.*[^(,)\\s]+.*$"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
