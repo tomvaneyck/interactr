@@ -75,7 +75,7 @@ namespace Interactr.ViewModel
                 {
                     // TODO: parse the text of the value field,
                     // TODO: Set the methodName and arguments from the value input.
-                    // TODO: Make sure it has a valid format.
+                    // TODO: Make sure it has a valid format (in the view??? -> see how its done in partyLabel).
                     // TODO: Automatically set the label when the methodName or argument changes,
                     // TODO: this way the _label always contains the correct text for the message.
                 }

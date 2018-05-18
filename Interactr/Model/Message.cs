@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Interactr.Reactive;
 
 namespace Interactr.Model
@@ -88,5 +89,30 @@ namespace Interactr.Model
         }
 
         #endregion
+
+        /// <summary>
+        /// Return True if the given label has a valid format for an InvocationLabel.
+        /// <remarks>
+        /// The label of an invocation message consists of a method name and an
+        /// argument list. A method name starts with a lowercase letter and consists
+        /// only of letters, digits, and underscores. An argument list is a parenthesized,
+        /// comma-separated list of arguments. An argument is any sequence of characters,
+        /// not including commas or parentheses.
+        /// </remarks>
+        /// <example> methodName(arg1,arg2) </example>
+        /// </summary>
+        /// <param name="label"> The label string.</param>
+        /// <returns>A boolean indicating if it is a valid label.</returns>
+        public static bool IsValidInvocationLabel(string label)
+        {
+            return label != null && Regex.Match(label,
+                           "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
+                       .Success;
+        }
+
+        public static bool IsValidMethodName(string methodName)
+        {
+            return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-z0-9_]*$");
+        }
     }
 }
