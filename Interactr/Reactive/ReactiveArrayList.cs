@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Subjects;
 
 namespace Interactr.Reactive
@@ -17,6 +18,9 @@ namespace Interactr.Reactive
 
         public override IObservable<(T Element, int Index)> OnDelete => _onDelete;
         private readonly Subject<(T Element, int Index)> _onDelete = new Subject<(T Element, int Index)>();
+
+        public override IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved => _onMoved;
+        private readonly Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>> _onMoved = new Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>>();
 
         public override T this[int index]
         {
@@ -60,6 +64,10 @@ namespace Interactr.Reactive
         {
             _contents.Insert(index, item);
             _onAdd.OnNext((item, index));
+            _onMoved.OnNext(
+                Enumerable.Range(index+1, _contents.Count - 1 - index)
+                    .Select(i => (_contents[i], index-1, index))
+            );
         }
 
         /// <see cref="IList.Remove"/>
@@ -80,6 +88,10 @@ namespace Interactr.Reactive
             T item = _contents[index];
             _contents.RemoveAt(index);
             _onDelete.OnNext((item, index));
+            _onMoved.OnNext(
+                Enumerable.Range(index, _contents.Count - index)
+                    .Select(i => (_contents[i], index + 1, index))
+            );
         }
 
         /// <see cref="ReactiveList.Move"/>
@@ -94,8 +106,20 @@ namespace Interactr.Reactive
         {
             T item = _contents[sourceIndex];
             _contents.RemoveAt(sourceIndex);
-            destinationIndex -= sourceIndex < destinationIndex ? 1 : 0;
             _contents.Insert(destinationIndex, item);
+
+            IEnumerable<(T, int, int)> movedElementChanges;
+            if (sourceIndex < destinationIndex) // Move element from front to back.
+            {
+                movedElementChanges = Enumerable.Range(sourceIndex, destinationIndex - sourceIndex)
+                    .Select(i => (_contents[i], i + 1, i));
+            }
+            else // Move element from back to front.
+            {
+                movedElementChanges = Enumerable.Range(destinationIndex + 1, sourceIndex - destinationIndex)
+                    .Select(i => (_contents[i], i - 1, i));
+            }
+            _onMoved.OnNext(new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges));
         }
 
         #region DefaultImplementations

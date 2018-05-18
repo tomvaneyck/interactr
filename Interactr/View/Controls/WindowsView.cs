@@ -47,7 +47,7 @@ namespace Interactr.View.Controls
                 .Where(window => window != null)
                 .Subscribe(window =>
                 {
-                    Children.Move(window, Children.Count);
+                    Children.Move(window, Children.Count - 1);
                 });
 
             // When the close button of a window is clicked, notify WindowCloseRequested

@@ -41,7 +41,7 @@ namespace Interactr.Tests.Reactive
         {
             ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C" };
             Assert.AreEqual(3, list.Count);
-            list.Move("B", list.Count);
+            list.Move("B", list.Count-1);
             Assert.AreEqual(3, list.Count);
             Assert.IsTrue(list.SequenceEqual(new[] { "A", "C", "B" }));
 
@@ -54,8 +54,56 @@ namespace Interactr.Tests.Reactive
         public void TestMovingMultipleOccurances()
         {
             ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "A", "C" };
-            list.Move("A", list.Count);
+            list.Move("A", list.Count-1);
             Assert.IsTrue(list.SequenceEqual(new[] { "B", "A", "C", "A" }));
+        }
+
+        [Test]
+        public void TestMovingForwardObservables()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C", "D", "E" };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Move("B", 3));
+            var actual = scheduler.Start(() => list.OnMoved, created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(1, actual.Messages.Count);
+            foreach (var actualMessages in actual.Messages)
+            {
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                {
+                    ("B", 1, 3),
+                    ("C", 2, 1),
+                    ("D", 3, 2)
+                }));
+            }
+        }
+
+        [Test]
+        public void TestMovingBackwardObservables()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C", "D", "E" };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Move("D", 1));
+            var actual = scheduler.Start(() => list.OnMoved, created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(1, actual.Messages.Count);
+            foreach (var actualMessages in actual.Messages)
+            {
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                {
+                    ("D", 3, 1),
+                    ("B", 1, 2),
+                    ("C", 2, 3)
+                }));
+            }
         }
 
         [Test]

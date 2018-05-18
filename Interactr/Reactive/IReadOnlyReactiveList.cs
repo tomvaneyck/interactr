@@ -22,6 +22,11 @@ namespace Interactr.Reactive
         /// The element is emitted after it is removed.
         /// </summary>
         IObservable<(T Element, int Index)> OnDelete { get; }
+
+        /// <summary>
+        /// Observable that emits a sequence of changes when the index of one or more elements changes.
+        /// </summary>
+        IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved { get; }
     }
 
     public static class ReadOnlyReactiveListExtensions

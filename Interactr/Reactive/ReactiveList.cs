@@ -19,6 +19,11 @@ namespace Interactr.Reactive
         /// </summary>
         public abstract IObservable<(T Element, int Index)> OnDelete { get; }
 
+        /// <summary>
+        /// Observable that emits a sequence of changes when the index of one or more elements changes.
+        /// </summary>
+        public abstract IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved { get; }
+
         public abstract T this[int index] { get; set; }
 
         public abstract void Add(T item);
