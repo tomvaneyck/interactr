@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Interactr.Reactive;
 
@@ -46,11 +47,18 @@ namespace Interactr.Model
             get => _label.Value;
             set
             {
-                if (IsValidInvocationLabel(value))
+                if (Type == MessageType.Invocation)
+                {
+                    if (IsValidInvocationLabel(value))
+                    {
+                        _label.Value = value;
+                    }
+                    else throw new ArgumentException();
+                }
+                else
                 {
                     _label.Value = value;
                 }
-                else throw new ArgumentException();
             }
         }
 
@@ -113,12 +121,17 @@ namespace Interactr.Model
         /// <returns>A boolean indicating if it is a valid label.</returns>
         public static bool IsValidInvocationLabel(string label)
         {
+            Debug.Print("label: " + label);
             // Check for a valid program structure.
             var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
+            Debug.Print("isValidStructure: " + isValidStructure.ToString());
 
             var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
             var argumentsListIsValid = IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
 
+            Debug.Print("methodNameIsValid: " + methodNameIsValid);
+            Debug.Print("argumentsListIsValid: " + argumentsListIsValid);
+            
             // The label is valid if both the methodName and the argumentsList are valid.
             return methodNameIsValid && argumentsListIsValid && isValidStructure;
         }

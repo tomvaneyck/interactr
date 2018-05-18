@@ -116,7 +116,7 @@ namespace Interactr.ViewModel
                     var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
                     var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
 
-                    // To make sure the observables don't go in an infinite loop.
+                    // Make sure the observables don't go in an infinite loop.
                     if (newMethodName != MethodName)
                     {
                         MethodName = newMethodName;
