@@ -30,10 +30,10 @@ namespace Interactr.Tests.View.Controls
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
 
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -47,10 +47,10 @@ namespace Interactr.Tests.View.Controls
                 -1, '\x1b');
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsTrue(_labelView.IsInEditMode);
@@ -62,10 +62,10 @@ namespace Interactr.Tests.View.Controls
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
                 KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.RunOnKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsFalse(result);
+            Assert.IsFalse(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -80,7 +80,7 @@ namespace Interactr.Tests.View.Controls
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(_labelView.Width + 1, _labelView.Height + 1), 1);
 
-            var result = _labelView.RunOnMouseEvent((mouseEventData));
+            _labelView.RunOnMouseEvent((mouseEventData));
 
             // Edit mode should still be false.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -178,14 +178,14 @@ namespace Interactr.Tests.View.Controls
 
         private class TestableLabelView : LabelView
         {
-            public bool RunOnKeyEvent(KeyEventData keyEventData)
+            public void RunOnKeyEvent(KeyEventData keyEventData)
             {
-                return OnKeyEvent(keyEventData);
+                OnKeyEvent(keyEventData);
             }
 
-            public bool RunOnMouseEvent(MouseEventData mouseEventData)
+            public void RunOnMouseEvent(MouseEventData mouseEventData)
             {
-                return OnMouseEvent(mouseEventData);
+                OnMouseEvent(mouseEventData);
             }
         }
     }

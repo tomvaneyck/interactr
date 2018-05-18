@@ -17,6 +17,7 @@ namespace Interactr.View
     /// <summary>
     /// The view for the communication diagram.
     /// </summary>
+    /// <see cref="AnchorPanel"/>
     public class CommunicationDiagramView : AnchorPanel
     {
         #region ViewModel
@@ -38,7 +39,7 @@ namespace Interactr.View
 
         private readonly IReadOnlyReactiveList<CommunicationDiagramMessageView> _messageViews;
 
-        private readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
+        private IReadOnlyReactiveList<CommunicationDiagramPartyView> _partyViews;
 
         public CommunicationDiagramView()
         {
@@ -78,46 +79,48 @@ namespace Interactr.View
 
             // Remove a message view from the children when deleted.
             _messageViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+
+            _partyViews.ObserveEach(pv => pv.LabelView.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteParty(e.Element.ViewModel.Party);
+                    }
+                }
+            );
+
+            _messageViews.ObserveEach(m => m.Label.KeyEventOccurred).Subscribe(e =>
+                {
+                    var eventData = e.Value;
+                    if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
+                    {
+                        // Delete the party from the viewmodel. This automatically
+                        // propagates to the view and the model.
+                        ViewModel.DeleteMessage(e.Element.ViewModel.Message);
+                    }
+                }
+            );
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 &&
+                FocusedElement.CanLoseFocus)
             {
-                Debug.WriteLine("Add Party.");
                 //Add a new Party.
-                ViewModel.AddParty(e.MousePosition);
-                return true;
-            }
-            else
-            {
-                return base.OnMouseEvent(e);
-            }
-        }
+                ViewModel.AddParty(eventData.MousePosition);
 
-        /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
-        {
-            // Delete party.
-            // The commented check is an extra safety, but not yet possible due
-            // to the need of a recursive search.
-            if (eventData.Id == KeyEvent.KEY_RELEASED &&
-                eventData.KeyCode == KeyCodes.Delete &&
-                /*Children.Contains(FocusedElement) &&*/
-                FocusedElement.GetType() == typeof(LabelView)
-            )
-            {
-                PartyView partyView = (PartyView) FocusedElement.Parent;
-
-                // Delete the party from the viewmodel. This automatically
-                // propagates to the view and the model.
-                ViewModel.DeleteParty(partyView.ViewModel.Party);
-                return true;
+                // Stop event propagation if the event is handled.
+                eventData.IsHandled = true;
+                return;
             }
 
-            return false;
+            base.OnMouseEvent(eventData);
         }
 
         /// <summary>
@@ -170,8 +173,7 @@ namespace Interactr.View
                                             (Parent?.Parent?.Position ?? new Point(0, 0)));
 
             // Dynamically change if the message is achored to the left or right arrowStack in the partyview.
-            receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(
-                 _ =>
+            receiverPartyView.PositionChanged.Merge(senderPartyView.PositionChanged).Subscribe(_ =>
                 {
                     // If the receiver is to the left of the sender and the sender has an arrow starting on it's rightArrowStack.
                     if (receiverPartyView.Position.X < senderPartyView.Position.X &&
@@ -213,33 +215,36 @@ namespace Interactr.View
     /// <summary>
     /// A drag panel to enable dragging of the parties in Communication diagram view.
     /// </summary>
+    /// <see cref="DragPanel"/>
     public class PartyViewsDragPanel : DragPanel
     {
         public readonly IReadOnlyReactiveList<CommunicationDiagramPartyView> PartyViews;
 
         public PartyViewsDragPanel(IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews)
         {
-            PartyViews = partyViews;
-
-            // Automatically enter label editing mode when adding a party
-            PartyViews.OnAdd.Subscribe(elem =>
             {
-                if (IsVisible && (IsFocused || HasChildInFocus()))
+                PartyViews = partyViews;
+
+                // Automatically enter label editing mode when adding a party
+                PartyViews.OnAdd.Subscribe(elem =>
                 {
-                    elem.Element.LabelView.IsInEditMode = true;
-                    elem.Element.LabelView.Focus();
-                }
-            });
+                    if (IsVisible && (IsFocused || HasChildInFocus()))
+                    {
+                        elem.Element.LabelView.IsInEditMode = true;
+                        elem.Element.LabelView.Focus();
+                    }
+                });
 
-            // Two-way binding between the viewmodel and view position.
-            partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
-                .Subscribe(e => e.Element.Position = e.Value);
-            partyViews.ObserveEach(partyView => partyView.PositionChanged)
-                .Subscribe(e => e.Element.ViewModel.Position = e.Value);
+                // Two-way binding between the viewmodel and view position.
+                partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
+                    .Subscribe(e => e.Element.Position = e.Value);
+                partyViews.ObserveEach(partyView => partyView.PositionChanged)
+                    .Subscribe(e => e.Element.ViewModel.Position = e.Value);
 
-            // Automatically add and remove party views to Children.
-            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+                // Automatically add and remove party views to Children.
+                PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+                PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
+            }
         }
     }
 }

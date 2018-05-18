@@ -67,7 +67,7 @@ namespace Interactr.Reactive
             return items.Where(e => filter(e.Element)).SelectMany(newElem =>
                 observableSelector(newElem.Element)
                     .TakeUntil(
-                        list.OnDelete.Where(deletedElem => Object.Equals(deletedElem, newElem))
+                        list.OnDelete.Where(deletedElem => deletedElem.Index == newElem.Index)
                     )
                     .Select(val => (newElem.Element, val))
             );

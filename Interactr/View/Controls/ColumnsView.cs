@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ namespace Interactr.View.Controls
             this.Children.Add(_reorderingPanel);
 
             // When a child receives MOUSE_PRESSED, start a drag.
-            /*ColumnsPanel.Children.ObserveEach(c => c.MouseEventOccured)
+            ColumnsPanel.Children.ObserveEach(c => c.MouseEventOccured)
                 .Where(e => e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 .Subscribe(e =>
                 {
@@ -48,12 +49,16 @@ namespace Interactr.View.Controls
 
                     // Make sure dragpanel receives mouse events
                     _reorderingPanel.IsVisibleToMouse = true;
+
+                    // Mark event as handled
+                    e.Value.IsHandled = true;
                 }
-            );*/
+            );
             
             // When the dragging finishes, move the element in the stack
             _reorderingPanel.OnDragFinished.Subscribe(dragElement =>
             {
+                Debug.WriteLine("end drag");
                 // Reset the drag panel
                 _reorderingPanel.Children.Remove(dragElement);
                 _reorderingPanel.IsVisibleToMouse = false;
@@ -77,33 +82,6 @@ namespace Interactr.View.Controls
                 // Remove dummy element.
                 ColumnsPanel.Children.Remove(_activeDummy);
             });
-        }
-
-        protected override bool OnMouseEventPreview(MouseEventData e)
-        {
-            UIElement column = this.FindElementAt(e.MousePosition).WalkToRoot().FirstOrDefault(c => c.Parent == ColumnsPanel);
-            if (column == null)
-            {
-                return base.OnMouseEventPreview(e);
-            }
-
-            // Replace the element from the stack with a dummy and the element to the dragpanel
-            int indexOfSelectedChild = ColumnsPanel.Children.IndexOf(column);
-            _activeDummy = new UIElement
-            {
-                PreferredWidth = column.PreferredWidth,
-                PreferredHeight = column.PreferredHeight
-            };
-            ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
-            _reorderingPanel.Children.Add(column);
-
-            // Make sure dragpanel receives mouse events
-            _reorderingPanel.IsVisibleToMouse = true;
-
-            // We need to focus the element for the dragging to work.
-            column.Focus();
-
-            return true;
         }
     }
 }

@@ -89,15 +89,6 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
 
-            // Bind text of label between this and PartyViewModel.
-            _labelView.TextChanged.Subscribe(text =>
-            {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
-            });
-
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
 
@@ -120,17 +111,14 @@ namespace Interactr.View
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData e)
         {
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
-                Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
-                return true;
+                e.IsHandled = true;
             }
-
-            return false;
         }
     }
 }

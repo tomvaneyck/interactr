@@ -214,7 +214,7 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (IsInEditMode)
             {
@@ -241,26 +241,28 @@ namespace Interactr.View.Controls
                     }
                 }
 
-                return true;
+                // Cancel event propagation.
+                eventData.IsHandled = true;
             }
-
-            return false;
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 _isFocusing = false;
+                eventData.IsHandled = true;
+                return;
             }
-            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
-                return true;
+                eventData.IsHandled = true;
+                return;
             }
 
-            return base.OnMouseEvent(eventData);
+            base.OnMouseEvent(eventData);
         }
     }
 }

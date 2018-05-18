@@ -1,4 +1,7 @@
-﻿namespace Interactr.View.Framework
+﻿using System;
+using Interactr.Reactive;
+
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// Information about a mouse input event.
@@ -19,6 +22,12 @@
         /// Amount of times the mouse button was pressed.
         /// </summary>
         public int ClickCount { get; }
+
+        /// <summary>
+        /// True when the propagation of an event has to be stopped.
+        /// This enable stopping event propagation in observables.
+        /// </summary>
+        public bool IsHandled { get; set; } = false;
 
         public MouseEventData(int id, Point mousePosition, int clickCount)
         {

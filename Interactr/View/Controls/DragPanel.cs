@@ -57,7 +57,7 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="UIElement.OnMouseEvent(MouseEventData)"/>
-        protected override bool OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData eventData)
         {
             if (eventData.Id == MouseEvent.MOUSE_DRAGGED && FocusedElement.CanLoseFocus)
             {
@@ -67,14 +67,17 @@ namespace Interactr.View.Controls
                 );
                 ApplyDragToFocusedElement(dragEventData);
                 _previousCursorPosition = eventData.MousePosition;
-                return true;
+                
+                // Stop the propagation of the event.
+                eventData.IsHandled = true;
+                return;
             }
 
-            return base.OnMouseEvent(eventData);
+          base.OnMouseEvent(eventData);
         }
 
         /// <see cref="UIElement.OnMouseEventPreview(MouseEventData)"/>
-        protected override bool OnMouseEventPreview(MouseEventData eventData)
+        protected override void OnMouseEventPreview(MouseEventData eventData)
         {
             if (eventData.Id == MouseEvent.MOUSE_PRESSED)
             {
@@ -90,7 +93,7 @@ namespace Interactr.View.Controls
                 }
             }
 
-            return base.OnMouseEventPreview(eventData);
+            base.OnMouseEventPreview(eventData);
         }
 
         /// <summary>
