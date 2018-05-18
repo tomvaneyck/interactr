@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -54,9 +56,21 @@ namespace Interactr.ViewModel
 
         #region Label
 
-        private ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
+        private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
 
-        private ReactiveList<string> _methodArguments = new ReactiveArrayList<string>();
+        public string MethodName
+        {
+            get => _methodName.Value;
+            private set => _methodName.Value = value;
+        }
+
+        private readonly ReactiveProperty<List<string>> _methodArguments = new ReactiveProperty<List<string>>();
+
+        public List<string> MethodArguments
+        {
+            get => _methodArguments.Value;
+            private set => _methodArguments.Value = value;
+        }
 
         /// <summary>
         /// The label to be displayed, includes the messageNumber and the label if the messageNumber is present.
@@ -69,21 +83,7 @@ namespace Interactr.ViewModel
         private string Label
         {
             get => _label.Value;
-            set
-            {
-                if (MessageType == Message.MessageType.Invocation)
-                {
-                    // TODO: parse the text of the value field,
-                    // TODO: Set the methodName and arguments from the value input.
-                    // TODO: Make sure it has a valid format (in the view??? -> see how its done in partyLabel).
-                    // TODO: Automatically set the label when the methodName or argument changes,
-                    // TODO: this way the _label always contains the correct text for the message.
-                }
-
-                // Set the value  of _label as is without any restrictions 
-                // if the messageType is not Invocation.
-                _label.Value = value;
-            }
+            set => _label.Value = value;
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
@@ -108,6 +108,44 @@ namespace Interactr.ViewModel
 
             // Propagate changes in the model to the viewmodel.
             message.LabelChanged.Subscribe(newLabelText => { Label = newLabelText; });
+
+            // Update the methodName and the method arguments when the label in the viewmodel changes.
+            LabelChanged.Subscribe(newLabelText =>
+                {
+                    // Only update if the value is new.
+                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
+                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
+
+                    // To make sure the observables don't go in an infinite loop.
+                    if (newMethodName != MethodName)
+                    {
+                        MethodName = newMethodName;
+                    }
+
+                    if (newMethodArguments != MethodArguments)
+                    {
+                        MethodArguments = newMethodArguments;
+                    }
+                }
+            );
+
+            // Update the label on a change in the methodName or methodArguments.
+            _methodArguments.Changed.MergeEvents(_messageNumber.Changed).Subscribe(_ =>
+            {
+                var newLabel = MethodName;
+                newLabel += "(";
+                foreach (var arg in MethodArguments)
+                {
+                    newLabel += arg + ",";
+                }
+
+                if (newLabel[newLabel.Length - 1] == ',')
+                {
+                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
+                }
+
+                newLabel += ")";
+            });
         }
     }
 }
