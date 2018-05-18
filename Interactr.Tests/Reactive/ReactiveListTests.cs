@@ -286,6 +286,22 @@ namespace Interactr.Tests.Reactive
             Assert.AreEqual(0, actual.Messages.Count);
         }
 
+        [Test]
+        public void TestDerivedList()
+        {
+            ReactiveList<int> sourceList = new ReactiveArrayList<int>();
+            sourceList.AddRange(Enumerable.Range(0, 5));
+            
+            IReadOnlyReactiveList<string> derivedList = sourceList.CreateDerivedList(i => i.ToString(), i => i % 2 == 0).ResultList; // Strings of the even numbers only
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new []{"0", "2", "4"}));
+
+            sourceList.AddRange(Enumerable.Range(5, 5));
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "0", "2", "4", "6", "8" }));
+
+            sourceList.Move(2, 0); // Apply movement so 0,1,2 changes to 2,0,1
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "2", "0", "4", "6", "8" }));
+        }
+
         class DummyTestingClass
         {
             public string Identifier { get; set; }

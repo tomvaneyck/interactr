@@ -88,6 +88,8 @@ namespace Interactr.Reactive
         /// <param name="destinationIndex">The index the item needs to be moved to.</param>
         public abstract void MoveByIndex(int sourceIndex, int destinationIndex);
 
+        public abstract void ApplyCyclicPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes);
+
         public abstract int Count { get; }
 
         int IReadOnlyCollection<T>.Count => Count;

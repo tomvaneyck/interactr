@@ -98,12 +98,27 @@ namespace Interactr.Reactive
         public override void Move(T item, int destinationIndex)
         {
             int sourceIndex = IndexOf(item);
+            if (sourceIndex == -1)
+            {
+                throw new ArgumentException("The specified item was not found in the list");
+            }
+
             MoveByIndex(sourceIndex, destinationIndex);
         }
 
         /// <see cref="ReactiveList.MoveByIndex"/>
         public override void MoveByIndex(int sourceIndex, int destinationIndex)
         {
+            if (sourceIndex < 0 || sourceIndex >= this.Count)
+            {
+                throw new IndexOutOfRangeException($"{sourceIndex} is not in [0;{Count-1}]");
+            }
+
+            if (destinationIndex < 0 || destinationIndex >= this.Count)
+            {
+                throw new IndexOutOfRangeException($"{destinationIndex} is not in [0;{Count - 1}]");
+            }
+
             T item = _contents[sourceIndex];
             _contents.RemoveAt(sourceIndex);
             _contents.Insert(destinationIndex, item);
@@ -120,6 +135,60 @@ namespace Interactr.Reactive
                     .Select(i => (_contents[i], i - 1, i));
             }
             _onMoved.OnNext(new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges));
+        }
+        
+        public override void ApplyCyclicPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
+        {
+            if (changes == null)
+            {
+                throw new ArgumentNullException(nameof(changes));
+            }
+
+            Dictionary<int, int> changesDictionary = changes.ToDictionary(c => c.SourceIndex, c => c.DestinationIndex);
+
+            if (changesDictionary.Count == 0)
+            {
+                return;
+            }
+
+            // Validate changes
+            foreach (var change in changesDictionary)
+            {
+                int sourceI = change.Key;
+                int destI = change.Value;
+
+                // If an element is moved to a new index, the element that was previously at that index
+                // must also be moved. Additionally, no other elements may be moved to this index.
+                // Also, the source element must have only one destination.
+                bool isValid = changesDictionary.ContainsKey(destI) && 
+                               changesDictionary.Values.Count(i => i == destI) == 1 &&
+                               changesDictionary.Keys.Count(i => i == sourceI) == 1 &&
+                               sourceI >= 0 && sourceI < Count &&
+                               destI >= 0 && destI < Count;
+                if (!isValid)
+                {
+                    throw new ArgumentException("Invalid move indices. The move must produce a permutation where each " +
+                                                "element has 1 unique index and the length of the list is not changed.");
+                }
+            }
+
+            // Apply changes
+            int firstSourceI = changesDictionary.Keys.First();
+            int curSourceI = firstSourceI;
+            T curValue = this[curSourceI];
+            do
+            {
+                int destI = changesDictionary[curSourceI];
+                T oldVal = this[destI];
+
+                this[destI] = curValue;
+
+                curSourceI = destI;
+                curValue = oldVal;
+            } while (curSourceI != firstSourceI);
+
+            // Emit events
+            _onMoved.OnNext(changesDictionary.Select(p => (this[p.Value], p.Key, p.Value)));
         }
 
         #region DefaultImplementations
