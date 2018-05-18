@@ -110,51 +110,49 @@ namespace Interactr.ViewModel
             // Propagate changes in the model to the viewmodel.
             message.LabelChanged.Subscribe(newLabelText =>
             {
-                Debug.Print("---");
-                Debug.Print(Label);
                 if (Label != newLabelText)
                 {
                     Label = newLabelText;
                 }
             });
 
-            // Update the methodName and the method arguments when the label in the viewmodel changes.
-            LabelChanged.Subscribe(newLabelText =>
-                {
-                    // Only update if the value is new.
-                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
-                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
-
-                    // Make sure the observables don't go in an infinite loop.
-                    if (newMethodName != MethodName)
-                    {
-                        MethodName = newMethodName;
-                    }
-
-                    if (newMethodArguments != MethodArguments)
-                    {
-                        MethodArguments = newMethodArguments;
-                    }
-                }
-            );
-
-            // Update the label on a change in the methodName or methodArguments.
-            _methodArguments.Changed.MergeEvents(_messageNumber.Changed).Subscribe(_ =>
-            {
-                var newLabel = MethodName;
-                newLabel += "(";
-                foreach (var arg in MethodArguments)
-                {
-                    newLabel += arg + ",";
-                }
-
-                if (newLabel[newLabel.Length - 1] == ',')
-                {
-                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
-                }
-
-                newLabel += ")";
-            });
+//            // Update the methodName and the method arguments when the label in the viewmodel changes.
+//            LabelChanged.Subscribe(newLabelText =>
+//                {
+//                    // Only update if the value is new.
+//                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
+//                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
+//
+//                    // Make sure the observables don't go in an infinite loop.
+//                    if (newMethodName != MethodName)
+//                    {
+//                        MethodName = newMethodName;
+//                    }
+//
+//                    if (newMethodArguments != MethodArguments)
+//                    {
+//                        MethodArguments = newMethodArguments;
+//                    }
+//                }
+//            );
+//
+//            // Update the label on a change in the methodName or methodArguments.
+//            _methodArguments.Changed.MergeEvents(_messageNumber.Changed).Subscribe(_ =>
+//            {
+//                var newLabel = MethodName;
+//                newLabel += "(";
+//                foreach (var arg in MethodArguments)
+//                {
+//                    newLabel += arg + ",";
+//                }
+//
+//                if (newLabel[newLabel.Length - 1] == ',')
+//                {
+//                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
+//                }
+//
+//                newLabel += ")";
+//            });
         }
     }
 }
