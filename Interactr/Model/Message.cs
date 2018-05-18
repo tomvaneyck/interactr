@@ -106,16 +106,19 @@ namespace Interactr.Model
         /// <returns>A boolean indicating if it is a valid label.</returns>
         public static bool IsValidInvocationLabel(string label)
         {
-            return label != null && Regex.Match(label,
-                           "^(([a-z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)?:){1}([A-Z\u00C0-\u017F]{1}[a-zA-Z0-9\u00C0-\u017F]*)+$")
-                       .Success;
+            // Parse the label (returns null if the label is invalid)
+            // Check if it IsValidMethodName
+            // Check if it IsValidArgumentList
+            return true;
         }
 
+        //TODO: comment.
         public static bool IsValidMethodName(string methodName)
         {
             return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-z0-9_]*$");
         }
 
+        //TODO: comment.
         public static bool IsValidArgumentsList(List<string> arguments)
         {
             if (arguments == null)
