@@ -245,9 +245,10 @@ namespace Interactr.Tests.Reactive
             scheduler.Schedule(TimeSpan.FromTicks(10), () => dummy1.TestObservable.OnNext("First test event"));
             scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Add(dummy2));
             scheduler.Schedule(TimeSpan.FromTicks(30), () => dummy2.TestObservable.OnNext("Second test event"));
-            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0]));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0])); //Delete dummy1
             scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Third test event"));
-            scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0]));
+            scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0])); //Delete dummy2
+            scheduler.Schedule(TimeSpan.FromTicks(70), () => dummy2.TestObservable.OnNext("Fourth test event"));
             var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0,
                 disposed: 100);
 
@@ -267,7 +268,7 @@ namespace Interactr.Tests.Reactive
             var scheduler = new TestScheduler();
             var dummy1 = new DummyTestingClass { Identifier = "A" };
             var dummy2 = new DummyTestingClass { Identifier = "B" };
-            var dummy3 = new DummyTestingClass { Identifier = "B" };
+            var dummy3 = new DummyTestingClass { Identifier = "C" };
             ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
             {
                 dummy2

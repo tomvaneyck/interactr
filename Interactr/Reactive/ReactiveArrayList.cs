@@ -66,7 +66,7 @@ namespace Interactr.Reactive
             _onAdd.OnNext((item, index));
             _onMoved.OnNext(
                 Enumerable.Range(index+1, _contents.Count - 1 - index)
-                    .Select(i => (_contents[i], index-1, index))
+                    .Select(i => (_contents[i], i - 1, i))
             );
         }
 
@@ -90,7 +90,7 @@ namespace Interactr.Reactive
             _onDelete.OnNext((item, index));
             _onMoved.OnNext(
                 Enumerable.Range(index, _contents.Count - index)
-                    .Select(i => (_contents[i], index + 1, index))
+                    .Select(i => (_contents[i], i + 1, i))
             );
         }
 
