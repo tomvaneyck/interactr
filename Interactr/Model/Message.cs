@@ -106,10 +106,14 @@ namespace Interactr.Model
         /// <returns>A boolean indicating if it is a valid label.</returns>
         public static bool IsValidInvocationLabel(string label)
         {
-            // Parse the label (returns null if the label is invalid)
-            // Check if it IsValidMethodName
-            // Check if it IsValidArgumentList
-            return true;
+            // Check for a valid program structure.
+            var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
+
+            var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
+            var argumentsListIsValid = IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
+
+            // The label is valid if both the methodName and the argumentsList are valid.
+            return methodNameIsValid && argumentsListIsValid && isValidStructure;
         }
 
         //TODO: comment.
