@@ -133,6 +133,11 @@ namespace Interactr.Reactive
                 throw new IndexOutOfRangeException($"{destinationIndex} is not in [0;{Count - 1}]");
             }
 
+            if (sourceIndex == destinationIndex)
+            {
+                return;
+            }
+
             T item = _contents[sourceIndex];
             _contents.RemoveAt(sourceIndex);
             _contents.Insert(destinationIndex, item);
