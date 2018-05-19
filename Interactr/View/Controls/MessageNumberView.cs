@@ -18,7 +18,11 @@ namespace Interactr.View.Controls
         public string MessageNumber
         {
             get => _messageNumber.Value;
-            set => _messageNumber.Value = value;
+            set {
+                if (value != null)
+                {
+                    _messageNumber.Value = value+":";
+                } }
         }
 
         /// <summary>

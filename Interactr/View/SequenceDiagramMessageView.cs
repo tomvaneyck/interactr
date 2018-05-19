@@ -59,7 +59,7 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m =>
                 {
-                    MessageNumberView.MessageNumber = m + ":";
+                    MessageNumberView.MessageNumber = m;
                     MessageNumberView.Height = MessageNumberView.PreferredHeight;
                     MessageNumberView.Width = MessageNumberView.PreferredWidth;
                 });
@@ -81,14 +81,23 @@ namespace Interactr.View
             });
 
             // The label is red if CanApplyLabel is true.
-            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel => Label.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
+                Label.Color = canApplyLabel || ViewModel.MessageType == Message.MessageType.Result
+                    ? DefaultLabelColor
+                    : InvalidLabelColor);
 
             // Fire ApplyLabel when leaving edit mode.
             Label.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                    if (ViewModel != null && ViewModel.MessageType == Message.MessageType.Result)
+                    {
+                        ViewModel.ApplyLabel();
+                    }
+                    else if (ViewModel != null && !isInEditMode)
+                    {
+                        ViewModel.ApplyLabel();
+                    }
                 }
             );
 
