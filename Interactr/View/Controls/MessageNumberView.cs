@@ -87,7 +87,6 @@ namespace Interactr.View.Controls
             });
         }
 
-
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
