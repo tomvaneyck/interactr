@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Model;
@@ -87,9 +88,9 @@ namespace Interactr.View
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                MessageNumberView.MessageNumber = m;
-                MessageNumberView.Height = PreferredHeight;
-                MessageNumberView.Width = PreferredWidth;
+                MessageNumberView.MessageNumber = m + ":";
+                MessageNumberView.Height = MessageNumberView.PreferredHeight;
+                MessageNumberView.Width = MessageNumberView.PreferredWidth;
             });
 
             // Put the label under the arrow.
@@ -112,7 +113,7 @@ namespace Interactr.View
                 Label.Width = Label.PreferredWidth;
                 Label.Height = Label.PreferredHeight;
                 MessageNumberView.Position = new Point(Label.Position.X - MessageNumberView.Width,
-                    Label.Position.Y - MessageNumberView.Height);
+                    Label.Position.Y);
             });
         }
 
