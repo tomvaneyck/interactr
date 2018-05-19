@@ -66,7 +66,7 @@ namespace Interactr.ViewModel
         public string Label
         {
             get => _label.Value;
-            protected set => _label.Value = value;
+            set => _label.Value = value;
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
@@ -88,6 +88,10 @@ namespace Interactr.ViewModel
         public MessageViewModel(Message message)
         {
             Message = message;
+
+            // Bidirectional bind between the message number in the viewmodel and model.
+            Message.MessageNumberChanged.Subscribe(m => MessageNumber = m);
+            MessageNumberChanged.Subscribe(m => Message.MessageNumber = m);
 
             // Propagate changes in the model to the viewmodel.
             message.LabelChanged.Subscribe(newLabelText => { Label = newLabelText; });

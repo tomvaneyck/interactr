@@ -88,7 +88,7 @@ namespace Interactr.View
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                MessageNumberView.Text = m + ":";
+                MessageNumberView.Text = m;
                 MessageNumberView.Height = MessageNumberView.PreferredHeight;
                 MessageNumberView.Width = MessageNumberView.PreferredWidth;
             });

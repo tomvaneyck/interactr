@@ -8,6 +8,27 @@ namespace Interactr.View.Controls
 {
     public class MessageNumberView : LabelView
     {
+        #region Text
+
+        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
+
+        public override string Text
+        {
+            get => _text.Value;
+            set
+            {
+                if (value != null)
+                {
+                    _text.Value = value + ":";
+                }
+            }
+        }
+
+        ///<see cref="TextChanged"/>
+        public override IObservable<string> TextChanged => _text.Changed;
+
+        #endregion
+
         public MessageNumberView()
         {
             // This element can never be focused or receive mouse events.

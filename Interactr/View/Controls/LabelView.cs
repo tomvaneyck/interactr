@@ -23,7 +23,7 @@ namespace Interactr.View.Controls
         /// <summary>
         /// The text of the label.
         /// </summary>
-        public string Text
+        public virtual string Text
         {
             get => _text.Value;
             set => _text.Value = value;
@@ -32,7 +32,7 @@ namespace Interactr.View.Controls
         /// <summary>
         /// Emit the new text when the text changes.
         /// </summary>
-        public IObservable<string> TextChanged => _text.Changed;
+        public virtual IObservable<string> TextChanged => _text.Changed;
 
         #endregion
 
@@ -255,6 +255,7 @@ namespace Interactr.View.Controls
                 eventData.IsHandled = true;
                 return;
             }
+
             if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
