@@ -273,5 +273,53 @@ namespace Interactr.Tests.Model
 
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void InvalidMessageLabelCapitalsTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelStartWithCapital);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelNoParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelNoParenthesis);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalCharactersTest()
+        {
+            bool expected1 = false;
+            bool actual1 = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalChars1);
+            bool expected2 = false;
+            bool actual2 = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalChars2);
+
+            Assert.AreEqual(expected1, actual1);
+            Assert.AreEqual(expected2, actual2);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalArgsCommaTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalArgsComma);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalArgsParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalArgsParenthesis);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
