@@ -100,20 +100,31 @@ namespace Interactr.Reactive
 
             // Select the target observable using observableSelector and return
             // values from it until the item is removed from this list.
-            return items.Where(e => filter(e.Element)).SelectMany(newElem =>
+            return items.Where(e => filter(e.Element)).SelectMany(addEvent =>
                 {
                     var latestIndex = list.OnMoved
-                        .SelectMany(c => c.Changes)
-                        .Scan(newElem.Index, (curIndex, change) => change.OldIndex == curIndex ? change.NewIndex : curIndex)
-                        .StartWith(newElem.Index);
+                        // On each index change event, update the item index.
+                        .Scan(addEvent.Index, (curIndex, e) =>
+                        {
+                            // Search for an index change of addEvent.Element.
+                            // Can't use .FirstOrDefault() here, because the changes are tuples which are value types and
+                            // thus non-nullable which could do weird stuff with equality comparison
+                            foreach (var change in e.Changes.Where(c => c.OldIndex == curIndex))
+                            {
+                                return change.NewIndex;
+                            }
+                            // The index was not changed, return the current value.
+                            return curIndex;
+                        })
+                        .StartWith(addEvent.Index);
 
-                    return observableSelector(newElem.Element)
+                    return observableSelector(addEvent.Element)
                         .TakeUntil(
                             list.OnDelete
                                 .WithLatestFrom(latestIndex, (e, i) => (DeleteEvent: e, LatestIndex: i))
                                 .Where(e => e.DeleteEvent.Index == e.LatestIndex)
                         )
-                        .Select(val => (newElem.Element, val));
+                        .Select(val => (addEvent.Element, val));
                 }
             );
         }
