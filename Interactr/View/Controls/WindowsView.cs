@@ -56,13 +56,10 @@ namespace Interactr.View.Controls
                 });
 
             // When the close button of a window is clicked, notify WindowCloseRequested
-            Children.ObserveWhere(window => ((Window) window).CloseButton.MouseEventOccured, elem => elem is Window)
+            Children.ObserveWhere(window => ((Window) window).CloseButton.OnButtonClick, elem => elem is Window)
                 .Subscribe(e =>
                 {
-                    if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
-                    {
-                        _windowCloseRequested.OnNext((Window) e.Element);
-                    }
+                    _windowCloseRequested.OnNext((Window)e.Element);
                 });
         }
 
