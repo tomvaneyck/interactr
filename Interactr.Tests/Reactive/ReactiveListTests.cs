@@ -263,6 +263,28 @@ namespace Interactr.Tests.Reactive
         }
 
         [Test]
+        public void TestObserveEachMoveRemove()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            var dummy1 = new DummyTestingClass { Identifier = "A" };
+            var dummy2 = new DummyTestingClass { Identifier = "B" };
+            ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
+            {
+                dummy1, dummy2
+            };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(30), () => list.Move(dummy1, 1)); //Move dummy1 to end of list
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.RemoveAt(0)); //Remove dummy2
+            scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Test event"));
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(1, actual.Messages.Count);
+        }
+
+        [Test]
         public void TestObserveEachIndexChange()
         {
             //Setup
