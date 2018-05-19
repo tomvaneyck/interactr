@@ -13,7 +13,7 @@ namespace Interactr.Tests.Model
 
         //Test labels
         private const string MessageLabel1 = "testlabel()";
-        private const string MessageLabel2 = "testlabel()";
+        private const string MessageLabel2 = "testlabel2()";
 
         private const string ValidPartyLabel1 = "instanceName:Classname";
         private const string ValidPartyLabel2 = "instanceName2:Classname2";
