@@ -135,21 +135,22 @@ namespace Interactr.View.Controls
 
             public override void PaintElement(Graphics g)
             {
-                g.FillEllipse(Brushes.White, 0, 0, ButtonSize, ButtonSize);
-                g.DrawEllipse(Pens.Black, 0, 0, ButtonSize, ButtonSize);
-
-                g.DrawString(Label, Font, Brushes.Black, ButtonSize + LabelMargin, 0);
+                int y = (this.Height - ButtonSize) / 2;
+                g.FillEllipse(Brushes.White, 0, y, ButtonSize, ButtonSize);
+                g.DrawEllipse(Pens.Black, 0, y, ButtonSize, ButtonSize);
 
                 if (IsSelected)
                 {
                     g.FillEllipse(
                         Brushes.Black, 
                         (ButtonSize - SelectionDotSize) / 2, 
-                        (ButtonSize - SelectionDotSize) / 2,
+                        y + ((ButtonSize - SelectionDotSize) / 2),
                         SelectionDotSize,
                         SelectionDotSize
                     );
                 }
+
+                g.DrawString(Label, Font, Brushes.Black, ButtonSize + LabelMargin, 0);
             }
         }
     }
