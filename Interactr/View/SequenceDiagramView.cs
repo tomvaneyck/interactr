@@ -176,19 +176,6 @@ namespace Interactr.View
                 });
 
             Children.Add(_pendingMessageView);
-
-            // Debugging code
-            ParentChanged.Where(parent => parent?.Parent != null).Subscribe(_ =>
-            {
-                WalkToRoot()
-                .OfType<WindowsView.Window>()
-                .First()
-                .AttachedProperties
-                .OnValueChanged
-                .Where(attachedProperty => attachedProperty.Key == LabelView.LabelBeingEdited)
-                .Subscribe(__ => { });
-            });
-            
         }
 
         /// <see cref="OnMouseEvent"/>

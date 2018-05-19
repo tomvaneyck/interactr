@@ -54,7 +54,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public bool LabelInEditMode;
+        public bool LabelInEditMode { get; set; }
 
         #region CanApplyLabel
 
@@ -103,7 +103,6 @@ namespace Interactr.ViewModel
                 if (!LabelInEditMode)
                 {
                     Label = newLabel;
-
                 }
             });
 
