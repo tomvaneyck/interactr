@@ -85,11 +85,19 @@ namespace Interactr.View
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
-            // Update the label on a change .
-            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
-                .Subscribe(_ => Label.Text = ViewModel.Label);
+            // Bidirectionally bind the view label to the label in the viewmodel.
+            ViewModel.LabelChanged.Subscribe(_ => Label.Text = ViewModel.Label);
 
-            // Update the messageNumber on a change
+            Label.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
+            // Bind the message number of the view to the viewmodel and adjust
+            // the height and width of the messageNumberView.
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
                 MessageNumberView.MessageNumber = m;
@@ -113,15 +121,6 @@ namespace Interactr.View
                 }
             );
 
-            // Bind text of label between this and MessageView.
-            Label.TextChanged.Subscribe(text =>
-            {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
-            });
-
             // Put the label under the arrow.
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
@@ -141,6 +140,8 @@ namespace Interactr.View
                 Label.Position = textPos;
                 Label.Width = Label.PreferredWidth;
                 Label.Height = Label.PreferredHeight;
+
+                // Update the position of the messageNumberView.
                 MessageNumberView.Position = new Point(Label.Position.X - MessageNumberView.Width,
                     Label.Position.Y);
             });

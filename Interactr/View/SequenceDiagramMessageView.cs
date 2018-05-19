@@ -55,7 +55,19 @@ namespace Interactr.View
             AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
             AnchorsProperty.SetValue(MessageNumberView, Anchors.Left | Anchors.Top);
 
-            // Update the messageNumber on a change
+            // Bidirectionally bind the view label to the label in the viewmodel.
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
+
+            Label.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
+            // Bind the message number of the view to the viewmodel and adjust
+            // the height and width of the messageNumberView.
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m =>
                 {
@@ -101,17 +113,7 @@ namespace Interactr.View
                 }
             );
 
-            // Bind text of label between this and ViewModel.
-            Label.TextChanged.Subscribe(text =>
-            {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
-            });
-
             // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged

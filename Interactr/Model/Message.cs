@@ -47,6 +47,8 @@ namespace Interactr.Model
             get => _label.Value;
             set
             {
+                // In case of an invocation message only set the label
+                // if the label has a valid format.
                 if (Type == MessageType.Invocation)
                 {
                     if (IsValidInvocationLabel(value))
@@ -146,10 +148,11 @@ namespace Interactr.Model
             // Check for a valid program structure.
             var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
 
+            // Check for a valid method name and a valid arguments list.
             var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
             var argumentsListIsValid = IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
 
-            // The label is valid if both the methodName and the argumentsList are valid.
+            // The label is valid if the methodName, the argumentsList and the structure are valid.
             return methodNameIsValid && argumentsListIsValid && isValidStructure;
         }
 

@@ -13,7 +13,7 @@ namespace Interactr.View.Controls
         private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
 
         /// <summary>
-        /// The text of the label.
+        /// The messageNumber of the message.
         /// </summary>
         public string MessageNumber
         {
@@ -26,7 +26,7 @@ namespace Interactr.View.Controls
         }
 
         /// <summary>
-        /// Emit the new text when the text changes.
+        /// Emit the new message number when it changes.
         /// </summary>
         public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
 

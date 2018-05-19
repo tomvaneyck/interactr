@@ -56,8 +56,7 @@ namespace Interactr.Tests.ViewModel
             }));
         }
 
-        [
-            Test]
+        [Test]
         public void TestMultiInvocation()
         {
             Party party1 = new Party(Party.PartyType.Actor, "classname:Party1");
@@ -113,8 +112,7 @@ namespace Interactr.Tests.ViewModel
             }));
         }
 
-        [
-            Test]
+        [Test]
         public void Test3Parties()
         {
             Party party1 = new Party(Party.PartyType.Actor, "classname:Party1");
@@ -171,8 +169,7 @@ namespace Interactr.Tests.ViewModel
             }));
         }
 
-        [
-            Test]
+        [Test]
         public void TestMultiLevel()
         {
             Party party1 = new Party(Party.PartyType.Actor, "classname:Party1");
