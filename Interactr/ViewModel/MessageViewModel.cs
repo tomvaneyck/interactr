@@ -103,11 +103,28 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        #region CanApplyLabel
+
+        private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// Indicate if the label is valid and thus can be applied in the model.
+        /// </summary>
+        public bool CanApplyLabel
+        {
+            get => _canApplyLabel.Value;
+            set => _canApplyLabel.Value = value;
+        }
+
+        public IObservable<bool> CanApplyLabelChanged => _canApplyLabel.Changed;
+
+        #endregion
+
         public MessageViewModel(Message message)
         {
             Message = message;
 
-            // Propagate changes in the model to the viewmodel.
+            // Bind the label in the viewmodel to the label in the model.
             message.LabelChanged.Subscribe(newLabelText =>
             {
                 if (Label != newLabelText)
@@ -115,6 +132,9 @@ namespace Interactr.ViewModel
                     Label = newLabelText;
                 }
             });
+
+            // Update CanApplyLabel when the label changes.
+            LabelChanged.Select(Message.IsValidInvocationLabel).Subscribe(isValid => CanApplyLabel = isValid);
 
 //            // Update the methodName and the method arguments when the label in the viewmodel changes.
 //            LabelChanged.Subscribe(newLabelText =>
@@ -153,6 +173,15 @@ namespace Interactr.ViewModel
 //
 //                newLabel += ")";
 //            });
+        }
+
+        /// <summary>
+        /// Set the model label to the label in the viewmodel.
+        /// </summary>
+        public void ApplyLabel()
+        {
+            Debug.Print("Apply Label called.");
+            Message.Label = Label;
         }
     }
 }

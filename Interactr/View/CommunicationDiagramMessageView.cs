@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -6,6 +7,7 @@ using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
+using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View
 {
@@ -14,6 +16,9 @@ namespace Interactr.View
     /// </summary>
     public class CommunicationDiagramMessageView : UIElement
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region CommunicationDiagramMessageViewModel
 
         private readonly ReactiveProperty<MessageViewModel> _viewModel =
@@ -77,14 +82,30 @@ namespace Interactr.View
             Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
                 .Subscribe(_ => Label.Text = ViewModel.DisplayLabel);
 
-//            // Bind text of label between this and ViewModel.
-//            Label.TextChanged.Subscribe(text =>
-//            {
-//                if (ViewModel != null)
-//                {
-//                    ViewModel.Label = text;
-//                }
-//            });
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => Label.CanLeaveEditMode = canApplyLabel);
+
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => Label.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+
+            // Fire ApplyLabel when leaving edit mode.
+            Label.EditModeChanged.Subscribe(
+                isInEditMode =>
+                {
+                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                }
+            );
+
+            // Bind text of label between this and MessageView.
+            Label.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
 
             // Put the label under the arrow.
             Observable.CombineLatest(
