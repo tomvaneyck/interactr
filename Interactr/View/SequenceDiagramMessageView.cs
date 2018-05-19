@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -13,6 +14,9 @@ namespace Interactr.View
 {
     public class SequenceDiagramMessageView : AnchorPanel
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region SequenceDiagramMessageViewModel
 
         private readonly ReactiveProperty<SequenceDiagramMessageViewModel> _viewModel =
@@ -33,6 +37,11 @@ namespace Interactr.View
         /// </summary>
         public LabelView Label { get; } = new LabelView();
 
+        /// <summary>
+        /// The messageNumber view of the message.
+        /// </summary>
+        public MessageNumberView MessageNumberView { get; } = new MessageNumberView();
+
         private readonly ArrowView _arrow = new ArrowView();
 
         public SequenceDiagramMessageView()
@@ -41,7 +50,19 @@ namespace Interactr.View
 
             Children.Add(_arrow);
             Children.Add(Label);
+            Children.Add(MessageNumberView);
+
             AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
+            AnchorsProperty.SetValue(MessageNumberView, Anchors.Left | Anchors.Top);
+
+            // Update the messageNumber on a change
+            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
+                .Subscribe(m =>
+                {
+                    MessageNumberView.MessageNumber = m + ":";
+                    MessageNumberView.Height = MessageNumberView.PreferredHeight;
+                    MessageNumberView.Width = MessageNumberView.PreferredWidth;
+                });
 
             // Put the arrow starting point on the sender activation bar.
             ObserveActivationBarPosition(vm => vm.SenderActivationBarChanged)
@@ -59,15 +80,14 @@ namespace Interactr.View
                 _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
-            //TODO: Fix crash!!!
-//            // Bind text of label between this and ViewModel.
-//            Label.TextChanged.Subscribe(text =>
-//            {
-//                if (ViewModel != null)
-//                {
-//                    ViewModel.Label = text;
-//                }
-//            });
+            // Bind text of label between this and ViewModel.
+            Label.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
 
             // Put the label under the arrow.
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
@@ -85,6 +105,8 @@ namespace Interactr.View
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
                 MarginsProperty.SetValue(Label, new Margins(textPos.X, textPos.Y));
+                MarginsProperty.SetValue(MessageNumberView,
+                    new Margins(textPos.X - MessageNumberView.PreferredWidth, textPos.Y));
             });
         }
 

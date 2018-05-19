@@ -124,14 +124,10 @@ namespace Interactr.Model
             Debug.Print("label: " + label);
             // Check for a valid program structure.
             var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
-            Debug.Print("isValidStructure: " + isValidStructure.ToString());
 
             var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
             var argumentsListIsValid = IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
 
-            Debug.Print("methodNameIsValid: " + methodNameIsValid);
-            Debug.Print("argumentsListIsValid: " + argumentsListIsValid);
-            
             // The label is valid if both the methodName and the argumentsList are valid.
             return methodNameIsValid && argumentsListIsValid && isValidStructure;
         }
