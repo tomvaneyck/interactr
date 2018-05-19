@@ -80,6 +80,18 @@ namespace Interactr.View
                 _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => Label.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+
+            // Fire ApplyLabel when leaving edit mode.
+            Label.EditModeChanged.Subscribe(
+                isInEditMode =>
+                {
+                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                }
+            );
+
             // Bind text of label between this and ViewModel.
             Label.TextChanged.Subscribe(text =>
             {

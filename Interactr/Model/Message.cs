@@ -164,7 +164,7 @@ namespace Interactr.Model
         /// <returns></returns>
         public static bool IsValidMethodName(string methodName)
         {
-            return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-z0-9_]*$");
+            return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-zA-Z0-9_]*$");
         }
 
         /// <summary>
