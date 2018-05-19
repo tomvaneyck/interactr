@@ -301,6 +301,12 @@ namespace Interactr.Tests.Reactive
 
             sourceList.Move(2, 0); // Apply movement so 0,1,2 changes to 2,0,1
             Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "2", "0", "4", "6", "8" }));
+
+            sourceList.RemoveAt(0);
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "0", "4", "6", "8" }));
+
+            sourceList.Insert(0, 2);
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "2", "0", "4", "6", "8" }));
         }
 
         [Test]
