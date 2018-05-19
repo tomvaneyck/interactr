@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Reactive;
+using System.Reactive.Subjects;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.Window;
@@ -44,20 +46,47 @@ namespace Interactr.View.Controls
         public IObservable<Font> LabelFontChanged => _labelFont.Changed;
 
         #endregion
+        
+        #region IsEnabled
+
+        private readonly ReactiveProperty<bool> _isEnabled = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If true, the button can be clicked.
+        /// If false, the button is grayed out and does not emit OnButtonClick events.
+        /// </summary>
+        public bool IsEnabled
+        {
+            get => _isEnabled.Value;
+            set => _isEnabled.Value = value;
+        }
+
+        public IObservable<bool> IsEnabledChanged => _isEnabled.Changed;
+
+        #endregion
+        
+        #region OnButtonClick
+        /// <summary>
+        /// Observable that emits an event when the button is clicked and the button is not disabled
+        /// </summary>
+        public IObservable<Unit> OnButtonClick => _onButtonClick;
+        private readonly Subject<Unit> _onButtonClick = new Subject<Unit>();
+        #endregion
 
         public Button()
         {
-            Label = "";
+            Label = "Button";
             LabelFont = new Font("Arial", 8f);
+            IsEnabled = true;
 
-            LabelChanged.Subscribe(_ => Repaint());
+            ReactiveExtensions.MergeEvents(LabelChanged, IsEnabledChanged).Subscribe(_ => Repaint());
         }
 
         private bool _isPressed; // Is the mouse down on this element?
 
         protected override void OnMouseEvent(MouseEventData eventData)
         {
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED)
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && IsEnabled)
             {
                 _isPressed = true;
                 Repaint();
@@ -66,6 +95,11 @@ namespace Interactr.View.Controls
             {
                 _isPressed = false;
                 Repaint();
+
+                if (IsEnabled)
+                {
+                    _onButtonClick.OnNext(Unit.Default);
+                }
             }
 
             eventData.IsHandled = true;
@@ -100,7 +134,18 @@ namespace Interactr.View.Controls
                 }
 
                 // Draw button label.
-                g.DrawString(Label, LabelFont, Brushes.Black, 0, 1);
+                if (IsEnabled)
+                {
+                    g.DrawString(Label, LabelFont, Brushes.Black, 0, 1);
+                }
+                else
+                {
+                    using (Brush brush = new SolidBrush(Color.FromArgb(128, 128, 128)))
+                    {
+                        g.DrawString(Label, LabelFont, Brushes.White, 1, 2);
+                        g.DrawString(Label, LabelFont, brush, 0, 1);
+                    }
+                }
             }
             else
             {
