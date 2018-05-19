@@ -102,6 +102,7 @@
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\ArrowView.cs" />
     <Compile Include="View\Controls\Button.cs" />
+    <Compile Include="View\Controls\MessageNumberView.cs" />
     <Compile Include="View\DiagramEditorView.cs" />
     <Compile Include="View\Framework\Keyboard.cs" />
     <Compile Include="View\LifeLineView.cs" />

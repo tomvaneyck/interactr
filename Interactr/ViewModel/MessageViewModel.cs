@@ -54,12 +54,6 @@ namespace Interactr.ViewModel
 
         #region Label
 
-        /// <summary>
-        /// The label to be displayed, includes the messageNumber and the label if the messageNumber is present.
-        /// Is equal to the Label when the messageNumber is not Present.
-        /// </summary>
-        public string DisplayLabel => MessageNumber != null ? MessageNumber + ":" + Label : Label;
-
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
         /// <summary>

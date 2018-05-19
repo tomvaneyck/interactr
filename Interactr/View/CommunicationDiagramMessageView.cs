@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
@@ -58,6 +59,11 @@ namespace Interactr.View
         /// </summary>
         public LabelView Label { get; } = new LabelView();
 
+        /// <summary>
+        /// The messageNumber view of the message.
+        /// </summary>
+        public MessageNumberView MessageNumberView { get; } = new MessageNumberView();
+
         private readonly ArrowView _arrow = new ArrowView();
 
         public CommunicationDiagramMessageView(MessageViewModel viewModel)
@@ -68,6 +74,7 @@ namespace Interactr.View
 
             Children.Add(_arrow);
             Children.Add(Label);
+            Children.Add(MessageNumberView);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
@@ -75,7 +82,15 @@ namespace Interactr.View
 
             // Update the label on a change.
             Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
-                .Subscribe(_ => Label.Text = ViewModel.DisplayLabel);
+                .Subscribe(_ => Label.Text = ViewModel.Label);
+
+            // Update the messageNumber on a change
+            ViewModel.MessageNumberChanged.Subscribe(m =>
+            {
+                MessageNumberView.MessageNumber = m;
+                MessageNumberView.Height = PreferredHeight;
+                MessageNumberView.Width = PreferredWidth;
+            });
 
             // Put the label under the arrow.
             Observable.CombineLatest(
@@ -96,6 +111,8 @@ namespace Interactr.View
                 Label.Position = textPos;
                 Label.Width = Label.PreferredWidth;
                 Label.Height = Label.PreferredHeight;
+                MessageNumberView.Position = new Point(Label.Position.X - MessageNumberView.Width,
+                    Label.Position.Y - MessageNumberView.Height);
             });
         }
 
