@@ -188,7 +188,7 @@ namespace Interactr.Model
 
             foreach (var arg in arguments)
             {
-                if (!Regex.IsMatch(arg, "^.*[^(,)\\s]+.*$"))
+                if (!Regex.IsMatch(arg, "^[^(,)\\s]*$") && arg!="")
                 {
                     return false;
                 }

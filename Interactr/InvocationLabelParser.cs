@@ -42,14 +42,15 @@ namespace Interactr
             }
 
             // Get the arguments enclosed in parenthesis.
-            var argsMatch = Regex.Match(label, "(.*)");
+            var argsMatch = Regex.Match(label, "[(].*[)]");
             if (!argsMatch.Success)
             {
                 return null;
             }
 
+            var matchWithoutParentheses = argsMatch.Value.Substring(1, argsMatch.Length - 2);
             // Split the arguments on ",".
-            var args = argsMatch.Value.Split(',');
+            var args = matchWithoutParentheses.Split(',');
 
             return args.ToList();
         }
