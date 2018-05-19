@@ -119,6 +119,10 @@ namespace Interactr.ViewModel
         {
             Message = message;
 
+            // Bidirectional bind between the message number in the viewmodel and model.
+            MessageNumberChanged.Subscribe(m => Message.MessageNumber = m);
+            Message.MessageNumberChanged.Subscribe(m => MessageNumber = m);
+
             // Bind the label in the viewmodel to the label in the model.
             message.LabelChanged.Subscribe(newLabelText =>
             {

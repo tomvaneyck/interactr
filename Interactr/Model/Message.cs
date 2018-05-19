@@ -106,6 +106,23 @@ namespace Interactr.Model
 
         #endregion
 
+        #region MessageNumber
+
+        private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
+
+        /// <summary>
+        ///  The message number of a message. 
+        /// </summary>
+        public string MessageNumber
+        {
+            get => _messageNumber.Value;
+            set => _messageNumber.Value = value;
+        }
+
+        public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
+
+        #endregion
+
         /// <summary>
         /// Return True if the given label has a valid format for an InvocationLabel.
         /// <remarks>
@@ -121,7 +138,11 @@ namespace Interactr.Model
         /// <returns>A boolean indicating if it is a valid label.</returns>
         public static bool IsValidInvocationLabel(string label)
         {
-            Debug.Print("label: " + label);
+            if (label == null)
+            {
+                return false;
+            }
+
             // Check for a valid program structure.
             var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
 
