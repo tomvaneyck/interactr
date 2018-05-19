@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -300,6 +301,29 @@ namespace Interactr.Tests.Reactive
 
             sourceList.Move(2, 0); // Apply movement so 0,1,2 changes to 2,0,1
             Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "2", "0", "4", "6", "8" }));
+        }
+
+        [Test]
+        public void TestApplyPermutation()
+        {
+            IList<string> list = new List<string>
+            {
+                "A", "B", "C", "D", "E", "F"
+            };
+
+            list.ApplyPermutation(new []
+            {
+                (3, 1),
+                (1, 2),
+                (2, 3),
+                (4, 5),
+                (5, 4)
+            });
+
+            Assert.IsTrue(list.SequenceEqual(new []
+            {
+                "A", "D", "B", "C", "F", "E"
+            }));
         }
 
         class DummyTestingClass

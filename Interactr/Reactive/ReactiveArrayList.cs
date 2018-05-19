@@ -139,56 +139,13 @@ namespace Interactr.Reactive
         
         public override void ApplyCyclicPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
         {
-            if (changes == null)
-            {
-                throw new ArgumentNullException(nameof(changes));
-            }
+            var changesList = changes.ToList();
 
-            Dictionary<int, int> changesDictionary = changes.ToDictionary(c => c.SourceIndex, c => c.DestinationIndex);
-
-            if (changesDictionary.Count == 0)
-            {
-                return;
-            }
-
-            // Validate changes
-            foreach (var change in changesDictionary)
-            {
-                int sourceI = change.Key;
-                int destI = change.Value;
-
-                // If an element is moved to a new index, the element that was previously at that index
-                // must also be moved. Additionally, no other elements may be moved to this index.
-                // Also, the source element must have only one destination.
-                bool isValid = changesDictionary.ContainsKey(destI) && 
-                               changesDictionary.Values.Count(i => i == destI) == 1 &&
-                               changesDictionary.Keys.Count(i => i == sourceI) == 1 &&
-                               sourceI >= 0 && sourceI < Count &&
-                               destI >= 0 && destI < Count;
-                if (!isValid)
-                {
-                    throw new ArgumentException("Invalid move indices. The move must produce a permutation where each " +
-                                                "element has 1 unique index and the length of the list is not changed.");
-                }
-            }
-
-            // Apply changes
-            int firstSourceI = changesDictionary.Keys.First();
-            int curSourceI = firstSourceI;
-            T curValue = this[curSourceI];
-            do
-            {
-                int destI = changesDictionary[curSourceI];
-                T oldVal = this[destI];
-
-                this[destI] = curValue;
-
-                curSourceI = destI;
-                curValue = oldVal;
-            } while (curSourceI != firstSourceI);
+            //Apply changes
+            _contents.ApplyCyclicPermutation(changesList);
 
             // Emit events
-            _onMoved.OnNext(changesDictionary.Select(p => (this[p.Value], p.Key, p.Value)));
+            _onMoved.OnNext(changesList.Select(c => (this[c.DestinationIndex], c.SourceIndex, c.DestinationIndex)));
         }
 
         #region DefaultImplementations
