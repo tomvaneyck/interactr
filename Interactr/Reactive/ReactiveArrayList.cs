@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Subjects;
 
 namespace Interactr.Reactive
@@ -17,6 +18,9 @@ namespace Interactr.Reactive
 
         public override IObservable<(T Element, int Index)> OnDelete => _onDelete;
         private readonly Subject<(T Element, int Index)> _onDelete = new Subject<(T Element, int Index)>();
+
+        public override IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved => _onMoved;
+        private readonly Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>> _onMoved = new Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>>();
 
         public override T this[int index]
         {
@@ -60,6 +64,10 @@ namespace Interactr.Reactive
         {
             _contents.Insert(index, item);
             _onAdd.OnNext((item, index));
+            _onMoved.OnNext(
+                Enumerable.Range(index+1, _contents.Count - 1 - index)
+                    .Select(i => (_contents[i], i - 1, i))
+            );
         }
 
         /// <see cref="IList.Remove"/>
@@ -80,6 +88,64 @@ namespace Interactr.Reactive
             T item = _contents[index];
             _contents.RemoveAt(index);
             _onDelete.OnNext((item, index));
+            _onMoved.OnNext(
+                Enumerable.Range(index, _contents.Count - index)
+                    .Select(i => (_contents[i], i + 1, i))
+            );
+        }
+
+        /// <see cref="ReactiveList.Move"/>
+        public override void Move(T item, int destinationIndex)
+        {
+            int sourceIndex = IndexOf(item);
+            if (sourceIndex == -1)
+            {
+                throw new ArgumentException("The specified item was not found in the list");
+            }
+
+            MoveByIndex(sourceIndex, destinationIndex);
+        }
+
+        /// <see cref="ReactiveList.MoveByIndex"/>
+        public override void MoveByIndex(int sourceIndex, int destinationIndex)
+        {
+            if (sourceIndex < 0 || sourceIndex >= this.Count)
+            {
+                throw new IndexOutOfRangeException($"{sourceIndex} is not in [0;{Count-1}]");
+            }
+
+            if (destinationIndex < 0 || destinationIndex >= this.Count)
+            {
+                throw new IndexOutOfRangeException($"{destinationIndex} is not in [0;{Count - 1}]");
+            }
+
+            T item = _contents[sourceIndex];
+            _contents.RemoveAt(sourceIndex);
+            _contents.Insert(destinationIndex, item);
+
+            IEnumerable<(T, int, int)> movedElementChanges;
+            if (sourceIndex < destinationIndex) // Move element from front to back.
+            {
+                movedElementChanges = Enumerable.Range(sourceIndex, destinationIndex - sourceIndex)
+                    .Select(i => (_contents[i], i + 1, i));
+            }
+            else // Move element from back to front.
+            {
+                movedElementChanges = Enumerable.Range(destinationIndex + 1, sourceIndex - destinationIndex)
+                    .Select(i => (_contents[i], i - 1, i));
+            }
+            _onMoved.OnNext(new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges));
+        }
+        
+        public override void ApplyPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
+        {
+            var changesList = changes.ToList();
+
+            //Apply changes
+            _contents.ApplyPermutation(changesList);
+
+            // Emit events
+            _onMoved.OnNext(changesList.Select(c => (this[c.DestinationIndex], c.SourceIndex, c.DestinationIndex)));
         }
 
         #region DefaultImplementations
