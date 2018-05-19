@@ -74,7 +74,7 @@ namespace Interactr.Tests.Reactive
             Assert.AreEqual(1, actual.Messages.Count);
             foreach (var actualMessages in actual.Messages)
             {
-                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value.Changes, new[]
                 {
                     ("B", 1, 3),
                     ("C", 2, 1),
@@ -98,7 +98,7 @@ namespace Interactr.Tests.Reactive
             Assert.AreEqual(1, actual.Messages.Count);
             foreach (var actualMessages in actual.Messages)
             {
-                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value.Changes, new[]
                 {
                     ("D", 3, 1),
                     ("B", 1, 2),

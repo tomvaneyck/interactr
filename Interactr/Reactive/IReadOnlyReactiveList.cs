@@ -26,7 +26,38 @@ namespace Interactr.Reactive
         /// <summary>
         /// Observable that emits a sequence of changes when the index of one or more elements changes.
         /// </summary>
-        IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved { get; }
+        IObservable<MoveEventData<T>> OnMoved { get; }
+    }
+
+    public class MoveEventData<T>
+    {
+        public MoveReason Reason { get; }
+        public IEnumerable<(T Element, int OldIndex, int NewIndex)> Changes { get; }
+
+        public MoveEventData(MoveReason reason, IEnumerable<(T Element, int OldIndex, int NewIndex)> changes)
+        {
+            Reason = reason;
+            Changes = changes;
+        }
+    }
+
+    /// <summary>
+    /// An enum of reasons why an OnMoved event can occur
+    /// </summary>
+    public enum MoveReason
+    {
+        /// <summary>
+        /// An element was inserted in the list, causing other elements to shift.
+        /// </summary>
+        Insertion,
+        /// <summary>
+        /// An element was removed from the list, causing other elements to shift.
+        /// </summary>
+        Deletion,
+        /// <summary>
+        /// A reordering operation was performed on the list.
+        /// </summary>
+        Reordering
     }
 
     public static class ReadOnlyReactiveListExtensions
@@ -72,7 +103,7 @@ namespace Interactr.Reactive
             return items.Where(e => filter(e.Element)).SelectMany(newElem =>
                 {
                     var latestIndex = list.OnMoved
-                        .SelectMany(c => c)
+                        .SelectMany(c => c.Changes)
                         .Scan(newElem.Index, (curIndex, change) => change.OldIndex == curIndex ? change.NewIndex : curIndex)
                         .StartWith(newElem.Index);
 
