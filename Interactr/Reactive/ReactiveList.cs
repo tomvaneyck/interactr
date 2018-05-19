@@ -88,7 +88,17 @@ namespace Interactr.Reactive
         /// <param name="destinationIndex">The index the item needs to be moved to.</param>
         public abstract void MoveByIndex(int sourceIndex, int destinationIndex);
 
-        public abstract void ApplyCyclicPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes);
+        /// <summary>
+        /// Moves elements in the list according to the specified permutation.
+        /// Note that the permutation must be complete. For example, to permute {A, B, C} to {B, C, A},
+        /// you must supply the following change tuples: {(0, 2), (1, 0), (2, 1)}
+        /// The order of the tuples does not matter.
+        /// </summary>
+        /// <param name="changes">
+        /// An enumeration of change tuples, each containing the current index of the element
+        /// to move and the new index to move the element to.
+        /// </param>
+        public abstract void ApplyPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes);
 
         public abstract int Count { get; }
 

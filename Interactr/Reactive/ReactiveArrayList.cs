@@ -137,12 +137,12 @@ namespace Interactr.Reactive
             _onMoved.OnNext(new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges));
         }
         
-        public override void ApplyCyclicPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
+        public override void ApplyPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
         {
             var changesList = changes.ToList();
 
             //Apply changes
-            _contents.ApplyCyclicPermutation(changesList);
+            _contents.ApplyPermutation(changesList);
 
             // Emit events
             _onMoved.OnNext(changesList.Select(c => (this[c.DestinationIndex], c.SourceIndex, c.DestinationIndex)));
