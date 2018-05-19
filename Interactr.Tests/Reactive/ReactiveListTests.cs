@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -34,6 +35,76 @@ namespace Interactr.Tests.Reactive
             list.RemoveAt(1);
             list.RemoveAt(0);
             Assert.IsTrue(list.SequenceEqual(new string[0]));
+        }
+
+        [Test]
+        public void TestMoving()
+        {
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C" };
+            Assert.AreEqual(3, list.Count);
+            list.Move("B", list.Count-1);
+            Assert.AreEqual(3, list.Count);
+            Assert.IsTrue(list.SequenceEqual(new[] { "A", "C", "B" }));
+
+            list.Move("A", 0);
+            Assert.AreEqual(3, list.Count);
+            Assert.IsTrue(list.SequenceEqual(new[] { "A", "C", "B" }));
+        }
+
+        [Test]
+        public void TestMovingMultipleOccurrences()
+        {
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "A", "C" };
+            list.Move("A", list.Count-1);
+            Assert.IsTrue(list.SequenceEqual(new[] { "B", "A", "C", "A" }));
+        }
+
+        [Test]
+        public void TestMovingForwardObservables()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C", "D", "E" };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Move("B", 3));
+            var actual = scheduler.Start(() => list.OnMoved, created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(1, actual.Messages.Count);
+            foreach (var actualMessages in actual.Messages)
+            {
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                {
+                    ("B", 1, 3),
+                    ("C", 2, 1),
+                    ("D", 3, 2)
+                }));
+            }
+        }
+
+        [Test]
+        public void TestMovingBackwardObservables()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "C", "D", "E" };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Move("D", 1));
+            var actual = scheduler.Start(() => list.OnMoved, created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(1, actual.Messages.Count);
+            foreach (var actualMessages in actual.Messages)
+            {
+                Assert.True(Enumerable.SequenceEqual(actualMessages.Value.Value, new[]
+                {
+                    ("D", 3, 1),
+                    ("B", 1, 2),
+                    ("C", 2, 3)
+                }));
+            }
         }
 
         [Test]
@@ -175,9 +246,10 @@ namespace Interactr.Tests.Reactive
             scheduler.Schedule(TimeSpan.FromTicks(10), () => dummy1.TestObservable.OnNext("First test event"));
             scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Add(dummy2));
             scheduler.Schedule(TimeSpan.FromTicks(30), () => dummy2.TestObservable.OnNext("Second test event"));
-            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0]));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(list[0])); //Delete dummy1
             scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Third test event"));
-            scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0]));
+            scheduler.Schedule(TimeSpan.FromTicks(60), () => list.Remove(list[0])); //Delete dummy2
+            scheduler.Schedule(TimeSpan.FromTicks(70), () => dummy2.TestObservable.OnNext("Fourth test event"));
             var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0,
                 disposed: 100);
 
@@ -188,6 +260,70 @@ namespace Interactr.Tests.Reactive
                 OnNext(30, (dummy2, "Second test event"))
             };
             ReactiveAssert.AreElementsEqual(expected, actual.Messages);
+        }
+
+        [Test]
+        public void TestObserveEachIndexChange()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            var dummy1 = new DummyTestingClass { Identifier = "A" };
+            var dummy2 = new DummyTestingClass { Identifier = "B" };
+            var dummy3 = new DummyTestingClass { Identifier = "C" };
+            ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
+            {
+                dummy2
+            };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Insert(0, dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Add(dummy1));
+            scheduler.Schedule(TimeSpan.FromTicks(30), () => list.Remove(dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => list.Remove(dummy1));
+            scheduler.Schedule(TimeSpan.FromTicks(50), () => dummy1.TestObservable.OnNext("Test event"));
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(0, actual.Messages.Count);
+        }
+
+        [Test]
+        public void TestDerivedList()
+        {
+            ReactiveList<int> sourceList = new ReactiveArrayList<int>();
+            sourceList.AddRange(Enumerable.Range(0, 5));
+            
+            IReadOnlyReactiveList<string> derivedList = sourceList.CreateDerivedList(i => i.ToString(), i => i % 2 == 0).ResultList; // Strings of the even numbers only
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new []{"0", "2", "4"}));
+
+            sourceList.AddRange(Enumerable.Range(5, 5));
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "0", "2", "4", "6", "8" }));
+
+            sourceList.Move(2, 0); // Apply movement so 0,1,2 changes to 2,0,1
+            Assert.IsTrue(Enumerable.SequenceEqual(derivedList, new[] { "2", "0", "4", "6", "8" }));
+        }
+
+        [Test]
+        public void TestApplyPermutation()
+        {
+            IList<string> list = new List<string>
+            {
+                "A", "B", "C", "D", "E", "F"
+            };
+
+            list.ApplyPermutation(new []
+            {
+                (3, 1),
+                (1, 2),
+                (2, 3),
+                (4, 5),
+                (5, 4)
+            });
+
+            Assert.IsTrue(list.SequenceEqual(new []
+            {
+                "A", "D", "B", "C", "F", "E"
+            }));
         }
 
         class DummyTestingClass

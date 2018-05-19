@@ -22,6 +22,11 @@ namespace Interactr.Reactive
         /// The element is emitted after it is removed.
         /// </summary>
         IObservable<(T Element, int Index)> OnDelete { get; }
+
+        /// <summary>
+        /// Observable that emits a sequence of changes when the index of one or more elements changes.
+        /// </summary>
+        IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved { get; }
     }
 
     public static class ReadOnlyReactiveListExtensions
@@ -69,11 +74,20 @@ namespace Interactr.Reactive
             // Select the target observable using observableSelector and return
             // values from it until the item is removed from this list.
             return items.Where(e => filter(e.Element)).SelectMany(newElem =>
-                observableSelector(newElem.Element)
-                    .TakeUntil(
-                        list.OnDelete.Where(deletedElem => Object.Equals(deletedElem, newElem))
-                    )
-                    .Select(val => (newElem.Element, val))
+                {
+                    var latestIndex = list.OnMoved
+                        .SelectMany(c => c)
+                        .Scan(newElem.Index, (curIndex, change) => change.OldIndex == curIndex ? change.NewIndex : curIndex)
+                        .StartWith(newElem.Index);
+
+                    return observableSelector(newElem.Element)
+                        .TakeUntil(
+                            list.OnDelete
+                                .WithLatestFrom(latestIndex, (e, i) => (DeleteEvent: e, LatestIndex: i))
+                                .Where(e => e.DeleteEvent.Index == e.LatestIndex)
+                        )
+                        .Select(val => (newElem.Element, val));
+                }
             );
         }
     }
