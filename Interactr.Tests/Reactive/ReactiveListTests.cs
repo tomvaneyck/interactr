@@ -52,7 +52,7 @@ namespace Interactr.Tests.Reactive
         }
 
         [Test]
-        public void TestMovingMultipleOccurances()
+        public void TestMovingMultipleOccurrences()
         {
             ReactiveList<string> list = new ReactiveArrayList<string> { "A", "B", "A", "C" };
             list.Move("A", list.Count-1);
