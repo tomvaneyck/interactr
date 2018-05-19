@@ -17,7 +17,7 @@ namespace Interactr.View.Controls
             get => _text.Value;
             set
             {
-                if (value != null)
+                if (!string.IsNullOrEmpty(value))
                 {
                     _text.Value = value + ":";
                 }
