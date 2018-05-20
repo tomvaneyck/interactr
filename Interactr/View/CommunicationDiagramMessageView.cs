@@ -76,9 +76,16 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
-                .Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label);
+            ViewModel.LabelChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label);
 
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+            
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
@@ -104,11 +111,13 @@ namespace Interactr.View
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
 
-                // Set the label position
+                // Set the labelMessageNumberView position
                 LabelWithMessageNumberView.Position =
-                    new Point(textPos.X + LabelWithMessageNumberView.MessageNumberView.Width, textPos.Y);
+                    new Point(textPos.X - LabelWithMessageNumberView.MessageNumberView.Width, textPos.Y);
+
+                // Set the width of the LabelView.
                 LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
-                LabelWithMessageNumberView.LabelView.Height =LabelWithMessageNumberView.LabelView.PreferredHeight;
+                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
             });
         }
 
