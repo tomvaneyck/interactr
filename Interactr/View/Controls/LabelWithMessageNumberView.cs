@@ -31,10 +31,15 @@ namespace Interactr.View.Controls
 
             // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
             LabelView.WidthChanged.MergeEvents(MessageNumberView.WidthChanged)
-                .Subscribe(_ => Width = LabelView.Width + MessageNumberView.Width);
+                .Subscribe(_ => { Width = LabelView.Width + MessageNumberView.Width;
+                    PreferredWidth = Width;
+                });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
-            LabelView.HeightChanged.Subscribe(h => Height = h);
+            LabelView.HeightChanged.Subscribe(h => {
+                Height = h;
+                PreferredHeight = h;
+            });
 
             // Paint on a change in messageNumber or label
             LabelView.TextChanged.MergeEvents(MessageNumberView.MessageNumberChanged).Subscribe(_ => Repaint());

@@ -81,8 +81,6 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m =>
                 {
-                    Debug.Print("new message number: " + m);
-
                     LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
                     LabelWithMessageNumberView.MessageNumberView.Height =
                         LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
@@ -106,7 +104,7 @@ namespace Interactr.View
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
-                    new Margins(textPos.X -LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
+               new Margins(textPos.X -LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
 
                 // Set the width of the LabelView.
                 LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
