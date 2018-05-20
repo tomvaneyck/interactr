@@ -37,7 +37,7 @@ namespace Interactr.View.Controls
                 .Where(e => e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 .Subscribe(e =>
                 {
-                    StartDrag(e.Element);
+                    StartDrag(e.Element, e.Element.TranslatePointTo(_reorderingPanel, e.Value.MousePosition));
 
                     // Mark event as handled
                     e.Value.IsHandled = true;
@@ -46,23 +46,11 @@ namespace Interactr.View.Controls
             
             // When the dragging finishes, move the element in the stack
             _reorderingPanel.OnDragFinished.Subscribe(EndDrag);
-
-            // If the mouse is released before actual movement, no drag will have occured
-            // and we insert the element back where it was before.
-            _reorderingPanel.MouseEventOccured.Subscribe(e =>
-            {
-                // On mouse release, if an element is being dragged
-                if (e.Id == MouseEvent.MOUSE_RELEASED && _activeDummy != null)
-                {
-                    var dragElement = _reorderingPanel.Children[0];
-                    EndDrag(dragElement);
-                }
-            });
         }
 
-        private void StartDrag(UIElement element)
+        private void StartDrag(UIElement element, Point mousePosition)
         {
-            // Replace the element from the stack with a dummy and the element to the dragpanel
+            // Replace the element from the stack with a dummy and add the element to the dragpanel
             int indexOfSelectedChild = ColumnsPanel.Children.IndexOf(element);
             _activeDummy = new UIElement
             {
@@ -72,9 +60,11 @@ namespace Interactr.View.Controls
             ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
             _reorderingPanel.Children.Add(element);
 
-            // Make sure dragpanel receives mouse events
+            // Start the drag of the element.
+            _reorderingPanel.StartDrag(element, mousePosition);
+
+            // Make sure dragpanel receives mouse events.
             _reorderingPanel.IsVisibleToMouse = true;
-            element.Focus();
         }
 
         private void EndDrag(UIElement dragElement)

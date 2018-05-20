@@ -28,7 +28,7 @@ namespace Interactr.View
 
             // Create the lifeline view and add it to this column view.
             LifeLineView = new LifeLineView();
-            MarginsProperty.SetValue(LifeLineView, new Margins(0, PartyView.PreferredHeight, 0, 0));
+            MarginsProperty.SetValue(LifeLineView, new Margins(0, PartyView.PreferredHeight + 10, 0, 0));
             Children.Add(LifeLineView);
 
             // Set up viewmodel subscription.

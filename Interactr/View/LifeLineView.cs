@@ -93,6 +93,7 @@ namespace Interactr.View
                 case MouseEvent.MOUSE_PRESSED:
                     // User is dragging from one lifeline to another to create a new message.
                     // Create a new pending message to store this information.
+                    this.Focus();
                     ViewModel.MessageStackVM.CreatePendingMessage(
                         ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
                     eventData.IsHandled = true;
