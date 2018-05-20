@@ -60,14 +60,9 @@ namespace Interactr.View
         }
 
         /// <summary>
-        /// The labelview of the message.
+        /// The label with messageNumber view of the message.
         /// </summary>
-        public LabelView Label { get; } = new LabelView();
-
-        /// <summary>
-        /// The messageNumber view of the message.
-        /// </summary>
-        public MessageNumberView MessageNumberView { get; } = new MessageNumberView();
+        public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
         private readonly ArrowView _arrow = new ArrowView();
 
@@ -78,17 +73,16 @@ namespace Interactr.View
             ViewModel = viewModel;
 
             Children.Add(_arrow);
-            Children.Add(Label);
-            Children.Add(MessageNumberView);
+            Children.Add(LabelWithMessageNumberView);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
-            // Bidirectionally bind the view label to the label in the viewmodel.
-            ViewModel.LabelChanged.Subscribe(_ => Label.Text = ViewModel.Label);
+            // Update the label on a change.
+            ViewModel.LabelChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label);
 
-            Label.TextChanged.Subscribe(text =>
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
@@ -96,13 +90,14 @@ namespace Interactr.View
                 }
             });
 
-            // Bind the message number of the view to the viewmodel and adjust
-            // the height and width of the messageNumberView.
+            // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                MessageNumberView.MessageNumber = m;
-                MessageNumberView.Height = MessageNumberView.PreferredHeight;
-                MessageNumberView.Width = MessageNumberView.PreferredWidth;
+                LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
+                LabelWithMessageNumberView.MessageNumberView.Height =
+                    LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
+                LabelWithMessageNumberView.MessageNumberView.Width =
+                    LabelWithMessageNumberView.MessageNumberView.PreferredWidth;
             });
 
             // Bind CanApplyLabel and CanLeaveEditMode.
@@ -136,14 +131,13 @@ namespace Interactr.View
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
 
-                // Set the label position
-                Label.Position = textPos;
-                Label.Width = Label.PreferredWidth;
-                Label.Height = Label.PreferredHeight;
+                // Set the labelMessageNumberView position
+                LabelWithMessageNumberView.Position =
+                    new Point(textPos.X - LabelWithMessageNumberView.MessageNumberView.Width, textPos.Y);
 
-                // Update the position of the messageNumberView.
-                MessageNumberView.Position = new Point(Label.Position.X - MessageNumberView.Width,
-                    Label.Position.Y);
+                // Set the width of the LabelView.
+                LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
+                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
             });
         }
 
@@ -157,9 +151,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                // and the latest viewmodel
+                    // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching sender
+                            // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.

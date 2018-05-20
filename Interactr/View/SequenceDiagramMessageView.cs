@@ -33,9 +33,9 @@ namespace Interactr.View
         #endregion
 
         /// <summary>
-        /// The labelview of the message.
+        /// The messageNumber view of the message.
         /// </summary>
-        public LabelView Label { get; } = new LabelView();
+        public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
         /// <summary>
         /// The messageNumber view of the message.
@@ -49,32 +49,21 @@ namespace Interactr.View
             this.IsVisibleToMouse = false;
 
             Children.Add(_arrow);
-            Children.Add(Label);
-            Children.Add(MessageNumberView);
+            Children.Add(LabelWithMessageNumberView);
 
-            AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
-            AnchorsProperty.SetValue(MessageNumberView, Anchors.Left | Anchors.Top);
+            AnchorsProperty.SetValue(LabelWithMessageNumberView, Anchors.Left | Anchors.Top);
 
             // Bidirectionally bind the view label to the label in the viewmodel.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
+                .Subscribe(label => LabelWithMessageNumberView.LabelView.Text = label);
 
-            Label.TextChanged.Subscribe(text =>
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
                     ViewModel.Label = text;
                 }
             });
-
-            // Bind the message number of the view to the viewmodel and adjust
-            // the height and width of the messageNumberView.
-            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
-                .Subscribe(m =>
-                {
-                    MessageNumberView.MessageNumber = m;
-                    MessageNumberView.Height = MessageNumberView.PreferredHeight;
-                    MessageNumberView.Width = MessageNumberView.PreferredWidth;
-                });
 
             // Put the arrow starting point on the sender activation bar.
             ObserveActivationBarPosition(vm => vm.SenderActivationBarChanged)
@@ -91,6 +80,18 @@ namespace Interactr.View
             {
                 _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
+
+            // Bind the message number of the view to the viewmodel and adjust
+            // the height and width of the messageNumberView.
+            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
+                .Subscribe(m =>
+                {
+                    LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
+                    LabelWithMessageNumberView.MessageNumberView.Height =
+                        LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
+                    LabelWithMessageNumberView.MessageNumberView.Width =
+                        LabelWithMessageNumberView.MessageNumberView.PreferredWidth;
+                });
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
@@ -127,9 +128,14 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                MarginsProperty.SetValue(Label, new Margins(textPos.X, textPos.Y));
-                MarginsProperty.SetValue(MessageNumberView,
-                    new Margins(textPos.X - MessageNumberView.PreferredWidth, textPos.Y));
+
+                // Set the labelMessageNumber view margins.
+                MarginsProperty.SetValue(LabelWithMessageNumberView,
+               new Margins(textPos.X -LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
+
+                // Set the width of the LabelView.
+                LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
+                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
             });
         }
 
