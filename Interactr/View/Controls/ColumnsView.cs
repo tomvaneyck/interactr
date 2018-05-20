@@ -49,6 +49,7 @@ namespace Interactr.View.Controls
 
                     // Make sure dragpanel receives mouse events
                     _reorderingPanel.IsVisibleToMouse = true;
+                    e.Element.Focus();
 
                     // Mark event as handled
                     e.Value.IsHandled = true;
