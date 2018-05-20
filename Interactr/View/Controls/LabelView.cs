@@ -174,17 +174,17 @@ namespace Interactr.View.Controls
             // Set attached property on window when edit mode changed.
             EditModeChanged.Subscribe(editMode =>
             {
-                WindowsView.Window window = WalkToRoot().OfType<WindowsView.Window>().FirstOrDefault();
+                DiagramEditorView diagramEditor = WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault();
 
-                if (window != null)
+                if (diagramEditor != null)
                 {
                     if (editMode)
                     {
-                        LabelBeingEdited.SetValue(window, this);
+                        LabelBeingEdited.SetValue(diagramEditor, this);
                     }
                     else
                     {
-                        LabelBeingEdited.SetValue(window, null);
+                        LabelBeingEdited.SetValue(diagramEditor, null);
                     }
                 }
             });

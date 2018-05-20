@@ -116,7 +116,7 @@ namespace Interactr.View
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEvent(MouseEventData e)
         {
-            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().First());
             if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
             {
                 ViewModel.SwitchPartyType();

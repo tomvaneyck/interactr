@@ -83,7 +83,7 @@ namespace Interactr.View
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEventPreview(MouseEventData eventData)
         {
-            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().First());
             if (labelBeingEdited?.CanLeaveEditMode ?? true)
             {
             var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;

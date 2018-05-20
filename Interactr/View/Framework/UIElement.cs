@@ -313,8 +313,8 @@ namespace Interactr.View.Framework
         /// </summary>
         public void Focus()
         {
-            WindowsView.Window window = WalkToRoot().OfType<WindowsView.Window>().FirstOrDefault();
-            LabelView labelBeingEdited = window != null ? LabelView.LabelBeingEdited.GetValue(window) : null; 
+            DiagramEditorView diagramEditor = WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault();
+            LabelView labelBeingEdited = diagramEditor != null ? LabelView.LabelBeingEdited.GetValue(diagramEditor) : null; 
             if (this == FocusedElement || ((!labelBeingEdited?.CanLeaveEditMode ?? false) && this != labelBeingEdited))
             {
                 // This is already focused
