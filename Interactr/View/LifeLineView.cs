@@ -68,6 +68,7 @@ namespace Interactr.View
 
         private void UpdateLayout()
         {
+            int maxY = 0;
             foreach (ActivationBarView barView in ActivationBarViews)
             {
                 // Horizontally center bar on lifeline and add offset for the nesting level of the bar.
@@ -76,7 +77,11 @@ namespace Interactr.View
                 barView.Position = new Framework.Point(x, y);
                 barView.Width = BarWidth;
                 barView.Height = barView.PreferredHeight;
+
+                maxY = Math.Max(maxY, y + barView.Height);
             }
+
+            this.PreferredHeight = maxY;
         }
 
         /// <see cref="OnMouseEvent"/>
