@@ -37,19 +37,7 @@ namespace Interactr.View.Controls
                 .Where(e => e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 .Subscribe(e =>
                 {
-                    // Replace the element from the stack with a dummy and the element to the dragpanel
-                    int indexOfSelectedChild = ColumnsPanel.Children.IndexOf(e.Element);
-                    _activeDummy = new UIElement
-                    {
-                        PreferredWidth = e.Element.PreferredWidth,
-                        PreferredHeight = e.Element.PreferredHeight
-                    };
-                    ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
-                    _reorderingPanel.Children.Add(e.Element);
-
-                    // Make sure dragpanel receives mouse events
-                    _reorderingPanel.IsVisibleToMouse = true;
-                    e.Element.Focus();
+                    StartDrag(e.Element);
 
                     // Mark event as handled
                     e.Value.IsHandled = true;
@@ -57,32 +45,62 @@ namespace Interactr.View.Controls
             );
             
             // When the dragging finishes, move the element in the stack
-            _reorderingPanel.OnDragFinished.Subscribe(dragElement =>
+            _reorderingPanel.OnDragFinished.Subscribe(EndDrag);
+
+            // If the mouse is released before actual movement, no drag will have occured
+            // and we insert the element back where it was before.
+            _reorderingPanel.MouseEventOccured.Subscribe(e =>
             {
-                Debug.WriteLine("end drag");
-                // Reset the drag panel
-                _reorderingPanel.Children.Remove(dragElement);
-                _reorderingPanel.IsVisibleToMouse = false;
-
-                // Find the position to insert the element at.
-                int insertionIndex = ColumnsPanel.Children.Count; // Append by default
-                int curX = 0;
-                for (var i = 0; i < ColumnsPanel.Children.Count; i++)
+                // On mouse release, if an element is being dragged
+                if (e.Id == MouseEvent.MOUSE_RELEASED && _activeDummy != null)
                 {
-                    var child = ColumnsPanel.Children[i];
-                    if (curX + (child.PreferredWidth/2) >= (dragElement.Position.X + (dragElement.PreferredWidth/2)))
-                    {
-                        // Insert dragged element at i.
-                        insertionIndex = i;
-                        break;
-                    }
-                    curX += child.PreferredWidth;
+                    var dragElement = _reorderingPanel.Children[0];
+                    EndDrag(dragElement);
                 }
-                ColumnsPanel.Children.Insert(insertionIndex, dragElement);
-
-                // Remove dummy element.
-                ColumnsPanel.Children.Remove(_activeDummy);
             });
+        }
+
+        private void StartDrag(UIElement element)
+        {
+            // Replace the element from the stack with a dummy and the element to the dragpanel
+            int indexOfSelectedChild = ColumnsPanel.Children.IndexOf(element);
+            _activeDummy = new UIElement
+            {
+                PreferredWidth = element.PreferredWidth,
+                PreferredHeight = element.PreferredHeight
+            };
+            ColumnsPanel.Children[indexOfSelectedChild] = _activeDummy;
+            _reorderingPanel.Children.Add(element);
+
+            // Make sure dragpanel receives mouse events
+            _reorderingPanel.IsVisibleToMouse = true;
+            element.Focus();
+        }
+
+        private void EndDrag(UIElement dragElement)
+        {
+            _reorderingPanel.Children.Remove(dragElement);
+            _reorderingPanel.IsVisibleToMouse = false;
+
+            // Find the position to insert the element at.
+            int insertionIndex = ColumnsPanel.Children.Count; // Append by default
+            int curX = 0;
+            for (var i = 0; i < ColumnsPanel.Children.Count; i++)
+            {
+                var child = ColumnsPanel.Children[i];
+                if (curX + (child.PreferredWidth / 2) >= (dragElement.Position.X + (dragElement.PreferredWidth / 2)))
+                {
+                    // Insert dragged element at i.
+                    insertionIndex = i;
+                    break;
+                }
+                curX += child.PreferredWidth;
+            }
+            ColumnsPanel.Children.Insert(insertionIndex, dragElement);
+
+            // Remove dummy element.
+            ColumnsPanel.Children.Remove(_activeDummy);
+            _activeDummy = null;
         }
     }
 }

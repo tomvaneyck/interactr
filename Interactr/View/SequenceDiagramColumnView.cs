@@ -16,6 +16,8 @@ namespace Interactr.View
 
         public SequenceDiagramColumnView(SequenceDiagramView parent, PartyViewModel partyVM)
         {
+            this.CanBeFocused = false;
+
             // Create the party view and add it to this column view.
             PartyView = new PartyView
             {
