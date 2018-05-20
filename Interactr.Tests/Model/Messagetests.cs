@@ -202,8 +202,6 @@ namespace Interactr.Tests.Model
     [TestFixture]
     public class LabelContentTests
     {
-        private const Message.MessageType DefaultMessageType = Message.MessageType.Invocation;
-
         // Valid Test labels
         private const string ValidMessageLabelNormal = "testlabel()";
         private const string ValidMessageLabelWithNumber = "testlabel2()";
