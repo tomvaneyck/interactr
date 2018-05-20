@@ -26,7 +26,38 @@ namespace Interactr.Reactive
         /// <summary>
         /// Observable that emits a sequence of changes when the index of one or more elements changes.
         /// </summary>
-        IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved { get; }
+        IObservable<MoveEventData<T>> OnMoved { get; }
+    }
+
+    public class MoveEventData<T>
+    {
+        public MoveReason Reason { get; }
+        public IEnumerable<(T Element, int OldIndex, int NewIndex)> Changes { get; }
+
+        public MoveEventData(MoveReason reason, IEnumerable<(T Element, int OldIndex, int NewIndex)> changes)
+        {
+            Reason = reason;
+            Changes = changes;
+        }
+    }
+
+    /// <summary>
+    /// An enum of reasons why an OnMoved event can occur
+    /// </summary>
+    public enum MoveReason
+    {
+        /// <summary>
+        /// An element was inserted in the list, causing other elements to shift.
+        /// </summary>
+        Insertion,
+        /// <summary>
+        /// An element was removed from the list, causing other elements to shift.
+        /// </summary>
+        Deletion,
+        /// <summary>
+        /// A reordering operation was performed on the list.
+        /// </summary>
+        Reordering
     }
 
     public static class ReadOnlyReactiveListExtensions
@@ -69,20 +100,31 @@ namespace Interactr.Reactive
 
             // Select the target observable using observableSelector and return
             // values from it until the item is removed from this list.
-            return items.Where(e => filter(e.Element)).SelectMany(newElem =>
+            return items.Where(e => filter(e.Element)).SelectMany(addEvent =>
                 {
                     var latestIndex = list.OnMoved
-                        .SelectMany(c => c)
-                        .Scan(newElem.Index, (curIndex, change) => change.OldIndex == curIndex ? change.NewIndex : curIndex)
-                        .StartWith(newElem.Index);
+                        // On each index change event, update the item index.
+                        .Scan(addEvent.Index, (curIndex, e) =>
+                        {
+                            // Search for an index change of addEvent.Element.
+                            // Can't use .FirstOrDefault() here, because the changes are tuples which are value types and
+                            // thus non-nullable which could do weird stuff with equality comparison
+                            foreach (var change in e.Changes.Where(c => c.OldIndex == curIndex))
+                            {
+                                return change.NewIndex;
+                            }
+                            // The index was not changed, return the current value.
+                            return curIndex;
+                        })
+                        .StartWith(addEvent.Index);
 
-                    return observableSelector(newElem.Element)
+                    return observableSelector(addEvent.Element)
                         .TakeUntil(
                             list.OnDelete
                                 .WithLatestFrom(latestIndex, (e, i) => (DeleteEvent: e, LatestIndex: i))
                                 .Where(e => e.DeleteEvent.Index == e.LatestIndex)
                         )
-                        .Select(val => (newElem.Element, val));
+                        .Select(val => (addEvent.Element, val));
                 }
             );
         }

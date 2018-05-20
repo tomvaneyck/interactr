@@ -19,8 +19,8 @@ namespace Interactr.Reactive
         public override IObservable<(T Element, int Index)> OnDelete => _onDelete;
         private readonly Subject<(T Element, int Index)> _onDelete = new Subject<(T Element, int Index)>();
 
-        public override IObservable<IEnumerable<(T Element, int OldIndex, int NewIndex)>> OnMoved => _onMoved;
-        private readonly Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>> _onMoved = new Subject<IEnumerable<(T Element, int OldIndex, int NewIndex)>>();
+        public override IObservable<MoveEventData<T>> OnMoved => _onMoved;
+        private readonly Subject<MoveEventData<T>> _onMoved = new Subject<MoveEventData<T>>();
 
         public override T this[int index]
         {
@@ -64,10 +64,17 @@ namespace Interactr.Reactive
         {
             _contents.Insert(index, item);
             _onAdd.OnNext((item, index));
-            _onMoved.OnNext(
-                Enumerable.Range(index+1, _contents.Count - 1 - index)
-                    .Select(i => (_contents[i], i - 1, i))
-            );
+
+            // If the insert was not an append, emit a move event
+            if (index != Count-1)
+            {
+                MoveEventData<T> moveEvent = new MoveEventData<T>(
+                    MoveReason.Insertion,
+                    Enumerable.Range(index + 1, _contents.Count - 1 - index)
+                        .Select(i => (_contents[i], i - 1, i))
+                );
+                _onMoved.OnNext(moveEvent);
+            }
         }
 
         /// <see cref="IList.Remove"/>
@@ -88,10 +95,17 @@ namespace Interactr.Reactive
             T item = _contents[index];
             _contents.RemoveAt(index);
             _onDelete.OnNext((item, index));
-            _onMoved.OnNext(
-                Enumerable.Range(index, _contents.Count - index)
-                    .Select(i => (_contents[i], i + 1, i))
-            );
+
+            // If the removed element was not at the end of the list, emit a move event
+            if (index != Count)
+            {
+                MoveEventData<T> moveEvent = new MoveEventData<T>(
+                    MoveReason.Deletion,
+                    Enumerable.Range(index, _contents.Count - index)
+                        .Select(i => (_contents[i], i + 1, i))
+                );
+                _onMoved.OnNext(moveEvent);
+            }
         }
 
         /// <see cref="ReactiveList.Move"/>
@@ -119,6 +133,11 @@ namespace Interactr.Reactive
                 throw new IndexOutOfRangeException($"{destinationIndex} is not in [0;{Count - 1}]");
             }
 
+            if (sourceIndex == destinationIndex)
+            {
+                return;
+            }
+
             T item = _contents[sourceIndex];
             _contents.RemoveAt(sourceIndex);
             _contents.Insert(destinationIndex, item);
@@ -134,7 +153,10 @@ namespace Interactr.Reactive
                 movedElementChanges = Enumerable.Range(destinationIndex + 1, sourceIndex - destinationIndex)
                     .Select(i => (_contents[i], i - 1, i));
             }
-            _onMoved.OnNext(new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges));
+            _onMoved.OnNext(new MoveEventData<T>(
+                MoveReason.Reordering,
+                new[] { (item, sourceIndex, destinationIndex) }.Concat(movedElementChanges)
+            ));
         }
         
         public override void ApplyPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes)
@@ -145,7 +167,10 @@ namespace Interactr.Reactive
             _contents.ApplyPermutation(changesList);
 
             // Emit events
-            _onMoved.OnNext(changesList.Select(c => (this[c.DestinationIndex], c.SourceIndex, c.DestinationIndex)));
+            _onMoved.OnNext(new MoveEventData<T>(
+                MoveReason.Reordering, 
+                changesList.Select(c => (this[c.DestinationIndex], c.SourceIndex, c.DestinationIndex))
+            ));
         }
 
         #region DefaultImplementations
