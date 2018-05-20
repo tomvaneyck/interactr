@@ -42,10 +42,6 @@ namespace Interactr.View
             // Add the views to the view tree.
             this.Children.Add(CommDiagView);
             this.Children.Add(SeqDiagView);
-
-            //TODO: this is needed to have working windows. Should be removed once window resizing is implemented.
-            this.PreferredWidth = 500;
-            this.PreferredHeight = 500;
         }
 
         /// <see cref="OnKeyEvent"/>

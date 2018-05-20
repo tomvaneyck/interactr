@@ -313,8 +313,7 @@ namespace Interactr.View.Framework
         /// </summary>
         public void Focus()
         {
-            DiagramEditorView diagramEditor = WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault();
-            LabelView labelBeingEdited = diagramEditor != null ? LabelView.LabelBeingEdited.GetValue(diagramEditor) : null; 
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault());
             if (this == FocusedElement || ((!labelBeingEdited?.CanLeaveEditMode ?? false) && this != labelBeingEdited))
             {
                 // This is already focused
@@ -525,7 +524,7 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         protected virtual void OnMouseEvent(MouseEventData eventData)
         {
-            // Only focus on mouseclick.
+            // Only focus on mousepress.
             if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused )
             {
                 Focus();
