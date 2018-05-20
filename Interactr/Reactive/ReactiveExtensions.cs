@@ -144,7 +144,13 @@ namespace Interactr.Reactive
                 sourceListObservable.ObserveNested(list => list.OnAdd)
                     .Subscribe(e => InsertElement(e.Index, e.Element)),
                 sourceListObservable.ObserveNested(list => list.OnMoved)
-                    .Subscribe(MoveElements),
+                    .Subscribe(e =>
+                    {
+                        if (e.Reason == MoveReason.Reordering)
+                        {
+                            MoveElements(e.Changes);
+                        }
+                    }),
                 sourceListObservable.ObserveNested(list => list.OnDelete)
                     .Subscribe(e => RemoveElement(e.Index))
             );
