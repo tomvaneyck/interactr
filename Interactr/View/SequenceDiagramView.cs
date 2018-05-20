@@ -182,8 +182,7 @@ namespace Interactr.View
         protected override void OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault());
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && (labelBeingEdited?.CanLeaveEditMode ?? true))
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && !LabelBeingEditedInScope())
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);

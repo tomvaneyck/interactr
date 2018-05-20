@@ -199,7 +199,13 @@ namespace Interactr.View.Controls
             });
 
             // Ignore mouse clicked when just received focus.
-            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
+            FocusChanged.Where(v => v).Subscribe(_ =>
+            {
+                if (!_isFocusing)
+                {
+                    _isFocusing = true;
+                }
+            });
 
             CanLeaveEditMode = true;
         }
