@@ -35,12 +35,7 @@ namespace Interactr.View
         /// <summary>
         /// The messageNumber view of the message.
         /// </summary>
-        public MessageNumberView MessageNumberView { get; } = new MessageNumberView();
-
-        /// <summary>
-        /// The labelview of the message.
-        /// </summary>
-        public LabelView Label { get; } = new LabelView();
+        public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
         private readonly ArrowView _arrow = new ArrowView();
 
@@ -49,16 +44,15 @@ namespace Interactr.View
             this.IsVisibleToMouse = false;
 
             Children.Add(_arrow);
-            Children.Add(Label);
-            Children.Add(MessageNumberView);
+            Children.Add(LabelWithMessageNumberView);
 
-            AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
-            AnchorsProperty.SetValue(MessageNumberView, Anchors.Left | Anchors.Top);
+            AnchorsProperty.SetValue(LabelWithMessageNumberView, Anchors.Left | Anchors.Top);
 
             // Bidirectionally bind the view label to the label in the viewmodel.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
+                .Subscribe(label => LabelWithMessageNumberView.LabelView.Text = label);
 
-            Label.TextChanged.Subscribe(text =>
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
@@ -87,9 +81,10 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m =>
                 {
-                    MessageNumberView.Text = m;
-                    MessageNumberView.Height = MessageNumberView.PreferredHeight;
-                    MessageNumberView.Width = MessageNumberView.PreferredWidth;
+                    LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
+                    LabelWithMessageNumberView.MessageNumberView.Height =
+                        LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
+                    LabelWithMessageNumberView.Width = LabelWithMessageNumberView.MessageNumberView.PreferredWidth;
                 });
 
             Observable.CombineLatest(
@@ -105,9 +100,9 @@ namespace Interactr.View
                 Point diff = end - start;
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                MarginsProperty.SetValue(Label, new Margins(textPos.X, textPos.Y));
-                MarginsProperty.SetValue(MessageNumberView,
-                    new Margins(textPos.X - MessageNumberView.PreferredWidth, textPos.Y));
+                MarginsProperty.SetValue(LabelWithMessageNumberView.LabelView, new Margins(textPos.X, textPos.Y));
+                MarginsProperty.SetValue(LabelWithMessageNumberView.MessageNumberView,
+                    new Margins(textPos.X - LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
             });
         }
 

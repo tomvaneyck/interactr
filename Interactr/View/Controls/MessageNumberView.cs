@@ -3,55 +3,71 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Interactr.Reactive;
+using Interactr.View.Framework;
+using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View.Controls
 {
-    public class MessageNumberView : LabelView
+    public class LabelWithMessageNumberView : UIElement
     {
-        #region Text
+        public LabelView LabelView { get; } = new LabelView();
 
-        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
+        public MessageNumberViewClass MessageNumberView { get; } = new MessageNumberViewClass();
 
-        public override string Text
+        public LabelWithMessageNumberView()
         {
-            get => _text.Value;
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _text.Value = value + ":";
-                }
-            }
-        }
+            Children.Add(LabelView);
+            Children.Add(MessageNumberView);
 
-        ///<see cref="TextChanged"/>
-        public override IObservable<string> TextChanged => _text.Changed;
-
-        #endregion
-
-        public MessageNumberView()
-        {
-            // This element can never be focused or receive mouse events.
             CanBeFocused = false;
-            IsVisibleToMouse = false;
+
+            MessageNumberView.Position = new Point(0, 0);
+
+            // Change the position of the messageNumber view if the position of the labelView changes.
+            MessageNumberView.WidthChanged.Subscribe(w =>
+            {
+                LabelView.Position = new Point(MessageNumberView.Position.X + w, MessageNumberView.Position.Y);
+            });
+
+            // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
+            LabelView.WidthChanged.MergeEvents(MessageNumberView.WidthChanged)
+                .Subscribe(_ => Width = LabelView.Width + MessageNumberView.Width);
+
+            // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
+            LabelView.HeightChanged.Subscribe(h => Height = h);
+
+            // Paint on a change in messageNumber or label
+            LabelView.TextChanged.MergeEvents(MessageNumberView.MessageNumberChanged).Subscribe(_ => Repaint());
         }
 
-        /// <see cref="PaintElement"/>
-        public override void PaintElement(Graphics g)
+        public class MessageNumberViewClass : LabelView
         {
-            // Draw the string.
-            using (Brush brush = new SolidBrush(Color))
+            #region MessageNumber 
+
+            private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
+
+            public string MessageNumber
             {
-                g.DrawString(Text, Font, brush, 0, 0);
+                get => _messageNumber.Value;
+                set
+                {
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        _messageNumber.Value = value + ":";
+                        Text = _messageNumber.Value;
+                    }
+                }
             }
 
-            using (Pen pen = new Pen(Color))
+            public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
+
+            #endregion
+
+            public MessageNumberViewClass()
             {
-                // Draw editing rectangle
-                if (IsFocused)
-                {
-                    g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-                }
+                // This element can never be focused or receive mouse events.
+                CanBeFocused = false;
+                IsVisibleToMouse = false;
             }
         }
     }

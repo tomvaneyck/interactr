@@ -23,7 +23,7 @@ namespace Interactr.View.Controls
         /// <summary>
         /// The text of the label.
         /// </summary>
-        public virtual string Text
+        public string Text
         {
             get => _text.Value;
             set => _text.Value = value;
@@ -32,7 +32,7 @@ namespace Interactr.View.Controls
         /// <summary>
         /// Emit the new text when the text changes.
         /// </summary>
-        public virtual IObservable<string> TextChanged => _text.Changed;
+        public IObservable<string> TextChanged => _text.Changed;
 
         #endregion
 
