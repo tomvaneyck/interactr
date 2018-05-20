@@ -65,12 +65,12 @@ namespace Interactr.Reactive
             _contents.Insert(index, item);
             
             // If the insert was not an append, emit a move event
-            if (index != Count)
+            if (index != Count-1)
             {
                 MoveEventData<T> moveEvent = new MoveEventData<T>(
                     MoveReason.Insertion,
-                    Enumerable.Range(index, _contents.Count - index)
-                        .Select(i => (_contents[i], i, i + 1))
+                    Enumerable.Range(index + 1, _contents.Count - 1 - index)
+                        .Select(i => (_contents[i], i - 1, i))
                 );
                 _onMoved.OnNext(moveEvent);
             }
