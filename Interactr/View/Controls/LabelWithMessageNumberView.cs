@@ -8,13 +8,11 @@ using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View.Controls
 {
-
     /// <summary>
     /// A composite element containing a label and a messageNumberView. 
-    /// This element places a messageNumber view than cannot be focused nor edited in front of the labelView.
-    /// The LabelWithMessageNumberView cannot be 
+    /// This element places a messageNumber view that cannot be focused nor edited in front of the labelView.
     /// </summary>
-    public class LabelWithMessageNumberView : UIElement
+    public class LabelWithMessageNumberView : StackPanel
     {
         public LabelView LabelView { get; } = new LabelView();
 
@@ -22,28 +20,19 @@ namespace Interactr.View.Controls
 
         public LabelWithMessageNumberView()
         {
-            Children.Add(LabelView);
+            StackOrientation = Orientation.Horizontal;
+
             Children.Add(MessageNumberView);
+            Children.Add(LabelView);
 
             CanBeFocused = false;
 
-            // Change the position of the messageNumber view if the position of the labelView changes.
-            MessageNumberView.WidthChanged.Subscribe(w =>
-            {
-                LabelView.Position = new Point(MessageNumberView.Position.X + w, MessageNumberView.Position.Y);
-            });
-
             // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
             LabelView.WidthChanged.MergeEvents(MessageNumberView.WidthChanged)
-                .Subscribe(_ => { Width = LabelView.Width + MessageNumberView.Width;
-                    PreferredWidth = Width;
-                });
+                .Subscribe(_ => { PreferredWidth = LabelView.PreferredWidth + MessageNumberView.PreferredWidth; });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
-            LabelView.HeightChanged.Subscribe(h => {
-                Height = h;
-                PreferredHeight = h;
-            });
+            LabelView.HeightChanged.Subscribe(h => { PreferredHeight = h; });
 
             // Paint on a change in messageNumber or label
             LabelView.TextChanged.MergeEvents(MessageNumberView.MessageNumberChanged).Subscribe(_ => Repaint());
