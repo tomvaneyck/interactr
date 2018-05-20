@@ -37,11 +37,6 @@ namespace Interactr.View
         /// </summary>
         public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
-        /// <summary>
-        /// The messageNumber view of the message.
-        /// </summary>
-        public MessageNumberView MessageNumberView { get; } = new MessageNumberView();
-
         private readonly ArrowView _arrow = new ArrowView();
 
         public SequenceDiagramMessageView()
@@ -95,12 +90,11 @@ namespace Interactr.View
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
-                Label.Color = canApplyLabel || ViewModel.MessageType == Message.MessageType.Result
-                    ? DefaultLabelColor
-                    : InvalidLabelColor);
+                LabelWithMessageNumberView.LabelView.Color = canApplyLabel
+                || ViewModel.MessageType == Message.MessageType.Result ? DefaultLabelColor : InvalidLabelColor);
 
             // Fire ApplyLabel when leaving edit mode.
-            Label.EditModeChanged.Subscribe(
+            LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
                     if (ViewModel != null && ViewModel.MessageType == Message.MessageType.Result)
@@ -131,7 +125,7 @@ namespace Interactr.View
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
-               new Margins(textPos.X -LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
+               new Margins(textPos.X - LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
 
                 // Set the width of the LabelView.
                 LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
@@ -151,7 +145,7 @@ namespace Interactr.View
                 0,
                 (ViewModel.Tick - bar.ViewModel.StartTick) * bar.TickHeight
             );
-            SequenceDiagramView parent = (SequenceDiagramView) Parent;
+            SequenceDiagramView parent = (SequenceDiagramView)Parent;
             Point anchorPointOnDiagram = bar.TranslatePointTo(parent, anchorPointOnBar);
 
             // Choose left or right side of bar based on which side the arrow is going.
@@ -164,9 +158,9 @@ namespace Interactr.View
         {
             // With the latest parent view
             return ParentChanged.OfType<SequenceDiagramView>().Select(parent =>
-                // and the latest viewmodel
+                    // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching activation bar
+                            // and the latest matching activation bar
                             barSelector(vm).Where(bar => bar != null).Select(targetBar =>
                             {
                                 // and listen for the position changes of its view.
