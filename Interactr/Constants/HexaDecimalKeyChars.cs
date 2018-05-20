@@ -10,5 +10,6 @@
         public const char Colon = '\x3A';
         public const char OpeningParenthesis = '\x28';
         public const char ClosingParenthesis = '\x29';
+        public const char Comma = '\x2C';
     }
 }

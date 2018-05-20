@@ -238,7 +238,8 @@ namespace Interactr.View.Controls
                     else if (char.IsLetterOrDigit(eventData.KeyChar) ||
                              eventData.KeyChar == HexaDecimalKeyChars.Colon ||
                              eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
-                             eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis)
+                             eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis || 
+                             eventData.KeyChar == HexaDecimalKeyChars.Comma)
                     {
                         Text += eventData.KeyChar;
                     }
