@@ -8,6 +8,12 @@ using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View.Controls
 {
+
+    /// <summary>
+    /// A composite element containing a label and a messageNumberView. 
+    /// This element places a messageNumber view than cannot be focused nor edited in front of the labelView.
+    /// The LabelWithMessageNumberView cannot be 
+    /// </summary>
     public class LabelWithMessageNumberView : UIElement
     {
         public LabelView LabelView { get; } = new LabelView();
@@ -20,8 +26,6 @@ namespace Interactr.View.Controls
             Children.Add(MessageNumberView);
 
             CanBeFocused = false;
-
-            MessageNumberView.Position = new Point(0, 0);
 
             // Change the position of the messageNumber view if the position of the labelView changes.
             MessageNumberView.WidthChanged.Subscribe(w =>
@@ -45,6 +49,10 @@ namespace Interactr.View.Controls
             LabelView.TextChanged.MergeEvents(MessageNumberView.MessageNumberChanged).Subscribe(_ => Repaint());
         }
 
+        /// <summary>
+        /// A LabelView that cannot be focused and is not visible to mouse. 
+        /// This View contains the messageNumber.
+        /// </summary>
         public class MessageNumberViewClass : LabelView
         {
             #region MessageNumber 
