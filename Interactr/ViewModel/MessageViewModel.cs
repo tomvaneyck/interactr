@@ -151,9 +151,13 @@ namespace Interactr.ViewModel
             {
                 var newLabel = MethodName ?? "";
                 newLabel += "(";
-                foreach (var arg in MethodArguments)
+
+                if (MethodArguments != null)
                 {
-                    newLabel += arg + ",";
+                    foreach (var arg in MethodArguments)
+                    {
+                        newLabel += arg + ",";
+                    }
                 }
 
                 if (newLabel[newLabel.Length - 1] == ',')
