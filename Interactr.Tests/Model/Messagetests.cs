@@ -218,7 +218,8 @@ namespace Interactr.Tests.Model
         private const string InvalidMessageLabelIllegalChars1 = "test*abel";
         private const string InvalidMessageLabelIllegalChars2 = "test&label";
         private const string InvalidMessageLabelIllegalArgsParenthesis = "testlabel(arg(ji), helofj(,394)";
-        private const string InvalidMessageLabelIllegalArgsComma = "testlabel(argji, helofj,,394";
+        private const string InvalidMessageLabelIllegalArgsComma = "testlabel(argji, helofj,,394)";
+        private const string InvalidMessageLabelTextafterParenthesis = "testlabel(arg,arg2)jefeo";
 
         [Test]
         public void ValidNormalMessageLabelTest()
@@ -318,6 +319,16 @@ namespace Interactr.Tests.Model
         {
             bool expected = false;
             bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalArgsParenthesis);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+
+        [Test]
+        public void InvalidMessageLabelTextAfterParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelTextafterParenthesis);
 
             Assert.AreEqual(expected, actual);
         }

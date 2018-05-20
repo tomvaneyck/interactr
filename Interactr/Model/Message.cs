@@ -146,7 +146,7 @@ namespace Interactr.Model
             }
 
             // Check for a valid program structure.
-            var isValidStructure = Regex.IsMatch(label, ".*[(]+.*[)]+");
+            var isValidStructure = Regex.IsMatch(label, "^.*" + Regex.Escape("(") + ".*" + Regex.Escape(")") + "$");
 
             // Check for a valid method name and a valid arguments list.
             var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
@@ -188,7 +188,7 @@ namespace Interactr.Model
 
             foreach (var arg in arguments)
             {
-                if (!Regex.IsMatch(arg, "^[^(,)\\s]*$") && arg!="")
+                if (!Regex.IsMatch(arg, "^[^(,)\\s]*$") && arg != "")
                 {
                     return false;
                 }
