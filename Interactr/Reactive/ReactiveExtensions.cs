@@ -99,9 +99,37 @@ namespace Interactr.Reactive
                 }
             }
 
-            int SourceListIndexToTargetListIndex(int sourceIndex)
+            void MoveElements(IEnumerable<(TInput Element, int OldIndex, int NewIndex)> changes)
             {
-                return isFilteredIn.Take(sourceIndex + 1).Count(isIn => isIn) - 1;
+                var changesList = changes.ToList();
+
+                // Apply moves to isFilteredIn list
+                List<bool> newIsFilteredIn = new List<bool>(isFilteredIn);
+                newIsFilteredIn.ApplyPermutation(changesList.Select(c => (c.OldIndex, c.NewIndex)));
+
+                // Calculate corresponding moves in targetList, taking the list filtering into account.
+                var derivedPermutation = changesList
+                    .Where(c => isFilteredIn[c.OldIndex]) // Don't move elements that weren't in the derived list to begin with.
+                    .Select(c =>
+                        {
+                            return (
+                                // Convert the start source list index to the current derived list index
+                                SourceListIndexToTargetListIndex(c.OldIndex),
+                                // Convert the destination source list index to the new derived list index, using the new isFilteredIn list
+                                SourceListIndexToTargetListIndex(c.NewIndex, newIsFilteredIn)
+                            );
+                        });
+
+                targetList.ApplyPermutation(derivedPermutation);
+            }
+
+            int SourceListIndexToTargetListIndex(int sourceIndex, IList<bool> isFilteredInList = null)
+            {
+                if (isFilteredInList == null)
+                {
+                    isFilteredInList = isFilteredIn;
+                }
+                return isFilteredInList.Take(sourceIndex + 1).Count(isIn => isIn) - 1;
             }
 
             CompositeDisposable disposable = new CompositeDisposable(
@@ -115,6 +143,14 @@ namespace Interactr.Reactive
                 }),
                 sourceListObservable.ObserveNested(list => list.OnAdd)
                     .Subscribe(e => InsertElement(e.Index, e.Element)),
+                sourceListObservable.ObserveNested(list => list.OnMoved)
+                    .Subscribe(e =>
+                    {
+                        if (e.Reason == MoveReason.Reordering)
+                        {
+                            MoveElements(e.Changes);
+                        }
+                    }),
                 sourceListObservable.ObserveNested(list => list.OnDelete)
                     .Subscribe(e => RemoveElement(e.Index))
             );

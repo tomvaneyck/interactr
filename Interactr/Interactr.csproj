@@ -74,6 +74,7 @@
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Party.cs" />
     <Compile Include="Reactive\IReadOnlyReactiveList.cs" />
+    <Compile Include="Reactive\ListExtensions.cs" />
     <Compile Include="Reactive\ReactiveArrayList.cs" />
     <Compile Include="Reactive\ReactiveDictionary.cs" />
     <Compile Include="Reactive\ReactiveExtensions.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="View\Controls\Anchors.cs" />
     <Compile Include="View\Controls\ArrowView.cs" />
     <Compile Include="View\Controls\Button.cs" />
+    <Compile Include="View\Controls\RadioButtonGroup.cs" />
     <Compile Include="View\Controls\ListBox.cs" />
     <Compile Include="View\Controls\ListView.cs" />
     <Compile Include="View\DiagramEditorView.cs" />

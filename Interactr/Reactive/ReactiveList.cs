@@ -19,6 +19,11 @@ namespace Interactr.Reactive
         /// </summary>
         public abstract IObservable<(T Element, int Index)> OnDelete { get; }
 
+        /// <summary>
+        /// Observable that emits a sequence of changes when the index of one or more elements changes.
+        /// </summary>
+        public abstract IObservable<MoveEventData<T>> OnMoved { get; }
+
         public abstract T this[int index] { get; set; }
 
         public abstract void Add(T item);
@@ -61,6 +66,39 @@ namespace Interactr.Reactive
         public abstract void Insert(int index, T item);
 
         public abstract void RemoveAt(int index);
+
+        /// <summary>
+        /// Move an item to another position in the list.
+        /// </summary>
+        /// <remarks>
+        /// The destination index is the index in the list before calling this method.
+        /// If this list contains the specified item more than once, the first occurance is moved.
+        /// </remarks>
+        /// <param name="item">The item to be moved.</param>
+        /// <param name="destinationIndex">The index the item needs to be moved to.</param>
+        public abstract void Move(T item, int destinationIndex);
+
+        /// <summary>
+        /// Move an item, defined by an index, to another position in the list.
+        /// </summary>
+        /// <remarks>
+        /// The destination index is the index in the list before calling this method.
+        /// </remarks>
+        /// <param name="sourceIndex">The index of the item to be moved.</param>
+        /// <param name="destinationIndex">The index the item needs to be moved to.</param>
+        public abstract void MoveByIndex(int sourceIndex, int destinationIndex);
+
+        /// <summary>
+        /// Moves elements in the list according to the specified permutation.
+        /// Note that the permutation must be complete. For example, to permute {A, B, C} to {B, C, A},
+        /// you must supply the following change tuples: {(0, 2), (1, 0), (2, 1)}
+        /// The order of the tuples does not matter.
+        /// </summary>
+        /// <param name="changes">
+        /// An enumeration of change tuples, each containing the current index of the element
+        /// to move and the new index to move the element to.
+        /// </param>
+        public abstract void ApplyPermutation(IEnumerable<(int SourceIndex, int DestinationIndex)> changes);
 
         public abstract int Count { get; }
 

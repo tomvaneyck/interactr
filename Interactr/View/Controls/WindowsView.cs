@@ -47,22 +47,14 @@ namespace Interactr.View.Controls
                 .Where(window => window != null)
                 .Subscribe(window =>
                 {
-                    int curIndex = Children.IndexOf(window);
-                    if (curIndex != Children.Count - 1)
-                    {
-                        Children.RemoveAt(curIndex);
-                        Children.Add(window);
-                    }
+                    Children.Move(window, Children.Count - 1);
                 });
 
             // When the close button of a window is clicked, notify WindowCloseRequested
-            Children.ObserveWhere(window => ((Window) window).CloseButton.MouseEventOccured, elem => elem is Window)
+            Children.ObserveWhere(window => ((Window) window).CloseButton.OnButtonClick, elem => elem is Window)
                 .Subscribe(e =>
                 {
-                    if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
-                    {
-                        _windowCloseRequested.OnNext((Window) e.Element);
-                    }
+                    _windowCloseRequested.OnNext((Window)e.Element);
                 });
         }
 
