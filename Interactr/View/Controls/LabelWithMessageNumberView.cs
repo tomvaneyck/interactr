@@ -62,7 +62,7 @@ namespace Interactr.View.Controls
             {
                 // Do not set the preferred height to zero
                 // When the labelView does not have elements and thus heigth zero 
-                // We still want the messageNumberView to be visible.g
+                // We still want the messageNumberView to be visible.
                 if (h != 0)
                 {
                     PreferredHeight = h;
