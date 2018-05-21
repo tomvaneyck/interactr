@@ -89,7 +89,7 @@ namespace Interactr.View
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
+                LabelWithMessageNumberView.MessageNumber = m;
             });
 
             LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
@@ -112,11 +112,7 @@ namespace Interactr.View
 
                 // Set the labelMessageNumberView position
                 LabelWithMessageNumberView.Position =
-                    new Point(textPos.X - LabelWithMessageNumberView.MessageNumberView.Width, textPos.Y);
-
-                // Set the width of the LabelView.
-                LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
-                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
+                    new Point(textPos.X, textPos.Y);
             });
         }
 

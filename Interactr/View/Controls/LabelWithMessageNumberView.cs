@@ -16,7 +16,28 @@ namespace Interactr.View.Controls
     {
         public LabelView LabelView { get; } = new LabelView();
 
-        public MessageNumberViewClass MessageNumberView { get; } = new MessageNumberViewClass();
+        public LabelView MessageNumberView { get; } = new LabelView();
+
+        public string WholeText
+        {
+            get => MessageNumber + LabelView.Text;
+        }
+
+        #region MessageNumber 
+
+        public string MessageNumber
+        {
+            get => MessageNumberView.Text;
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    MessageNumberView.Text = value + ":";
+                }
+            }
+        }
+
+        #endregion
 
         public LabelWithMessageNumberView()
         {
@@ -27,50 +48,21 @@ namespace Interactr.View.Controls
 
             CanBeFocused = false;
 
+            MessageNumberView.IsReadOnly = true;
+
+
+            LabelView.PreferredHeightChanged.Subscribe(h => LabelView.Height = h);
+            LabelView.PreferredWidthChanged.Subscribe(h => LabelView.Width = h);
+
             // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
-            LabelView.WidthChanged.MergeEvents(MessageNumberView.WidthChanged)
+            LabelView.PreferredWidthChanged.MergeEvents(MessageNumberView.PreferredWidthChanged)
                 .Subscribe(_ => { PreferredWidth = LabelView.PreferredWidth + MessageNumberView.PreferredWidth; });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
             LabelView.HeightChanged.Subscribe(h => { PreferredHeight = h; });
 
             // Paint on a change in messageNumber or label
-            LabelView.TextChanged.MergeEvents(MessageNumberView.MessageNumberChanged).Subscribe(_ => Repaint());
-        }
-
-        /// <summary>
-        /// A LabelView that cannot be focused and is not visible to mouse. 
-        /// This View contains the messageNumber.
-        /// </summary>
-        public class MessageNumberViewClass : LabelView
-        {
-            #region MessageNumber 
-
-            private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
-
-            public string MessageNumber
-            {
-                get => _messageNumber.Value;
-                set
-                {
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        _messageNumber.Value = value + ":";
-                        Text = _messageNumber.Value;
-                    }
-                }
-            }
-
-            public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
-
-            #endregion
-
-            public MessageNumberViewClass()
-            {
-                // This element can never be focused or receive mouse events.
-                CanBeFocused = false;
-                IsVisibleToMouse = false;
-            }
+            LabelView.TextChanged.MergeEvents(MessageNumberView.TextChanged).Subscribe(_ => Repaint());
         }
     }
 }

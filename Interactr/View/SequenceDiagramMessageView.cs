@@ -2,13 +2,14 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Reactive.Linq;
-using Interactr.Model;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;
+using Message = Interactr.Model.Message;
 
 namespace Interactr.View
 {
@@ -79,14 +80,10 @@ namespace Interactr.View
             // Bind the message number of the view to the viewmodel and adjust
             // the height and width of the messageNumberView.
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
-                .Subscribe(m =>
-                {
-                    LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
-                    LabelWithMessageNumberView.MessageNumberView.Height =
-                        LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
-                    LabelWithMessageNumberView.MessageNumberView.Width =
-                        LabelWithMessageNumberView.MessageNumberView.PreferredWidth;
-                });
+                .Subscribe(m => { LabelWithMessageNumberView.MessageNumber = m; });
+
+            LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
+            LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
 
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
@@ -99,16 +96,16 @@ namespace Interactr.View
                 Point end = p[0].X > p[1].X ? p[0] : p[1];
                 // Get the vector from the leftmost to the rightmost point.
                 Point diff = end - start;
-                // Start the text at a third of the distance between the points. Looks good enough for now.
-                Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
+                
+                // Center the text.
+                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
+                var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
+                    LabelWithMessageNumberView.LabelView.Font);
+                Point textPos = midPos - new Point(textSize.Width/2, 0);
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
-               new Margins(textPos.X -LabelWithMessageNumberView.MessageNumberView.PreferredWidth, textPos.Y));
-
-                // Set the width of the LabelView.
-                LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
-                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
+                    new Margins(textPos.X, textPos.Y));
             });
         }
 

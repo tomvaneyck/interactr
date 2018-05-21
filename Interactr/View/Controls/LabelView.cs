@@ -76,6 +76,26 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        #region IsReadOnly
+
+        private readonly ReactiveProperty<bool> _isReadOnly = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// Indicate if the label is readonly.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => _isReadOnly.Value;
+            set => _isReadOnly.Value = value;
+        }
+
+        /// <summary>
+        /// Emit the new IsReadOnly values.
+        /// </summary>
+        public IObservable<bool> IsReadOnlyChanged => _isInEditMode.Changed;
+
+        #endregion
+        
         #region IsInEditMode
 
         private readonly ReactiveProperty<bool> _isInEditMode = new ReactiveProperty<bool>();
@@ -179,6 +199,9 @@ namespace Interactr.View.Controls
 
                 Repaint();
             });
+            
+            // Leave edit mode if ReadOnly is activated
+            IsReadOnlyChanged.Where(isReadOnly => isReadOnly).Subscribe(_ => IsInEditMode = false);
 
             // Ignore mouse clicked when just received focus.
             FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
@@ -256,7 +279,7 @@ namespace Interactr.View.Controls
                 return;
             }
 
-            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED && !IsReadOnly)
             {
                 IsInEditMode = true;
                 eventData.IsHandled = true;
