@@ -458,7 +458,6 @@ namespace Interactr.View.Framework
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
                 var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
 
-                
                 element.OnMouseEventPreview(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
@@ -467,7 +466,7 @@ namespace Interactr.View.Framework
                     return;
                 }
 
-                element._mouseEventOccured.OnNext(newMouseEventData);
+                element._mouseEventPreviewOccured.OnNext(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
                     // Stop event propagation.

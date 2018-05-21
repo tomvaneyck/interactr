@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Interactr.Reactive;
 
 namespace Interactr.View.Controls
@@ -15,9 +16,35 @@ namespace Interactr.View.Controls
     public class DragPanel : UIElement
     {
         private Point _previousCursorPosition;
+        private UIElement _childBeingDragged;
+
+        #region OnDragStart
+        private readonly Subject<UIElement> _onDragStart = new Subject<UIElement>();
+        
+        /// <summary>
+        /// This observable provides the child being dragged when the drag starts.
+        /// </summary>
+        public IObservable<UIElement> OnDragStart => _onDragStart;
+        #endregion
+
+        #region OnDragFinished
+        private readonly Subject<UIElement> _onDragFinished = new Subject<UIElement>();
+
+        /// <summary>
+        /// This observable provides the child being dragged when the drag ends.
+        /// </summary>
+        public IObservable<UIElement> OnDragFinished => _onDragFinished;
+        #endregion
+
+        /// <summary>
+        /// On which axes should the children be movable?
+        /// </summary>
+        public Orientation DraggableOrientations { get; set; } = Orientation.Horizontal | Orientation.Vertical;
 
         public DragPanel()
         {
+            CanBeFocused = false;
+
             // Update layout when the width or height is changed.
             ReactiveExtensions.MergeEvents(
                 WidthChanged,
@@ -29,26 +56,38 @@ namespace Interactr.View.Controls
                 Children.ObserveEach(child => child.PreferredWidthChanged),
                 Children.ObserveEach(child => child.PreferredHeightChanged)
             ).Subscribe(_ => UpdateLayout());
-        }
 
-        /// <see cref="UIElement.OnMouseEvent(MouseEventData)"/>
-        protected override void OnMouseEvent(MouseEventData eventData)
-        {
-            if (eventData.Id == MouseEvent.MOUSE_DRAGGED && FocusedElement.CanLoseFocus)
+            Children.ObserveEach(c => c.MouseEventOccured).Subscribe(e =>
             {
-                MouseDragEventData dragEventData = new MouseDragEventData(
-                    eventData.MousePosition.X - _previousCursorPosition.X,
-                    eventData.MousePosition.Y - _previousCursorPosition.Y
-                );
-                ApplyDragToFocusedElement(dragEventData);
-                _previousCursorPosition = eventData.MousePosition;
-                
-                // Stop the propagation of the event.
-                eventData.IsHandled = true;
-                return;
-            }
+                if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
+                {
+                    // Start drag
+                    StartDrag(e.Element, e.Element.TranslatePointTo(this, e.Value.MousePosition));
+                }
+                else if (e.Value.Id == MouseEvent.MOUSE_DRAGGED)
+                {
+                    // Apply drag
+                    var mousePosition = e.Element.TranslatePointTo(this, e.Value.MousePosition);
+                    double deltaX = mousePosition.X - _previousCursorPosition.X;
+                    double deltaY = mousePosition.Y - _previousCursorPosition.Y;
+                    ApplyDrag(e.Element, deltaX, deltaY);
+                    _previousCursorPosition = mousePosition;
+                    
+                    e.Value.IsHandled = true;
+                }
+                else if (e.Value.Id == MouseEvent.MOUSE_RELEASED)
+                {
+                    if (_childBeingDragged != null)
+                    {
+                        // Finish drag
+                        _childBeingDragged.ReleaseMouseCapture();
+                        _onDragFinished.OnNext(_childBeingDragged);
+                        _childBeingDragged = null;
 
-          base.OnMouseEvent(eventData);
+                        e.Value.IsHandled = true;
+                    }
+                }
+            });
         }
 
         /// <see cref="UIElement.OnMouseEventPreview(MouseEventData)"/>
@@ -58,38 +97,56 @@ namespace Interactr.View.Controls
             {
                 _previousCursorPosition = eventData.MousePosition;
             }
-            else if (eventData.Id == MouseEvent.MOUSE_RELEASED)
-            {
-                UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault(element => element.Parent == this);
-                dragElement?.ReleaseMouseCapture();
-            }
 
             base.OnMouseEventPreview(eventData);
         }
 
         /// <summary>
-        /// Apply the drag data to the focused element.
+        /// Start the drag of a child of this panel.
         /// </summary>
-        /// <remarks>
-        /// Only apply the data if the focused element is a descendant.
-        /// </remarks>
-        /// <param name="dragEventData">The drag data.</param>
-        private void ApplyDragToFocusedElement(MouseDragEventData dragEventData)
+        /// <param name="child">The child to start dragging.</param>
+        /// <param name="mousePos">The current position of the mouse</param>
+        public void StartDrag(UIElement child, Point mousePos)
         {
-            // Only drag the direct descendents of this DragPanel.
-            UIElement dragElement = FocusedElement.WalkToRoot().FirstOrDefault((element) => element.Parent == this);
-            if (dragElement != null)
+            _previousCursorPosition = mousePos;
+            ApplyDrag(child, 0, 0);
+        }
+
+        /// <summary>
+        /// Apply the drag data to the specified child of this element.
+        /// </summary>
+        /// <param name="target">The element to be dragged.</param>
+        /// <param name="deltaX">The x-axis distance to move the target element. Can be negative.</param>
+        /// <param name="deltaY">The y-axis distance to move the target element. Can be negative.</param>
+        private void ApplyDrag(UIElement target, double deltaX, double deltaY)
+        {
+            // If the element was not being dragged before, trigger OnDragStart
+            if (target != _childBeingDragged)
             {
-                dragElement.CaptureMouse();
+                _childBeingDragged = target;
+                _onDragStart.OnNext(_childBeingDragged);
+            }
 
-                Point newPosition = new Point(
-                    (int) (dragElement.Position.X + dragEventData.DeltaX),
-                    (int) (dragElement.Position.Y + dragEventData.DeltaY)
-                );
+            if (_childBeingDragged != null)
+            {
+                _childBeingDragged.CaptureMouse();
 
-                if (IsValidPosition(dragElement, newPosition))
+                int newX = _childBeingDragged.Position.X;
+                if (DraggableOrientations.HasFlag(Orientation.Horizontal))
                 {
-                    dragElement.Position = newPosition;
+                    newX += (int)deltaX;
+                }
+
+                int newY = _childBeingDragged.Position.Y;
+                if (DraggableOrientations.HasFlag(Orientation.Vertical))
+                {
+                    newY += (int)deltaY;
+                }
+
+                Point newPosition = new Point(newX, newY);
+                if (IsValidPosition(_childBeingDragged, newPosition))
+                {
+                    _childBeingDragged.Position = newPosition;
                 }
             }
         }
@@ -99,7 +156,7 @@ namespace Interactr.View.Controls
         /// </summary>
         /// <param name="element">The given element.</param>
         /// <param name="position">The given position.</param>
-        /// <returns>True if position is a valid position for the given elementt.</returns>
+        /// <returns>True if position is a valid position for the given element.</returns>
         private bool IsValidPosition(UIElement element, Point position)
         {
             return (
