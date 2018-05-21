@@ -92,7 +92,7 @@ namespace Interactr.View
                 }
             );
 
-            _messageViews.ObserveEach(m => m.Label.KeyEventOccurred).Subscribe(e =>
+            _messageViews.ObserveEach(m => m.LabelWithMessageNumberView.LabelView.KeyEventOccurred).Subscribe(e =>
                 {
                     var eventData = e.Value;
                     if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)

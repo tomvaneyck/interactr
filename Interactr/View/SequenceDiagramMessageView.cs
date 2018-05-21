@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reactive.Linq;
-using Interactr.Model;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;
+using Message = Interactr.Model.Message;
 
 namespace Interactr.View
 {
     public class SequenceDiagramMessageView : AnchorPanel
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region SequenceDiagramMessageViewModel
 
         private readonly ReactiveProperty<SequenceDiagramMessageViewModel> _viewModel =
@@ -29,9 +34,9 @@ namespace Interactr.View
         #endregion
 
         /// <summary>
-        /// The labelview of the message.
+        /// The messageNumber view of the message.
         /// </summary>
-        public LabelView Label { get; } = new LabelView();
+        public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
         private readonly ArrowView _arrow = new ArrowView();
 
@@ -40,8 +45,21 @@ namespace Interactr.View
             this.IsVisibleToMouse = false;
 
             Children.Add(_arrow);
-            Children.Add(Label);
-            AnchorsProperty.SetValue(Label, Anchors.Left | Anchors.Top);
+            Children.Add(LabelWithMessageNumberView);
+
+            AnchorsProperty.SetValue(LabelWithMessageNumberView, Anchors.Left | Anchors.Top);
+
+            // Bidirectionally bind the view label to the label in the viewmodel.
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
+                .Subscribe(label => LabelWithMessageNumberView.LabelView.Text = label);
+
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
 
             // Put the arrow starting point on the sender activation bar.
             ObserveActivationBarPosition(vm => vm.SenderActivationBarChanged)
@@ -59,8 +77,11 @@ namespace Interactr.View
                 _arrow.Style = vm.MessageType == Message.MessageType.Invocation ? LineType.Solid : LineType.Dotted;
             });
 
-            // Put the label under the arrow.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(label => Label.Text = label);
+            // Bind the message number of the view to the viewmodel and adjust
+            // the height and width of the messageNumberView.
+            ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
+                .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
+
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
@@ -72,9 +93,16 @@ namespace Interactr.View
                 Point end = p[0].X > p[1].X ? p[0] : p[1];
                 // Get the vector from the leftmost to the rightmost point.
                 Point diff = end - start;
-                // Start the text at a third of the distance between the points. Looks good enough for now.
-                Point textPos = start + new Point(diff.X / 3, diff.Y / 3);
-                MarginsProperty.SetValue(Label, new Margins(textPos.X, textPos.Y));
+                
+                // Center the text.
+                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
+                var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
+                    LabelWithMessageNumberView.LabelView.Font);
+                Point textPos = midPos - new Point(textSize.Width/2, 0);
+
+                // Set the labelMessageNumber view margins.
+                MarginsProperty.SetValue(LabelWithMessageNumberView,
+                    new Margins(textPos.X, textPos.Y));
             });
         }
 

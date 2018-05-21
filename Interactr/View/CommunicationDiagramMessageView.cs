@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
@@ -54,9 +56,9 @@ namespace Interactr.View
         }
 
         /// <summary>
-        /// The labelview of the message.
+        /// The label with messageNumber view of the message.
         /// </summary>
-        public LabelView Label { get; } = new LabelView();
+        public LabelWithMessageNumberView LabelWithMessageNumberView { get; } = new LabelWithMessageNumberView();
 
         private readonly ArrowView _arrow = new ArrowView();
 
@@ -67,15 +69,31 @@ namespace Interactr.View
             ViewModel = viewModel;
 
             Children.Add(_arrow);
-            Children.Add(Label);
+            Children.Add(LabelWithMessageNumberView);
 
             // Change the size of the arrow views.
             WidthChanged.Subscribe(newWidth => _arrow.Width = newWidth);
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            Observable.Merge(ViewModel.LabelChanged, ViewModel.MessageNumberChanged)
-                .Subscribe(_ => Label.Text = ViewModel.DisplayLabel);
+            ViewModel.LabelChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label);
+
+            LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
+            });
+
+            // Update the messageNumber on a change
+            ViewModel.MessageNumberChanged.Subscribe(m =>
+            {
+                LabelWithMessageNumberView.SetMessageNumber( m);
+            });
+
+            LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
+            LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
 
             // Put the label under the arrow.
             Observable.CombineLatest(
@@ -92,10 +110,9 @@ namespace Interactr.View
                 // Start the text at a third of the distance between the points. Looks good enough for now.
                 Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
 
-                // Set the label position
-                Label.Position = textPos;
-                Label.Width = Label.PreferredWidth;
-                Label.Height = Label.PreferredHeight;
+                // Set the labelMessageNumberView position
+                LabelWithMessageNumberView.Position =
+                    new Point(textPos.X, textPos.Y);
             });
         }
 
