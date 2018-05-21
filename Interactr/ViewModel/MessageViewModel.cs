@@ -76,6 +76,13 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
+        /// <summary>
+        /// The text of the Label stored in message view model.
+        /// </summary>
+        /// <remarks>This should not necessarily be the same as the label in the message model.
+        /// If the changes of viewModel are not propogated to the model for example.
+        /// Any changes to the model are however immediately propagated to the viewmodel.
+        /// </remarks>
         public string Label
         {
             get => _label.Value;

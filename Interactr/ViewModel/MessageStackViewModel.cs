@@ -193,7 +193,7 @@ namespace Interactr.ViewModel
             {
                 Tick = suggestedTick,
                 Type = Message.MessageType.Invocation,
-                Label = "invocation()",
+                Label = "inv()",
                 SenderActivationBar = targetActivationBar
             };
             PendingInvokingMessageVM = pendingMsg;

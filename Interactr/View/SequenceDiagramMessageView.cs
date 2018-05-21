@@ -66,7 +66,7 @@ namespace Interactr.View
                 Point end = _arrow.StartPoint.X > _arrow.EndPoint.X ? _arrow.StartPoint : _arrow.EndPoint;
                 // Get the vector from the leftmost to the rightmost point.
                 Point diff = new Point(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
-                
+
                 // Center the text on a text change.
                 Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
@@ -121,10 +121,6 @@ namespace Interactr.View
                 }
             );
 
-            // Put the label under the arrow.
-            LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
-            LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
-
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
@@ -135,7 +131,7 @@ namespace Interactr.View
                 // Get the rightmost point
                 Point end = p[0].X > p[1].X ? p[0] : p[1];
                 // Get the vector from the leftmost to the rightmost point.
-                Point diff = new Point(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                Point diff = end - start;
 
                 // Center the text.
                 Point midPos = start + new Point(diff.X / 2, diff.Y / 2);

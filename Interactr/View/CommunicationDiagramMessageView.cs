@@ -91,10 +91,7 @@ namespace Interactr.View
             });
 
             // Update the messageNumber on a change
-            ViewModel.MessageNumberChanged.Subscribe(m =>
-            {
-                            LabelWithMessageNumberView.SetMessageNumber( m);
-            });
+            ViewModel.MessageNumberChanged.Subscribe(m => { LabelWithMessageNumberView.SetMessageNumber(m); });
 
             // Bind CanApplyLabel and CanLeaveEditMode.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
@@ -102,7 +99,8 @@ namespace Interactr.View
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.Color =
+                    canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
 
             // Fire ApplyLabel when leaving edit mode.
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
@@ -112,6 +110,8 @@ namespace Interactr.View
                 }
             );
 
+            // Change the height and width of the LabelWithMessageNumberView manually because, 
+            // the CommunicationDiagramMessageView is a UIElement.
             LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
             LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
 

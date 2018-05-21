@@ -130,9 +130,9 @@ namespace Interactr.Model
         /// <remarks>
         /// The label of an invocation message consists of a method name and an
         /// argument list. A method name starts with a lowercase letter and consists
-        /// only of letters, digits, and underscores. An argument list is a parenthesized,
-        /// comma-separated list of arguments. An argument is any sequence of characters,
-        /// not including commas or parentheses.
+        /// only of letters, digits, and underscores.
+        /// An argument list is a parenthesized, comma-separated list of arguments with an argument being any sequence
+        /// of characters, not including commas or parentheses.
         /// </remarks>
         /// <example> methodName(arg1,arg2) </example>
         /// </summary>
