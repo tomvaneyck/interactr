@@ -245,14 +245,5 @@ namespace Interactr.View
                 PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
             }
         }
-
-        protected override void OnMouseEvent(MouseEventData eventData)
-        {
-            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<WindowsView.Window>().First());
-            if ((labelBeingEdited?.CanLeaveEditMode ?? true))
-            {
-                base.OnMouseEvent(eventData); 
-            }
-        }
     }
 }
