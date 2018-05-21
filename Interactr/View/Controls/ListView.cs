@@ -29,17 +29,11 @@ namespace Interactr.View.Controls
         #endregion
         
         #region SelectedItem
-
-        private readonly ReactiveProperty<T> _selectedItem = new ReactiveProperty<T>();
-
         public T SelectedItem
         {
-            get => _selectedItem.Value;
-            set => _selectedItem.Value = value;
+            get => SelectedIndex != -1 ? ItemsSource[SelectedIndex] : default(T);
+            set => SelectedIndex = ItemsSource.IndexOf(value);
         }
-
-        public IObservable<T> SelectedItemChanged => _selectedItem.Changed;
-
         #endregion
 
         #region SelectedIndex
@@ -75,7 +69,7 @@ namespace Interactr.View.Controls
                 }
             });
 
-            // When a child becomes selected, unselect all other items
+            // When a child becomes selected, unselect all other items and set SelectedIndex
             this.Children.ObserveEach(e => ((ItemContainer)e).IsSelectedChanged).Subscribe(e =>
             {
                 if (_selectedContainer != null)
@@ -83,6 +77,7 @@ namespace Interactr.View.Controls
                     _selectedContainer.IsSelected = false;
                 }
                 _selectedContainer = (ItemContainer)e.Element;
+                SelectedIndex = Children.IndexOf(_selectedContainer);
             });
 
             // When the selected element is deleted, select a neighbour or nothing
@@ -100,7 +95,16 @@ namespace Interactr.View.Controls
                 }
             });
 
-            // When the selected element is moved, update the selected index
+            // When the selected element is moved, update the selected index.
+            Children.OnMoved
+                .WithLatestFrom(SelectedIndexChanged, (e, i) => (EventData: e, LatestIndex: i))
+                // Find the change where the currently selected index was moved, if any such change exists.
+                .Where(e => e.EventData.Changes.Any(change => change.OldIndex == e.LatestIndex))
+                .Subscribe(e =>
+                {
+                    // Set the new index.
+                    SelectedIndex = e.EventData.Changes.First(c => c.OldIndex == e.LatestIndex).NewIndex;
+                });
         }
 
         private class ItemContainer : AnchorPanel

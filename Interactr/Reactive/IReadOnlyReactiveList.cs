@@ -27,6 +27,8 @@ namespace Interactr.Reactive
         /// Observable that emits a sequence of changes when the index of one or more elements changes.
         /// </summary>
         IObservable<MoveEventData<T>> OnMoved { get; }
+
+        int IndexOf(T item);
     }
 
     public class MoveEventData<T>
