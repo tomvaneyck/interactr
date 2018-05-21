@@ -96,7 +96,7 @@ namespace Interactr.View.Controls
                 else
                 {
                     // Select next element, except if the previous selection was the last element in the list.
-                    int newSelectedIndex = e.Index == Children.Count ? e.Index-1 : e.Index + 1;
+                    this.SelectedIndex = e.Index == Children.Count ? e.Index-1 : e.Index + 1;
                 }
             });
 
