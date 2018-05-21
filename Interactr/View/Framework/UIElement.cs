@@ -256,6 +256,13 @@ namespace Interactr.View.Framework
             }
         }
 
+        /// <summary>
+        /// Indicate if there is a label that is being edited in the scope.
+        /// </summary>
+        /// <remarks>
+        /// The scope consists of a DiagramEditorView and all its children.
+        /// </remarks>
+        /// <returns>True if there is a label in edit mode in the current scope. False otherwise.</returns>
         protected bool LabelBeingEditedInScope()
         {
             LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault());

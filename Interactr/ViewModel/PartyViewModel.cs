@@ -54,6 +54,13 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        /// <summary>
+        /// Indicates if the label of the party view is in edit mode.
+        /// </summary>
+        /// <remarks>
+        /// This property gets set in the party view of this party view model.
+        /// It maintains a binding so that the view model is aware of changes in the view.
+        /// </remarks>
         public bool LabelInEditMode { get; set; }
 
         #region CanApplyLabel

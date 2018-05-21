@@ -176,7 +176,7 @@ namespace Interactr.View.Controls
                 MarginsProperty.SetValue(CloseButton, new Margins(top: 7, right: 7, bottom: 7));
                 Children.Add(CloseButton);
 
-                //Focus child if this window is clicked.
+                // Focus child if this window is clicked.
                 FocusChanged.Subscribe(focused =>
                 {
                     if (focused)
