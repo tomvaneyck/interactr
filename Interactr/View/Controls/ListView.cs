@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
@@ -85,6 +86,19 @@ namespace Interactr.View.Controls
             });
 
             // When the selected element is deleted, select a neighbour or nothing
+            this.Children.OnDelete.Where(e => e.Index == SelectedIndex).Subscribe(e =>
+            {
+                if (this.Children.Count == 0)
+                {
+                    // Clear selection.
+                    this.SelectedIndex = -1;
+                }
+                else
+                {
+                    // Select next element, except if the previous selection was the last element in the list.
+                    int newSelectedIndex = e.Index == Children.Count ? e.Index-1 : e.Index + 1;
+                }
+            });
 
             // When the selected element is moved, update the selected index
         }
