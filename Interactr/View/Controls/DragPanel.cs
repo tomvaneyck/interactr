@@ -43,6 +43,8 @@ namespace Interactr.View.Controls
 
         public DragPanel()
         {
+            CanBeFocused = false;
+
             // Update layout when the width or height is changed.
             ReactiveExtensions.MergeEvents(
                 WidthChanged,
