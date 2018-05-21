@@ -118,7 +118,6 @@ namespace Interactr.View
                 _arrow.EndPointChanged
             ).Subscribe(p =>
             {
-
                 // Center the label.
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
