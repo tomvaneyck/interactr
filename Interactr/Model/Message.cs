@@ -88,5 +88,22 @@ namespace Interactr.Model
         }
 
         #endregion
+
+        #region MessageNumber
+
+        private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
+
+        /// <summary>
+        ///  The message number of a message. 
+        /// </summary>
+        public string MessageNumber
+        {
+            get => _messageNumber.Value;
+            set => _messageNumber.Value = value;
+        }
+
+        public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
+
+        #endregion
     }
 }

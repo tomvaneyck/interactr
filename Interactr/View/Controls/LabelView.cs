@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive;
@@ -75,6 +76,26 @@ namespace Interactr.View.Controls
         /// Emit the new Color when it changes.
         /// </summary>
         public IObservable<Color> ColorChanged => _color.Changed;
+
+        #endregion
+
+        #region IsReadOnly
+
+        private readonly ReactiveProperty<bool> _isReadOnly = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// Indicate if the label is readonly.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => _isReadOnly.Value;
+            set => _isReadOnly.Value = value;
+        }
+
+        /// <summary>
+        /// Emit the new IsReadOnly values.
+        /// </summary>
+        public IObservable<bool> IsReadOnlyChanged => _isReadOnly.Changed;
 
         #endregion
 
@@ -198,6 +219,9 @@ namespace Interactr.View.Controls
                 }
             });
 
+            // Leave edit mode if ReadOnly is activated
+            IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
+
             // Ignore mouse clicked when just received focus.
             FocusChanged.Where(isFocused => isFocused).Subscribe(_ =>
             {
@@ -285,7 +309,8 @@ namespace Interactr.View.Controls
                 eventData.IsHandled = true;
                 return;
             }
-            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+
+            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED && !IsReadOnly)
             {
                 IsInEditMode = true;
                 eventData.IsHandled = true;
