@@ -50,7 +50,6 @@ namespace Interactr.View.Controls
 
             MessageNumberView.IsReadOnly = true;
 
-
             LabelView.PreferredHeightChanged.Subscribe(h => LabelView.Height = h);
             LabelView.PreferredWidthChanged.Subscribe(h => LabelView.Width = h);
 
