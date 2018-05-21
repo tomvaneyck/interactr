@@ -310,6 +310,30 @@ namespace Interactr.Tests.Reactive
         }
 
         [Test]
+        public void TestObserveEachIndexChange2()
+        {
+            //Setup
+            var scheduler = new TestScheduler();
+            var dummy1 = new DummyTestingClass { Identifier = "A" };
+            var dummy2 = new DummyTestingClass { Identifier = "B" };
+            var dummy3 = new DummyTestingClass { Identifier = "C" };
+            ReactiveList<DummyTestingClass> list = new ReactiveArrayList<DummyTestingClass>
+            {
+                dummy1, dummy2, dummy3
+            };
+
+            //Define actions
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => list.Remove(dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(20), () => list.Insert(1, dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(30), () => list.Remove(dummy3));
+            scheduler.Schedule(TimeSpan.FromTicks(40), () => dummy3.TestObservable.OnNext("Test event"));
+            var actual = scheduler.Start(() => list.ObserveEach(d => d.TestObservable), created: 0, subscribed: 0, disposed: 100);
+
+            //Assert
+            Assert.AreEqual(0, actual.Messages.Count);
+        }
+
+        [Test]
         public void TestDerivedList()
         {
             ReactiveList<int> sourceList = new ReactiveArrayList<int>();

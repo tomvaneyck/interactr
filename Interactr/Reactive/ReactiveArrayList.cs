@@ -63,8 +63,7 @@ namespace Interactr.Reactive
         public override void Insert(int index, T item)
         {
             _contents.Insert(index, item);
-            _onAdd.OnNext((item, index));
-
+            
             // If the insert was not an append, emit a move event
             if (index != Count-1)
             {
@@ -75,6 +74,8 @@ namespace Interactr.Reactive
                 );
                 _onMoved.OnNext(moveEvent);
             }
+
+            _onAdd.OnNext((item, index));
         }
 
         /// <see cref="IList.Remove"/>
