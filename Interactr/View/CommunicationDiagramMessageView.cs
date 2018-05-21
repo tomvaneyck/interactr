@@ -93,11 +93,7 @@ namespace Interactr.View
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                LabelWithMessageNumberView.MessageNumberView.MessageNumber = m;
-                LabelWithMessageNumberView.MessageNumberView.Height =
-                    LabelWithMessageNumberView.MessageNumberView.PreferredHeight;
-                LabelWithMessageNumberView.MessageNumberView.Width =
-                    LabelWithMessageNumberView.MessageNumberView.PreferredWidth;
+                LabelWithMessageNumberView.MessageNumber = m;
             });
 
             // Bind CanApplyLabel and CanLeaveEditMode.
@@ -116,6 +112,9 @@ namespace Interactr.View
                 }
             );
 
+            LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
+            LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
+
             // Put the label under the arrow.
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
@@ -133,11 +132,7 @@ namespace Interactr.View
 
                 // Set the labelMessageNumberView position
                 LabelWithMessageNumberView.Position =
-                    new Point(textPos.X - LabelWithMessageNumberView.MessageNumberView.Width, textPos.Y);
-
-                // Set the width of the LabelView.
-                LabelWithMessageNumberView.LabelView.Width = LabelWithMessageNumberView.LabelView.PreferredWidth;
-                LabelWithMessageNumberView.LabelView.Height = LabelWithMessageNumberView.LabelView.PreferredHeight;
+                    new Point(textPos.X, textPos.Y);
             });
         }
 
@@ -151,9 +146,9 @@ namespace Interactr.View
         {
             // Select the latest parent view
             return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching sender
+                        // and the latest matching sender
                             partySelector(vm).Where(party => party != null).Select(targetParty =>
                             {
                                 // and listen for the position changes of its view.
