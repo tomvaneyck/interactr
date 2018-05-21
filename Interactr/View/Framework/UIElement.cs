@@ -494,7 +494,7 @@ namespace Interactr.View.Framework
                     return;
                 }
 
-                element._mouseEventOccured.OnNext(newMouseEventData);
+                element._mouseEventPreviewOccured.OnNext(newMouseEventData);
                 if (newMouseEventData.IsHandled)
                 {
                     // Stop event propagation.

@@ -69,6 +69,7 @@ namespace Interactr.View
 
         private void UpdateLayout()
         {
+            int maxY = 0;
             foreach (ActivationBarView barView in ActivationBarViews)
             {
                 // Horizontally center bar on lifeline and add offset for the nesting level of the bar.
@@ -77,7 +78,11 @@ namespace Interactr.View
                 barView.Position = new Framework.Point(x, y);
                 barView.Width = BarWidth;
                 barView.Height = barView.PreferredHeight;
+
+                maxY = Math.Max(maxY, y + barView.Height);
             }
+
+            this.PreferredHeight = maxY;
         }
 
         /// <see cref="OnMouseEvent"/>
@@ -91,6 +96,7 @@ namespace Interactr.View
                     case MouseEvent.MOUSE_PRESSED:
                         // User is dragging from one lifeline to another to create a new message.
                         // Create a new pending message to store this information.
+                        this.Focus();
                         ViewModel.MessageStackVM.CreatePendingMessage(
                             ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
                         eventData.IsHandled = true;
@@ -102,7 +108,7 @@ namespace Interactr.View
                         ViewModel.MessageStackVM.FinishPendingMessage();
                         eventData.IsHandled = true;
                         return;
-                } 
+                }
             }
 
             base.OnMouseEventPreview(eventData);
