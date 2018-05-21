@@ -10,7 +10,7 @@ using MessageStackWalker = Interactr.ViewModel.MessageStack.MessageStackWalker;
 namespace Interactr.Tests.ViewModel
 {
     [TestFixture]
-    class MessageStackWalkerTest
+    class MessageStackWalkerTests
     {
         private static string _testLabel = "label()";
 
