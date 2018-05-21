@@ -19,7 +19,15 @@ namespace Interactr.View.Controls
         public Orientation StackOrientation
         {
             get => _stackOrientation.Value;
-            set => _stackOrientation.Value = value;
+            set
+            {
+                if (Enum.GetValues(typeof(Orientation)).Cast<Orientation>().Count(f => value.HasFlag(f)) != 1)
+                {
+                    throw new ArgumentException("The stackpanel must have one single orientation.");
+                }
+
+                _stackOrientation.Value = value;
+            }
         }
 
         public IObservable<Orientation> StackOrientationChanged => _stackOrientation.Changed;
@@ -30,6 +38,9 @@ namespace Interactr.View.Controls
         {
             // Set can be focused false.
             CanBeFocused = false;
+
+            //Horizontal stack by default
+            StackOrientation = Orientation.Horizontal;
 
             // Update layout when the width, height or orientation of this panel changes.
             ReactiveExtensions.MergeEvents(

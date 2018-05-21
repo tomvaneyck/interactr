@@ -70,6 +70,7 @@ namespace Interactr.View.Controls
             BorderColor = Color.Black;
             BackgroundColor = Color.Transparent;
             BorderWidth = 1;
+            CanBeFocused = false;
 
             // When a property changes, repaint.
             ReactiveExtensions.MergeEvents(
