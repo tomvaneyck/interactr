@@ -80,10 +80,7 @@ namespace Interactr.View
             // Bind the message number of the view to the viewmodel and adjust
             // the height and width of the messageNumberView.
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
-                .Subscribe(m => { LabelWithMessageNumberView.MessageNumber = m; });
-
-            LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
-            LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
+                .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
 
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
