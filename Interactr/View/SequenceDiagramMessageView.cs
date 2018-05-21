@@ -59,6 +59,23 @@ namespace Interactr.View
                 {
                     ViewModel.Label = text;
                 }
+
+                // Get the leftmost arrow point
+                Point start = _arrow.StartPoint.X < _arrow.EndPoint.X ? _arrow.StartPoint : _arrow.EndPoint;
+                // Get the rightmost arrow point
+                Point end = _arrow.StartPoint.X > _arrow.EndPoint.X ? _arrow.StartPoint : _arrow.EndPoint;
+                // Get the vector from the leftmost to the rightmost point.
+                Point diff = new Point(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+                
+                // Center the text on a text change.
+                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
+                var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
+                    LabelWithMessageNumberView.LabelView.Font);
+                Point textPos = midPos - new Point(textSize.Width / 2, 0);
+
+                // Set the labelMessageNumber view margins.
+                MarginsProperty.SetValue(LabelWithMessageNumberView,
+                    new Margins(textPos.X, textPos.Y));
             });
 
             // Put the arrow starting point on the sender activation bar.
@@ -80,12 +97,14 @@ namespace Interactr.View
             // Bind the message number of the view to the viewmodel and adjust
             // the height and width of the messageNumberView.
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
-            .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
+                .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
                 LabelWithMessageNumberView.LabelView.Color = canApplyLabel
-                || ViewModel.MessageType == Message.MessageType.Result ? DefaultLabelColor : InvalidLabelColor);
+                                                             || ViewModel.MessageType == Message.MessageType.Result
+                    ? DefaultLabelColor
+                    : InvalidLabelColor);
 
             // Fire ApplyLabel when leaving edit mode.
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
@@ -116,13 +135,13 @@ namespace Interactr.View
                 // Get the rightmost point
                 Point end = p[0].X > p[1].X ? p[0] : p[1];
                 // Get the vector from the leftmost to the rightmost point.
-                Point diff = end - start;
-                
+                Point diff = new Point(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
+
                 // Center the text.
                 Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = midPos - new Point(textSize.Width/2, 0);
+                Point textPos = midPos - new Point(textSize.Width / 2, 0);
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
@@ -142,7 +161,7 @@ namespace Interactr.View
                 0,
                 (ViewModel.Tick - bar.ViewModel.StartTick) * bar.TickHeight
             );
-            SequenceDiagramView parent = (SequenceDiagramView)Parent;
+            SequenceDiagramView parent = (SequenceDiagramView) Parent;
             Point anchorPointOnDiagram = bar.TranslatePointTo(parent, anchorPointOnBar);
 
             // Choose left or right side of bar based on which side the arrow is going.
@@ -155,9 +174,9 @@ namespace Interactr.View
         {
             // With the latest parent view
             return ParentChanged.OfType<SequenceDiagramView>().Select(parent =>
-                    // and the latest viewmodel
+                // and the latest viewmodel
                     ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                            // and the latest matching activation bar
+                        // and the latest matching activation bar
                             barSelector(vm).Where(bar => bar != null).Select(targetBar =>
                             {
                                 // and listen for the position changes of its view.
