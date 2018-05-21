@@ -190,7 +190,7 @@ namespace Interactr.View.Controls
             });
 
             // Exit edit mode when focus is lost and the label can leave edit mode.
-            FocusChanged.Where(_ => !_).Subscribe(_ =>
+            FocusChanged.Where(isFocused => !isFocused).Subscribe(_ =>
             {
                 if (CanLeaveEditMode)
                 {
@@ -199,7 +199,7 @@ namespace Interactr.View.Controls
             });
 
             // Ignore mouse clicked when just received focus.
-            FocusChanged.Where(v => v).Subscribe(_ =>
+            FocusChanged.Where(isFocused => isFocused).Subscribe(_ =>
             {
                 if (!_isFocusing)
                 {
