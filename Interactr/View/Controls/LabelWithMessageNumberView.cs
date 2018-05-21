@@ -58,7 +58,16 @@ namespace Interactr.View.Controls
                 .Subscribe(_ => { PreferredWidth = LabelView.PreferredWidth + MessageNumberView.PreferredWidth; });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
-            LabelView.HeightChanged.Subscribe(h => { PreferredHeight = h; });
+            LabelView.HeightChanged.Subscribe(h =>
+            {
+                // Do not set the preferred height to zero
+                // When the labelView does not have elements and thus heigth zero 
+                // We still want the messageNumberView to be visible.g
+                if (h != 0)
+                {
+                    PreferredHeight = h;
+                }
+            });
 
             // Paint on a change in messageNumber or label
             LabelView.TextChanged.MergeEvents(MessageNumberView.TextChanged).Subscribe(_ => Repaint());
