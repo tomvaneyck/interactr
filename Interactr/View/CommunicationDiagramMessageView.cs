@@ -93,7 +93,7 @@ namespace Interactr.View
             // Update the messageNumber on a change
             ViewModel.MessageNumberChanged.Subscribe(m =>
             {
-                LabelWithMessageNumberView.MessageNumber = m;
+                            LabelWithMessageNumberView.SetMessageNumber( m);
             });
 
             // Bind CanApplyLabel and CanLeaveEditMode.

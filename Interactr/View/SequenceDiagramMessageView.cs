@@ -80,7 +80,7 @@ namespace Interactr.View
             // Bind the message number of the view to the viewmodel and adjust
             // the height and width of the messageNumberView.
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
-                .Subscribe(m => { LabelWithMessageNumberView.MessageNumber = m; });
+            .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>

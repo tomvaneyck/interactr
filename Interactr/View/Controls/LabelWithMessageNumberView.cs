@@ -14,30 +14,11 @@ namespace Interactr.View.Controls
     /// </summary>
     public class LabelWithMessageNumberView : StackPanel
     {
-        public LabelView LabelView { get; } = new LabelView();
-
         public LabelView MessageNumberView { get; } = new LabelView();
 
-        public string WholeText
-        {
-            get => MessageNumber + LabelView.Text;
-        }
+        public LabelView LabelView { get; } = new LabelView();
 
-        #region MessageNumber 
-
-        public string MessageNumber
-        {
-            get => MessageNumberView.Text;
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    MessageNumberView.Text = value + ":";
-                }
-            }
-        }
-
-        #endregion
+        public string WholeText => MessageNumberView.Text + LabelView.Text;
 
         public LabelWithMessageNumberView()
         {
@@ -50,27 +31,24 @@ namespace Interactr.View.Controls
 
             MessageNumberView.IsReadOnly = true;
 
-            LabelView.PreferredHeightChanged.Subscribe(h => LabelView.Height = h);
-            LabelView.PreferredWidthChanged.Subscribe(h => LabelView.Width = h);
-
             // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
             LabelView.PreferredWidthChanged.MergeEvents(MessageNumberView.PreferredWidthChanged)
                 .Subscribe(_ => { PreferredWidth = LabelView.PreferredWidth + MessageNumberView.PreferredWidth; });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
-            LabelView.HeightChanged.Subscribe(h =>
-            {
-                // Do not set the preferred height to zero
-                // When the labelView does not have elements and thus heigth zero 
-                // We still want the messageNumberView to be visible.
-                if (h != 0)
+            LabelView.PreferredHeightChanged.MergeEvents(MessageNumberView.PreferredHeightChanged)
+                .Subscribe(h =>
                 {
-                    PreferredHeight = h;
-                }
-            });
+                    // Do not set the preferred height to zero
+                    // When the labelView does not have elements and thus height zero 
+                    // We still want the messageNumberView to be visible.
+                    PreferredHeight = Math.Max(LabelView.PreferredHeight, MessageNumberView.PreferredHeight);
+                });
+        }
 
-            // Paint on a change in messageNumber or label
-            LabelView.TextChanged.MergeEvents(MessageNumberView.TextChanged).Subscribe(_ => Repaint());
+        public void SetMessageNumber(string value)
+        {
+            MessageNumberView.Text = string.IsNullOrEmpty(value) ? "" : value + ":";
         }
     }
 }
