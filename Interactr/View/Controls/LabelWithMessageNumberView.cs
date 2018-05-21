@@ -50,15 +50,12 @@ namespace Interactr.View.Controls
 
             MessageNumberView.IsReadOnly = true;
 
-            LabelView.PreferredHeightChanged.Subscribe(h => LabelView.Height = h);
-            LabelView.PreferredWidthChanged.Subscribe(h => LabelView.Width = h);
-
             // Bind the width of this LabelWithMessageNumberView to the width of messageNumber and labelView.
             LabelView.PreferredWidthChanged.MergeEvents(MessageNumberView.PreferredWidthChanged)
                 .Subscribe(_ => { PreferredWidth = LabelView.PreferredWidth + MessageNumberView.PreferredWidth; });
 
             // Bind the height of this LabelWithMessageNumberView to the height of the labelView.
-            LabelView.HeightChanged.Subscribe(h =>
+            LabelView.PreferredHeightChanged.Subscribe(h =>
             {
                 // Do not set the preferred height to zero
                 // When the labelView does not have elements and thus heigth zero 
