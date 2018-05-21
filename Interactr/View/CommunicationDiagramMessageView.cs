@@ -121,18 +121,8 @@ namespace Interactr.View
                 _arrow.EndPointChanged
             ).Subscribe(p =>
             {
-                // Get the leftmost point
-                Point start = p[0].X < p[1].X ? p[0] : p[1];
-                // Get the rightmost point
-                Point end = p[0].X > p[1].X ? p[0] : p[1];
-                // Get the vector from the leftmost to the rightmost point.
-                Point diff = end - start;
-                // Start the text at a third of the distance between the points. Looks good enough for now.
-                Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
-
                 // Set the labelMessageNumberView position
-                LabelWithMessageNumberView.Position =
-                    new Point(textPos.X, textPos.Y);
+                LabelWithMessageNumberView.Position = _arrow.calculateMidPoint();
             });
         }
 

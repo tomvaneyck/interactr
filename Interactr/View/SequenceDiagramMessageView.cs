@@ -60,18 +60,10 @@ namespace Interactr.View
                     ViewModel.Label = text;
                 }
 
-                // Get the leftmost arrow point
-                Point start = _arrow.StartPoint.X < _arrow.EndPoint.X ? _arrow.StartPoint : _arrow.EndPoint;
-                // Get the rightmost arrow point
-                Point end = _arrow.StartPoint.X > _arrow.EndPoint.X ? _arrow.StartPoint : _arrow.EndPoint;
-                // Get the vector from the leftmost to the rightmost point.
-                Point diff = new Point(Math.Abs(end.X - start.X), Math.Abs(end.Y - start.Y));
-
                 // Center the text on a text change.
-                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = midPos - new Point(textSize.Width / 2, 0);
+                Point textPos = _arrow.calculateMidPoint() - new Point(textSize.Width / 2, 0);
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
@@ -126,20 +118,12 @@ namespace Interactr.View
                 _arrow.EndPointChanged
             ).Subscribe(p =>
             {
-                // Get the leftmost point
-                Point start = p[0].X < p[1].X ? p[0] : p[1];
-                // Get the rightmost point
-                Point end = p[0].X > p[1].X ? p[0] : p[1];
-                // Get the vector from the leftmost to the rightmost point.
-                Point diff = end - start;
 
-                // Center the text.
-                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
+                // Center the label.
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = midPos - new Point(textSize.Width / 2, 0);
+                Point textPos = _arrow.calculateMidPoint() - new Point(textSize.Width / 2, 0);
 
-                // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });
