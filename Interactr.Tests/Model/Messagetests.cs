@@ -321,7 +321,6 @@ namespace Interactr.Tests.Model
             Assert.AreEqual(expected, actual);
         }
 
-
         [Test]
         public void InvalidMessageLabelTextAfterParenthesisTest()
         {
