@@ -26,13 +26,15 @@ namespace Interactr.View.Controls
 
         #endregion
 
-        private Button _moveUpButton;
-        private Button _moveDownButton;
-        private Button _deleteButton;
-        private ListView<T> _listView;
+        private readonly Button _moveUpButton;
+        private readonly Button _moveDownButton;
+        private readonly Button _deleteButton;
+        private readonly ListView<T> _listView;
 
         public ListBox(Func<T, UIElement> viewFactory)
         {
+            this.StackOrientation = Orientation.Vertical;
+
             _listView = new ListView<T>(viewFactory);
             this.ItemsSourceChanged.Subscribe(list => _listView.ItemsSource = list);
 
@@ -88,7 +90,6 @@ namespace Interactr.View.Controls
             this.Children.Add(stackPanel);
             
             this.Children.Add(_listView);
-
         }
     }
 }

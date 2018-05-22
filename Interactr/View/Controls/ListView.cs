@@ -54,16 +54,17 @@ namespace Interactr.View.Controls
 
         public ListView(Func<T, UIElement> viewFactory)
         {
+            this.StackOrientation = Orientation.Vertical;
+
             // Select nothing by default.
             SelectedIndex = -1;
 
             var elements = ItemsSourceChanged.CreateDerivedListBinding(e => new ItemContainer(e, viewFactory(e))).ResultList;
             elements.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
             elements.OnDelete.Subscribe(e => this.Children.RemoveAt(e.Index));
-            
 
             // When a child is clicked, mark it as selected
-            this.Children.ObserveEach(e => e.MouseEventOccured).Subscribe(e =>
+            this.Children.ObserveEach(e => e.MouseEventPreviewOccured).Subscribe(e =>
             {
                 if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 {
