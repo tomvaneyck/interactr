@@ -197,26 +197,26 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
-            protected override void OnMouseEvent(MouseEventData eventData)
+            protected override void OnMouseEvent(MouseEventData e)
             {
-                if (eventData.Id == MouseEvent.MOUSE_PRESSED)
+                if (e.Id == MouseEvent.MOUSE_PRESSED)
                 {
                     // Which sides of the window is the mouse over?
                     _resizeMode = ResizeMode.None;
-                    if (eventData.MousePosition.X <= BorderSize)
+                    if (e.MousePosition.X <= BorderSize)
                     {
                         _resizeMode |= ResizeMode.Left;
                     }
-                    else if (eventData.MousePosition.X >= Width - BorderSize)
+                    else if (e.MousePosition.X >= Width - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Right;
                     }
 
-                    if (eventData.MousePosition.Y <= BorderSize)
+                    if (e.MousePosition.Y <= BorderSize)
                     {
                         _resizeMode |= ResizeMode.Top;
                     }
-                    else if (eventData.MousePosition.Y >= Height - BorderSize)
+                    else if (e.MousePosition.Y >= Height - BorderSize)
                     {
                         _resizeMode |= ResizeMode.Bottom;
                     }
@@ -225,51 +225,54 @@ namespace Interactr.View.Controls
                     // can drag outside the window border and the window will still receive events.
                     if (_resizeMode != ResizeMode.None)
                     {
-                        CaptureMouse();
-                        eventData.IsHandled = true;
+                        CaptureMouseAtRoot();
+                        e.IsHandled = true;
                         return;
                     }
                 }
-                else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
+                else if (e.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
                 {
                     // Dragging finished, release mouse capture.
-                    ReleaseMouseCapture();
+                    ReleaseMouseAtRoot();
                     _resizeMode = ResizeMode.None;
-                    eventData.IsHandled = true;
+                    e.IsHandled = true;
                     return;
                 }
-                else if (eventData.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
+                else if (e.Id == MouseEvent.MOUSE_DRAGGED && _resizeMode != ResizeMode.None)
                 {
+                    int newPreferredWidth = PreferredWidth;
+                    int newPreferredHeight = PreferredHeight;
+
                     // User has dragged the mouse. Resize/reposition the window.
                     if ((_resizeMode & ResizeMode.Left) != 0)
                     {
-                        PreferredWidth -= eventData.MousePosition.X;
-                        Position += new Point(eventData.MousePosition.X, 0);
+                        newPreferredWidth -= e.MousePosition.X;
+                        Position += new Point(e.MousePosition.X, 0);
                     }
 
                     if ((_resizeMode & ResizeMode.Top) != 0)
                     {
-                        PreferredHeight -= eventData.MousePosition.Y;
-                        Position += new Point(0, eventData.MousePosition.Y);
+                        newPreferredHeight -= e.MousePosition.Y;
+                        Position += new Point(0, e.MousePosition.Y);
                     }
 
                     if ((_resizeMode & ResizeMode.Right) != 0)
                     {
-                        PreferredWidth = eventData.MousePosition.X;
+                        newPreferredWidth = e.MousePosition.X;
                     }
 
                     if ((_resizeMode & ResizeMode.Bottom) != 0)
                     {
-                        PreferredHeight = eventData.MousePosition.Y;
+                        newPreferredHeight = e.MousePosition.Y;
                     }
 
-                    PreferredWidth = Math.Max(MinWindowWidth, PreferredWidth);
-                    PreferredHeight = Math.Max(MinWindowHeight, PreferredHeight);
-                    eventData.IsHandled = true;
+                    PreferredWidth = Math.Max(MinWindowWidth, newPreferredWidth);
+                    PreferredHeight = Math.Max(MinWindowHeight, newPreferredHeight);
+                    e.IsHandled = true;
                     return;
                 }
                 
-                base.OnMouseEvent(eventData);
+                base.OnMouseEvent(e);
             }
 
             public override void PaintElement(Graphics g)
