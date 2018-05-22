@@ -220,15 +220,22 @@ namespace Interactr.View.Controls
             using (Pen pen = new Pen(Color))
             {
                 // Draw editing rectangle.
-                if (IsFocused)
+                if (IsInEditMode)
+                {
+                    using (Pen borderPen = new Pen(Color.DodgerBlue))
+                    {
+                        g.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
+                    }
+
+                    // Draw cursor.
+                    if (_cursorIsVisible)
+                    {
+                        g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                    }
+                }
+                else if (IsFocused)
                 {
                     g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
-                }
-
-                // Draw cursor.
-                if (_cursorIsVisible)
-                {
-                    g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
                 }
             }
         }
