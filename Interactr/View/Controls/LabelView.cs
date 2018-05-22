@@ -143,11 +143,9 @@ namespace Interactr.View.Controls
 
         #endregion
 
-        private bool _isFocusing;
-
         public LabelView()
         {
-            // Set the text to empty string
+            // Set the text to empty string.
             Text = "";
 
             // Set the default font.
@@ -158,7 +156,9 @@ namespace Interactr.View.Controls
             ReactiveExtensions.MergeEvents(
                 TextChanged,
                 FontChanged,
-                ColorChanged
+                ColorChanged,
+                EditModeChanged,
+                FocusChanged
             ).Subscribe(_ => Repaint());
 
             // Set the preferred width and height of the labelView by measuring
@@ -190,26 +190,22 @@ namespace Interactr.View.Controls
                 Repaint();
             });
 
-            // Leave edit mode if focus is lost and Repaint.
-            FocusChanged.Subscribe(isFocused =>
+            // If the focus changed, exit edit mode unless CanLeaveEditMove is true.
+            FocusChanged
+                .Where(isFocused => !isFocused && CanLeaveEditMode)
+                .Subscribe(_ => IsInEditMode = false);
+
+            // Leave edit mode if ReadOnly is activated.
+            IsReadOnlyChanged.Where(isReadOnly => isReadOnly).Subscribe(_ => IsInEditMode = false);
+
+            // In edit mode, capture the mouse on the diagram editor scope.
+            EditModeChanged.Subscribe(editMode =>
             {
-                if (!isFocused)
-                {
-                    IsInEditMode = false;
-                }
+                UIElement mouseCaptureScope =
+                    WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault() ?? WalkToRoot().Last();
 
-                Repaint();
+                mouseCaptureScope.MouseCapturingElement = editMode ? this : null;
             });
-
-            // Leave edit mode if ReadOnly is activated
-            IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
-
-            // Ignore mouse clicked when just received focus.
-            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
-
-            // Update canLoseFocus when the CanLeaveEditMode is changed.
-            CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
-            CanLeaveEditMode = true;
         }
 
         /// <see cref="PaintElement"/>
@@ -223,7 +219,7 @@ namespace Interactr.View.Controls
 
             using (Pen pen = new Pen(Color))
             {
-                // Draw editing rectangle
+                // Draw editing rectangle.
                 if (IsFocused)
                 {
                     g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
@@ -271,23 +267,30 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="OnMouseEvent"/>
-        protected override void OnMouseEvent(MouseEventData eventData)
+        protected override void OnMouseEvent(MouseEventData e)
         {
-            if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            // When the user clicks outside of the label bounds, try to exit edit mode.
+            if (IsInEditMode)
             {
-                _isFocusing = false;
-                eventData.IsHandled = true;
-                return;
-            }
+                bool eventOutOfLabelBounds = e.MousePosition.X < 0 || e.MousePosition.Y < 0 ||
+                                             e.MousePosition.X >= Width || e.MousePosition.Y >= Height;
 
-            if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED && !IsReadOnly)
+                if (e.Id == MouseEvent.MOUSE_PRESSED && eventOutOfLabelBounds && CanLeaveEditMode)
+                {
+                    IsInEditMode = false;
+                }
+
+                e.IsHandled = true;
+            }
+            // When the label is focused and the user clicks the label, enter edit mode.
+            else if (IsFocused && e.Id == MouseEvent.MOUSE_PRESSED && !IsReadOnly)
             {
                 IsInEditMode = true;
-                eventData.IsHandled = true;
+                e.IsHandled = true;
                 return;
             }
 
-            base.OnMouseEvent(eventData);
+            base.OnMouseEvent(e);
         }
     }
 }
