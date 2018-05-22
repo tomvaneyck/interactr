@@ -51,9 +51,12 @@ namespace Interactr.View.Framework
         /// <returns>The property value.</returns>
         public object GetValueObject(UIElement elem)
         {
-            if (elem.AttachedProperties.TryGetValue(this, out object value))
+            if (elem != null)
             {
-                return value;
+                if (elem.AttachedProperties.TryGetValue(this, out object value))
+                {
+                    return value;
+                }
             }
 
             return DefaultValueObject;

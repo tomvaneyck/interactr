@@ -45,7 +45,7 @@ namespace Interactr.Tests.View
         public void AddPartyOnDoubleMouseClick()
         {
             _communicationDiagramView.Focus();
-            _communicationDiagramView.RunOnMouseEvent(new MouseEventData(Window.MouseEvent.MOUSE_CLICKED,
+            UIElement.HandleMouseEvent(_communicationDiagramView, new MouseEventData(Window.MouseEvent.MOUSE_CLICKED,
                 new Point(0, 2), 2));
 
             // Assert the amount of parties has increased from 0 to 1.

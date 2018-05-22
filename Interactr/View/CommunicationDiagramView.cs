@@ -109,8 +109,7 @@ namespace Interactr.View
         protected override void OnMouseEvent(MouseEventData eventData)
         {
             // Add a new party on double click
-            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 &&
-                FocusedElement.CanLoseFocus)
+            if (eventData.Id == MouseEvent.MOUSE_CLICKED && eventData.ClickCount % 2 == 0 && !LabelBeingEditedInScope())
             {
                 //Add a new Party.
                 ViewModel.AddParty(eventData.MousePosition);

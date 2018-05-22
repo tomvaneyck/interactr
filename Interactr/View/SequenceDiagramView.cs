@@ -120,7 +120,14 @@ namespace Interactr.View
             ViewModelChanged
                 .ObserveNested(vm => vm.StackVM.PendingInvokingMessageVMChanged)
                 .Select(vm => vm != null)
-                .Subscribe(hasPendingMessage => _pendingMessageView.IsVisible = hasPendingMessage);
+                .Subscribe(hasPendingMessage =>
+                {
+                    _pendingMessageView.IsVisible = hasPendingMessage;
+                    if (hasPendingMessage)
+                    {
+                        Focus();
+                    }
+                });
 
             // Set the correct start and endpoint for the pending message view.
             ViewModelChanged
@@ -172,7 +179,7 @@ namespace Interactr.View
         protected override void OnMouseEvent(MouseEventData e)
         {
             // Add a new party on double click
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && !LabelBeingEditedInScope())
             {
                 //Add a new Party.
                 ViewModel.AddParty(e.MousePosition);

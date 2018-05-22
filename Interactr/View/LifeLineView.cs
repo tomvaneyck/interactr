@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Reactive;
+using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -87,24 +88,27 @@ namespace Interactr.View
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEventPreview(MouseEventData eventData)
         {
-            var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
-            switch (eventData.Id)
+            if (!LabelBeingEditedInScope())
             {
-                case MouseEvent.MOUSE_PRESSED:
-                    // User is dragging from one lifeline to another to create a new message.
-                    // Create a new pending message to store this information.
-                    this.Focus();
-                    ViewModel.MessageStackVM.CreatePendingMessage(
-                        ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
-                    eventData.IsHandled = true;
-                    return;
-                case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
-                    // User released mouse on this lifeline while dragging a new pending message.
-                    // Try to create and add an actual message to the diagram.
-                    pendingMessage.Receiver = ViewModel.PartyVM.Party;
-                    ViewModel.MessageStackVM.FinishPendingMessage();
-                    eventData.IsHandled = true;
-                    return;
+                var pendingMessage = ViewModel.MessageStackVM.PendingInvokingMessageVM;
+                switch (eventData.Id)
+                {
+                    case MouseEvent.MOUSE_PRESSED:
+                        // User is dragging from one lifeline to another to create a new message.
+                        // Create a new pending message to store this information.
+                        this.Focus();
+                        ViewModel.MessageStackVM.CreatePendingMessage(
+                            ViewModel.PartyVM.Party, (eventData.MousePosition.Y / TickHeight) + 1);
+                        eventData.IsHandled = true;
+                        return;
+                    case MouseEvent.MOUSE_RELEASED when pendingMessage != null:
+                        // User released mouse on this lifeline while dragging a new pending message.
+                        // Try to create and add an actual message to the diagram.
+                        pendingMessage.Receiver = ViewModel.PartyVM.Party;
+                        ViewModel.MessageStackVM.FinishPendingMessage();
+                        eventData.IsHandled = true;
+                        return;
+                }
             }
 
             base.OnMouseEventPreview(eventData);

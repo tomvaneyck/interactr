@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Interactr.Reactive;
+using Interactr.View.Controls;
 using Interactr.Window;
 
 namespace Interactr.View.Framework
@@ -242,7 +243,59 @@ namespace Interactr.View.Framework
         private readonly Subject<bool> _focusChanged = new Subject<bool>();
         public IObservable<bool> FocusChanged => _focusChanged.StartWith(IsFocused);
 
-        public bool CanLoseFocus { get; set; } = true;
+        private bool _canBeFocused = true;
+        public bool CanBeFocused
+        {
+            get
+            {
+                return _canBeFocused && !LabelBeingEditedInScope();
+            }
+            protected set
+            {
+                _canBeFocused = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicate if there is a label that is being edited in the scope.
+        /// </summary>
+        /// <remarks>
+        /// The scope consists of a DiagramEditorView and all its children.
+        /// </remarks>
+        /// <returns>True if there is a label in edit mode in the current scope. False otherwise.</returns>
+        protected bool LabelBeingEditedInScope()
+        {
+            LabelView labelBeingEdited = LabelView.LabelBeingEdited.GetValue(WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault());
+            return (!labelBeingEdited?.CanLeaveEditMode ?? false) && this != labelBeingEdited;
+        }
+
+        /// <summary>
+        /// Marks this element as the focused element.
+        /// See UIElement.FocusedElement for more information.
+        /// </summary>
+        public bool Focus()
+        {
+            if (!CanBeFocused)
+            {
+                // This element may not be focused.
+                return false;
+            }
+
+            if (!IsFocused)
+            {
+                // Set focused element, then emit events for previous and current focused elements.
+                UIElement previouslyFocusedElement = FocusedElement;
+                FocusedElement = this;
+
+                // Previously focused element is now unfocused
+                previouslyFocusedElement?._focusChanged.OnNext(false);
+
+                // This element is now focused
+                _focusChanged.OnNext(true);
+            }
+
+            return true;
+        }
 
         #endregion
 
@@ -252,8 +305,6 @@ namespace Interactr.View.Framework
         public IObservable<Unit> RepaintRequested => _repaintRequested;
 
         #endregion
-
-        public bool CanBeFocused { get; protected set; } = true;
 
         public UIElement()
         {
@@ -306,29 +357,6 @@ namespace Interactr.View.Framework
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());
-        }
-
-        /// <summary>
-        /// Marks this element as the focused element.
-        /// See UIElement.FocusedElement for more information.
-        /// </summary>
-        public void Focus()
-        {
-            if (this == FocusedElement || (!FocusedElement?.CanLoseFocus ?? false))
-            {
-                // This is already focused
-                return;
-            }
-
-            // Set focused element, then emit events for previous and current focused elements.
-            UIElement previouslyFocusedElement = FocusedElement;
-            FocusedElement = this;
-
-            // Previously focused element is now unfocused
-            previouslyFocusedElement?._focusChanged.OnNext(false);
-
-            // This element is now focused
-            this._focusChanged.OnNext(true);
         }
 
         #region Keyboard events
@@ -523,11 +551,10 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
         protected virtual void OnMouseEvent(MouseEventData eventData)
         {
-            // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused )
+            // Only focus on mousepress.
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED)
             {
-                Focus();
-                eventData.IsHandled = true;
+                eventData.IsHandled = Focus();
             }
         }
 
