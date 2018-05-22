@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interactr.Reactive;
@@ -27,36 +29,53 @@ namespace Interactr.View.Controls
         private Button _moveUpButton;
         private Button _moveDownButton;
         private Button _deleteButton;
-        private ListView<T> _listBox;
+        private ListView<T> _listView;
 
         public ListBox(Func<T, UIElement> viewFactory)
         {
+            _listView = new ListView<T>(viewFactory);
+            this.ItemsSourceChanged.Subscribe(list => _listView.ItemsSource = list);
+
+            // Add move up button.
             _moveUpButton = new Button
             {
                 Label = "Move up"
             };
             _moveUpButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.MoveByIndex(_listBox.SelectedIndex, _listBox.SelectedIndex - 1);
+                ItemsSource.MoveByIndex(_listView.SelectedIndex, _listView.SelectedIndex - 1);
             });
+            _listView.SelectedIndexChanged
+                .Select(index => index > 0)
+                .Subscribe(canMoveUp => _moveUpButton.IsEnabled = canMoveUp);
+
+            // Add move down button.
             _moveDownButton = new Button
             {
                 Label = "Move down"
             };
             _moveDownButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.MoveByIndex(_listBox.SelectedIndex, _listBox.SelectedIndex + 1);
+                ItemsSource.MoveByIndex(_listView.SelectedIndex, _listView.SelectedIndex + 1);
             });
+            _listView.SelectedIndexChanged
+                .Select(index => index >= 0 && index < ItemsSource.Count-1)
+                .Subscribe(canMoveDown => _moveDownButton.IsEnabled = canMoveDown);
+
+            // Add delete button.
             _deleteButton = new Button
             {
                 Label = "Delete"
             };
-            _moveUpButton.OnButtonClick.Subscribe(_ =>
+            _deleteButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.RemoveAt(_listBox.SelectedIndex);
+                ItemsSource.RemoveAt(_listView.SelectedIndex);
             });
+            _listView.SelectedIndexChanged
+                .Select(index => index >= 0)
+                .Subscribe(canDelete => _deleteButton.IsEnabled = canDelete);
 
-            this.Children.Add(new StackPanel
+            var stackPanel = new StackPanel
             {
                 Children =
                 {
@@ -65,11 +84,11 @@ namespace Interactr.View.Controls
                     _deleteButton
                 },
                 StackOrientation = Orientation.Horizontal
-            });
+            };
+            this.Children.Add(stackPanel);
+            
+            this.Children.Add(_listView);
 
-            _listBox = new ListView<T>(viewFactory);
-            this.ItemsSourceChanged.Subscribe(list => _listBox.ItemsSource = list);
-            this.Children.Add(_listBox);
         }
     }
 }
