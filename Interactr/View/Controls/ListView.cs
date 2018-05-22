@@ -54,9 +54,13 @@ namespace Interactr.View.Controls
 
         public ListView(Func<T, UIElement> viewFactory)
         {
+            // Select nothing by default.
+            SelectedIndex = -1;
+
             var elements = ItemsSourceChanged.CreateDerivedListBinding(e => new ItemContainer(e, viewFactory(e))).ResultList;
             elements.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
             elements.OnDelete.Subscribe(e => this.Children.RemoveAt(e.Index));
+            
 
             // When a child is clicked, mark it as selected
             this.Children.ObserveEach(e => e.MouseEventOccured).Subscribe(e =>
@@ -72,12 +76,19 @@ namespace Interactr.View.Controls
             // When a child becomes selected, unselect all other items and set SelectedIndex
             this.Children.ObserveEach(e => ((ItemContainer)e).IsSelectedChanged).Subscribe(e =>
             {
-                if (_selectedContainer != null)
+                // If an item was selected.
+                if (e.Value)
                 {
-                    _selectedContainer.IsSelected = false;
+                    // Unselect the previous selection, if any.
+                    if (_selectedContainer != null)
+                    {
+                        _selectedContainer.IsSelected = false;
+                    }
+
+                    // Store the new selection.
+                    _selectedContainer = (ItemContainer)e.Element;
+                    SelectedIndex = Children.IndexOf(_selectedContainer);
                 }
-                _selectedContainer = (ItemContainer)e.Element;
-                SelectedIndex = Children.IndexOf(_selectedContainer);
             });
 
             // When the selected element is deleted, select a neighbour or nothing
