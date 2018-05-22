@@ -1,11 +1,14 @@
-﻿namespace Interactr.View.Controls
+﻿using System;
+
+namespace Interactr.View.Controls
 {
     /// <summary>
     /// Enum representing an orientation.
     /// </summary>
+    [Flags]
     public enum Orientation
     {
-        Horizontal,
-        Vertical
+        Horizontal = 1,
+        Vertical = 2
     }
 }

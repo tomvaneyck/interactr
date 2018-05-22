@@ -29,6 +29,8 @@ namespace Interactr.View.Controls
 
         public ImageView()
         {
+            CanBeFocused = false;
+
             //When the image changes, change to preferred size and repaint.
             ImageChanged.Subscribe(newImage =>
             {

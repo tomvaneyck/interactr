@@ -61,7 +61,7 @@ namespace Interactr.View
                 }
             );
 
-            _messageViews.ObserveEach(mv => mv.Label.KeyEventOccurred).Subscribe(e =>
+            _messageViews.ObserveEach(mv => mv.LabelWithMessageNumberView.LabelView.KeyEventOccurred).Subscribe(e =>
                 {
                     var eventData = e.Value;
                     if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyCodes.Delete)
@@ -77,10 +77,7 @@ namespace Interactr.View
         private void SetupPartyColumns()
         {
             // Create a horizontal stackpanel
-            StackPanel stackPanel = new StackPanel
-            {
-                StackOrientation = Orientation.Horizontal
-            };
+            ColumnsView stackPanel = new ColumnsView();
             Children.Add(stackPanel);
 
             // Create a list of party views based on the party viewmodels.
@@ -91,7 +88,7 @@ namespace Interactr.View
                 .ResultList;
 
             // Automatically add and remove columns to the stackpanel.
-            ColumnViews.OnAdd.Subscribe(e => stackPanel.Children.Insert(e.Index, e.Element));
+            ColumnViews.OnAdd.Subscribe(e => stackPanel.ColumnsPanel.Children.Insert(e.Index, e.Element));
             ColumnViews.OnAdd.Subscribe(e =>
             {
                 if (IsVisible && (IsFocused || HasChildInFocus()))
@@ -101,7 +98,7 @@ namespace Interactr.View
                 }
             });
 
-            ColumnViews.OnDelete.Subscribe(e => stackPanel.Children.RemoveAt(e.Index));
+            ColumnViews.OnDelete.Subscribe(e => stackPanel.ColumnsPanel.Children.RemoveAt(e.Index));
         }
 
         private void SetupMessages()
