@@ -80,12 +80,6 @@ namespace Interactr.View.Controls
                 Children.OnAdd
             ).Subscribe(_ => UpdateLayout());
 
-            // When the size of a child or the stacking orientation changes, update the preferredsize
-            var onChildPreferredSizeChange = Observable.Merge(
-                Children.ObserveEach(child => child.PreferredHeightChanged),
-                Children.ObserveEach(child => child.PreferredWidthChanged)
-            );
-
             AutoCompactEnabledChanged.Subscribe(_ => UpdateLayout());
         }
 
