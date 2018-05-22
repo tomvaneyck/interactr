@@ -87,6 +87,7 @@ namespace Interactr.View.Controls
             }
         }
 
+        /// <see cref="OnKeyEvent"/>
         protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (IsInEditMode &&

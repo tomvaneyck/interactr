@@ -3,13 +3,17 @@ using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.Window;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 
 namespace Interactr.View.Controls
 {
-    public class EditableText : UIElement
+    /// <summary>
+    /// Provides a system for displaying and editing text.
+    /// </summary>
+    public abstract class EditableText : UIElement
     {
         #region Text
 
@@ -109,14 +113,6 @@ namespace Interactr.View.Controls
                 ColorChanged
             ).Subscribe(_ => Repaint());
 
-            // Set the preferred width and height of the labelView by measuring
-            // how much space it would take to fully render the string.
-            TextChanged.Subscribe(text =>
-            {
-                PreferredWidth = TextRenderer.MeasureText(text, Font).Width;
-                PreferredHeight = TextRenderer.MeasureText(text, Font).Height;
-            });
-
             // Blink cursor if label is in edit mode.
             EditModeChanged.Select(editMode =>
             {
@@ -148,12 +144,25 @@ namespace Interactr.View.Controls
             });
         }
 
+        /// <summary>
+        /// Update the preferred height and preferred width.
+        /// </summary>
+        protected virtual void UpdateLayout()
+        {
+            // Set the preferred width and height of the labelView by measuring
+            // how much space it would take to fully render the string.
+            PreferredWidth = Text.Length > 0 ? TextRenderer.MeasureText(Text, Font).Width : 5;
+            PreferredHeight = Font.Height;
+        }
+
         public override void PaintElement(Graphics g)
         {
+            UpdateLayout();
+
             // Draw the string.
             using (Brush brush = new SolidBrush(Color))
             {
-                g.DrawString(Text, Font, brush, 0, 0);
+                g.DrawString(Text, Font, brush, 1, 0);
             }
 
             using (Pen pen = new Pen(Color))
@@ -161,7 +170,10 @@ namespace Interactr.View.Controls
                 // Draw cursor.
                 if (CursorIsVisible)
                 {
-                    g.DrawLine(pen, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                    int cursorPosition = Text.Length > 0 
+                        ? TextRenderer.MeasureText(Text, Font).Width - 3 
+                        : 3;
+                    g.DrawLine(pen, cursorPosition, 0, cursorPosition, PreferredHeight);
                 }
             }
         }
@@ -212,6 +224,7 @@ namespace Interactr.View.Controls
         /// implementation of OnMouseEvent to each sub class.
         /// </remarks>
         /// <param name="eventData">Details of the event.</param>
+        // TODO: Come up with better name.
         protected virtual void HandleMouseEvent(MouseEventData eventData)
         {
             if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)

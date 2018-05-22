@@ -601,8 +601,6 @@ namespace Interactr.View.Framework
                 g.SetClip(new RectangleF(f.Origin.X, f.Origin.Y, f.RenderWidth, f.RenderHeight));
                 // Map x, y coordinates to child space (relative to child origin)
                 g.TranslateTransform(f.Origin.X, f.Origin.Y);
-                // Set max drawing width and height
-                //g.SetClip(new RectangleF(0, 0, f.RenderWidth, f.RenderHeight));
 
                 // Paint
                 curElement.PaintElement(g);
