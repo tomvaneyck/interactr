@@ -34,6 +34,25 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        #region AutoCompactEnabled
+
+        private readonly ReactiveProperty<bool> _autoCompactEnabled = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If true, this panel will set its preferred size to the minimal size needed to display its contents.
+        /// If false, the panel will not update its preferred size.
+        /// True by default.
+        /// </summary>
+        public bool AutoCompactEnabled
+        {
+            get => _autoCompactEnabled.Value;
+            set => _autoCompactEnabled.Value = value;
+        }
+
+        public IObservable<bool> AutoCompactEnabledChanged => _autoCompactEnabled.Changed;
+
+        #endregion
+        
         public StackPanel()
         {
             // Set can be focused false.
@@ -60,6 +79,14 @@ namespace Interactr.View.Controls
                 Children.OnDelete,
                 Children.OnAdd
             ).Subscribe(_ => UpdateLayout());
+
+            // When the size of a child or the stacking orientation changes, update the preferredsize
+            var onChildPreferredSizeChange = Observable.Merge(
+                Children.ObserveEach(child => child.PreferredHeightChanged),
+                Children.ObserveEach(child => child.PreferredWidthChanged)
+            );
+
+            AutoCompactEnabledChanged.Subscribe(_ => UpdateLayout());
         }
 
         /// <summary>
@@ -75,6 +102,8 @@ namespace Interactr.View.Controls
             {
                 UpdateVerticalLayout();
             }
+
+            UpdatePreferredSize();
         }
 
         /// <summary>
@@ -110,6 +139,15 @@ namespace Interactr.View.Controls
                 child.Width = Width;
                 child.Height = child.PreferredHeight;
                 curY += child.PreferredHeight;
+            }
+        }
+
+        private void UpdatePreferredSize()
+        {
+            if (AutoCompactEnabled)
+            {
+                PreferredWidth = Children.Select(c => c.Width).Max();
+                PreferredHeight = Children.Select(c => c.Height).Max();
             }
         }
     }
