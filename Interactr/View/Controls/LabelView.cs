@@ -120,8 +120,6 @@ namespace Interactr.View.Controls
 
             // Cancel event propagation.
             eventData.IsHandled = true;
-
-            base.OnKeyEvent(eventData);
         }
 
         /// <see cref="EditableText.HandleMouseEvent"/>
