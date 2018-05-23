@@ -222,29 +222,27 @@ namespace Interactr.View
 
         public PartyViewsDragPanel(IReadOnlyReactiveList<CommunicationDiagramPartyView> partyViews)
         {
+            PartyViews = partyViews;
+
+            // Automatically enter label editing mode when adding a party
+            PartyViews.OnAdd.Subscribe(elem =>
             {
-                PartyViews = partyViews;
-
-                // Automatically enter label editing mode when adding a party
-                PartyViews.OnAdd.Subscribe(elem =>
+                if (IsVisible && (IsFocused || HasChildInFocus()))
                 {
-                    if (IsVisible && (IsFocused || HasChildInFocus()))
-                    {
-                        elem.Element.LabelView.IsInEditMode = true;
-                        elem.Element.LabelView.Focus();
-                    }
-                });
+                    elem.Element.LabelView.IsInEditMode = true;
+                    elem.Element.LabelView.Focus();
+                }
+            });
 
-                // Two-way binding between the viewmodel and view position.
-                partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
-                    .Subscribe(e => e.Element.Position = e.Value);
-                partyViews.ObserveEach(partyView => partyView.PositionChanged)
-                    .Subscribe(e => e.Element.ViewModel.Position = e.Value);
+            // Two-way binding between the viewmodel and view position.
+            partyViews.ObserveEach(partyView => partyView.ViewModel.PositionChanged)
+                .Subscribe(e => e.Element.Position = e.Value);
+            partyViews.ObserveEach(partyView => partyView.PositionChanged)
+                .Subscribe(e => e.Element.ViewModel.Position = e.Value);
 
-                // Automatically add and remove party views to Children.
-                PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
-                PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
-            }
+            // Automatically add and remove party views to Children.
+            PartyViews.OnAdd.Subscribe(e => Children.Add(e.Element));
+            PartyViews.OnDelete.Subscribe(e => Children.Remove(e.Element));
         }
     }
 }
