@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Interactr.Tests
@@ -68,13 +69,15 @@ namespace Interactr.Tests
         public void RetrieveArgumentsEmpty()
         {
             List<string> expected1 = new List<string>() {""};
-            List<string> actual1 = InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelNormal);
+            var actual1 = 
+                InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelNormal);
 
-            List<string> expected2 = new List<string>() {""};
-            List<string> actual2 = InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelWithNumber);
+            var expected2 = new List<string>() {""};
+            var actual2 =
+                InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelWithNumber);
 
-            List<string> expected3 = new List<string>() {""};
-            List<string> actual3 = InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelUnderscores);
+            var expected3 = new List<string>() {""};
+            var actual3 = InvocationLabelParser.RetrieveArgumentsFromLabel(ValidMessageLabelUnderscores);
 
             CollectionAssert.AreEqual(expected1, actual1);
             CollectionAssert.AreEqual(expected2, actual2);

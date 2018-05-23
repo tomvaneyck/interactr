@@ -63,7 +63,7 @@ namespace Interactr.View
                 // Center the text on a text change.
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = _arrow.calculateMidPoint() - new Point(textSize.Width / 2, 0);
+                Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
                 // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
@@ -93,8 +93,8 @@ namespace Interactr.View
 
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
-                LabelWithMessageNumberView.LabelView.Color = canApplyLabel
-                                                             || ViewModel.MessageType == Message.MessageType.Result
+                LabelWithMessageNumberView.LabelView.Color = 
+                    canApplyLabel || ViewModel.MessageType == Message.MessageType.Result
                     ? DefaultLabelColor
                     : InvalidLabelColor);
 
@@ -102,11 +102,7 @@ namespace Interactr.View
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && ViewModel.MessageType == Message.MessageType.Result)
-                    {
-                        ViewModel.ApplyLabel();
-                    }
-                    else if (ViewModel != null && !isInEditMode)
+                    if (ViewModel != null && !isInEditMode)
                     {
                         ViewModel.ApplyLabel();
                     }
@@ -121,7 +117,7 @@ namespace Interactr.View
                 // Center the label.
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = _arrow.calculateMidPoint() - new Point(textSize.Width / 2, 0);
+                Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));

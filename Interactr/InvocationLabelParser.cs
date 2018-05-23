@@ -32,9 +32,9 @@ namespace Interactr
         /// Return the list of arguments of an invocation label when given a valid label.
         /// Return null if the label does not contain an opening parenthesis and closing parenthesis.
         /// </summary>
-        /// <param name="label"></param>
+        /// <param name="label"> The label of an invocation message.</param>
         /// <returns></returns>
-        public static List<string> RetrieveArgumentsFromLabel(string label)
+        public static IEnumerable<string> RetrieveArgumentsFromLabel(string label)
         {
             if (label == null)
             {
@@ -52,7 +52,7 @@ namespace Interactr
             // Split the arguments on ",".
             var args = matchWithoutParentheses.Split(',');
 
-            return args.ToList();
+            return args.Where(a => a!=null);
         }
     }
 }

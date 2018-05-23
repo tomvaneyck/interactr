@@ -149,7 +149,10 @@ namespace Interactr.ViewModel
                     var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
 
                     MethodName = newMethodName;
-                    MethodArguments = newMethodArguments;
+                    if (newMethodArguments != null)
+                    {
+                        MethodArguments = newMethodArguments.ToList();
+                    }
                 }
             );
 

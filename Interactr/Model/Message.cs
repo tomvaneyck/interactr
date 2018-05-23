@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Interactr.Reactive;
 
@@ -149,8 +150,10 @@ namespace Interactr.Model
             var isValidStructure = Regex.IsMatch(label, "^.*" + Regex.Escape("(") + ".*" + Regex.Escape(")") + "$");
 
             // Check for a valid method name and a valid arguments list.
-            var methodNameIsValid = IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
-            var argumentsListIsValid = IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
+            var methodNameIsValid =
+                IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
+            var argumentsListIsValid =
+                IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
 
             // The label is valid if the methodName, the argumentsList and the structure are valid.
             return methodNameIsValid && argumentsListIsValid && isValidStructure;
@@ -179,7 +182,7 @@ namespace Interactr.Model
         /// </remarks>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public static bool IsValidArgumentsList(List<string> arguments)
+        public static bool IsValidArgumentsList(IEnumerable<string> arguments)
         {
             if (arguments == null)
             {

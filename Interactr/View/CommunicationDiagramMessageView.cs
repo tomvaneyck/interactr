@@ -122,7 +122,7 @@ namespace Interactr.View
             ).Subscribe(p =>
             {
                 // Set the labelMessageNumberView position
-                LabelWithMessageNumberView.Position = _arrow.calculateMidPoint();
+                LabelWithMessageNumberView.Position = _arrow.CalculateMidPoint();
             });
         }
 

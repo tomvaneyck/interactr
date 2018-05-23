@@ -102,7 +102,7 @@ namespace Interactr.View.Controls
         /// Calculate and return the middle point of this arrowView.
         /// </summary>
         /// <returns></returns>
-        public Point calculateMidPoint()
+        public Point CalculateMidPoint()
         {
             // Get the leftmost arrow point
             Point start = StartPoint.X < EndPoint.X ? StartPoint : EndPoint;
