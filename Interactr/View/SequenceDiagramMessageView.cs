@@ -91,12 +91,16 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
 
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.CanLeaveEditMode = canApplyLabel);
+
             // The label is red if CanApplyLabel is true.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
-                LabelWithMessageNumberView.LabelView.Color = 
+                LabelWithMessageNumberView.LabelView.Color =
                     canApplyLabel || ViewModel.MessageType == Message.MessageType.Result
-                    ? DefaultLabelColor
-                    : InvalidLabelColor);
+                        ? DefaultLabelColor
+                        : InvalidLabelColor);
 
             // Fire ApplyLabel when leaving edit mode.
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(

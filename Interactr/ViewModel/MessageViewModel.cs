@@ -126,6 +126,12 @@ namespace Interactr.ViewModel
         {
             Message = message;
 
+            // Set CanApplyLabel to true if the message is of the ResultType
+            if (MessageType == Message.MessageType.Result)
+            {
+                CanApplyLabel = true;
+            }
+
             // Bidirectional bind between the message number in the viewmodel and model.
             Message.MessageNumberChanged.Subscribe(m => MessageNumber = m);
             MessageNumberChanged.Subscribe(m => Message.MessageNumber = m);
@@ -140,7 +146,8 @@ namespace Interactr.ViewModel
             });
 
             // Update CanApplyLabel when the label changes.
-            LabelChanged.Select(Message.IsValidInvocationLabel).Subscribe(isValid => CanApplyLabel = isValid);
+            LabelChanged.Where(_ => MessageType == Message.MessageType.Invocation)
+                .Select(Message.IsValidInvocationLabel).Subscribe(isValid => CanApplyLabel = isValid);
 
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             LabelChanged.Subscribe(newLabelText =>

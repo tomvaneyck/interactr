@@ -8,6 +8,7 @@ using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
+using Message = Interactr.Model.Message;
 using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View
@@ -106,7 +107,8 @@ namespace Interactr.View
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                    if (ViewModel != null && !isInEditMode)
+                        ViewModel.ApplyLabel();
                 }
             );
 
