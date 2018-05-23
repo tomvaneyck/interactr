@@ -64,9 +64,6 @@ namespace Interactr.Tests.View.Controls
             _labelView.CanLeaveEditMode = true;
             _labelView.RunOnKeyEvent(keyEventData);
 
-            // Check if an action was handled.
-            Assert.IsFalse(keyEventData.IsHandled);
-
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
