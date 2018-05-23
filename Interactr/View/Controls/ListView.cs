@@ -43,7 +43,15 @@ namespace Interactr.View.Controls
         public int SelectedIndex
         {
             get => _selectedIndex.Value;
-            set => _selectedIndex.Value = value;
+            set
+            {
+                if (value >= Children.Count || value < -1)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+
+                _selectedIndex.Value = value;
+            }
         }
 
         public IObservable<int> SelectedIndexChanged => _selectedIndex.Changed;
@@ -59,6 +67,7 @@ namespace Interactr.View.Controls
             // Select nothing by default.
             SelectedIndex = -1;
 
+            // Setup list content view elements.
             var elements = ItemsSourceChanged.CreateDerivedListBinding(e => new ItemContainer(e, viewFactory(e))).ResultList;
             elements.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
             elements.OnDelete.Subscribe(e => Children.RemoveAt(e.Index));
@@ -70,60 +79,68 @@ namespace Interactr.View.Controls
                 }
             });
 
-            // When a child is clicked, mark it as selected
-            this.Children.ObserveEach(e => e.MouseEventPreviewOccured).Subscribe(e =>
+            SetupSelectionBindings();
+        }
+
+        private void SetupSelectionBindings()
+        {
+            // When a child is clicked, set SelectedIndex.
+            Children.ObserveEach(e => e.MouseEventPreviewOccured).Subscribe(e =>
             {
                 if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 {
-                    ItemContainer selectedContainer = (ItemContainer)e.Element;
-                    selectedContainer.IsSelected = true;
+                    SelectedIndex = Children.IndexOf(e.Element);
                     e.Value.IsHandled = true;
                 }
             });
 
-            // When a child becomes selected, unselect all other items and set SelectedIndex
-            this.Children.ObserveEach(e => ((ItemContainer)e).IsSelectedChanged).Subscribe(e =>
+            // If an item is inserted, shift SelectedIndex one place if necessary.
+            Children.OnAdd.Subscribe(e =>
             {
-                // If an item was selected.
-                if (e.Value)
+                if (SelectedIndex >= e.Index)
                 {
-                    // Unselect the previous selection, if any.
-                    if (_selectedContainer != null)
+                    SelectedIndex++;
+                }
+            });
+
+            // If an item is removed, shift SelectedIndex one place if necessary.
+            Children.OnDelete.Subscribe(e =>
+            {
+                if (SelectedIndex >= e.Index)
+                {
+                    SelectedIndex--;
+                }
+            });
+
+            // If the selected item is moved, change the selected index accordingly.
+            Children.OnMoved.Subscribe(e =>
+            {
+                if (e.Reason == MoveReason.Reordering)
+                {
+                    foreach (var change in e.Changes.Where(c => c.OldIndex == SelectedIndex))
                     {
-                        _selectedContainer.IsSelected = false;
+                        SelectedIndex = change.NewIndex;
+                        break;
                     }
-
-                    // Store the new selection.
-                    _selectedContainer = (ItemContainer)e.Element;
-                    SelectedIndex = Children.IndexOf(_selectedContainer);
                 }
             });
 
-            // When the selected element is deleted, select a neighbour or nothing
-            this.Children.OnDelete.Where(e => e.Index == SelectedIndex).Subscribe(e =>
+            // When the selected index changes, mark the previously selected ItemContainer as not-selected
+            // and mark the newly selected ItemContainer as selected.
+            SelectedIndexChanged.Subscribe(newIndex =>
             {
-                if (this.Children.Count == 0)
+                if (_selectedContainer != null)
                 {
-                    // Clear selection.
-                    this.SelectedIndex = -1;
+                    _selectedContainer.IsSelected = false;
+                    _selectedContainer = null;
                 }
-                else
+
+                if (newIndex >= 0)
                 {
-                    // Select next element, except if the previous selection was the last element in the list.
-                    this.SelectedIndex = e.Index == Children.Count ? e.Index-1 : e.Index + 1;
+                    _selectedContainer = (ItemContainer)Children[newIndex];
+                    _selectedContainer.IsSelected = true;
                 }
             });
-
-            // When the selected element is moved, update the selected index.
-            Children.OnMoved
-                .WithLatestFrom(SelectedIndexChanged, (e, i) => (EventData: e, LatestIndex: i))
-                // Find the change where the currently selected index was moved, if any such change exists.
-                .Where(e => e.EventData.Changes.Any(change => change.OldIndex == e.LatestIndex))
-                .Subscribe(e =>
-                {
-                    // Set the new index.
-                    SelectedIndex = e.EventData.Changes.First(c => c.OldIndex == e.LatestIndex).NewIndex;
-                });
         }
 
         private class ItemContainer : AnchorPanel
