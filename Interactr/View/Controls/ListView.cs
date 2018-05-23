@@ -61,7 +61,14 @@ namespace Interactr.View.Controls
 
             var elements = ItemsSourceChanged.CreateDerivedListBinding(e => new ItemContainer(e, viewFactory(e))).ResultList;
             elements.OnAdd.Subscribe(e => Children.Insert(e.Index, e.Element));
-            elements.OnDelete.Subscribe(e => this.Children.RemoveAt(e.Index));
+            elements.OnDelete.Subscribe(e => Children.RemoveAt(e.Index));
+            elements.OnMoved.Subscribe(e =>
+            {
+                if (e.Reason == MoveReason.Reordering)
+                {
+                    Children.ApplyPermutation(e.Changes.Select(c => (c.OldIndex, c.NewIndex)));
+                }
+            });
 
             // When a child is clicked, mark it as selected
             this.Children.ObserveEach(e => e.MouseEventPreviewOccured).Subscribe(e =>

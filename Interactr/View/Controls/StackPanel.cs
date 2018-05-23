@@ -79,7 +79,8 @@ namespace Interactr.View.Controls
             // Update the positions of the children when a child is added or removed.
             ReactiveExtensions.MergeEvents(
                 Children.OnDelete,
-                Children.OnAdd
+                Children.OnAdd,
+                Children.OnMoved
             ).Subscribe(_ => UpdateLayout());
 
             AutoCompactEnabledChanged.Subscribe(_ => UpdateLayout());
