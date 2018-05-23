@@ -193,7 +193,7 @@ namespace Interactr.View.Controls
                             Text = Text.Substring(0, Text.Length - 1);
                         }
                     }
-                    // If Keychar is not escape.
+                    // If Keychar is a letter or a colon.
                     else if (char.IsLetterOrDigit(eventData.KeyChar) || eventData.KeyChar == HexaDecimalKeyChars.Colon)
                     {
                         Text += eventData.KeyChar;
