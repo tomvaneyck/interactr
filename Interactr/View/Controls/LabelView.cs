@@ -91,40 +91,37 @@ namespace Interactr.View.Controls
         protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (IsInEditMode &&
-                    eventData.Id == KeyEvent.KEY_RELEASED &&
-                    eventData.KeyCode == KeyEvent.VK_ESCAPE &&
-                    CanLeaveEditMode)
-                {
-                    IsInEditMode = false;
-                }
-                else if (eventData.Id == KeyEvent.KEY_TYPED)
-                {
-                    // If the keyChar is backspace.
-                    if (eventData.KeyChar == HexaDecimalKeyChars.BackSpace)
-                    {
-                        if (Text.Length > 0)
-                        {
-                            Text = Text.Substring(0, Text.Length - 1);
-                        }
-                    }
-                    // If Keychar is not escape.
-                    else if (char.IsLetterOrDigit(eventData.KeyChar) ||
-                             eventData.KeyChar == HexaDecimalKeyChars.Colon ||
-                             eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
-                             eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis || 
-                             eventData.KeyChar == HexaDecimalKeyChars.Comma)
-                    {
-                        Text += eventData.KeyChar;
-                    }
-                }
-
-                // Cancel event propagation.
-                eventData.IsHandled = true;
-            }
-            else
+                eventData.Id == KeyEvent.KEY_RELEASED &&
+                eventData.KeyCode == KeyEvent.VK_ESCAPE &&
+                CanLeaveEditMode)
             {
-                base.OnKeyEvent(eventData);
+                IsInEditMode = false;
             }
+            else if (eventData.Id == KeyEvent.KEY_TYPED)
+            {
+                // If the keyChar is backspace.
+                if (eventData.KeyChar == HexaDecimalKeyChars.BackSpace)
+                {
+                    if (Text.Length > 0)
+                    {
+                        Text = Text.Substring(0, Text.Length - 1);
+                    }
+                }
+                // If Keychar is not escape.
+                else if (char.IsLetterOrDigit(eventData.KeyChar) ||
+                         eventData.KeyChar == HexaDecimalKeyChars.Colon ||
+                         eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
+                         eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis ||
+                         eventData.KeyChar == HexaDecimalKeyChars.Comma)
+                {
+                    Text += eventData.KeyChar;
+                }
+            }
+
+            // Cancel event propagation.
+            eventData.IsHandled = true;
+
+            base.OnKeyEvent(eventData);
         }
 
         /// <see cref="EditableText.HandleMouseEvent"/>
@@ -135,7 +132,7 @@ namespace Interactr.View.Controls
                 _isFocusing = false;
                 eventData.IsHandled = true;
             }
-            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED )
+            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
                 eventData.IsHandled = true;
