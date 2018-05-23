@@ -524,7 +524,7 @@ namespace Interactr.View.Framework
         protected virtual void OnMouseEvent(MouseEventData eventData)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused )
+            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 Focus();
                 eventData.IsHandled = true;
@@ -601,8 +601,6 @@ namespace Interactr.View.Framework
                 g.SetClip(new RectangleF(f.Origin.X, f.Origin.Y, f.RenderWidth, f.RenderHeight));
                 // Map x, y coordinates to child space (relative to child origin)
                 g.TranslateTransform(f.Origin.X, f.Origin.Y);
-                // Set max drawing width and height
-                //g.SetClip(new RectangleF(0, 0, f.RenderWidth, f.RenderHeight));
 
                 // Paint
                 curElement.PaintElement(g);
