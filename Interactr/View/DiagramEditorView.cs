@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -47,13 +50,29 @@ namespace Interactr.View
         /// <see cref="OnKeyEvent"/>
         protected override void OnKeyEvent(KeyEventData eventData)
         {
-            // Switch views on tab.
-            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
+            if (eventData.Id == KeyEvent.KEY_PRESSED)
             {
-                ViewModel?.SwitchViews();
+                // Switch views on tab.
+                if (eventData.KeyCode == KeyEvent.VK_TAB)
+                {
+                    ViewModel?.SwitchViews();
 
-                // Cancel the event propagation.
-                eventData.IsHandled = true;
+                    // Cancel the event propagation.
+                    eventData.IsHandled = true;
+                }
+                // Show diagram dialog on CTRL+Enter
+                else if (Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && eventData.KeyCode == (int)Keys.Enter)
+                {
+                    WindowsView windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
+                    if (windowsView == null)
+                    {
+                        return;
+                    }
+
+                    var dialogVM = ViewModel.CreateDiagramDialogViewModel();
+                    var window = windowsView.AddWindow(new DiagramDialogView { ViewModel = dialogVM }, 200, 100);
+                    window.Title = "Diagram options";
+                }
             }
         }
     }
