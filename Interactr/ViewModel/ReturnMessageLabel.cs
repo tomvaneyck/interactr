@@ -22,7 +22,7 @@ namespace Interactr.ViewModel
 
         public IObservable<string> TextChanged => _text.Changed;
 
-        public bool IsValidLabel()
+        public bool HasValidLabel()
         {
             return true;
         }

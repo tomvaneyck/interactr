@@ -8,7 +8,7 @@ namespace Interactr.ViewModel
         /// Return true if the label is valid.
         /// </summary>
         /// <returns></returns>
-        bool IsValidLabel();
+        bool HasValidLabel();
 
         /// <summary>
         /// The text of the Label stored in message view model.
