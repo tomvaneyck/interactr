@@ -81,13 +81,13 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            ViewModel.Label.LabelChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label.Label);
+            ViewModel.Label.TextChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label.Text);
 
             LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label.Label = text;
+                    ViewModel.Label.Text = text;
                 }
             });
 

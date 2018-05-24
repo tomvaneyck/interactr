@@ -50,14 +50,14 @@ namespace Interactr.View
             AnchorsProperty.SetValue(LabelWithMessageNumberView, Anchors.Left | Anchors.Top);
 
             // Bidirectionally bind the view label to the label in the viewmodel.
-            ViewModelChanged.ObserveNested(vm => vm.Label.LabelChanged)
+            ViewModelChanged.ObserveNested(vm => vm.Label.TextChanged)
                 .Subscribe(label => LabelWithMessageNumberView.LabelView.Text = label);
 
             LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label.Label = text;
+                    ViewModel.Label.Text = text;
                 }
 
                 // Center the text on a text change.

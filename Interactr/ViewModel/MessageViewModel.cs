@@ -19,7 +19,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public Message Message { get; }
 
-        public ILabelVM Label { get; }
+        public ILabelViewModel Label { get; }
 
         #region MessageNumber
 
@@ -95,11 +95,11 @@ namespace Interactr.ViewModel
             if (MessageType == Message.MessageType.Result)
             {
                 CanApplyLabel = true;
-                Label = new ReturnMessageLabelVM();
+                Label = new ReturnMessageLabelViewModel();
             }
             else
             {
-                Label = new InvocationMessageLabelVM();
+                Label = new InvocationMessageLabelViewModel();
             }
 
             // Bidirectional bind between the message number in the viewmodel and model.
@@ -109,22 +109,14 @@ namespace Interactr.ViewModel
             // Bind the label in the viewmodel to the label in the model.
             message.LabelChanged.Subscribe(newLabelText =>
             {
-                if (Label.Label != newLabelText)
+                if (Label.Text != newLabelText)
                 {
-                    Label.Label = newLabelText;
+                    Label.Text = newLabelText;
                 }
             });
 
             // Update CanApplyLabel when the label changes.
-            Label.LabelChanged.Where(_ => MessageType == Message.MessageType.Invocation)
-                .Select(Message.IsValidInvocationLabel).Subscribe(isValid => CanApplyLabel = isValid);
-
-            if (Message.Type == Message.MessageType.Invocation)
-            {
-                InvocationMessageLabelVM invLabel = Label as InvocationMessageLabelVM;
-
-
-            }
+            Label.TextChanged.Select(_ => Label.IsValidLabel()).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
@@ -132,7 +124,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Message.Label = Label.Label;
+            Message.Label = Label.Text;
         }
     }
 }

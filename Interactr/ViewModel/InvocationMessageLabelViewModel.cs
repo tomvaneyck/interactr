@@ -7,50 +7,51 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class InvocationMessageLabelVM : ILabelVM
+    public class InvocationMessageLabelViewModel : ILabelViewModel
     {
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
+        #region Text
 
-        /// <summary>
-        /// The text of the Label stored in message view model.
-        /// </summary>
-        /// <remarks>This should not necessarily be the same as the label in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public string Label
+        /// <see cref="Text"/>
+        public string Text
         {
-            get => _label.Value;
-            set => _label.Value = value;
+            get => _text.Value;
+            set => _text.Value = value;
         }
 
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<string> TextChanged => _text.Changed;
+
+        #endregion
+
+        #region MethodName
 
         private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
 
-        public string MethodName
+        private string MethodName
         {
             get => _methodName.Value;
-            private set => _methodName.Value = value;
+            set => _methodName.Value = value;
         }
 
-        public IObservable<string> MethodNameChanged => _methodName.Changed;
+        #endregion
+
+        #region MethodArguments
 
         private readonly ReactiveProperty<List<string>> _methodArguments = new ReactiveProperty<List<string>>();
 
-        public List<string> MethodArguments
+        private List<string> MethodArguments
         {
             get => _methodArguments.Value;
-            private set => _methodArguments.Value = value;
+            set => _methodArguments.Value = value;
         }
 
-        public IObservable<IList<string>> MethodArgumentsChanged => _methodArguments.Changed;
+        #endregion
 
-        public InvocationMessageLabelVM()
+        public InvocationMessageLabelViewModel()
         {
             // Update the methodName and the method arguments when the label in the viewmodel changes.
-            LabelChanged.Subscribe(newLabelText =>
+            TextChanged.Subscribe(newLabelText =>
                 {
                     var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
                     var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
@@ -64,7 +65,7 @@ namespace Interactr.ViewModel
             );
 
             // Update the label on a change in the methodName or methodArguments.
-            MethodNameChanged.MergeEvents(MethodArgumentsChanged).Subscribe(_ =>
+            _methodName.Changed.MergeEvents(_methodArguments.Changed).Subscribe(_ =>
             {
                 var newLabel = MethodName;
                 newLabel += "(";
@@ -83,13 +84,17 @@ namespace Interactr.ViewModel
                 }
 
                 newLabel += ")";
-                Label = newLabel;
+                Text = newLabel;
             });
         }
 
+        /// <summary>
+        /// Indicate wether the text of this messageLabel is a valid label.
+        /// </summary>
+        /// <returns></returns>
         public bool IsValidLabel()
         {
-            return Message.IsValidInvocationLabel(Label);
+            return Message.IsValidInvocationLabel(Text);
         }
     }
 }
