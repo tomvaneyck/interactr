@@ -123,8 +123,6 @@ namespace Interactr.ViewModel
             {
                 InvocationMessageLabelVM invLabel = Label as InvocationMessageLabelVM;
 
-                Debug.Print(Label.ToString());
-                Debug.Print(invLabel.ToString());
                 // Update the label on a change in the methodName or methodArguments.
                 invLabel.MethodNameChanged.MergeEvents(invLabel.MethodArgumentsChanged).Subscribe(_ =>
                 {
@@ -145,6 +143,7 @@ namespace Interactr.ViewModel
                     }
 
                     newLabel += ")";
+                    Label.Label = newLabel;
                 });
             }
         }

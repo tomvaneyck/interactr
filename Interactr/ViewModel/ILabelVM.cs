@@ -14,6 +14,6 @@ namespace Interactr.ViewModel
 
         IObservable<string> LabelChanged { get; }
 
-        //DialogVM CreateDialogViewModel();
+        //TODO: DialogVM CreateDialogViewModel();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Interactr.Model;
 using Interactr.Reactive;
 
 namespace Interactr.ViewModel
@@ -8,6 +10,7 @@ namespace Interactr.ViewModel
     public class InvocationMessageLabelVM : ILabelVM
     {
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+
 
         /// <summary>
         /// The text of the Label stored in message view model.
@@ -23,11 +26,6 @@ namespace Interactr.ViewModel
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
-
-        public bool IsValidLabel()
-        {
-            throw new System.NotImplementedException();
-        }
 
         private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
 
@@ -64,6 +62,11 @@ namespace Interactr.ViewModel
                     }
                 }
             );
+        }
+
+        public bool IsValidLabel()
+        {
+            return Message.IsValidInvocationLabel(Label);
         }
     }
 }

@@ -5,7 +5,6 @@ namespace Interactr.ViewModel
 {
     public class ReturnMessageLabelVM : ILabelVM
     {
-        
         private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
 
         /// <summary>
@@ -22,10 +21,10 @@ namespace Interactr.ViewModel
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
-        
+
         public bool IsValidLabel()
         {
-            throw new System.NotImplementedException();
+            return true;
         }
     }
 }

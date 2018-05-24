@@ -46,23 +46,7 @@ namespace Interactr.Model
         public string Label
         {
             get => _label.Value;
-            set
-            {
-                // In case of an invocation message only set the label
-                // if the label has a valid format.
-                if (Type == MessageType.Invocation)
-                {
-                    if (IsValidInvocationLabel(value))
-                    {
-                        _label.Value = value;
-                    }
-                    else throw new ArgumentException();
-                }
-                else
-                {
-                    _label.Value = value;
-                }
-            }
+            set => _label.Value = value;
         }
 
         public IObservable<string> LabelChanged => _label.Changed;
