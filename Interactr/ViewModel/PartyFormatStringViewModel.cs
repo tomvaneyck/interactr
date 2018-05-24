@@ -49,7 +49,7 @@ namespace Interactr.ViewModel
 
         public PartyFormatStringViewModel()
         {
-            // Update the methodName and the method arguments when the label in the viewmodel changes.
+            // Update the instanceName and the className when the label changes.
             TextChanged.Subscribe(newLabelText =>
                 {
                     // Only retrieve methodName if it is valid.
@@ -69,13 +69,17 @@ namespace Interactr.ViewModel
                     }
                     else
                     {
-                        // If the text cannot be split up in instanceName and Classname 
+                        // If the text cannot be split up in instanceName and className 
                         // than set ClassName to null and the instanceName to the whole text.
                         InstanceName = newLabelText;
                         ClassName = null;
                     }
                 }
             );
+
+            // Update the text of the label if the instanceName or the className changes.
+            _instanceName.Changed.MergeEvents(_className.Changed)
+                .Subscribe(_ => { Text = _instanceName + ":" + _className; });
         }
 
         public bool HasValidLabel()
