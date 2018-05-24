@@ -111,6 +111,7 @@
     <Compile Include="View\Controls\TextBox.cs" />
     <Compile Include="View\DiagramEditorView.cs" />
     <Compile Include="View\Dialogs\DiagramDialogView.cs" />
+    <Compile Include="View\Dialogs\Dialog.cs" />
     <Compile Include="View\Framework\Keyboard.cs" />
     <Compile Include="View\LifeLineView.cs" />
     <Compile Include="View\Controls\DragPanel.cs" />

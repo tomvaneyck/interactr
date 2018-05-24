@@ -63,15 +63,8 @@ namespace Interactr.View
                 // Show diagram dialog on CTRL+Enter
                 else if (Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && eventData.KeyCode == (int)Keys.Enter)
                 {
-                    WindowsView windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
-                    if (windowsView == null)
-                    {
-                        return;
-                    }
-
                     var dialogVM = ViewModel.CreateDiagramDialogViewModel();
-                    var window = windowsView.AddWindow(new DiagramDialogView { ViewModel = dialogVM }, 200, 100);
-                    window.Title = "Diagram options";
+                    var window = Dialog.OpenDialog(this, new DiagramDialogView { ViewModel = dialogVM }, "Diagram options", 200, 100);
                 }
             }
         }
