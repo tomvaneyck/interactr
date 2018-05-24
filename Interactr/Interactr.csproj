@@ -97,7 +97,7 @@
     <Compile Include="ViewModel\PendingMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
-    <Compile Include="ViewModel\InvocationMessageLabelViewModel.cs" />
+    <Compile Include="ViewModel\InvocationMessageNameViewModel.cs" />
     <Compile Include="View\ActivationBarView.cs" />
     <Compile Include="View\CommunicationDiagramMessageView.cs" />
     <Compile Include="View\CommunicationDiagramPartyView.cs" />

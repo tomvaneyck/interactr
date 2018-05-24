@@ -7,7 +7,7 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class InvocationMessageLabelViewModel : ILabelViewModel
+    public class InvocationMessageNameViewModel : ILabelViewModel
     {
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
@@ -48,7 +48,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public InvocationMessageLabelViewModel()
+        public InvocationMessageNameViewModel()
         {
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             TextChanged.Subscribe(newLabelText =>

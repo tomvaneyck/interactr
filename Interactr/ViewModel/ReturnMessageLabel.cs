@@ -3,7 +3,7 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
-    public class ReturnMessageLabelViewModel : ILabelViewModel
+    public class ReturnMessageNameViewModel : ILabelViewModel
     {
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 

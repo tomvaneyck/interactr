@@ -95,11 +95,11 @@ namespace Interactr.ViewModel
             if (MessageType == Message.MessageType.Result)
             {
                 CanApplyLabel = true;
-                Label = new ReturnMessageLabelViewModel();
+                Label = new ReturnMessageNameViewModel();
             }
             else
             {
-                Label = new InvocationMessageLabelViewModel();
+                Label = new InvocationMessageNameViewModel();
             }
 
             // Bidirectional bind between the message number in the viewmodel and model.
