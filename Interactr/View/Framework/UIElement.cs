@@ -75,7 +75,15 @@ namespace Interactr.View.Framework
         public UIElement MouseCapturingElement
         {
             get => _mouseCapturingElement.Value;
-            set => _mouseCapturingElement.Value = value;
+            set
+            {
+                if (value != null && !value.IsVisibleToMouse)
+                {
+                    throw new ArgumentException("Cannot capture mouse on element that is invisible to mouse.");
+                }
+
+                _mouseCapturingElement.Value = value;
+            }
         }
 
         public IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
@@ -443,19 +451,28 @@ namespace Interactr.View.Framework
 
         private UIElement FindMouseEventTarget(Point mousePos)
         {
+            return FindMouseEventTargetCandidates(mousePos).FirstOrDefault(e => e.IsVisibleToMouse);
+        }
+
+        private IEnumerable<UIElement> FindMouseEventTargetCandidates(Point mousePos)
+        {
             if (MouseCapturingElement != null)
             {
-                return MouseCapturingElement;
+                yield return MouseCapturingElement;
             }
-
-            UIElement childContainingTarget = FindChildrenAt(mousePos).FirstOrDefault(e => e.IsVisibleToMouse);
-            if (childContainingTarget == null)
+            else
             {
-                return this;
+                foreach (var child in FindChildrenAt(mousePos))
+                {
+                    Point p = TranslatePointTo(child, mousePos);
+                    foreach (var candidates in child.FindMouseEventTargetCandidates(p))
+                    {
+                        yield return candidates;
+                    }
+                }
             }
 
-            Point p = TranslatePointTo(childContainingTarget, mousePos);
-            return childContainingTarget.FindMouseEventTarget(p);
+            yield return this;
         }
 
         /// <summary>

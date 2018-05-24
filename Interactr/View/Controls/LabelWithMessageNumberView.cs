@@ -44,6 +44,8 @@ namespace Interactr.View.Controls
                     // We still want the messageNumberView to be visible.
                     PreferredHeight = Math.Max(LabelView.PreferredHeight, MessageNumberView.PreferredHeight);
                 });
+
+            LabelView.CanLeaveEditMode = true;
         }
 
         public void SetMessageNumber(string value)
