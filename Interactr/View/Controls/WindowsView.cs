@@ -179,7 +179,7 @@ namespace Interactr.View.Controls
                 //Focus child if this window is clicked.
                 FocusChanged.Subscribe(focused =>
                 {
-                    if (focused && InnerElement.CanBeFocused)
+                    if (focused)
                     {
                         InnerElement.Focus();
                     }
@@ -225,7 +225,7 @@ namespace Interactr.View.Controls
                     // can drag outside the window border and the window will still receive events.
                     if (_resizeMode != ResizeMode.None)
                     {
-                        CaptureMouse();
+                        CaptureMouseAtRoot();
                         eventData.IsHandled = true;
                         return;
                     }
@@ -233,7 +233,7 @@ namespace Interactr.View.Controls
                 else if (eventData.Id == MouseEvent.MOUSE_RELEASED && _resizeMode != ResizeMode.None)
                 {
                     // Dragging finished, release mouse capture.
-                    ReleaseMouseCapture();
+                    ReleaseMouseAtRoot();
                     _resizeMode = ResizeMode.None;
                     eventData.IsHandled = true;
                     return;

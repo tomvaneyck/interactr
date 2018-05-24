@@ -64,22 +64,21 @@ namespace Interactr.View.Framework
 
         #region MouseCapturingElement
 
-        private static readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
+        private readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
 
         /// <summary>
-        /// The UI element that has captured the mouse.
+        /// The UI element that has captured the mouse under this element.
         /// </summary>
         /// <remarks>
-        /// If an element captures the mouse, it will receive all mouse events, regardless of the current mouse position.
-        /// Use UIElement.CaptureMouse() to capture the mouse.
+        /// If an element captures the mouse, it will receive all mouse events that occur within the bounds of this element.
         /// </remarks>
-        public static UIElement MouseCapturingElement
+        public UIElement MouseCapturingElement
         {
             get => _mouseCapturingElement.Value;
-            private set => _mouseCapturingElement.Value = value;
+            set => _mouseCapturingElement.Value = value;
         }
 
-        public static IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
+        public IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
 
         #endregion
 
@@ -409,7 +408,7 @@ namespace Interactr.View.Framework
         /// <summary>
         /// Is called when keyboard events are triggered.
         /// Can be overridden to handle keyboard events.
-        /// Set eventData.IsCancelled to true indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set e.IsCancelled to true indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element has handled the event</returns>
@@ -428,8 +427,8 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
         public static void HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
-            UIElement targetElement = MouseCapturingElement ?? rootElement.FindElementAt(eventData.MousePosition);
-
+            UIElement targetElement = rootElement.FindMouseEventTarget(eventData.MousePosition);
+            
             TunnelDownMouseEventPreview(rootElement, targetElement, eventData);
             if (eventData.IsHandled)
             {
@@ -442,6 +441,23 @@ namespace Interactr.View.Framework
             targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
+        private UIElement FindMouseEventTarget(Point mousePos)
+        {
+            if (MouseCapturingElement != null)
+            {
+                return MouseCapturingElement;
+            }
+
+            UIElement childContainingTarget = FindChildrenAt(mousePos).FirstOrDefault(e => e.IsVisibleToMouse);
+            if (childContainingTarget == null)
+            {
+                return this;
+            }
+
+            Point p = TranslatePointTo(childContainingTarget, mousePos);
+            return childContainingTarget.FindMouseEventTarget(p);
+        }
+
         /// <summary>
         /// Take a mouse event, call OnMouseEventPreview on every element from the root down until the evenData
         /// is cancelled or mouseover-element is reached.
@@ -450,8 +466,7 @@ namespace Interactr.View.Framework
         /// <param name="rootElement">The element at the top of the view-tree.</param>
         /// <param name="mouseoverElement">The element the mouse is over.</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
-        private static void TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
-            MouseEventData eventData)
+        private static void TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
@@ -507,7 +522,7 @@ namespace Interactr.View.Framework
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Override this method to intercept mouse events before they reach the element the mouse is over.
-        /// Set eventData.IsCancelled to true to indicate that the event has been handled and should not be pushed
+        /// Set e.IsCancelled to true to indicate that the event has been handled and should not be pushed
         /// to more UI elements.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
@@ -518,29 +533,30 @@ namespace Interactr.View.Framework
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Can be overriden to handle mouse events.
-        /// Set eventData.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set e.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        protected virtual void OnMouseEvent(MouseEventData eventData)
+        /// <param name="e">Details about this event. Should be relative to this element.</param>
+        protected virtual void OnMouseEvent(MouseEventData e)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            if (e.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
                 Focus();
-                eventData.IsHandled = true;
+                e.IsHandled = true;
             }
         }
 
-        public void CaptureMouse()
+        public void CaptureMouseAtRoot()
         {
-            MouseCapturingElement = this;
+            WalkToRoot().Last().MouseCapturingElement = this;
         }
 
-        public void ReleaseMouseCapture()
+        public void ReleaseMouseAtRoot()
         {
-            if (MouseCapturingElement == this)
+            var root = WalkToRoot().Last();
+            if (root.MouseCapturingElement == this)
             {
-                MouseCapturingElement = null;
+                root.MouseCapturingElement = null;
             }
         }
 
@@ -667,14 +683,13 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Find the UIElement that is visible at this point on the screen.
-        /// This function searches downward in the tree for the bottom-most node that contains the specified point.
+        /// Find the visible child UIElements that contain the specified point.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public UIElement FindElementAt(Point point)
+        /// <param name="point">The point that should be contained by the returned children.</param>
+        /// <returns>An enumerable of children of this element that contain the specified children.</returns>
+        public IEnumerable<UIElement> FindChildrenAt(Point point)
         {
-            IEnumerable<UIElement> childrenContainingPoint = Children
+            return Children
                 .Reverse()
                 .Where(child =>
                     child.IsVisible &&
@@ -682,23 +697,6 @@ namespace Interactr.View.Framework
                     point.X < (child.Position.X + child.Width) &&
                     point.Y < (child.Position.Y + child.Height)
                 );
-
-            foreach (UIElement childContainingPoint in childrenContainingPoint)
-            {
-                Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
-                var returnValue = childContainingPoint.FindElementAt(relativePosition);
-                if (returnValue != null)
-                {
-                    return returnValue;
-                }
-            }
-
-            if (this.IsVisibleToMouse)
-            {
-                return this;
-            }
-
-            return null;
         }
 
         /// <summary>

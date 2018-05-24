@@ -86,6 +86,10 @@ namespace Interactr.Reactive
         /// <returns>An observable of the elements that are emitted along with the item that produced it.</returns>
         public static IObservable<(T Element, V Value)> ObserveWhere<T, V>(this IReadOnlyReactiveList<T> list, Func<T, IObservable<V>> observableSelector, Func<T, bool> filter)
         {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
             if (observableSelector == null)
             {
                 throw new ArgumentNullException(nameof(observableSelector));
