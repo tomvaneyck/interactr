@@ -80,7 +80,7 @@ namespace Interactr.View.Controls
                     if (_childBeingDragged != null)
                     {
                         // Finish drag
-                        _childBeingDragged.ReleaseMouseCapture();
+                        _childBeingDragged.ReleaseMouseAtRoot();
                         _onDragFinished.OnNext(_childBeingDragged);
                         _childBeingDragged = null;
 
@@ -129,7 +129,7 @@ namespace Interactr.View.Controls
 
             if (_childBeingDragged != null)
             {
-                _childBeingDragged.CaptureMouse();
+                _childBeingDragged.CaptureMouseAtRoot();
 
                 int newX = _childBeingDragged.Position.X;
                 if (DraggableOrientations.HasFlag(Orientation.Horizontal))

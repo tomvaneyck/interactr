@@ -133,15 +133,20 @@ namespace Interactr.View.Controls
             });
 
             // Leave edit mode if focus is lost and Repaint.
-            FocusChanged.Subscribe(isFocused =>
-            {
-                if (!isFocused)
-                {
-                    IsInEditMode = false;
-                }
+            FocusChanged
+                .Where(isFocused => !IsFocused)
+                .Subscribe(_ => HandleFocusChange());
+        }
 
-                Repaint();
-            });
+        /// <summary>
+        /// Handles the loss of focus.
+        /// </summary>
+        /// <remarks>
+        /// Defers the implementation to derived classes with the template pattern.
+        /// </remarks>
+        protected virtual void HandleFocusChange()
+        {
+            IsInEditMode = false;
         }
 
         /// <summary>
@@ -208,30 +213,13 @@ namespace Interactr.View.Controls
         /// <see cref="OnMouseEvent"/>
         protected override void OnMouseEvent(MouseEventData eventData)
         {
-            HandleMouseEvent(eventData);
-
-            if (!eventData.IsHandled)
-            {
-                base.OnMouseEvent(eventData);
-            }
-        }
-
-        /// <summary>
-        /// Handle the mouse event.
-        /// </summary>
-        /// <remarks>
-        /// Implemented following the template pattern. This methods serves to defer the variant
-        /// implementation of OnMouseEvent to each sub class.
-        /// </remarks>
-        /// <param name="eventData">Details of the event.</param>
-        // TODO: Come up with better name.
-        protected virtual void HandleMouseEvent(MouseEventData eventData)
-        {
             if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
             {
                 IsInEditMode = true;
                 eventData.IsHandled = true;
             }
+
+            base.OnMouseEvent(eventData);
         }
     }
 }

@@ -48,6 +48,15 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        /// <summary>
+        /// Indicates if the label of the party view is in edit mode.
+        /// </summary>
+        /// <remarks>
+        /// This property gets set in the party view of this party view model.
+        /// It maintains a binding so that the view model is aware of changes in the view.
+        /// </remarks>
+        public bool LabelInEditMode { get; set; }
+
         #region CanApplyLabel
 
         private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
@@ -93,8 +102,13 @@ namespace Interactr.ViewModel
             party.TypeChanged.Subscribe(newType => Type = newType);
 
             // Define the label in the viewmodel to change when the label changes in the model.
-            party.LabelChanged.Subscribe(newLabel => Label.Text = newLabel);
-
+            party.LabelChanged.Subscribe(newLabel =>
+            {
+                if (!LabelInEditMode)
+                {
+                    Label = newLabel; 
+                }
+            });
             // Update CanApplyLabel when the label changes.
             LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
