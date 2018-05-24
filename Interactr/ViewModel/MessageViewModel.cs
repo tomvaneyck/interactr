@@ -116,7 +116,7 @@ namespace Interactr.ViewModel
             });
 
             // Update CanApplyLabel when the label changes.
-            FormatString.TextChanged.Select(_ => FormatString.HasValidLabel()).Subscribe(isValid => CanApplyLabel = isValid);
+            FormatString.TextChanged.Select(_ => FormatString.HasValidText()).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
