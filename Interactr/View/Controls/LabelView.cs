@@ -138,8 +138,7 @@ namespace Interactr.View.Controls
             eventData.IsHandled = true;
         }
 
-        /// <see cref="EditableText.HandleMouseEvent"/>
-        protected override void HandleMouseEvent(MouseEventData e)
+        protected override void OnMouseEvent(MouseEventData e)
         {
             // When the user clicks outside of the label bounds, try to exit edit mode.
             if (IsInEditMode)
@@ -159,6 +158,12 @@ namespace Interactr.View.Controls
             else if (IsFocused && e.Id == MouseEvent.MOUSE_PRESSED && !IsReadOnly)
             {
                 IsInEditMode = true;
+                e.IsHandled = true;
+            }
+
+            if (e.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            {
+                Focus();
                 e.IsHandled = true;
             }
         }
