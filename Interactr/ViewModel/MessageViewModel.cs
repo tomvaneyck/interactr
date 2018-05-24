@@ -56,42 +56,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        #region Label
-
-        private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
-
-        public string MethodName
-        {
-            get => _methodName.Value;
-            private set => _methodName.Value = value;
-        }
-
-        private readonly ReactiveProperty<List<string>> _methodArguments = new ReactiveProperty<List<string>>();
-
-        public List<string> MethodArguments
-        {
-            get => _methodArguments.Value;
-            private set => _methodArguments.Value = value;
-        }
-
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-
-        /// <summary>
-        /// The text of the Label stored in message view model.
-        /// </summary>
-        /// <remarks>This should not necessarily be the same as the label in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public string Label
-        {
-            get => _label.Value;
-            set => _label.Value = value;
-        }
-
-        public IObservable<string> LabelChanged => _label.Changed;
-
-        #endregion
+        public ILabelVM Label { get; }
 
         #region Type
 
@@ -130,6 +95,11 @@ namespace Interactr.ViewModel
             if (MessageType == Message.MessageType.Result)
             {
                 CanApplyLabel = true;
+                Label = new ReturnMessageLabelVM();
+            }
+            else
+            {
+                Label = new InvocationMessageLabelVM();
             }
 
             // Bidirectional bind between the message number in the viewmodel and model.
@@ -139,51 +109,44 @@ namespace Interactr.ViewModel
             // Bind the label in the viewmodel to the label in the model.
             message.LabelChanged.Subscribe(newLabelText =>
             {
-                if (Label != newLabelText)
+                if (Label.Label != newLabelText)
                 {
-                    Label = newLabelText;
+                    Label.Label = newLabelText;
                 }
             });
 
             // Update CanApplyLabel when the label changes.
-            LabelChanged.Where(_ => MessageType == Message.MessageType.Invocation)
+            Label.LabelChanged.Where(_ => MessageType == Message.MessageType.Invocation)
                 .Select(Message.IsValidInvocationLabel).Subscribe(isValid => CanApplyLabel = isValid);
 
-            // Update the methodName and the method arguments when the label in the viewmodel changes.
-            LabelChanged.Subscribe(newLabelText =>
-                {
-                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
-                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
-
-                    MethodName = newMethodName;
-                    if (newMethodArguments != null)
-                    {
-                        MethodArguments = newMethodArguments.ToList();
-                    }
-                }
-            );
-
-            // Update the label on a change in the methodName or methodArguments.
-            _methodArguments.Changed.MergeEvents(_methodName.Changed).Subscribe(_ =>
+            if (Message.Type == Message.MessageType.Invocation)
             {
-                var newLabel = MethodName ?? "";
-                newLabel += "(";
+                InvocationMessageLabelVM invLabel = Label as InvocationMessageLabelVM;
 
-                if (MethodArguments != null)
+                Debug.Print(Label.ToString());
+                Debug.Print(invLabel.ToString());
+                // Update the label on a change in the methodName or methodArguments.
+                invLabel.MethodNameChanged.MergeEvents(invLabel.MethodArgumentsChanged).Subscribe(_ =>
                 {
-                    foreach (var arg in MethodArguments)
+                    var newLabel = invLabel.Label ?? "";
+                    newLabel += "(";
+
+                    if (invLabel.MethodArguments != null)
                     {
-                        newLabel += arg + ",";
+                        foreach (var arg in invLabel.MethodArguments)
+                        {
+                            newLabel += arg + ",";
+                        }
                     }
-                }
 
-                if (newLabel[newLabel.Length - 1] == ',')
-                {
-                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
-                }
+                    if (newLabel[newLabel.Length - 1] == ',')
+                    {
+                        newLabel = newLabel.Substring(0, newLabel.Length - 1);
+                    }
 
-                newLabel += ")";
-            });
+                    newLabel += ")";
+                });
+            }
         }
 
         /// <summary>
@@ -191,7 +154,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Message.Label = Label;
+            Message.Label = Label.Label;
         }
     }
 }
