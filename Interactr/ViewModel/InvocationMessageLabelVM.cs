@@ -62,6 +62,29 @@ namespace Interactr.ViewModel
                     }
                 }
             );
+
+            // Update the label on a change in the methodName or methodArguments.
+            MethodNameChanged.MergeEvents(MethodArgumentsChanged).Subscribe(_ =>
+            {
+                var newLabel = MethodName;
+                newLabel += "(";
+
+                if (MethodArguments != null)
+                {
+                    foreach (var arg in MethodArguments)
+                    {
+                        newLabel += arg + ",";
+                    }
+                }
+
+                if (newLabel[newLabel.Length - 1] == ',')
+                {
+                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
+                }
+
+                newLabel += ")";
+                Label = newLabel;
+            });
         }
 
         public bool IsValidLabel()
