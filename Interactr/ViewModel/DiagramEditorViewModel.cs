@@ -1,4 +1,7 @@
-﻿using Interactr.Model;
+﻿using System;
+using Interactr.Model;
+using Interactr.Reactive;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -19,15 +22,38 @@ namespace Interactr.ViewModel
         /// The sequence diagram view model.
         /// </summary>
         public SequenceDiagramViewModel SeqDiagramVM { get; }
+        
+        #region VisibleDiagramType
+
+        private readonly ReactiveProperty<Diagram.Type> _visibleDiagramType = new ReactiveProperty<Diagram.Type>();
+
+        public Diagram.Type VisibleDiagramType
+        {
+            get => _visibleDiagramType.Value;
+            set => _visibleDiagramType.Value = value;
+        }
+
+        public IObservable<Diagram.Type> VisibleDiagramTypeChanged => _visibleDiagramType.Changed;
+
+        #endregion
 
         public DiagramEditorViewModel(Diagram diagram)
         {
             Diagram = diagram;
             CommDiagramVM = new CommunicationDiagramViewModel(diagram);
-            SeqDiagramVM = new SequenceDiagramViewModel(diagram)
+            SeqDiagramVM = new SequenceDiagramViewModel(diagram);
+            VisibleDiagramType = Diagram.Type.Sequence;
+
+            SetupBindings();
+        }
+
+        private void SetupBindings()
+        {
+            VisibleDiagramTypeChanged.Subscribe(newType =>
             {
-                IsVisible = true
-            };
+                SeqDiagramVM.IsVisible = newType == Diagram.Type.Sequence;
+                CommDiagramVM.IsVisible = newType == Diagram.Type.Communication;
+            });
         }
 
         /// <summary>
@@ -35,16 +61,30 @@ namespace Interactr.ViewModel
         /// </summary>
         public void SwitchViews()
         {
-            if (CommDiagramVM.IsVisible)
+            switch (VisibleDiagramType)
             {
-                CommDiagramVM.IsVisible = false;
-                SeqDiagramVM.IsVisible = true;
+                case Diagram.Type.Sequence:
+                    VisibleDiagramType = Diagram.Type.Communication;
+                    break;
+                case Diagram.Type.Communication:
+                    VisibleDiagramType = Diagram.Type.Sequence;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else //If SeqDiagramVM or neither is visible
+        }
+
+        public DiagramDialogViewModel CreateDiagramDialogViewModel()
+        {
+            DiagramDialogViewModel dialog = new DiagramDialogViewModel
             {
-                CommDiagramVM.IsVisible = true;
-                SeqDiagramVM.IsVisible = false;
-            }
+                SelectedDiagramType = SeqDiagramVM.IsVisible ? Diagram.Type.Sequence : Diagram.Type.Communication
+            };
+
+            dialog.SelectedDiagramTypeChanged.Subscribe(newDiagType => VisibleDiagramType = newDiagType);
+            VisibleDiagramTypeChanged.Subscribe(newType => dialog.SelectedDiagramType = newType);
+
+            return dialog;
         }
     }
 }
