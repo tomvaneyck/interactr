@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Mime;
+using System.Diagnostics;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 
@@ -12,7 +12,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
-        /// <see cref="MediaTypeNames.Text"/>
+        /// <see cref="Text"/>
         public string Text
         {
             get => _text.Value;
@@ -50,9 +50,8 @@ namespace Interactr.ViewModel
         public PartyFormatStringViewModel()
         {
             // Update the instanceName and the className when the label changes.
-            TextChanged.Subscribe(newLabelText =>
+            TextChanged.Where(t => t != null).Subscribe(newLabelText =>
                 {
-                    // Only retrieve methodName if it is valid.
                     var splitText = newLabelText.Split(':');
 
                     // If the text contains a : and thus can be split up in an 
@@ -60,12 +59,14 @@ namespace Interactr.ViewModel
                     if (splitText.Length >= 2)
                     {
                         InstanceName = splitText[0];
-                        ClassName = "";
+                        var className = "";
 
                         for (int i = 1; i < splitText.Length; i++)
                         {
-                            ClassName += splitText[i];
+                            className += splitText[i];
                         }
+
+                        ClassName = className;
                     }
                     else
                     {
@@ -79,7 +80,17 @@ namespace Interactr.ViewModel
 
             // Update the text of the label if the instanceName or the className changes.
             _instanceName.Changed.MergeEvents(_className.Changed)
-                .Subscribe(_ => { Text = _instanceName + ":" + _className; });
+                .Subscribe(_ =>
+                {
+                    if (ClassName == null)
+                    {
+                        Text = InstanceName;
+                    }
+                    else
+                    {
+                        Text = InstanceName + ":" + ClassName;
+                    }
+                });
         }
 
         public bool HasValidLabel()
