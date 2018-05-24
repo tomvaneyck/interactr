@@ -143,7 +143,6 @@ namespace Interactr.ViewModel
                     }
 
                     newLabel += ")";
-                    Label.Label = newLabel;
                 });
             }
         }
