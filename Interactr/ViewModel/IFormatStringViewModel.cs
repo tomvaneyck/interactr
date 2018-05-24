@@ -2,7 +2,7 @@
 
 namespace Interactr.ViewModel
 {
-    public interface ILabelViewModel
+    public interface IFormatStringViewModel
     {
         /// <summary>
         /// Return true if the label is valid.

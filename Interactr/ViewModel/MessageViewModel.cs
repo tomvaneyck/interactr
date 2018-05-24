@@ -19,7 +19,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public Message Message { get; }
 
-        public ILabelViewModel Label { get; }
+        public IFormatStringViewModel FormatString { get; }
 
         #region MessageNumber
 
@@ -95,11 +95,11 @@ namespace Interactr.ViewModel
             if (MessageType == Message.MessageType.Result)
             {
                 CanApplyLabel = true;
-                Label = new ReturnMessageNameViewModel();
+                FormatString = new ReturnFormatStringViewModel();
             }
             else
             {
-                Label = new InvocationMessageNameViewModel();
+                FormatString = new InvocationFormatStringViewModel();
             }
 
             // Bidirectional bind between the message number in the viewmodel and model.
@@ -109,14 +109,14 @@ namespace Interactr.ViewModel
             // Bind the label in the viewmodel to the label in the model.
             message.LabelChanged.Subscribe(newLabelText =>
             {
-                if (Label.Text != newLabelText)
+                if (FormatString.Text != newLabelText)
                 {
-                    Label.Text = newLabelText;
+                    FormatString.Text = newLabelText;
                 }
             });
 
             // Update CanApplyLabel when the label changes.
-            Label.TextChanged.Select(_ => Label.IsValidLabel()).Subscribe(isValid => CanApplyLabel = isValid);
+            FormatString.TextChanged.Select(_ => FormatString.IsValidLabel()).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Message.Label = Label.Text;
+            Message.Label = FormatString.Text;
         }
     }
 }

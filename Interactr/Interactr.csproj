@@ -86,7 +86,7 @@
     <Compile Include="ViewModel\ReturnMessageLabel.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
-    <Compile Include="ViewModel\ILabelViewModel.cs" />
+    <Compile Include="ViewModel\IFormatStringViewModel.cs" />
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MessageStackViewModel.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="ViewModel\PendingMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
-    <Compile Include="ViewModel\InvocationMessageNameViewModel.cs" />
+    <Compile Include="ViewModel\InvocationFormatStringViewModel.cs" />
     <Compile Include="View\ActivationBarView.cs" />
     <Compile Include="View\CommunicationDiagramMessageView.cs" />
     <Compile Include="View\CommunicationDiagramPartyView.cs" />
