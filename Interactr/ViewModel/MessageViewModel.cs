@@ -19,6 +19,8 @@ namespace Interactr.ViewModel
         /// </summary>
         public Message Message { get; }
 
+        public ILabelVM Label { get; }
+
         #region MessageNumber
 
         private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
@@ -55,8 +57,6 @@ namespace Interactr.ViewModel
         public IObservable<int> TickChanged => _tick.Changed;
 
         #endregion
-
-        public ILabelVM Label { get; }
 
         #region Type
 
