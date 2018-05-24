@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -117,6 +120,37 @@ namespace Interactr.View
             {
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
+                e.IsHandled = true;
+            }
+        }
+
+        protected override void OnKeyEvent(KeyEventData e)
+        {
+            // On CTRL+Enter, open a party dialog
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && e.KeyCode == (int)Keys.Enter)
+            {
+                var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
+                if (windowsView == null)
+                {
+                    return;
+                }
+                
+                // Create dialog.
+                var dialogVM = ViewModel.CreateNewDialogViewModel();
+                var dialogView = new PartyDialogView {ViewModel = dialogVM};
+                var window = windowsView.AddWindow(dialogView, 230, 140);
+                window.Title = "Party settings";
+
+                // Close dialog when the party is deleted or the close button is clicked.
+                var binding = ViewModel.Diagram.Parties.OnDelete
+                    .Where(deleted => deleted.Element == ViewModel.Party)
+                    .MergeEvents(window.CloseButton.OnButtonClick)
+                    .Take(1)
+                    .Subscribe(_ =>
+                    {
+                        windowsView.RemoveWindowWith(dialogView);
+                    });
+
                 e.IsHandled = true;
             }
         }

@@ -2,7 +2,9 @@
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -86,10 +88,13 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        public Diagram Diagram { get; }
+
         public Party Party { get; }
 
-        public PartyViewModel(Party party)
+        public PartyViewModel(Diagram diagram, Party party)
         {
+            Diagram = diagram;
             Party = party;
 
             // Bind the type in the viewmodel to the type in the model.
@@ -122,5 +127,10 @@ namespace Interactr.ViewModel
             Party.Label = Label;
         }
 
+        public PartyDialogViewModel CreateNewDialogViewModel()
+        {
+            PartyDialogViewModel dialog = new PartyDialogViewModel();
+            return dialog;
+        }
     }
 }
