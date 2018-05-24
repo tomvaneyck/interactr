@@ -106,7 +106,7 @@ namespace Interactr.ViewModel
             {
                 if (!LabelInEditMode)
                 {
-                    Label = newLabel; 
+                    Label.Text = newLabel; 
                 }
             });
             // Update CanApplyLabel when the label changes.

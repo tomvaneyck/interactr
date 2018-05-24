@@ -93,7 +93,7 @@ namespace Interactr.ViewModel
                 });
         }
 
-        public bool HasValidLabel()
+        public bool HasValidText()
         {
             return Party.IsValidLabel(Text);
         }

@@ -7,6 +7,10 @@ using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
+    /// <summary>
+    /// A container for the label of an invocation message, also containing
+    /// the methodName and methodArguments that get parsed out of the text.
+    /// </summary>
     public class InvocationFormatStringViewModel : IFormatStringViewModel
     {
         #region Text
@@ -89,10 +93,10 @@ namespace Interactr.ViewModel
         }
 
         /// <summary>
-        /// Indicate wether the text of this messageLabel is a valid label.
+        /// Indicate wether the text of this  invocation messageLabel is a valid label.
         /// </summary>
         /// <returns></returns>
-        public bool HasValidLabel()
+        public bool HasValidText()
         {
             return Message.IsValidInvocationLabel(Text);
         }
