@@ -36,21 +36,15 @@ namespace Interactr.ViewModel
 
         #region Label
 
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-
         /// <summary> A label.
         /// <example> instance_name;class_name </example>
         /// </summary>
-        public string Label
-        {
-            get => _label.Value;
-            set => _label.Value = value;
-        }
+        public PartyFormatStringViewModel Label { get; set; }
 
         /// <summary>
         /// An observable that emits the new label when it has changed.
         /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<string> LabelChanged => Label.TextChanged;
 
         #endregion
 
@@ -92,11 +86,14 @@ namespace Interactr.ViewModel
         {
             Party = party;
 
+            // Create a new party formatted string view model
+            Label = new PartyFormatStringViewModel();
+
             // Bind the type in the viewmodel to the type in the model.
             party.TypeChanged.Subscribe(newType => Type = newType);
 
             // Define the label in the viewmodel to change when the label changes in the model.
-            party.LabelChanged.Subscribe(newLabel => Label = newLabel);
+            party.LabelChanged.Subscribe(newLabel => Label.Text = newLabel);
 
             // Update CanApplyLabel when the label changes.
             LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
@@ -119,8 +116,7 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Party.Label = Label;
+            Party.Label = Label.Text;
         }
-
     }
 }

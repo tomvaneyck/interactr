@@ -9,9 +9,9 @@ namespace Interactr.ViewModel
 {
     public class InvocationFormatStringViewModel : IFormatStringViewModel
     {
-        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
-
         #region Text
+
+        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
         /// <see cref="Text"/>
         public string Text

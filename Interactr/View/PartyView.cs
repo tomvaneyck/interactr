@@ -71,9 +71,10 @@ namespace Interactr.View
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
                 .Subscribe(newLabel => LabelView.Text = newLabel);
+            
             LabelView.TextChanged.Subscribe(newText =>
             {
-                if (ViewModel != null) ViewModel.Label = newText;
+                if (ViewModel != null) ViewModel.Label.Text = newText;
             });
 
             // Add child elements
@@ -105,7 +106,7 @@ namespace Interactr.View
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label = text;
+                    ViewModel.Label.Text = text;
                 }
             });
         }
