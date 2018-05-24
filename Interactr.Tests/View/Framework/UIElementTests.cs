@@ -67,7 +67,7 @@ namespace Interactr.Tests.View.Framework
         }
 
         [Test]
-        public void TestFindElementAt()
+        public void TestFindChildrenAt()
         {
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement
@@ -78,9 +78,8 @@ namespace Interactr.Tests.View.Framework
             };
             elem1.Children.Add(elem2);
 
-            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(5, 5)));
-            Assert.AreEqual(elem2, elem1.FindElementAt(new Point(12, 12)));
-            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(20, 20)));
+            Assert.AreEqual(0, elem1.FindChildrenAt(new Point(5, 5)).Count());
+            Assert.AreEqual(elem2, elem1.FindChildrenAt(new Point(12, 12)).Single());
         }
 
         [Test]

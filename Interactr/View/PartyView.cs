@@ -72,11 +72,20 @@ namespace Interactr.View
             });
 
             // Bi-directional bind party label to view
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
-                .Subscribe(newLabel => LabelView.Text = newLabel);
-            LabelView.TextChanged.Subscribe(newText =>
+            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(text =>
             {
-                if (ViewModel != null) ViewModel.Label = newText;
+                // The label may not be updated if it is in edit mode.
+                if (!LabelView.IsInEditMode)
+                {
+                    LabelView.Text = text;
+                }
+            });
+            LabelView.TextChanged.Subscribe(text =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.Label = text;
+                }
             });
 
             // Add child elements
@@ -88,9 +97,13 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
-            // The label is red if CanApplyLabel is true.
+            // The label is red if CanApplyLabel is false.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel => LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+                .Subscribe(canApplyLabel =>
+                {
+                    LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
+                }
+            );
 
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
@@ -99,7 +112,15 @@ namespace Interactr.View
             LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                    if (ViewModel != null)
+                    {
+                        ViewModel.LabelInEditMode = isInEditMode;
+
+                        if (!isInEditMode)
+                        {
+                            ViewModel.ApplyLabel();
+                        }
+                    }
                 }
             );
 

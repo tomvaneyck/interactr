@@ -32,5 +32,10 @@ namespace Interactr.Model
         /// List of messages present in the diagram.
         /// </summary>
         public ReactiveList<Message> Messages { get; }
+
+        public enum Type
+        {
+            Sequence, Communication
+        }
     }
 }
