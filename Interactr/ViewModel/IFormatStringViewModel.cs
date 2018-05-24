@@ -20,7 +20,5 @@ namespace Interactr.ViewModel
         string Text { get; set; }
 
         IObservable<string> TextChanged { get; }
-
-        //TODO: DialogVM CreateDialogViewModel();
     }
 }
