@@ -88,7 +88,6 @@ namespace Interactr.View.Controls
                 StackOrientation = Orientation.Horizontal
             };
             this.Children.Add(stackPanel);
-            
             this.Children.Add(_listView);
         }
     }
