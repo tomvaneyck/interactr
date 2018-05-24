@@ -23,7 +23,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        #region MethodName
+        #region InstanceName
 
         private readonly ReactiveProperty<string> _instanceName = new ReactiveProperty<string>();
 
@@ -37,9 +37,9 @@ namespace Interactr.ViewModel
 
         #region ClassName
 
-        private readonly ReactiveProperty<List<string>> _className = new ReactiveProperty<List<string>>();
+        private readonly ReactiveProperty<string> _className = new ReactiveProperty<string>();
 
-        private List<string> ClassName
+        private string ClassName
         {
             get => _className.Value;
             set => _className.Value = value;
@@ -47,7 +47,38 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public bool IsValidLabel()
+        public PartyFormatStringViewModel()
+        {
+            // Update the methodName and the method arguments when the label in the viewmodel changes.
+            TextChanged.Subscribe(newLabelText =>
+                {
+                    // Only retrieve methodName if it is valid.
+                    var splitText = newLabelText.Split(':');
+
+                    // If the text contains a : and thus can be split up in an 
+                    // instanceName and a className
+                    if (splitText.Length >= 2)
+                    {
+                        InstanceName = splitText[0];
+                        ClassName = "";
+
+                        for (int i = 1; i < splitText.Length; i++)
+                        {
+                            ClassName += splitText[i];
+                        }
+                    }
+                    else
+                    {
+                        // If the text cannot be split up in instanceName and Classname 
+                        // than set ClassName to null and the instanceName to the whole text.
+                        InstanceName = newLabelText;
+                        ClassName = null;
+                    }
+                }
+            );
+        }
+
+        public bool HasValidLabel()
         {
             return Party.IsValidLabel(Text);
         }

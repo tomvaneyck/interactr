@@ -92,7 +92,7 @@ namespace Interactr.ViewModel
         /// Indicate wether the text of this messageLabel is a valid label.
         /// </summary>
         /// <returns></returns>
-        public bool IsValidLabel()
+        public bool HasValidLabel()
         {
             return Message.IsValidInvocationLabel(Text);
         }
