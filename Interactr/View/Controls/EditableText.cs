@@ -133,15 +133,20 @@ namespace Interactr.View.Controls
             });
 
             // Leave edit mode if focus is lost and Repaint.
-            FocusChanged.Subscribe(isFocused =>
-            {
-                if (!isFocused)
-                {
-                    IsInEditMode = false;
-                }
+            FocusChanged
+                .Where(isFocused => !IsFocused)
+                .Subscribe(_ => HandleFocusChange());
+        }
 
-                Repaint();
-            });
+        /// <summary>
+        /// Handles the loss of focus.
+        /// </summary>
+        /// <remarks>
+        /// Defers the implementation to derived classes with the template pattern.
+        /// </remarks>
+        protected virtual void HandleFocusChange()
+        {
+            IsInEditMode = false;
         }
 
         /// <summary>

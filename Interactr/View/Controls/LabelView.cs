@@ -57,19 +57,28 @@ namespace Interactr.View.Controls
 
         #endregion
 
-        private bool _isFocusing;
-
         public LabelView() : base()
         {
             // Leave edit mode if ReadOnly is activated
             IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
 
-            // Ignore mouse clicked when just received focus.
-            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
+            // In edit mode, capture the mouse on the diagram editor scope.
+            EditModeChanged.Subscribe(editMode =>
+            {
+                UIElement mouseCaptureScope =
+                    WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault() ?? WalkToRoot().Last();
 
-            // Update canLoseFocus when the CanLeaveEditMode is changed.
-            CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
-            CanLeaveEditMode = true;
+                mouseCaptureScope.MouseCapturingElement = editMode ? this : null;
+            });
+        }
+
+        /// <see cref="HandleFocusChange">
+        protected override void HandleFocusChange()
+        {
+            if (CanLeaveEditMode)
+            {
+                base.HandleFocusChange(); 
+            }
         }
 
         /// <see cref="PaintElement"/>
@@ -77,8 +86,15 @@ namespace Interactr.View.Controls
         {
             base.PaintElement(g);
 
-            // Draw focus rectangle
-            if (IsFocused)
+            // Draw editing or focus rectangle.
+            if (IsInEditMode)
+            {
+                using (Pen pen = new Pen(Color.DodgerBlue))
+                {
+                    g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+                }
+            }
+            else if (IsFocused)
             {
                 using (Pen pen = new Pen(Color))
                 {
@@ -105,17 +121,26 @@ namespace Interactr.View.Controls
         }
 
         /// <see cref="EditableText.HandleMouseEvent"/>
-        protected override void HandleMouseEvent(MouseEventData eventData)
+        protected override void HandleMouseEvent(MouseEventData e)
         {
-            if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            // When the user clicks outside of the label bounds, try to exit edit mode.
+            if (IsInEditMode)
             {
-                _isFocusing = false;
-                eventData.IsHandled = true;
+                bool eventOutOfLabelBounds = e.MousePosition.X < 0 || e.MousePosition.Y < 0 ||
+                                             e.MousePosition.X >= Width || e.MousePosition.Y >= Height;
+
+                if (e.Id == MouseEvent.MOUSE_PRESSED && eventOutOfLabelBounds && CanLeaveEditMode)
+                {
+                    IsInEditMode = false;
+                }
+
+                e.IsHandled = true;
             }
-            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED )
+            // When the label is focused and the user clicks the label, enter edit mode.
+            else if (IsFocused && e.Id == MouseEvent.MOUSE_PRESSED && !IsReadOnly)
             {
                 IsInEditMode = true;
-                eventData.IsHandled = true;
+                e.IsHandled = true;
             }
         }
     }

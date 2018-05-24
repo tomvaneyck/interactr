@@ -179,7 +179,7 @@ namespace Interactr.View.Controls
                 //Focus child if this window is clicked.
                 FocusChanged.Subscribe(focused =>
                 {
-                    if (focused && InnerElement.CanBeFocused)
+                    if (focused)
                     {
                         InnerElement.Focus();
                     }
