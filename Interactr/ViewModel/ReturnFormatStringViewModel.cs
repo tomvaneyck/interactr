@@ -22,10 +22,6 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public ReturnFormatStringViewModel()
-        {
-        }
-
         public bool HasValidText()
         {
             return true;

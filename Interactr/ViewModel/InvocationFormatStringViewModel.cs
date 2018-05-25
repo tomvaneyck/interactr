@@ -43,19 +43,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        #region MethodArguments
-
-        private readonly ReactiveProperty<List<string>> _methodArguments = new ReactiveProperty<List<string>>();
-
-        private List<string> MethodArguments
-        {
-            get => _methodArguments.Value;
-            set => _methodArguments.Value = value;
-        }
-
-        public IObservable<List<string>> MethodArgumentsChanged => _methodArguments.Changed;
-
-        #endregion
+        public ReactiveList<string> MethodArguments { get; } = new ReactiveArrayList<string>();
 
         public InvocationFormatStringViewModel()
         {
@@ -68,13 +56,14 @@ namespace Interactr.ViewModel
                     MethodName = newMethodName;
                     if (newMethodArguments != null)
                     {
-                        MethodArguments = newMethodArguments.ToList();
+                        MethodArguments.Clear();
+                        MethodArguments.AddRange(newMethodArguments);
                     }
                 }
             );
 
             // Update the label on a change in the methodName or methodArguments.
-            _methodName.Changed.MergeEvents(_methodArguments.Changed).Subscribe(_ =>
+            _methodName.Changed.MergeEvents(MethodNameChanged).Subscribe(_ =>
             {
                 var newLabel = MethodName;
                 newLabel += "(";
