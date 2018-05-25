@@ -40,7 +40,7 @@ namespace Interactr.ViewModel
         /// <summary> A label.
         /// <example> instance_name;class_name </example>
         /// </summary>
-        public PartyFormatStringViewModel Label { get; set; }
+        public PartyFormatStringViewModel Label { get; }
 
         /// <summary>
         /// An observable that emits a default unit if something
@@ -108,7 +108,7 @@ namespace Interactr.ViewModel
             {
                 if (!LabelInEditMode)
                 {
-                    Label.Text = newLabel; 
+                    Label.Text = newLabel;
                 }
             });
             // Update CanApplyLabel when the label changes.
