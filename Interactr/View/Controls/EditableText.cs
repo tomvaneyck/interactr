@@ -25,7 +25,14 @@ namespace Interactr.View.Controls
         public string Text
         {
             get => _text.Value;
-            set => _text.Value = value;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                _text.Value = value;
+            }
         }
 
         /// <summary>

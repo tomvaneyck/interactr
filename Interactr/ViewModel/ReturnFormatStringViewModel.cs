@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
+using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -25,6 +28,21 @@ namespace Interactr.ViewModel
         public bool HasValidText()
         {
             return true;
+        }
+
+        public ReturnMessageDialogViewModel CreateNewDialogViewModel(Message model)
+        {
+            var dialogVM = new ReturnMessageDialogViewModel();
+            
+           //Bind the text with the dialogViewModel.
+            TextChanged.Subscribe(newText =>
+            {
+                dialogVM.Text = newText;
+                model.Label = newText;
+            });
+            dialogVM.TextChanged.Subscribe(newText => { Text = newText; });
+            
+            return dialogVM;
         }
     }
 }

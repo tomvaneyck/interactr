@@ -57,7 +57,7 @@ namespace Interactr.ViewModel
 
             // Create MessageViewModels from messages.
             MessageViewModels = Diagram.Messages.CreateDerivedList(msg =>
-                new SequenceDiagramMessageViewModel(msg, 0)).ResultList;
+                new SequenceDiagramMessageViewModel(diagram,msg, 0)).ResultList;
 
             // When the diagram changes, recalculate layout.
             ReactiveExtensions.MergeEvents(

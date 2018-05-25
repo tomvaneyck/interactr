@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Interactr.Model;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.ViewModel.MessageStack;
+using Message = Interactr.Model.Message;
 using StackFrame = Interactr.ViewModel.MessageStack.StackFrame<Interactr.ViewModel.MessageViewModel>;
 
 namespace Interactr.ViewModel
@@ -19,7 +21,7 @@ namespace Interactr.ViewModel
         /// <remarks>
         /// Only invocation messages get drawn in the communication diagram.
         /// </remarks>
-        private readonly IReadOnlyReactiveList<MessageViewModel> _messageViewModelsReactive; 
+        private readonly IReadOnlyReactiveList<MessageViewModel> _messageViewModelsReactive;
 
         /// <summary>
         /// The message view models for the communication diagram, but in IReadOnlyList form.
@@ -36,7 +38,8 @@ namespace Interactr.ViewModel
         public CommunicationDiagramViewModel(Diagram diagram) : base(diagram)
         {
             // Create message view models for every invocation message in the diagram model.
-            _messageViewModelsReactive = Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(msg)).ResultList;
+            _messageViewModelsReactive =
+                Diagram.Messages.CreateDerivedList(msg => new MessageViewModel(diagram, msg)).ResultList;
             InvocationMessageViewModels = _messageViewModelsReactive
                 .CreateDerivedList(msg => msg, msg => msg.MessageType == Message.MessageType.Invocation).ResultList;
 

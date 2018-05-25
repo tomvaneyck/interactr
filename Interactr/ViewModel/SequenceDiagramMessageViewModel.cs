@@ -45,7 +45,7 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public SequenceDiagramMessageViewModel(Message message, int tick) : base(message)
+        public SequenceDiagramMessageViewModel(Diagram diagram, Message message, int tick) : base(diagram,message)
         {
             Tick = tick;
         }
