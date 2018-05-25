@@ -46,17 +46,11 @@ namespace Interactr.View.Controls
                 .Where(elem => elem != null)
                 .Select(elem => elem.WalkToRoot().FirstOrDefault(n => n is Window))
                 .Where(window => window != null)
-                .Subscribe(window =>
-                {
-                    Children.Move(window, Children.Count - 1);
-                });
+                .Subscribe(window => { Children.Move(window, Children.Count - 1); });
 
             // When the close button of a window is clicked, notify WindowCloseRequested
             Children.ObserveWhere(window => ((Window) window).CloseButton.OnButtonClick, elem => elem is Window)
-                .Subscribe(e =>
-                {
-                    _windowCloseRequested.OnNext((Window)e.Element);
-                });
+                .Subscribe(e => { _windowCloseRequested.OnNext((Window) e.Element); });
         }
 
         public override void PaintElement(Graphics g)
@@ -123,7 +117,10 @@ namespace Interactr.View.Controls
             private const int MinWindowHeight = 100;
 
             public IObservable<Unit> WindowClosed =>
-                ((WindowsView) Parent).Children.OnDelete.Where(e => e.Element == this).Take(1).Select(e => Unit.Default);
+                ((WindowsView) Parent).Children.OnDelete
+                    .Where(e => e.Element == this)
+                    .Take(1)
+                    .Select(e => Unit.Default);
 
             #region Title
 
@@ -201,6 +198,7 @@ namespace Interactr.View.Controls
             }
 
             private ResizeMode _resizeMode;
+
             protected override void OnMouseEvent(MouseEventData e)
             {
                 if (e.Id == MouseEvent.MOUSE_PRESSED)
@@ -275,7 +273,7 @@ namespace Interactr.View.Controls
                     e.IsHandled = true;
                     return;
                 }
-                
+
                 base.OnMouseEvent(e);
             }
 

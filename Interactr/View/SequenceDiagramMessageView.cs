@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.ViewModel.Dialogs;
+using Interactr.Window;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;
 using Message = Interactr.Model.Message;
@@ -128,6 +132,7 @@ namespace Interactr.View
                     LabelWithMessageNumberView.LabelView.Font);
                 Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
+
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });
@@ -173,6 +178,32 @@ namespace Interactr.View
                             }).Switch()
                     ).Switch()
             ).Switch();
+        }
+
+        protected override void OnKeyEvent(KeyEventData e)
+        {
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) &&
+                e.KeyCode == (int) Keys.Enter)
+            {
+                var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
+                if (windowsView != null)
+
+                    if (ViewModel.MessageType == Message.MessageType.Result)
+                    {
+                        Debug.Print("Create dialog.");
+                        // Create dialog.
+                        var returnFormatStringVM = ViewModel.FormatString as ReturnFormatStringViewModel;
+                        var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
+                        var dialogView = new ReturnMessageDialogView(dialogVM);
+                        var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 230, 140);
+
+                        //TODO: close dialog box.
+                        ViewModel.Diagram.Messages.OnDelete.Where(deleted => deleted.Element == ViewModel.Message)
+                            .TakeUntil(window.WindowClosed).Subscribe(_ => windowsView.RemoveWindowWith(dialogView));
+                    }                
+
+                e.IsHandled = true;
+            }
         }
     }
 }

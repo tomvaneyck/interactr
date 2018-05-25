@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Web.WebSockets;
 using Interactr.Model;
 using Interactr.ViewModel;
 using Interactr.ViewModel.MessageStack;
@@ -22,9 +23,9 @@ namespace Interactr.Tests.ViewModel
 
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party2, party1, Message.MessageType.Result, _testLabel), 1)
             };
 
@@ -64,13 +65,13 @@ namespace Interactr.Tests.ViewModel
 
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party2, party1, Message.MessageType.Result, _testLabel), 1),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 2),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party2, party1, Message.MessageType.Result, _testLabel), 3)
             };
 
@@ -121,13 +122,15 @@ namespace Interactr.Tests.ViewModel
 
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel( new Diagram(), 
                     new Message(party2, party3, Message.MessageType.Invocation, _testLabel), 1),
-                new SequenceDiagramMessageViewModel(new Message(party3, party2, Message.MessageType.Result, _testLabel),
+                new SequenceDiagramMessageViewModel(new Diagram(), 
+                    new Message(party3, party2, Message.MessageType.Result, _testLabel),
                     2),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, _testLabel),
+                new SequenceDiagramMessageViewModel(new Diagram(), 
+                    new Message(party2, party1, Message.MessageType.Result, _testLabel),
                     3)
             };
 
@@ -177,13 +180,13 @@ namespace Interactr.Tests.ViewModel
 
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party2, party1, Message.MessageType.Invocation, _testLabel), 1),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party1, party2, Message.MessageType.Result, _testLabel), 2),
-                new SequenceDiagramMessageViewModel(
+                new SequenceDiagramMessageViewModel(new Diagram(), 
                     new Message(party2, party1, Message.MessageType.Result, _testLabel), 3)
             };
 

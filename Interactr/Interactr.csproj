@@ -83,6 +83,7 @@
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\ActivationBarViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\ReturnMessageDialogViewModel.cs" />
     <Compile Include="ViewModel\PartyFormatStringViewModel.cs" />
     <Compile Include="ViewModel\ReturnFormatStringViewModel.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="View\Dialogs\PartyDialogView.cs" />
     <Compile Include="View\Dialogs\DiagramDialogView.cs" />
     <Compile Include="View\Dialogs\Dialog.cs" />
+    <Compile Include="View\Dialogs\ReturnMessageDialogView.cs" />
     <Compile Include="View\Framework\Keyboard.cs" />
     <Compile Include="View\LifeLineView.cs" />
     <Compile Include="View\Controls\DragPanel.cs" />
