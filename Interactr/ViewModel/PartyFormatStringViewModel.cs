@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
+using NUnit.Framework.Internal;
 
 namespace Interactr.ViewModel
 {
@@ -29,7 +30,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _instanceName = new ReactiveProperty<string>();
 
-        private string InstanceName
+        public string InstanceName
         {
             get => _instanceName.Value;
             set => _instanceName.Value = value;
@@ -43,7 +44,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _className = new ReactiveProperty<string>();
 
-        private string ClassName
+        public string ClassName
         {
             get => _className.Value;
             set => _className.Value = value;
@@ -55,6 +56,8 @@ namespace Interactr.ViewModel
 
         public IObservable<Unit> FormatStringChanged { get; }
 
+        private bool _isUpdating;
+
         public PartyFormatStringViewModel()
         {
             // Set the observables for a change to the formatString
@@ -62,39 +65,61 @@ namespace Interactr.ViewModel
             
             // Update the instanceName and the className when the label changes.
             TextChanged.Where(t => t != null).Subscribe(newLabelText =>
+            {
+                if (!_isUpdating)
                 {
-                    var splitText = newLabelText.Split(':');
+                    _isUpdating = true;
 
-                    // If the text contains a : and thus can be split up in an 
-                    // instanceName and a className
-                    if (splitText.Length >= 2)
-                    {
-                        InstanceName = splitText[0];
-                        ClassName = string.Join(":", splitText.Skip(1));
-                    }
-                    else
-                    {
-                        // If the text cannot be split up in instanceName and className 
-                        // than set ClassName to null and the instanceName to the whole text.
-                        InstanceName = newLabelText;
-                        ClassName = null;
-                    }
+                    UpdatePartyPropertiesFromLabel();
+
+                    _isUpdating = false;
                 }
-            );
+            });
 
             // Update the text of the label if the instanceName or the className changes.
-            _instanceName.Changed.MergeEvents(_className.Changed)
-                .Subscribe(_ =>
+            InstanceNameChanged.MergeEvents(ClassNameChanged).Subscribe(_ =>
+            {
+                if (!_isUpdating)
                 {
-                    if (ClassName == null)
-                    {
-                        Text = InstanceName;
-                    }
-                    else
-                    {
-                        Text = InstanceName + ":" + ClassName;
-                    }
-                });
+                    _isUpdating = true;
+
+                    UpdateLabelFromPartyProperties();
+
+                    _isUpdating = false;
+                }
+            });
+        }
+
+        private void UpdatePartyPropertiesFromLabel()
+        {
+            var splitText = Text.Split(':');
+
+            // If the text contains a : and thus can be split up in an 
+            // instanceName and a className
+            if (splitText.Length >= 2)
+            {
+                InstanceName = splitText[0];
+                ClassName = string.Join(":", splitText.Skip(1));
+            }
+            else
+            {
+                // If the text cannot be split up in instanceName and className 
+                // than set ClassName to null and the instanceName to the whole text.
+                InstanceName = Text;
+                ClassName = null;
+            }
+        }
+
+        private void UpdateLabelFromPartyProperties()
+        {
+            if (ClassName == null)
+            {
+                Text = InstanceName;
+            }
+            else
+            {
+                Text = InstanceName + ":" + ClassName;
+            }
         }
 
         public bool HasValidText()

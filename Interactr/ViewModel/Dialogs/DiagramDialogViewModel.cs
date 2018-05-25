@@ -10,7 +10,7 @@ namespace Interactr.ViewModel.Dialogs
 {
     public class DiagramDialogViewModel
     {
-        #region SelectedDiagramType
+        #region ClassName
 
         private readonly ReactiveProperty<Diagram.Type> _selectedDiagramType = new ReactiveProperty<Diagram.Type>();
 

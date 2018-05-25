@@ -12,16 +12,20 @@ namespace Interactr.Tests.View
     public class PartyViewTests
     {
         // Party variable.
+        private Diagram diagram;
+        private Party party;
         private PartyView partyView;
 
 
         [SetUp]
         public void SetupPartyViewTest()
         {
-
+            party = new Party(Party.PartyType.Actor, "instance:Classname");
+            diagram = new Diagram {Parties = { party }};
+            
             partyView = new PartyView
             {
-                ViewModel = new PartyViewModel(new Party(Party.PartyType.Actor, "instance:Classname"))
+                ViewModel = new PartyViewModel(diagram, party)
             };
         }
 

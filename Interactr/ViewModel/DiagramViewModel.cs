@@ -57,7 +57,7 @@ namespace Interactr.ViewModel
         protected DiagramViewModel(Diagram diagram)
         {
             Diagram = diagram;
-            PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(party)).ResultList;
+            PartyViewModels = Diagram.Parties.CreateDerivedList(party => new PartyViewModel(this.Diagram, party)).ResultList;
         }
 
         /// <summary>
