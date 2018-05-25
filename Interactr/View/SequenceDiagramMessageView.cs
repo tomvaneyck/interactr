@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.ViewModel.Dialogs;
@@ -185,10 +186,23 @@ namespace Interactr.View
                 e.KeyCode == (int) Keys.Enter)
             {
                 var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
-                //if (windowsView == null)
-                    // Create dialog.
-                 //   var dialogVM = ViewModel.Label.CreateNewDialogViewModel();
-                //var dialogView = new ReturnMessageDialogView {ViewModel = DiagramDialogViewModel};
+                if (windowsView != null)
+
+                    if (ViewModel.MessageType == Message.MessageType.Result)
+                    {
+                        Debug.Print("Create dialog.");
+                        // Create dialog.
+                        var returnFormatStringVM = ViewModel.FormatString as ReturnFormatStringViewModel;
+                        var dialogVM = returnFormatStringVM.CreateNewDialogViewModel();
+                        var dialogView = new ReturnMessageDialogView(dialogVM);
+                        var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 230, 140);
+
+                        //TODO: close dialog box.
+                        ViewModel.Diagram.Messages.OnDelete.Where(deleted => deleted.Element == ViewModel.Message)
+                            .TakeUntil(window.WindowClosed).Subscribe(_ => windowsView.RemoveWindowWith(dialogView));
+                    }                
+
+                e.IsHandled = true;
             }
         }
     }

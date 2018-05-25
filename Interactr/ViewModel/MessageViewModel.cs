@@ -14,6 +14,8 @@ namespace Interactr.ViewModel
     /// </summary>
     public class MessageViewModel
     {
+        public Diagram Diagram { get; }
+
         /// <summary>
         /// Reference to the Message model.
         /// </summary>
@@ -96,8 +98,9 @@ namespace Interactr.ViewModel
         /// </remarks>
         public bool LabelInEditMode { get; set; }
 
-        public MessageViewModel(Message message)
+        public MessageViewModel(Diagram diagram, Message message)
         {
+            Diagram = diagram;
             Message = message;
 
             // Set CanApplyLabel to true if the message is of the ResultType

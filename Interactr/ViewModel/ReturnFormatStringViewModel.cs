@@ -2,6 +2,7 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Reactive;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -25,6 +26,11 @@ namespace Interactr.ViewModel
         public bool HasValidText()
         {
             return true;
+        }
+
+        public ReturnMessageDialogViewModel CreateNewDialogViewModel()
+        {
+            return new ReturnMessageDialogViewModel();
         }
     }
 }
