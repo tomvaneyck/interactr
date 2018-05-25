@@ -94,9 +94,10 @@ namespace Interactr.View
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
             // The label is red if CanApplyLabel is false.
-            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel => { LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor; }
-                );
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
+            {
+                LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
+            });
 
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
