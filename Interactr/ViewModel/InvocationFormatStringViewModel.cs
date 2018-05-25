@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -45,44 +46,39 @@ namespace Interactr.ViewModel
 
         public ReactiveList<string> MethodArguments { get; } = new ReactiveArrayList<string>();
 
+        private bool _isUpdating = false;
+
         public InvocationFormatStringViewModel()
         {
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             TextChanged.Subscribe(newLabelText =>
+            {
+                if (!_isUpdating)
                 {
-                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
-                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
+                    _isUpdating = true;
 
-                    MethodName = newMethodName;
-                    if (newMethodArguments != null)
-                    {
-                        MethodArguments.Clear();
-                        MethodArguments.AddRange(newMethodArguments);
-                    }
+                    UpdateMethodPropertiesFromLabel();
+
+                    _isUpdating = false;
                 }
-            );
+            });
 
             // Update the label on a change in the methodName or methodArguments.
-            _methodName.Changed.MergeEvents(MethodNameChanged).Subscribe(_ =>
+            var methodArgumentsChanged = ReactiveExtensions.MergeEvents(
+                MethodArguments.OnAdd,
+                MethodArguments.OnDelete,
+                MethodArguments.OnMoved.Where(c => c.Reason == MoveReason.Reordering)
+            );
+            MethodNameChanged.MergeEvents(methodArgumentsChanged).Subscribe(_ =>
             {
-                var newLabel = MethodName;
-                newLabel += "(";
-
-                if (MethodArguments != null)
+                if (!_isUpdating)
                 {
-                    foreach (var arg in MethodArguments)
-                    {
-                        newLabel += arg + ",";
-                    }
-                }
+                    _isUpdating = true;
 
-                if (newLabel[newLabel.Length - 1] == ',')
-                {
-                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
-                }
+                    UpdateLabelFromMethodProperties();
 
-                newLabel += ")";
-                Text = newLabel;
+                    _isUpdating = false;
+                }
             });
         }
 
@@ -93,6 +89,38 @@ namespace Interactr.ViewModel
         public bool HasValidText()
         {
             return Message.IsValidInvocationLabel(Text);
+        }
+
+        private void UpdateMethodPropertiesFromLabel()
+        {
+            var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(Text);
+            var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(Text);
+
+            MethodName = newMethodName;
+            if (newMethodArguments != null)
+            {
+                MethodArguments.Clear();
+                MethodArguments.AddRange(newMethodArguments);
+            }
+        }
+
+        private void UpdateLabelFromMethodProperties()
+        {
+            var newLabel = MethodName;
+            newLabel += "(";
+
+            foreach (var arg in MethodArguments)
+            {
+                newLabel += arg + ",";
+            }
+
+            if (newLabel[newLabel.Length - 1] == ',')
+            {
+                newLabel = newLabel.Substring(0, newLabel.Length - 1);
+            }
+
+            newLabel += ")";
+            Text = newLabel;
         }
     }
 }
