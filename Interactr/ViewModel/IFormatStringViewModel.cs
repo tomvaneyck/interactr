@@ -20,5 +20,7 @@ namespace Interactr.ViewModel
         string Text { get; set; }
 
         IObservable<string> TextChanged { get; }
+        
+        IObservable<System.Reactive.Unit> FormatStringChanged { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text.RegularExpressions;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -38,6 +39,8 @@ namespace Interactr.ViewModel
             set => _methodName.Value = value;
         }
 
+        public IObservable<string> MethodNameChanged => _methodName.Changed;
+
         #endregion
 
         #region MethodArguments
@@ -50,10 +53,17 @@ namespace Interactr.ViewModel
             set => _methodArguments.Value = value;
         }
 
+        public IObservable<List<string>> MethodArgumentsChanged => _methodArguments.Changed;
+
         #endregion
+
+        public IObservable<Unit> FormatStringChanged { get; }
 
         public InvocationFormatStringViewModel()
         {
+            // Set the observables for a change to the formatString
+            FormatStringChanged = TextChanged.MergeEvents(MethodNameChanged, MethodArgumentsChanged);
+
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             TextChanged.Subscribe(newLabelText =>
                 {

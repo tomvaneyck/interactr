@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -33,6 +35,8 @@ namespace Interactr.ViewModel
             set => _instanceName.Value = value;
         }
 
+        public IObservable<string> InstanceNameChanged => _instanceName.Changed;
+
         #endregion
 
         #region ClassName
@@ -45,10 +49,17 @@ namespace Interactr.ViewModel
             set => _className.Value = value;
         }
 
+        public IObservable<string> ClassNameChanged => _className.Changed;
+
         #endregion
+
+        public IObservable<Unit> FormatStringChanged { get; }
 
         public PartyFormatStringViewModel()
         {
+            // Set the observables for a change to the formatString
+            FormatStringChanged = TextChanged.MergeEvents(InstanceNameChanged, ClassNameChanged);
+            
             // Update the instanceName and the className when the label changes.
             TextChanged.Where(t => t != null).Subscribe(newLabelText =>
                 {
@@ -59,14 +70,7 @@ namespace Interactr.ViewModel
                     if (splitText.Length >= 2)
                     {
                         InstanceName = splitText[0];
-                        var className = "";
-
-                        for (int i = 1; i < splitText.Length; i++)
-                        {
-                            className += splitText[i];
-                        }
-
-                        ClassName = className;
+                        ClassName = string.Join(":", splitText.Skip(1));
                     }
                     else
                     {

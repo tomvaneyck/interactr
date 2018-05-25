@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -42,9 +43,10 @@ namespace Interactr.ViewModel
         public PartyFormatStringViewModel Label { get; set; }
 
         /// <summary>
-        /// An observable that emits the new label when it has changed.
+        /// An observable that emits a default unit if something
+        /// in the Formatted string label changes.
         /// </summary>
-        public IObservable<string> LabelChanged => Label.TextChanged;
+        public IObservable<Unit> LabelChanged => Label.FormatStringChanged;
 
         #endregion
 
@@ -110,7 +112,7 @@ namespace Interactr.ViewModel
                 }
             });
             // Update CanApplyLabel when the label changes.
-            LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
+            Label.TextChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
