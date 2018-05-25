@@ -70,8 +70,15 @@ namespace Interactr.View
 
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
-                .Subscribe(newLabel => LabelView.Text = newLabel);
-            
+                .Subscribe(newLabel =>
+                    {
+                        if (!LabelView.IsInEditMode)
+                        {
+                            LabelView.Text = newLabel;
+                        }
+                    }
+                );
+
             LabelView.TextChanged.Subscribe(newText =>
             {
                 if (ViewModel != null) ViewModel.Label.Text = newText;
@@ -88,11 +95,8 @@ namespace Interactr.View
 
             // The label is red if CanApplyLabel is false.
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel =>
-                {
-                    LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
-                }
-            );
+                .Subscribe(canApplyLabel => { LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor; }
+                );
 
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
