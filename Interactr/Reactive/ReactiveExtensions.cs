@@ -101,16 +101,22 @@ namespace Interactr.Reactive
 
             void MoveElements(IEnumerable<(TInput Element, int OldIndex, int NewIndex)> changes)
             {
-                var changesList = changes.ToList();
+                if (filterFunc == null)
+                {
+                    targetList.ApplyPermutation(changes.Select(c => (c.OldIndex, c.NewIndex)));
+                }
+                else
+                {
+                    var changesList = changes.ToList();
 
-                // Apply moves to isFilteredIn list
-                List<bool> newIsFilteredIn = new List<bool>(isFilteredIn);
-                newIsFilteredIn.ApplyPermutation(changesList.Select(c => (c.OldIndex, c.NewIndex)));
+                    // Apply moves to isFilteredIn list
+                    List<bool> newIsFilteredIn = new List<bool>(isFilteredIn);
+                    newIsFilteredIn.ApplyPermutation(changesList.Select(c => (c.OldIndex, c.NewIndex)));
 
-                // Calculate corresponding moves in targetList, taking the list filtering into account.
-                var derivedPermutation = changesList
-                    .Where(c => isFilteredIn[c.OldIndex]) // Don't move elements that weren't in the derived list to begin with.
-                    .Select(c =>
+                    // Calculate corresponding moves in targetList, taking the list filtering into account.
+                    var derivedPermutation = changesList
+                        .Where(c => isFilteredIn[c.OldIndex]) // Don't move elements that weren't in the derived list to begin with.
+                        .Select(c =>
                         {
                             return (
                                 // Convert the start source list index to the current derived list index
@@ -120,7 +126,8 @@ namespace Interactr.Reactive
                             );
                         });
 
-                targetList.ApplyPermutation(derivedPermutation);
+                    targetList.ApplyPermutation(derivedPermutation);
+                }
             }
 
             int SourceListIndexToTargetListIndex(int sourceIndex, IList<bool> isFilteredInList = null)
@@ -136,9 +143,12 @@ namespace Interactr.Reactive
                 sourceListObservable.Subscribe(newList =>
                 {
                     targetList.Clear();
-                    for (int i = 0; i < newList.Count; i++)
+                    if (newList != null)
                     {
-                        InsertElement(i, newList[i]);
+                        for (int i = 0; i < newList.Count; i++)
+                        {
+                            InsertElement(i, newList[i]);
+                        }
                     }
                 }),
                 sourceListObservable.ObserveNested(list => list.OnAdd)
