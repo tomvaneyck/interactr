@@ -106,9 +106,14 @@ namespace Interactr.View
             LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && !isInEditMode)
+                    if (ViewModel != null)
                     {
-                        ViewModel.ApplyLabel();
+                        ViewModel.LabelInEditMode = isInEditMode;
+
+                        if (!isInEditMode)
+                        {
+                            ViewModel.ApplyLabel();
+                        }
                     }
                 }
             );
