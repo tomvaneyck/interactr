@@ -193,7 +193,7 @@ namespace Interactr.ViewModel
             {
                 Tick = suggestedTick,
                 Type = Message.MessageType.Invocation,
-                Label = "Invocation",
+                Label = "inv()",
                 SenderActivationBar = targetActivationBar
             };
             PendingInvokingMessageVM = pendingMsg;
@@ -239,7 +239,7 @@ namespace Interactr.ViewModel
 
             // Add return message.
             Message returnMessage =
-                new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "");
+                new Message(pendingMsg.Receiver, pendingMsg.SenderActivationBar.Party, Message.MessageType.Result, "return()");
             Diagram.Messages.Insert(i + 1, returnMessage);
         }
     }

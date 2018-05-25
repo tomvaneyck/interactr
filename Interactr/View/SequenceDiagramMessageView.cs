@@ -50,15 +50,24 @@ namespace Interactr.View
             AnchorsProperty.SetValue(LabelWithMessageNumberView, Anchors.Left | Anchors.Top);
 
             // Bidirectionally bind the view label to the label in the viewmodel.
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
+            ViewModelChanged.ObserveNested(vm => vm.FormatString.TextChanged)
                 .Subscribe(label => LabelWithMessageNumberView.LabelView.Text = label);
 
             LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label = text;
+                    ViewModel.FormatString.Text = text;
                 }
+
+                // Center the text on a text change.
+                var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
+                    LabelWithMessageNumberView.LabelView.Font);
+                Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
+
+                // Set the labelMessageNumber view margins.
+                MarginsProperty.SetValue(LabelWithMessageNumberView,
+                    new Margins(textPos.X, textPos.Y));
             });
 
             // Put the arrow starting point on the sender activation bar.
@@ -82,25 +91,38 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.MessageNumberChanged)
                 .Subscribe(m => LabelWithMessageNumberView.SetMessageNumber(m));
 
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.CanLeaveEditMode = canApplyLabel);
+
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
+                LabelWithMessageNumberView.LabelView.Color =
+                    canApplyLabel || ViewModel.MessageType == Message.MessageType.Result
+                        ? DefaultLabelColor
+                        : InvalidLabelColor);
+
+            // Fire ApplyLabel when leaving edit mode.
+            LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
+                isInEditMode =>
+                {
+                    if (ViewModel != null && !isInEditMode)
+                    {
+                        ViewModel.ApplyLabel();
+                    }
+                }
+            );
+
             Observable.CombineLatest(
                 _arrow.StartPointChanged,
                 _arrow.EndPointChanged
             ).Subscribe(p =>
             {
-                // Get the leftmost point
-                Point start = p[0].X < p[1].X ? p[0] : p[1];
-                // Get the rightmost point
-                Point end = p[0].X > p[1].X ? p[0] : p[1];
-                // Get the vector from the leftmost to the rightmost point.
-                Point diff = end - start;
-                
-                // Center the text.
-                Point midPos = start + new Point(diff.X / 2, diff.Y / 2);
+                // Center the label.
                 var textSize = TextRenderer.MeasureText(LabelWithMessageNumberView.WholeText,
                     LabelWithMessageNumberView.LabelView.Font);
-                Point textPos = midPos - new Point(textSize.Width/2, 0);
+                Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
-                // Set the labelMessageNumber view margins.
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });

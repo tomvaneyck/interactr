@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Constants\HexaDecimalKeyChars.cs" />
     <Compile Include="Constants\KeyCodes.cs" />
+    <Compile Include="InvocationLabelParser.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Model\Diagram.cs" />
     <Compile Include="Model\Message.cs" />
@@ -82,8 +83,10 @@
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\ActivationBarViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
+    <Compile Include="ViewModel\ReturnMessageLabel.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
+    <Compile Include="ViewModel\IFormatStringViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\PartyDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DiagramDialogViewModel.cs" />
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="ViewModel\PendingMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramMessageViewModel.cs" />
     <Compile Include="ViewModel\SequenceDiagramViewModel.cs" />
+    <Compile Include="ViewModel\InvocationFormatStringViewModel.cs" />
     <Compile Include="View\ActivationBarView.cs" />
     <Compile Include="View\CommunicationDiagramMessageView.cs" />
     <Compile Include="View\CommunicationDiagramPartyView.cs" />

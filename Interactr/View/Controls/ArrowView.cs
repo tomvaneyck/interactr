@@ -68,14 +68,14 @@ namespace Interactr.View.Controls
         {
             // Draw arrowhead triangle.
             float radius = ArrowHeadSize;
-            float wingAngle = (float)(Math.PI / 4d); // Angle between line and arrow wings.
+            float wingAngle = (float) (Math.PI / 4d); // Angle between line and arrow wings.
 
             float xDiff = EndPoint.X - StartPoint.X; // Length of line projected on X-axis.
             float yDiff = EndPoint.Y - StartPoint.Y; // Length of line projected on Y-axis.
 
             // Angle between x-axis and line.
-            float check = (float)Math.Asin(yDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
-            float angleCalc = (float)Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float check = (float) Math.Asin(yDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
+            float angleCalc = (float) Math.Acos(xDiff / Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2)));
             float arrowAngle = check < 0 ? -1 * angleCalc : angleCalc;
 
             // If line has length 0, assume an angle of 0.
@@ -85,17 +85,33 @@ namespace Interactr.View.Controls
             // The wings will be drawn from EndPoint to each of these points.
 
             // Calculate point 1
-            int x1 = (int)Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
-            int y1 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
+            int x1 = (int) Math.Round(Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.X;
+            int y1 = (int) Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
             // Calculate point 2, on the other side of the line.
-            int x2 = (int)Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
-            int y2 = (int)Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
+            int x2 = (int) Math.Round(-Math.Cos(arrowAngle - wingAngle) * radius) + EndPoint.X;
+            int y2 = (int) Math.Round(-Math.Sin(arrowAngle - wingAngle) * radius) + EndPoint.Y;
 
             Point pointL = new Point(x1, y1);
             Point pointR = new Point(x2, y2);
 
             return (pointL, pointR);
+        }
+
+        /// <summary>
+        /// Calculate and return the middle point of this arrowView.
+        /// </summary>
+        /// <returns></returns>
+        public Point CalculateMidPoint()
+        {
+            // Get the leftmost arrow point
+            Point start = StartPoint.X < EndPoint.X ? StartPoint : EndPoint;
+            // Get the rightmost arrow point
+            Point end = StartPoint.X > EndPoint.X ? StartPoint : EndPoint;
+            // Get the vector from the leftmost to the rightmost point.
+            Point diff = end - start;
+
+            return start + new Point(diff.X / 2, diff.Y / 2);
         }
     }
 }

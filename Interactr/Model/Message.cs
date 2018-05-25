@@ -1,4 +1,8 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Interactr.Reactive;
 
 namespace Interactr.Model
@@ -105,5 +109,79 @@ namespace Interactr.Model
         public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
 
         #endregion
+
+        /// <summary>
+        /// Return True if the given label has a valid format for an InvocationLabel.
+        /// <remarks>
+        /// The label of an invocation message consists of a method name and an
+        /// argument list. A method name starts with a lowercase letter and consists
+        /// only of letters, digits, and underscores.
+        /// An argument list is a parenthesized, comma-separated list of arguments with an argument being any sequence
+        /// of characters, not including commas or parentheses.
+        /// </remarks>
+        /// <example> methodName(arg1,arg2) </example>
+        /// </summary>
+        /// <param name="label"> The label string.</param>
+        /// <returns>A boolean indicating if it is a valid label.</returns>
+        public static bool IsValidInvocationLabel(string label)
+        {
+            if (label == null)
+            {
+                return false;
+            }
+
+            // Check for a valid program structure.
+            var isValidStructure = Regex.IsMatch(label, "^.*" + Regex.Escape("(") + ".*" + Regex.Escape(")") + "$");
+
+            // Check for a valid method name and a valid arguments list.
+            var methodNameIsValid =
+                IsValidMethodName(InvocationLabelParser.RetrieveMethodNameFromLabel(label));
+            var argumentsListIsValid =
+                IsValidArgumentsList(InvocationLabelParser.RetrieveArgumentsFromLabel(label));
+
+            // The label is valid if the methodName, the argumentsList and the structure are valid.
+            return methodNameIsValid && argumentsListIsValid && isValidStructure;
+        }
+
+        /// <summary>
+        /// Return True if a given method name has a valid format.
+        /// </summary>
+        /// <remarks>
+        /// A method name starts with a lowercase letter and consists
+        /// only of letters, digits, and underscores. An argument list is a parenthesized,
+        /// </remarks>
+        /// <param name="methodName"></param>
+        /// <returns></returns>
+        public static bool IsValidMethodName(string methodName)
+        {
+            return methodName != null && Regex.IsMatch(methodName, "^[a-z][a-zA-Z0-9_]*$");
+        }
+
+        /// <summary>
+        /// Return True if a given argumentList is valid.
+        /// </summary>
+        /// <remarks>
+        /// The list is valid if every string in the list is an argument.
+        /// An argument is any sequence of characters, not including commas or parentheses.
+        /// </remarks>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        public static bool IsValidArgumentsList(IEnumerable<string> arguments)
+        {
+            if (arguments == null)
+            {
+                return false;
+            }
+
+            foreach (var arg in arguments)
+            {
+                if (!Regex.IsMatch(arg, "^[^(,)\\s]*$") && arg != "")
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
