@@ -159,13 +159,12 @@ namespace Interactr.View
                 // Create dialog.
                 var dialogVM = ViewModel.CreateNewDialogViewModel();
                 var dialogView = new PartyDialogView {ViewModel = dialogVM};
-                var window = windowsView.AddWindow(dialogView, 230, 140);
-                window.Title = "Party settings";
+                var window = Dialog.OpenDialog(this, dialogView, "Party settings", 230, 140);
 
                 // Close dialog when the party is deleted or the close button is clicked.
                 var binding = ViewModel.Diagram.Parties.OnDelete
                     .Where(deleted => deleted.Element == ViewModel.Party)
-                    .MergeEvents(window.CloseButton.OnButtonClick)
+                    .TakeUntil(window.WindowClosed)
                     .Take(1)
                     .Subscribe(_ =>
                     {
