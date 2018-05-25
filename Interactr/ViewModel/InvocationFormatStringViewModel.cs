@@ -104,21 +104,7 @@ namespace Interactr.ViewModel
 
         private void UpdateLabelFromMethodProperties()
         {
-            var newLabel = MethodName;
-            newLabel += "(";
-
-            foreach (var arg in MethodArguments)
-            {
-                newLabel += arg + ",";
-            }
-
-            if (newLabel[newLabel.Length - 1] == ',')
-            {
-                newLabel = newLabel.Substring(0, newLabel.Length - 1);
-            }
-
-            newLabel += ")";
-            Text = newLabel;
+            Text = $"{ MethodName }({ String.Join(",", MethodArguments) })";
         }
     }
 }
