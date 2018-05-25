@@ -45,10 +45,10 @@ namespace Interactr.View.Dialogs
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.InstanceName = newText;
+                    ViewModel.Label.InstanceName = newText;
                 }
             });
-            ViewModelChanged.ObserveNested(vm => vm.InstanceNameChanged)
+            ViewModelChanged.ObserveNested(vm => vm.Label.InstanceNameChanged)
                 .Where(instanceName => instanceName != null)
                 .Subscribe(newText => instanceNameTextBox.Text = newText);
             AnchorsProperty.SetValue(instanceNameTextBox, Anchors.Left | Anchors.Top);
@@ -70,10 +70,10 @@ namespace Interactr.View.Dialogs
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.ClassName = newText;
+                    ViewModel.Label.ClassName = newText;
                 }
             });
-            ViewModelChanged.ObserveNested(vm => vm.ClassNameChanged)
+            ViewModelChanged.ObserveNested(vm => vm.Label.ClassNameChanged)
                 .Where(className => className != null)
                 .Subscribe(newText => classNameTextBox.Text = newText);
             AnchorsProperty.SetValue(classNameTextBox, Anchors.Left | Anchors.Top);

@@ -10,33 +10,7 @@ namespace Interactr.ViewModel.Dialogs
 {
     public class PartyDialogViewModel
     {
-        #region ClassName
-
-        private readonly ReactiveProperty<string> _className = new ReactiveProperty<string>();
-
-        public string ClassName
-        {
-            get => _className.Value;
-            set => _className.Value = value;
-        }
-
-        public IObservable<string> ClassNameChanged => _className.Changed;
-
-        #endregion
-        
-        #region InstanceName
-
-        private readonly ReactiveProperty<string> _instanceName = new ReactiveProperty<string>();
-
-        public string InstanceName
-        {
-            get => _instanceName.Value;
-            set => _instanceName.Value = value;
-        }
-
-        public IObservable<string> InstanceNameChanged => _instanceName.Changed;
-
-        #endregion
+        public PartyFormatStringViewModel Label { get; } = new PartyFormatStringViewModel();
         
         #region PartyType
 

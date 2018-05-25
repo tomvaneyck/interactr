@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
@@ -143,10 +144,19 @@ namespace Interactr.ViewModel
         public PartyDialogViewModel CreateNewDialogViewModel()
         {
             PartyDialogViewModel dialog = new PartyDialogViewModel();
-            dialog.ClassNameChanged.Subscribe(newClassName => Label.ClassName = newClassName);
-            Label.ClassNameChanged.Subscribe(newClassName => dialog.ClassName = newClassName);
-            dialog.InstanceNameChanged.Subscribe(newInstanceName => Label.InstanceName = newInstanceName);
-            Label.InstanceNameChanged.Subscribe(newInstanceName => dialog.InstanceName = newInstanceName);
+
+            dialog.Label.ClassName = Label.ClassName;
+            dialog.Label.InstanceName = Label.InstanceName;
+
+            dialog.Label.TextChanged
+                .Where(_ => dialog.Label.HasValidText())
+                .Subscribe(newLabel => Party.Label = newLabel);
+            
+            Label.ClassNameChanged.Subscribe(newClassName => dialog.Label.ClassName = newClassName);
+            Label.InstanceNameChanged.Subscribe(newInstanceName => dialog.Label.InstanceName = newInstanceName);
+
+            dialog.PartyTypeChanged.Subscribe(newType => Party.Type = newType);
+            Party.TypeChanged.Subscribe(newType => dialog.PartyType = newType);
             return dialog;
         }
     }
