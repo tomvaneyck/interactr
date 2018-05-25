@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -106,7 +107,22 @@ namespace Interactr.ViewModel
 
         private void UpdateLabelFromMethodProperties()
         {
-            Text = $"{ MethodName }({ String.Join(",", MethodArguments) })";
+            Text = $"{MethodName}({String.Join(",", MethodArguments)})";
+        }
+
+        public InvocationMessageDiagramViewModel CreateNewDialogViewModel(Message model)
+        {
+            var dialogVM = new InvocationMessageDiagramViewModel();
+
+            //Bind the text with the dialogViewModel.
+            TextChanged.Subscribe(newText =>
+            {
+                dialogVM.Text = newText;
+                model.Label = newText;
+            });
+            dialogVM.TextChanged.Subscribe(newText => { Text = newText; });
+
+            return dialogVM;
         }
     }
 }

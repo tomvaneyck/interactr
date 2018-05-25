@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using Interactr.Constants;
+using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View;
 using Interactr.View.Controls;
@@ -62,7 +63,7 @@ namespace Interactr.View
             _messageViews = ViewModelChanged
                 .Where(vm => vm != null)
                 .Select(vm => vm.InvocationMessageViewModels)
-                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(vm)).ResultList;
+                .CreateDerivedListBinding(vm => new CommunicationDiagramMessageView(ViewModel.Diagram,vm)).ResultList;
 
             // Automatically add and remove message views to Children.
             _messageViews.OnAdd.Subscribe(e =>
