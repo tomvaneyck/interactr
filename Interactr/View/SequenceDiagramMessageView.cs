@@ -193,7 +193,7 @@ namespace Interactr.View
                         Debug.Print("Create dialog.");
                         // Create dialog.
                         var returnFormatStringVM = ViewModel.FormatString as ReturnFormatStringViewModel;
-                        var dialogVM = returnFormatStringVM.CreateNewDialogViewModel();
+                        var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
                         var dialogView = new ReturnMessageDialogView(dialogVM);
                         var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 230, 140);
 

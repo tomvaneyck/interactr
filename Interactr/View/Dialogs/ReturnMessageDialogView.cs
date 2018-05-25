@@ -26,12 +26,19 @@ namespace Interactr.View.Dialogs
         {
             ViewModel = viewModel;
 
+
             // Add a textbox for typing the messageLabel.
-            TextBox ReturnMessageTextBox = new TextBox();
-            ReturnMessageTextBox.TextChanged.Subscribe(newText => ViewModel.Text = newText);
-            AnchorsProperty.SetValue(ReturnMessageTextBox, Anchors.Left | Anchors.Top);
-            MarginsProperty.SetValue(ReturnMessageTextBox, new Margins(5, 5));
-            this.Children.Add(ReturnMessageTextBox);
+            TextBox returnMessageTextBox = new TextBox();
+            
+            // Bind TextBox and viewmodel.
+            ViewModel.TextChanged.Subscribe(newText => returnMessageTextBox.Text = newText);
+            returnMessageTextBox.TextChanged.Subscribe(newText => ViewModel.Text = newText);
+            
+            // Anchor and margin properties.
+            AnchorsProperty.SetValue(returnMessageTextBox, Anchors.Left | Anchors.Top);
+            MarginsProperty.SetValue(returnMessageTextBox, new Margins(5, 5));
+
+            this.Children.Add(returnMessageTextBox);
         }
     }
 }
