@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
+using Interactr.ViewModel.Dialogs;
+using Interactr.Window;
 using Point = Interactr.View.Framework.Point;
 using LineType = Interactr.View.Controls.LineView.LineType;
 using Message = Interactr.Model.Message;
@@ -128,6 +131,7 @@ namespace Interactr.View
                     LabelWithMessageNumberView.LabelView.Font);
                 Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
+
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });
@@ -173,6 +177,19 @@ namespace Interactr.View
                             }).Switch()
                     ).Switch()
             ).Switch();
+        }
+
+        protected override void OnKeyEvent(KeyEventData e)
+        {
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) &&
+                e.KeyCode == (int) Keys.Enter)
+            {
+                var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
+                //if (windowsView == null)
+                    // Create dialog.
+                 //   var dialogVM = ViewModel.Label.CreateNewDialogViewModel();
+                //var dialogView = new ReturnMessageDialogView {ViewModel = DiagramDialogViewModel};
+            }
         }
     }
 }
