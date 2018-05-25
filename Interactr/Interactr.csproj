@@ -114,6 +114,8 @@
     <Compile Include="View\Controls\EditableText.cs" />
     <Compile Include="View\Controls\RadioButtonGroup.cs" />
     <Compile Include="View\Controls\TextBox.cs" />
+    <Compile Include="View\Controls\ListBox.cs" />
+    <Compile Include="View\Controls\ListView.cs" />
     <Compile Include="View\DiagramEditorView.cs" />
     <Compile Include="View\Dialogs\DiagramDialogView.cs" />
     <Compile Include="View\Dialogs\Dialog.cs" />
