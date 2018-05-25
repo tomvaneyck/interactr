@@ -29,7 +29,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _instanceName = new ReactiveProperty<string>();
 
-        private string InstanceName
+        public string InstanceName
         {
             get => _instanceName.Value;
             set => _instanceName.Value = value;
@@ -43,7 +43,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _className = new ReactiveProperty<string>();
 
-        private string ClassName
+        public string ClassName
         {
             get => _className.Value;
             set => _className.Value = value;

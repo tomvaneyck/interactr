@@ -139,9 +139,14 @@ namespace Interactr.ViewModel
         {
             Party.Label = Label.Text;
         }
+
         public PartyDialogViewModel CreateNewDialogViewModel()
         {
             PartyDialogViewModel dialog = new PartyDialogViewModel();
+            dialog.ClassNameChanged.Subscribe(newClassName => Label.ClassName = newClassName);
+            Label.ClassNameChanged.Subscribe(newClassName => dialog.ClassName = newClassName);
+            dialog.InstanceNameChanged.Subscribe(newInstanceName => Label.InstanceName = newInstanceName);
+            Label.InstanceNameChanged.Subscribe(newInstanceName => dialog.InstanceName = newInstanceName);
             return dialog;
         }
     }

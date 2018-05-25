@@ -73,6 +73,7 @@ namespace Interactr.View
 
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.Label.TextChanged)
+                .Where(newLabel => newLabel != null)
                 .Subscribe(newLabel =>
                     {
                         if (!LabelView.IsInEditMode)

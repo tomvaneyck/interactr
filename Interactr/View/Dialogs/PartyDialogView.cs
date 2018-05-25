@@ -41,8 +41,16 @@ namespace Interactr.View.Dialogs
             this.Children.Add(instanceNameLabel);
 
             TextBox instanceNameTextBox = new TextBox();
-            instanceNameTextBox.TextChanged.Subscribe(newText => ViewModel.InstanceName = newText);
-            ViewModelChanged.ObserveNested(vm => vm.InstanceNameChanged).Subscribe(newText => instanceNameTextBox.Text = newText);
+            instanceNameTextBox.TextChanged.Subscribe(newText =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.InstanceName = newText;
+                }
+            });
+            ViewModelChanged.ObserveNested(vm => vm.InstanceNameChanged)
+                .Where(instanceName => instanceName != null)
+                .Subscribe(newText => instanceNameTextBox.Text = newText);
             AnchorsProperty.SetValue(instanceNameTextBox, Anchors.Left | Anchors.Top);
             MarginsProperty.SetValue(instanceNameTextBox, new Margins(115, 5));
             this.Children.Add(instanceNameTextBox);
@@ -58,8 +66,16 @@ namespace Interactr.View.Dialogs
             this.Children.Add(classNameLabel);
 
             TextBox classNameTextBox = new TextBox();
-            classNameTextBox.TextChanged.Subscribe(newText => ViewModel.ClassName = newText);
-            ViewModelChanged.ObserveNested(vm => vm.ClassNameChanged).Subscribe(newText => classNameTextBox.Text = newText);
+            classNameTextBox.TextChanged.Subscribe(newText =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.ClassName = newText;
+                }
+            });
+            ViewModelChanged.ObserveNested(vm => vm.ClassNameChanged)
+                .Where(className => className != null)
+                .Subscribe(newText => classNameTextBox.Text = newText);
             AnchorsProperty.SetValue(classNameTextBox, Anchors.Left | Anchors.Top);
             MarginsProperty.SetValue(classNameTextBox, new Margins(115, 30));
             this.Children.Add(classNameTextBox);
@@ -78,14 +94,26 @@ namespace Interactr.View.Dialogs
             {
                 Label = "Actor"
             };
-            actorButton.IsSelectedChanged.Where(selected => selected).Subscribe(_ => ViewModel.PartyType = Party.PartyType.Actor);
+            actorButton.IsSelectedChanged.Where(selected => selected).Subscribe(_ =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.PartyType = Party.PartyType.Actor;
+                }
+            });
             ViewModelChanged.ObserveNested(vm => vm.PartyTypeChanged).Where(type => type == Party.PartyType.Actor).Subscribe(_ => actorButton.IsSelected = true);
 
             RadioButtonGroup.RadioButton objectButton = new RadioButtonGroup.RadioButton
             {
                 Label = "Object"
             };
-            objectButton.IsSelectedChanged.Where(selected => selected).Subscribe(_ => ViewModel.PartyType = Party.PartyType.Object);
+            objectButton.IsSelectedChanged.Where(selected => selected).Subscribe(_ =>
+            {
+                if (ViewModel != null)
+                {
+                    ViewModel.PartyType = Party.PartyType.Object;
+                }
+            });
             ViewModelChanged.ObserveNested(vm => vm.PartyTypeChanged).Where(type => type == Party.PartyType.Object).Subscribe(_ => objectButton.IsSelected = true);
 
             RadioButtonGroup partyTypeRadioGroup = new RadioButtonGroup
