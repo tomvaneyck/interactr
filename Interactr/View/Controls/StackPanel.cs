@@ -55,6 +55,8 @@ namespace Interactr.View.Controls
         
         public StackPanel()
         {
+            AutoCompactEnabled = true;
+
             // Set can be focused false.
             CanBeFocused = false;
 
@@ -77,7 +79,8 @@ namespace Interactr.View.Controls
             // Update the positions of the children when a child is added or removed.
             ReactiveExtensions.MergeEvents(
                 Children.OnDelete,
-                Children.OnAdd
+                Children.OnAdd,
+                Children.OnMoved
             ).Subscribe(_ => UpdateLayout());
 
             AutoCompactEnabledChanged.Subscribe(_ => UpdateLayout());
@@ -140,8 +143,8 @@ namespace Interactr.View.Controls
         {
             if (AutoCompactEnabled)
             {
-                PreferredWidth = Children.Select(c => c.Width).Max();
-                PreferredHeight = Children.Select(c => c.Height).Max();
+                PreferredWidth = Children.Select(c => c.Position.X + c.PreferredWidth).Concat(new []{ 0 }).Max();
+                PreferredHeight = Children.Select(c => c.Position.Y + c.PreferredHeight).Concat(new[] { 0 }).Max();
             }
         }
     }
