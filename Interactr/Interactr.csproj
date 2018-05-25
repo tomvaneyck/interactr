@@ -83,7 +83,8 @@
     <Compile Include="Reactive\ReactiveProperty.cs" />
     <Compile Include="ViewModel\ActivationBarViewModel.cs" />
     <Compile Include="ViewModel\CommunicationDiagramViewModel.cs" />
-    <Compile Include="ViewModel\ReturnMessageLabel.cs" />
+    <Compile Include="ViewModel\PartyFormatStringViewModel.cs" />
+    <Compile Include="ViewModel\ReturnFormatStringViewModel.cs" />
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
     <Compile Include="ViewModel\IFormatStringViewModel.cs" />

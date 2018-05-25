@@ -69,20 +69,19 @@ namespace Interactr.View
             });
 
             // Bi-directional bind party label to view
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged).Subscribe(text =>
+            ViewModelChanged.ObserveNested(vm => vm.Label.TextChanged)
+                .Subscribe(newLabel =>
+                    {
+                        if (!LabelView.IsInEditMode)
+                        {
+                            LabelView.Text = newLabel;
+                        }
+                    }
+                );
+
+            LabelView.TextChanged.Subscribe(newText =>
             {
-                // The label may not be updated if it is in edit mode.
-                if (!LabelView.IsInEditMode)
-                {
-                    LabelView.Text = text;
-                }
-            });
-            LabelView.TextChanged.Subscribe(text =>
-            {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
+                if (ViewModel != null) ViewModel.Label.Text = newText;
             });
 
             // Add child elements
@@ -95,12 +94,10 @@ namespace Interactr.View
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
             // The label is red if CanApplyLabel is false.
-            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
-                .Subscribe(canApplyLabel =>
-                {
-                    LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
-                }
-            );
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
+            {
+                LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
+            });
 
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => _labelView.CanLeaveEditMode = canApplyLabel);
@@ -126,7 +123,7 @@ namespace Interactr.View
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label = text;
+                    ViewModel.Label.Text = text;
                 }
             });
         }
