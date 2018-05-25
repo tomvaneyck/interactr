@@ -175,8 +175,8 @@ namespace Interactr.View.Controls
                 // Draw cursor.
                 if (CursorIsVisible)
                 {
-                    int cursorPosition = Text.Length > 0 
-                        ? TextRenderer.MeasureText(Text, Font).Width - 3 
+                    int cursorPosition = Text.Length > 0
+                        ? TextRenderer.MeasureText(Text, Font).Width - 3
                         : 3;
                     g.DrawLine(pen, cursorPosition, 0, cursorPosition, PreferredHeight);
                 }
@@ -199,7 +199,11 @@ namespace Interactr.View.Controls
                         }
                     }
                     // If Keychar is a letter or a colon.
-                    else if (char.IsLetterOrDigit(eventData.KeyChar) || eventData.KeyChar == HexaDecimalKeyChars.Colon)
+                    else if (char.IsLetterOrDigit(eventData.KeyChar) ||
+                             eventData.KeyChar == HexaDecimalKeyChars.Colon ||
+                             eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
+                             eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis ||
+                             eventData.KeyChar == HexaDecimalKeyChars.Comma)
                     {
                         Text += eventData.KeyChar;
                     }
