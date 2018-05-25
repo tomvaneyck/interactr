@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Reactive;
 using System.Reactive.Subjects;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.Window;
@@ -78,6 +79,13 @@ namespace Interactr.View.Controls
             Label = "Button";
             LabelFont = new Font("Arial", 8f);
             IsEnabled = true;
+
+            LabelChanged.Subscribe(text =>
+            {
+                var newSize = TextRenderer.MeasureText(text, LabelFont);
+                PreferredWidth = newSize.Width + 2;
+                PreferredHeight = newSize.Height + 2;
+            });
 
             ReactiveExtensions.MergeEvents(LabelChanged, IsEnabledChanged).Subscribe(_ => Repaint());
         }
