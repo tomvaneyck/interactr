@@ -72,7 +72,7 @@ namespace Interactr.Tests.View
         {
             partyView.LabelView.Text = "test:IsRight";
 
-            Assert.AreEqual(partyView.ViewModel.Label, partyView.LabelView.Text);
+            Assert.AreEqual(partyView.ViewModel.Label.Text, partyView.LabelView.Text);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Interactr.Tests.View
             partyView.LabelView.Text = "test:IsRight";
             partyView.LabelView.IsInEditMode = false;
 
-            Assert.AreEqual(partyView.ViewModel.Label, partyView.ViewModel.Party.Label);
+            Assert.AreEqual(partyView.ViewModel.Label.Text, partyView.ViewModel.Party.Label);
         }
     }
 }

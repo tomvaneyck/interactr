@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -38,21 +39,16 @@ namespace Interactr.ViewModel
 
         #region Label
 
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-
         /// <summary> A label.
         /// <example> instance_name;class_name </example>
         /// </summary>
-        public string Label
-        {
-            get => _label.Value;
-            set => _label.Value = value;
-        }
+        public PartyFormatStringViewModel Label { get; }
 
         /// <summary>
-        /// An observable that emits the new label when it has changed.
+        /// An observable that emits a default unit if something
+        /// in the Formatted string label changes.
         /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<string> LabelChanged => Label.TextChanged;
 
         #endregion
 
@@ -106,6 +102,9 @@ namespace Interactr.ViewModel
             Diagram = diagram;
             Party = party;
 
+            // Create a new party formatted string view model
+            Label = new PartyFormatStringViewModel();
+
             // Bind the type in the viewmodel to the type in the model.
             party.TypeChanged.Subscribe(newType => Type = newType);
 
@@ -114,10 +113,9 @@ namespace Interactr.ViewModel
             {
                 if (!LabelInEditMode)
                 {
-                    Label = newLabel; 
+                    Label.Text = newLabel;
                 }
             });
-
             // Update CanApplyLabel when the label changes.
             LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
@@ -139,9 +137,8 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Party.Label = Label;
+            Party.Label = Label.Text;
         }
-
         public PartyDialogViewModel CreateNewDialogViewModel()
         {
             PartyDialogViewModel dialog = new PartyDialogViewModel();

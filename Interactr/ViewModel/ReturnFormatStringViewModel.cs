@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
     public class ReturnFormatStringViewModel : IFormatStringViewModel
     {
+        #region Text
+
         private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
         /// <see cref="Text"/>
@@ -15,6 +19,8 @@ namespace Interactr.ViewModel
         }
 
         public IObservable<string> TextChanged => _text.Changed;
+
+        #endregion
 
         public bool HasValidText()
         {

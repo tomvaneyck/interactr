@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using Interactr.Model;
 using Interactr.Reactive;
@@ -13,9 +15,9 @@ namespace Interactr.ViewModel
     /// </summary>
     public class InvocationFormatStringViewModel : IFormatStringViewModel
     {
-        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
-
         #region Text
+
+        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
 
         /// <see cref="Text"/>
         public string Text
@@ -38,66 +40,73 @@ namespace Interactr.ViewModel
             set => _methodName.Value = value;
         }
 
-        #endregion
-
-        #region MethodArguments
-
-        private readonly ReactiveProperty<List<string>> _methodArguments = new ReactiveProperty<List<string>>();
-
-        private List<string> MethodArguments
-        {
-            get => _methodArguments.Value;
-            set => _methodArguments.Value = value;
-        }
+        public IObservable<string> MethodNameChanged => _methodName.Changed;
 
         #endregion
+
+        public ReactiveList<string> MethodArguments { get; } = new ReactiveArrayList<string>();
+
+        private bool _isUpdating = false;
 
         public InvocationFormatStringViewModel()
         {
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             TextChanged.Subscribe(newLabelText =>
+            {
+                if (!_isUpdating)
                 {
-                    var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(newLabelText);
-                    var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(newLabelText);
+                    _isUpdating = true;
 
-                    MethodName = newMethodName;
-                    if (newMethodArguments != null)
-                    {
-                        MethodArguments = newMethodArguments.ToList();
-                    }
+                    UpdateMethodPropertiesFromLabel();
+
+                    _isUpdating = false;
                 }
-            );
+            });
 
             // Update the label on a change in the methodName or methodArguments.
-            _methodName.Changed.MergeEvents(_methodArguments.Changed).Subscribe(_ =>
+            var methodArgumentsChanged = ReactiveExtensions.MergeEvents(
+                MethodArguments.OnAdd,
+                MethodArguments.OnDelete,
+                MethodArguments.OnMoved.Where(c => c.Reason == MoveReason.Reordering)
+            );
+            MethodNameChanged.MergeEvents(methodArgumentsChanged).Subscribe(_ =>
             {
-                var newLabel = MethodName;
-                newLabel += "(";
-
-                if (MethodArguments != null)
+                if (!_isUpdating)
                 {
-                    foreach (var arg in MethodArguments)
-                    {
-                        newLabel += arg + ",";
-                    }
-                }
+                    _isUpdating = true;
 
-                if (newLabel[newLabel.Length - 1] == ',')
-                {
-                    newLabel = newLabel.Substring(0, newLabel.Length - 1);
-                }
+                    UpdateLabelFromMethodProperties();
 
-                newLabel += ")";
-                Text = newLabel;
+                    _isUpdating = false;
+                }
             });
         }
 
         /// <summary>
         /// Indicate wether the text of this  invocation messageLabel is a valid label.
         /// </summary>
+        /// <returns></returns>
         public bool HasValidText()
         {
             return Message.IsValidInvocationLabel(Text);
+        }
+
+        private void UpdateMethodPropertiesFromLabel()
+        {
+            var newMethodName = InvocationLabelParser.RetrieveMethodNameFromLabel(Text);
+            var newMethodArguments = InvocationLabelParser.RetrieveArgumentsFromLabel(Text);
+
+            MethodName = newMethodName;
+            if (newMethodArguments != null)
+            {
+                MethodArguments.Clear();
+                MethodArguments.AddRange(newMethodArguments);
+            }
+        }
+
+        private void UpdateLabelFromMethodProperties()
+        {
+            Text = $"{ MethodName }({ String.Join(",", MethodArguments) })";
         }
     }
 }
