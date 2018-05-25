@@ -112,30 +112,12 @@ namespace Interactr.View.Controls
                 CanLeaveEditMode)
             {
                 IsInEditMode = false;
+                eventData.IsHandled = true;
             }
-            else if (eventData.Id == KeyEvent.KEY_TYPED)
+            else
             {
-                // If the keyChar is backspace.
-                if (eventData.KeyChar == HexaDecimalKeyChars.BackSpace)
-                {
-                    if (Text.Length > 0)
-                    {
-                        Text = Text.Substring(0, Text.Length - 1);
-                    }
-                }
-                // If Keychar is not escape.
-                else if (char.IsLetterOrDigit(eventData.KeyChar) ||
-                         eventData.KeyChar == HexaDecimalKeyChars.Colon ||
-                         eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
-                         eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis ||
-                         eventData.KeyChar == HexaDecimalKeyChars.Comma)
-                {
-                    Text += eventData.KeyChar;
-                }
+                base.OnKeyEvent(eventData);
             }
-
-            // Cancel event propagation.
-            eventData.IsHandled = true;
         }
 
         protected override void OnMouseEvent(MouseEventData e)
