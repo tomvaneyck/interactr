@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Drawing;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Model;
@@ -8,6 +8,8 @@ using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
+using Message = Interactr.Model.Message;
+using Point = Interactr.View.Framework.Point;
 
 namespace Interactr.View
 {
@@ -16,6 +18,9 @@ namespace Interactr.View
     /// </summary>
     public class CommunicationDiagramMessageView : UIElement
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region CommunicationDiagramMessageViewModel
 
         private readonly ReactiveProperty<MessageViewModel> _viewModel =
@@ -76,22 +81,39 @@ namespace Interactr.View
             HeightChanged.Subscribe(newHeight => _arrow.Height = newHeight);
 
             // Update the label on a change.
-            ViewModel.LabelChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.Label);
+            ViewModel.FormatString.TextChanged.Subscribe(_ => LabelWithMessageNumberView.LabelView.Text = ViewModel.FormatString.Text);
 
             LabelWithMessageNumberView.LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label = text;
+                    ViewModel.FormatString.Text = text;
                 }
             });
 
             // Update the messageNumber on a change
-            ViewModel.MessageNumberChanged.Subscribe(m =>
-            {
-                LabelWithMessageNumberView.SetMessageNumber( m);
-            });
+            ViewModel.MessageNumberChanged.Subscribe(m => { LabelWithMessageNumberView.SetMessageNumber(m); });
 
+            // Bind CanApplyLabel and CanLeaveEditMode.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.CanLeaveEditMode = canApplyLabel);
+
+            // The label is red if CanApplyLabel is true.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
+                .Subscribe(canApplyLabel => LabelWithMessageNumberView.LabelView.Color =
+                    canApplyLabel ? DefaultLabelColor : InvalidLabelColor);
+
+            // Fire ApplyLabel when leaving edit mode.
+            LabelWithMessageNumberView.LabelView.EditModeChanged.Subscribe(
+                isInEditMode =>
+                {
+                    if (ViewModel != null && !isInEditMode)
+                        ViewModel.ApplyLabel();
+                }
+            );
+
+            // Change the height and width of the LabelWithMessageNumberView manually because, 
+            // the CommunicationDiagramMessageView is a UIElement.
             LabelWithMessageNumberView.PreferredHeightChanged.Subscribe(h => LabelWithMessageNumberView.Height = h);
             LabelWithMessageNumberView.PreferredWidthChanged.Subscribe(w => LabelWithMessageNumberView.Width = w);
 
@@ -101,18 +123,8 @@ namespace Interactr.View
                 _arrow.EndPointChanged
             ).Subscribe(p =>
             {
-                // Get the leftmost point
-                Point start = p[0].X < p[1].X ? p[0] : p[1];
-                // Get the rightmost point
-                Point end = p[0].X > p[1].X ? p[0] : p[1];
-                // Get the vector from the leftmost to the rightmost point.
-                Point diff = end - start;
-                // Start the text at a third of the distance between the points. Looks good enough for now.
-                Point textPos = start + new Point(diff.X / 2, diff.Y / 2);
-
                 // Set the labelMessageNumberView position
-                LabelWithMessageNumberView.Position =
-                    new Point(textPos.X, textPos.Y);
+                LabelWithMessageNumberView.Position = _arrow.CalculateMidPoint();
             });
         }
 

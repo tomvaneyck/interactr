@@ -107,17 +107,35 @@ namespace Interactr.View.Controls
         protected override void OnKeyEvent(KeyEventData eventData)
         {
             if (IsInEditMode &&
-                    eventData.Id == KeyEvent.KEY_RELEASED &&
-                    eventData.KeyCode == KeyEvent.VK_ESCAPE &&
-                    CanLeaveEditMode)
+                eventData.Id == KeyEvent.KEY_RELEASED &&
+                eventData.KeyCode == KeyEvent.VK_ESCAPE &&
+                CanLeaveEditMode)
             {
                 IsInEditMode = false;
-                eventData.IsHandled = true;
             }
-            else
+            else if (eventData.Id == KeyEvent.KEY_TYPED)
             {
-                base.OnKeyEvent(eventData);
+                // If the keyChar is backspace.
+                if (eventData.KeyChar == HexaDecimalKeyChars.BackSpace)
+                {
+                    if (Text.Length > 0)
+                    {
+                        Text = Text.Substring(0, Text.Length - 1);
+                    }
+                }
+                // If Keychar is not escape.
+                else if (char.IsLetterOrDigit(eventData.KeyChar) ||
+                         eventData.KeyChar == HexaDecimalKeyChars.Colon ||
+                         eventData.KeyChar == HexaDecimalKeyChars.OpeningParenthesis ||
+                         eventData.KeyChar == HexaDecimalKeyChars.ClosingParenthesis ||
+                         eventData.KeyChar == HexaDecimalKeyChars.Comma)
+                {
+                    Text += eventData.KeyChar;
+                }
             }
+
+            // Cancel event propagation.
+            eventData.IsHandled = true;
         }
 
         protected override void OnMouseEvent(MouseEventData e)
@@ -135,6 +153,7 @@ namespace Interactr.View.Controls
 
                 e.IsHandled = true;
             }
+            
             // When the label is focused and the user clicks the label, enter edit mode.
             else if (IsFocused && e.Id == MouseEvent.MOUSE_PRESSED && !IsReadOnly)
             {

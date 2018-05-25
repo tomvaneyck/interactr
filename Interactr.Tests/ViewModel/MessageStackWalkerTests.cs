@@ -12,6 +12,8 @@ namespace Interactr.Tests.ViewModel
     [TestFixture]
     class MessageStackWalkerTests
     {
+        private static string _testLabel = "label()";
+
         [Test]
         public void TestSimpleInvocation()
         {
@@ -21,8 +23,9 @@ namespace Interactr.Tests.ViewModel
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
                 new SequenceDiagramMessageViewModel(
-                    new Message(party1, party2, Message.MessageType.Invocation, "Invocation"), 0),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, ""), 1)
+                    new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
+                new SequenceDiagramMessageViewModel(
+                    new Message(party2, party1, Message.MessageType.Result, _testLabel), 1)
             };
 
             StackFrame<SequenceDiagramMessageViewModel> expectedFrame1 =
@@ -62,11 +65,13 @@ namespace Interactr.Tests.ViewModel
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
                 new SequenceDiagramMessageViewModel(
-                    new Message(party1, party2, Message.MessageType.Invocation, "Invocation"), 0),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, ""), 1),
+                    new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
                 new SequenceDiagramMessageViewModel(
-                    new Message(party1, party2, Message.MessageType.Invocation, "Invocation"), 2),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, ""), 3)
+                    new Message(party2, party1, Message.MessageType.Result, _testLabel), 1),
+                new SequenceDiagramMessageViewModel(
+                    new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 2),
+                new SequenceDiagramMessageViewModel(
+                    new Message(party2, party1, Message.MessageType.Result, _testLabel), 3)
             };
 
             StackFrame<SequenceDiagramMessageViewModel> expectedFrame1 =
@@ -117,11 +122,13 @@ namespace Interactr.Tests.ViewModel
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
                 new SequenceDiagramMessageViewModel(
-                    new Message(party1, party2, Message.MessageType.Invocation, "Invocation"), 0),
+                    new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
                 new SequenceDiagramMessageViewModel(
-                    new Message(party2, party3, Message.MessageType.Invocation, "Invocation"), 1),
-                new SequenceDiagramMessageViewModel(new Message(party3, party2, Message.MessageType.Result, ""), 2),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, ""), 3)
+                    new Message(party2, party3, Message.MessageType.Invocation, _testLabel), 1),
+                new SequenceDiagramMessageViewModel(new Message(party3, party2, Message.MessageType.Result, _testLabel),
+                    2),
+                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, _testLabel),
+                    3)
             };
 
             StackFrame<SequenceDiagramMessageViewModel> expectedFrame1 =
@@ -171,11 +178,13 @@ namespace Interactr.Tests.ViewModel
             List<SequenceDiagramMessageViewModel> messages = new List<SequenceDiagramMessageViewModel>
             {
                 new SequenceDiagramMessageViewModel(
-                    new Message(party1, party2, Message.MessageType.Invocation, "Invocation"), 0),
+                    new Message(party1, party2, Message.MessageType.Invocation, _testLabel), 0),
                 new SequenceDiagramMessageViewModel(
-                    new Message(party2, party1, Message.MessageType.Invocation, "Invocation"), 1),
-                new SequenceDiagramMessageViewModel(new Message(party1, party2, Message.MessageType.Result, ""), 2),
-                new SequenceDiagramMessageViewModel(new Message(party2, party1, Message.MessageType.Result, ""), 3)
+                    new Message(party2, party1, Message.MessageType.Invocation, _testLabel), 1),
+                new SequenceDiagramMessageViewModel(
+                    new Message(party1, party2, Message.MessageType.Result, _testLabel), 2),
+                new SequenceDiagramMessageViewModel(
+                    new Message(party2, party1, Message.MessageType.Result, _testLabel), 3)
             };
 
             StackFrame<SequenceDiagramMessageViewModel> expectedFrame1 =
