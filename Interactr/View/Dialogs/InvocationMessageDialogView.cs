@@ -38,10 +38,18 @@ namespace Interactr.View.Dialogs
 
             Children.Add(methodNameTextBox);
 
-//            var methodArgsListBox = new ListBox<string>(e => new LabelView() {Text = e.Value});
-//            
-//            //Bind textbox and viewModel
-//            ViewModel.MethodArguments.OnAdd.Subscribe(newText => methodArgsListBox.ItemsSource.Insert(newText.Index,newText.Element));
+            var methodArgsListBox = new ListBox<string>(e => new LabelView() {Text = e});
+
+            //Bind textbox and viewModel
+            ViewModel.MethodArguments.OnAdd.Subscribe(newText =>
+                methodArgsListBox.ItemsSource.Insert(newText.Index, newText.Element));
+            ViewModel.MethodArguments.OnDelete.Subscribe(e => methodArgsListBox.ItemsSource.Remove(e.Element));
+         
+            // Anchor and margin properties.
+            AnchorsProperty.SetValue(methodArgsListBox, Anchors.Left | Anchors.Top);
+            MarginsProperty.SetValue(methodArgsListBox, new Margins(0,60));
+            
+            Children.Add(methodArgsListBox);
         }
     }
 }
