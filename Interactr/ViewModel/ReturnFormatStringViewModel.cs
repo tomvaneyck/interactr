@@ -22,11 +22,8 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public IObservable<Unit> FormatStringChanged { get; }
-
         public ReturnFormatStringViewModel()
         {
-            FormatStringChanged = TextChanged.Select(_=>Unit.Default);
         }
 
         public bool HasValidText()

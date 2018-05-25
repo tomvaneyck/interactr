@@ -57,13 +57,8 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        public IObservable<Unit> FormatStringChanged { get; }
-
         public InvocationFormatStringViewModel()
         {
-            // Set the observables for a change to the formatString
-            FormatStringChanged = TextChanged.MergeEvents(MethodNameChanged, MethodArgumentsChanged);
-
             // Update the methodName and the method arguments when the label in the viewmodel changes.
             TextChanged.Subscribe(newLabelText =>
                 {

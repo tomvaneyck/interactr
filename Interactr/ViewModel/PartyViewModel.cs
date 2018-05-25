@@ -46,7 +46,7 @@ namespace Interactr.ViewModel
         /// An observable that emits a default unit if something
         /// in the Formatted string label changes.
         /// </summary>
-        public IObservable<Unit> LabelChanged => Label.FormatStringChanged;
+        public IObservable<string> LabelChanged => Label.TextChanged;
 
         #endregion
 
@@ -112,7 +112,7 @@ namespace Interactr.ViewModel
                 }
             });
             // Update CanApplyLabel when the label changes.
-            Label.TextChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
+            LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
 
         /// <summary>
