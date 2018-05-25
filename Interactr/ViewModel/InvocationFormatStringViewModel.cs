@@ -113,12 +113,18 @@ namespace Interactr.ViewModel
             var dialogVM = new InvocationMessageDiagramViewModel();
 
             //Bind the text with the dialogViewModel.
-            TextChanged.Subscribe(newText =>
+            MethodNameChanged.Subscribe(newText =>
             {
-                dialogVM.Text = newText;
-                model.Label = newText;
+                if (Message.IsValidMethodName(newText))
+                {
+                    dialogVM.MethodName = newText;
+                    if (Message.IsValidInvocationLabel(dialogVM.Text))
+                    {
+                        model.Label = dialogVM.Text;
+                    }
+                }
             });
-            dialogVM.TextChanged.Subscribe(newText => { Text = newText; });
+            dialogVM.MethodNameChanged.Subscribe(newText => { MethodName = newText; });
 
             return dialogVM;
         }
