@@ -150,22 +150,16 @@ namespace Interactr.View
             // On CTRL+Enter, open a party dialog
             if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && e.KeyCode == (int)Keys.Enter)
             {
-                var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
-                if (windowsView == null)
-                {
-                    return;
-                }
-                
                 // Create dialog.
                 var dialogVM = ViewModel.CreateNewDialogViewModel();
                 var dialogView = new PartyDialogView {ViewModel = dialogVM};
                 var window = Dialog.OpenDialog(this, dialogView, "Party settings", 230, 140);
 
                 // Close dialog when the party is deleted or the close button is clicked.
-                var binding = ViewModel.Diagram.Parties.OnDelete
+                var windowsView = (WindowsView)window.Parent;
+                ViewModel.Diagram.Parties.OnDelete
                     .Where(deleted => deleted.Element == ViewModel.Party)
                     .TakeUntil(window.WindowClosed)
-                    .Take(1)
                     .Subscribe(_ =>
                     {
                         windowsView.RemoveWindowWith(dialogView);
