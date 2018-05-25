@@ -114,8 +114,10 @@ namespace Interactr.View.Controls
                 IsInEditMode = false;
                 eventData.IsHandled = true;
             }
-
-            base.OnKeyEvent(eventData);
+            else
+            {
+                base.OnKeyEvent(eventData);
+            }
         }
 
         protected override void OnMouseEvent(MouseEventData e)
