@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -91,10 +94,13 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        public Diagram Diagram { get; }
+
         public Party Party { get; }
 
-        public PartyViewModel(Party party)
+        public PartyViewModel(Diagram diagram, Party party)
         {
+            Diagram = diagram;
             Party = party;
 
             // Create a new party formatted string view model
@@ -133,6 +139,25 @@ namespace Interactr.ViewModel
         public void ApplyLabel()
         {
             Party.Label = Label.Text;
+        }
+
+        public PartyDialogViewModel CreateNewDialogViewModel()
+        {
+            PartyDialogViewModel dialog = new PartyDialogViewModel();
+
+            dialog.Label.ClassName = Label.ClassName;
+            dialog.Label.InstanceName = Label.InstanceName;
+
+            dialog.Label.TextChanged
+                .Where(_ => dialog.Label.HasValidText())
+                .Subscribe(newLabel => Party.Label = newLabel);
+            
+            Label.ClassNameChanged.Subscribe(newClassName => dialog.Label.ClassName = newClassName);
+            Label.InstanceNameChanged.Subscribe(newInstanceName => dialog.Label.InstanceName = newInstanceName);
+
+            dialog.PartyTypeChanged.Subscribe(newType => Party.Type = newType);
+            Party.TypeChanged.Subscribe(newType => dialog.PartyType = newType);
+            return dialog;
         }
     }
 }

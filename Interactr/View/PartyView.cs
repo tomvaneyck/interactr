@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -70,6 +73,7 @@ namespace Interactr.View
 
             // Bi-directional bind party label to view
             ViewModelChanged.ObserveNested(vm => vm.Label.TextChanged)
+                .Where(newLabel => newLabel != null)
                 .Subscribe(newLabel =>
                     {
                         if (!LabelView.IsInEditMode)
@@ -135,6 +139,30 @@ namespace Interactr.View
             {
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
+                e.IsHandled = true;
+            }
+        }
+
+        protected override void OnKeyEvent(KeyEventData e)
+        {
+            // On CTRL+Enter, open a party dialog
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && e.KeyCode == (int)Keys.Enter)
+            {
+                // Create dialog.
+                var dialogVM = ViewModel.CreateNewDialogViewModel();
+                var dialogView = new PartyDialogView {ViewModel = dialogVM};
+                var window = Dialog.OpenDialog(this, dialogView, "Party settings", 230, 140);
+
+                // Close dialog when the party is deleted or the close button is clicked.
+                var windowsView = (WindowsView)window.Parent;
+                ViewModel.Diagram.Parties.OnDelete
+                    .Where(deleted => deleted.Element == ViewModel.Party)
+                    .TakeUntil(window.WindowClosed)
+                    .Subscribe(_ =>
+                    {
+                        windowsView.RemoveWindowWith(dialogView);
+                    });
+
                 e.IsHandled = true;
             }
         }

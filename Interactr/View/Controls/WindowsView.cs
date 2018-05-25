@@ -117,8 +117,10 @@ namespace Interactr.View.Controls
             private const int MinWindowHeight = 100;
 
             public IObservable<Unit> WindowClosed =>
-                ((WindowsView) Parent).Children.OnDelete.Where(e => e.Element == this).Take(1)
-                .Select(e => Unit.Default);
+                ((WindowsView) Parent).Children.OnDelete
+                    .Where(e => e.Element == this)
+                    .Take(1)
+                    .Select(e => Unit.Default);
 
             #region Title
 

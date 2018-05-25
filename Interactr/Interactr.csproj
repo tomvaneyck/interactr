@@ -89,6 +89,7 @@
     <Compile Include="ViewModel\DiagramEditorViewModel.cs" />
     <Compile Include="ViewModel\DiagramViewModel.cs" />
     <Compile Include="ViewModel\IFormatStringViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\PartyDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\DiagramDialogViewModel.cs" />
     <Compile Include="ViewModel\LifeLineViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="View\Controls\ListBox.cs" />
     <Compile Include="View\Controls\ListView.cs" />
     <Compile Include="View\DiagramEditorView.cs" />
+    <Compile Include="View\Dialogs\PartyDialogView.cs" />
     <Compile Include="View\Dialogs\DiagramDialogView.cs" />
     <Compile Include="View\Dialogs\Dialog.cs" />
     <Compile Include="View\Dialogs\ReturnMessageDialogView.cs" />
