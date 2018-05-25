@@ -92,7 +92,6 @@ namespace Interactr.ViewModel
 
         private void UpdatePartyPropertiesFromLabel()
         {
-            Debug.WriteLine($"{this.GetHashCode()}: UpdatePartyPropertiesFromLabel - {Text}");
             var splitText = Text.Split(':');
 
             // If the text contains a : and thus can be split up in an 
@@ -109,12 +108,10 @@ namespace Interactr.ViewModel
                 InstanceName = Text;
                 ClassName = null;
             }
-            Debug.WriteLine($"   -> {InstanceName} {ClassName}");
         }
 
         private void UpdateLabelFromPartyProperties()
         {
-            Debug.WriteLine($"{this.GetHashCode()}: UpdateLabelFromPartyProperties - {InstanceName} {ClassName}");
             if (ClassName == null)
             {
                 Text = InstanceName;
@@ -123,7 +120,6 @@ namespace Interactr.ViewModel
             {
                 Text = InstanceName + ":" + ClassName;
             }
-            Debug.WriteLine($"   -> {Text}");
         }
 
         public bool HasValidText()
