@@ -90,5 +90,10 @@ namespace Interactr.View.Controls
             this.Children.Add(stackPanel);
             this.Children.Add(_listView);
         }
+
+        public override void PaintElement(Graphics g)
+        {
+            g.DrawRectangle(Pens.Black, 0, 0, Width-1, Height-1);
+        }
     }
 }
