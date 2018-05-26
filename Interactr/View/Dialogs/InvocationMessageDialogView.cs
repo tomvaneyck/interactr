@@ -59,11 +59,7 @@ namespace Interactr.View.Dialogs
 
             // Method arguments listbox
             var methodArgsListBox = new ListBox<string>(e => new LabelView {Text = e});
-
-            //Bind textbox and viewModel
-            ViewModel.MethodArguments.OnAdd.Subscribe(newText =>
-                methodArgsListBox.ItemsSource.Insert(newText.Index, newText.Element));
-            ViewModel.MethodArguments.OnDelete.Subscribe(e => methodArgsListBox.ItemsSource.Remove(e.Element));
+            methodArgsListBox.ItemsSource = viewModel.MethodArguments;
          
             // Anchor and margin properties.
             AnchorsProperty.SetValue(methodArgsListBox, Anchors.Left | Anchors.Top | Anchors.Bottom);

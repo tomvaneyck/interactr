@@ -34,7 +34,7 @@ namespace Interactr.ViewModel.Dialogs
 
         #endregion
 
-        public ReactiveList<string> MethodArguments { get; } = new ReactiveArrayList<string>();
+        public ReactiveList<string> MethodArguments { get; set; }
 
     }
 }

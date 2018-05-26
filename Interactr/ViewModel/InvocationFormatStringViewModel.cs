@@ -126,6 +126,8 @@ namespace Interactr.ViewModel
             });
             dialogVM.MethodNameChanged.Subscribe(newText => { MethodName = newText; });
 
+            dialogVM.MethodArguments = MethodArguments;
+
             return dialogVM;
         }
     }
