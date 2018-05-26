@@ -203,6 +203,9 @@ namespace Interactr.View.Controls
                         {
                             Text = Text.Substring(0, Text.Length - 1);
                         }
+
+                        // Cancel event propagation.
+                        eventData.IsHandled = true;
                     }
                     // If Keychar is a letter or a colon.
                     else if (char.IsLetterOrDigit(eventData.KeyChar) ||
@@ -212,14 +215,11 @@ namespace Interactr.View.Controls
                              eventData.KeyChar == HexaDecimalKeyChars.Comma)
                     {
                         Text += eventData.KeyChar;
+                        // Cancel event propagation.
+                        eventData.IsHandled = true;
                     }
                 }
-
-                // Cancel event propagation.
-                eventData.IsHandled = true;
             }
-
-            base.OnKeyEvent(eventData);
         }
 
         /// <see cref="OnMouseEvent"/>

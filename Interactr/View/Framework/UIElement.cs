@@ -260,7 +260,7 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        public bool CanBeFocused { get; protected set; } = true;
+        public bool CanBeFocused { get; set; } = true;
 
         public bool IsTabScope { get; set; }
 
@@ -348,6 +348,8 @@ namespace Interactr.View.Framework
         /// <param name="eventData">Details about this event.</param>
         public static void HandleKeyEvent(KeyEventData eventData)
         {
+            var targetElement = FocusedElement;
+
             TunnelDownKeyEventPreview(eventData);
             if (eventData.IsHandled)
             {
@@ -356,7 +358,17 @@ namespace Interactr.View.Framework
             }
 
             //Bubble up event from FocusedElement to root
-            FocusedElement.BubbleUpKeyEvent(eventData);
+            targetElement.BubbleUpKeyEvent(eventData);
+            if (eventData.IsHandled)
+            {
+                //Event was handled
+                return;
+            }
+
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
+            {
+                targetElement.FocusNextTabStop();
+            }
         }
 
         /// <summary>
@@ -424,11 +436,6 @@ namespace Interactr.View.Framework
         /// <returns>True if this element has handled the event</returns>
         protected virtual void OnKeyEvent(KeyEventData eventData)
         {
-            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
-            {
-                FocusNextTabStop();
-                eventData.IsHandled = true;
-            }
         }
 
         #endregion
