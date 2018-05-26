@@ -140,20 +140,19 @@ namespace Interactr.View.Controls
             });
 
             // Leave edit mode if focus is lost and Repaint.
-            FocusChanged
-                .Where(isFocused => !IsFocused)
-                .Subscribe(_ => HandleFocusChange());
+            FocusChanged.Subscribe(HandleFocusChange);
         }
 
         /// <summary>
         /// Handles the loss of focus.
         /// </summary>
+        /// <param name="isFocused"></param>
         /// <remarks>
         /// Defers the implementation to derived classes with the template pattern.
         /// </remarks>
-        protected virtual void HandleFocusChange()
+        protected virtual void HandleFocusChange(bool isFocused)
         {
-            IsInEditMode = false;
+            IsInEditMode = isFocused;
         }
 
         /// <summary>
@@ -219,6 +218,8 @@ namespace Interactr.View.Controls
                 // Cancel event propagation.
                 eventData.IsHandled = true;
             }
+
+            base.OnKeyEvent(eventData);
         }
 
         /// <see cref="OnMouseEvent"/>

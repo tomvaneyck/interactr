@@ -30,6 +30,8 @@ namespace Interactr.View.Dialogs
 
         public PartyDialogView()
         {
+            this.IsTabScope = true;
+
             LabelView instanceNameLabel = new LabelView
             {
                 Text = "Instance name:",

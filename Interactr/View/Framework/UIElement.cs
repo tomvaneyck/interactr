@@ -262,6 +262,8 @@ namespace Interactr.View.Framework
 
         public bool CanBeFocused { get; protected set; } = true;
 
+        public bool IsTabScope { get; set; }
+
         public UIElement()
         {
             this.IsVisible = true;
@@ -422,6 +424,11 @@ namespace Interactr.View.Framework
         /// <returns>True if this element has handled the event</returns>
         protected virtual void OnKeyEvent(KeyEventData eventData)
         {
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
+            {
+                FocusNextTabStop();
+                eventData.IsHandled = true;
+            }
         }
 
         #endregion
@@ -636,6 +643,15 @@ namespace Interactr.View.Framework
                 g.TranslateTransform(f.Origin.X, f.Origin.Y);
 
                 // Paint
+                if (curElement.IsFocused)
+                {
+                    using (Pen focusPen = new Pen(Color.Gray))
+                    {
+                        focusPen.DashStyle = DashStyle.Dot;
+                        focusPen.DashOffset = 2;
+                        g.DrawRectangle(focusPen, 0, 0, curElement.Width - 1, curElement.Height - 1);
+                    }
+                }
                 curElement.PaintElement(g);
 
                 // Reset clip and transform
@@ -680,6 +696,48 @@ namespace Interactr.View.Framework
         }
 
         #endregion
+
+        private void FocusNextTabStop()
+        {
+            // Move focus to the first focusable descendant, unless we have already just done this.
+            var child = GetDecendants().FirstOrDefault(c => c.CanBeFocused && c.IsVisible);
+            if (child != null)
+            {
+                child.Focus();
+                return;
+            }
+
+            // Focus the first next sibling or their descendant thereof that is focusable.
+            // If no such element is found, go up one level in the tree and repeat.
+            // If a tabscope is encountered, don't go up and focus the first focusable descendant of the tab scope instead.
+            UIElement curElement = this;
+            while (curElement.Parent != null)
+            {
+                var siblingsAfterCurElement = curElement.Parent.Children.SkipWhile(e => e != curElement).Skip(1);
+                foreach (var sibling in siblingsAfterCurElement)
+                {
+                    var candidates = new[] { sibling }.Concat(sibling.GetDecendants());
+                    var nextFocusableElement = candidates.FirstOrDefault(e => e.CanBeFocused && e.IsVisible);
+                    if (nextFocusableElement != null)
+                    {
+                        nextFocusableElement.Focus();
+                        return;
+                    }
+                }
+
+                if (curElement.Parent.IsTabScope)
+                {
+                    var e = curElement.Parent.Children.FirstOrDefault(c => c.CanBeFocused && c.IsVisible);
+                    if (e != null)
+                    {
+                        e.Focus();
+                        return;
+                    }
+                }
+
+                curElement = curElement.Parent;
+            }
+        }
 
         /// <summary>
         /// Transform input point p to coördinates relative to the given UIElement.
@@ -741,7 +799,7 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Return all the decendants of this element.
+        /// Return all the decendants of this element, in a breadth first order.
         /// </summary>
         /// <returns>All decendants of this element.</returns>
         public IEnumerable<UIElement> GetDecendants()
