@@ -59,6 +59,8 @@ namespace Interactr.View.Controls
 
         public LabelView() : base()
         {
+            CanLeaveEditMode = true;
+
             // Leave edit mode if ReadOnly is activated
             IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
 

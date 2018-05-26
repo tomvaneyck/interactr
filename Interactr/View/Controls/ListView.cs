@@ -142,9 +142,16 @@ namespace Interactr.View.Controls
             });
         }
 
+        public int GetSourceIndexOfView(UIElement e)
+        {
+            ItemContainer container = Children.OfType<ItemContainer>().FirstOrDefault(c => c.View == e);
+            return Children.IndexOf(container);
+        }
+
         private class ItemContainer : AnchorPanel
         {
             public T Item { get; }
+            public UIElement View { get; }
             
             #region IsSelected
 
@@ -163,9 +170,10 @@ namespace Interactr.View.Controls
             public ItemContainer(T item, UIElement view)
             {
                 Item = item;
+                View = view;
 
-                MarginsProperty.SetValue(view, new Margins(3, 3, 3, 3));
-                this.Children.Add(view);
+                MarginsProperty.SetValue(View, new Margins(3, 3, 3, 3));
+                this.Children.Add(View);
 
                 IsSelectedChanged.Subscribe(_ => Repaint());
             }

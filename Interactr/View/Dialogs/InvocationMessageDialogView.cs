@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Runtime.Remoting.Messaging;
 using Interactr.Reactive;
 using Interactr.View.Controls;
@@ -22,6 +23,8 @@ namespace Interactr.View.Dialogs
         public IObservable<InvocationMessageDiagramViewModel> ViewModelChanged => _viewModel.Changed;
 
         #endregion
+
+        private ListBox<string> _methodArgumentsListBox;
 
         public InvocationMessageDialogView(InvocationMessageDiagramViewModel viewModel)
         {
@@ -58,16 +61,26 @@ namespace Interactr.View.Dialogs
             this.Children.Add(methodArgumentsLabel);
 
             // Method arguments listbox
-            var methodArgsListBox = new ListBox<string>(e => new LabelView {Text = e})
+            _methodArgumentsListBox = new ListBox<string>(e =>
             {
-                ItemsSource = viewModel.MethodArguments
-            };
+                var labelView = new LabelView {Text = e};
+                labelView.EditModeChanged
+                    .Where(editMode => !editMode)
+                    .Where(_ => labelView.Parent != null)
+                    .Subscribe(newLabel =>
+                    {
+                        int i = _methodArgumentsListBox.ListView.GetSourceIndexOfView(labelView);
+                        _methodArgumentsListBox.ItemsSource[i] = labelView.Text;
+                    });
+                return labelView;
+            });
+            _methodArgumentsListBox.ItemsSource = viewModel.MethodArguments;
 
             // Anchor and margin properties.
-            AnchorsProperty.SetValue(methodArgsListBox, Anchors.Left | Anchors.Top | Anchors.Bottom);
-            MarginsProperty.SetValue(methodArgsListBox, new Margins(140, 30, 0, 5));
+            AnchorsProperty.SetValue(_methodArgumentsListBox, Anchors.Left | Anchors.Top | Anchors.Bottom);
+            MarginsProperty.SetValue(_methodArgumentsListBox, new Margins(140, 30, 0, 5));
             
-            Children.Add(methodArgsListBox);
+            Children.Add(_methodArgumentsListBox);
         }
     }
 }
