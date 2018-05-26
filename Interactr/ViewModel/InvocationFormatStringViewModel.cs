@@ -33,7 +33,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
 
-        private string MethodName
+        public string MethodName
         {
             get => _methodName.Value;
             set => _methodName.Value = value;
@@ -111,22 +111,8 @@ namespace Interactr.ViewModel
         public InvocationMessageDiagramViewModel CreateNewDialogViewModel(Message model)
         {
             var dialogVM = new InvocationMessageDiagramViewModel();
-
-            //Bind the text with the dialogViewModel.
-            MethodNameChanged.Subscribe(newText =>
-            {
-                if (Message.IsValidMethodName(newText))
-                {
-                    dialogVM.MethodName = newText;
-                    if (Message.IsValidInvocationLabel(dialogVM.Text))
-                    {
-                        model.Label = dialogVM.Text;
-                    }
-                }
-            });
-            dialogVM.MethodNameChanged.Subscribe(newText => { MethodName = newText; });
-
-            dialogVM.MethodArguments = MethodArguments;
+            model.LabelChanged.Subscribe(newLabel => dialogVM.Message.Text = newLabel);
+            dialogVM.Message.TextChanged.Subscribe(newLabel => model.Label = newLabel);
 
             return dialogVM;
         }

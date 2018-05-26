@@ -24,7 +24,7 @@ namespace Interactr.View.Dialogs
 
         #endregion
 
-        private ListBox<string> _methodArgumentsListBox;
+        private readonly ListBox<string> _methodArgumentsListBox;
 
         public InvocationMessageDialogView(InvocationMessageDiagramViewModel viewModel)
         {
@@ -43,8 +43,8 @@ namespace Interactr.View.Dialogs
 
             // Method name textbox
             TextBox methodNameTextBox = new TextBox();
-            ViewModel.MethodNameChanged.Subscribe(newText => methodNameTextBox.Text = newText);
-            methodNameTextBox.TextChanged.Subscribe(newText => ViewModel.MethodName = newText);
+            ViewModel.Message.MethodNameChanged.Subscribe(newText => methodNameTextBox.Text = newText);
+            methodNameTextBox.TextChanged.Subscribe(newText => ViewModel.Message.MethodName = newText);
             AnchorsProperty.SetValue(methodNameTextBox, Anchors.Left | Anchors.Top);
             MarginsProperty.SetValue(methodNameTextBox, new Margins(140, 5));
             this.Children.Add(methodNameTextBox);
@@ -74,7 +74,7 @@ namespace Interactr.View.Dialogs
                     });
                 return labelView;
             });
-            _methodArgumentsListBox.ItemsSource = viewModel.MethodArguments;
+            _methodArgumentsListBox.ItemsSource = viewModel.Message.MethodArguments;
 
             // Anchor and margin properties.
             AnchorsProperty.SetValue(_methodArgumentsListBox, Anchors.Left | Anchors.Top | Anchors.Bottom);
