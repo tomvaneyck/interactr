@@ -90,7 +90,6 @@ namespace Interactr.View.Controls
                 if (e.Value.Id == MouseEvent.MOUSE_PRESSED)
                 {
                     SelectedIndex = Children.IndexOf(e.Element);
-                    e.Value.IsHandled = true;
                 }
             });
 

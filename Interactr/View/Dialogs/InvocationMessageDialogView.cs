@@ -58,9 +58,11 @@ namespace Interactr.View.Dialogs
             this.Children.Add(methodArgumentsLabel);
 
             // Method arguments listbox
-            var methodArgsListBox = new ListBox<string>(e => new LabelView {Text = e});
-            methodArgsListBox.ItemsSource = viewModel.MethodArguments;
-         
+            var methodArgsListBox = new ListBox<string>(e => new LabelView {Text = e})
+            {
+                ItemsSource = viewModel.MethodArguments
+            };
+
             // Anchor and margin properties.
             AnchorsProperty.SetValue(methodArgsListBox, Anchors.Left | Anchors.Top | Anchors.Bottom);
             MarginsProperty.SetValue(methodArgsListBox, new Margins(140, 30, 0, 5));
