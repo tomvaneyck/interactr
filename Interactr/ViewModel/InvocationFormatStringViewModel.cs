@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -32,7 +33,7 @@ namespace Interactr.ViewModel
 
         private readonly ReactiveProperty<string> _methodName = new ReactiveProperty<string>();
 
-        private string MethodName
+        public string MethodName
         {
             get => _methodName.Value;
             set => _methodName.Value = value;
@@ -104,7 +105,16 @@ namespace Interactr.ViewModel
 
         private void UpdateLabelFromMethodProperties()
         {
-            Text = $"{ MethodName }({ String.Join(",", MethodArguments) })";
+            Text = $"{MethodName}({String.Join(",", MethodArguments)})";
+        }
+
+        public InvocationMessageDiagramViewModel CreateNewDialogViewModel(Message model)
+        {
+            var dialogVM = new InvocationMessageDiagramViewModel();
+            model.LabelChanged.Subscribe(newLabel => dialogVM.Message.Text = newLabel);
+            dialogVM.Message.TextChanged.Subscribe(newLabel => model.Label = newLabel);
+
+            return dialogVM;
         }
     }
 }

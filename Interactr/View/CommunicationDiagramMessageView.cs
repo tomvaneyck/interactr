@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -20,6 +23,8 @@ namespace Interactr.View
     {
         private static readonly Color DefaultLabelColor = Color.Black;
         private static readonly Color InvalidLabelColor = Color.Red;
+
+        public Diagram Diagram { get;  }
 
         #region CommunicationDiagramMessageViewModel
 
@@ -67,10 +72,11 @@ namespace Interactr.View
 
         private readonly ArrowView _arrow = new ArrowView();
 
-        public CommunicationDiagramMessageView(MessageViewModel viewModel)
+        public CommunicationDiagramMessageView(Diagram diagram, MessageViewModel viewModel)
         {
             IsVisibleToMouse = false;
 
+            Diagram = diagram;
             ViewModel = viewModel;
 
             Children.Add(_arrow);
@@ -136,28 +142,33 @@ namespace Interactr.View
             });
         }
 
-        /// <summary>
-        /// Observe the position of the party given by the party selector.
-        /// </summary>
-        /// <param name="partySelector">The selector of the party.</param>
-        /// <returns>An observable with the partyview of the party where the position changed.</returns>
-        private IObservable<PartyView> ObservePartyPosition(
-            Func<MessageViewModel, IObservable<Party>> partySelector)
+        protected override void OnKeyEvent(KeyEventData e)
         {
-            // Select the latest parent view
-            return ParentChanged.OfType<CommunicationDiagramView>().Select(parent =>
-                // and the latest viewmodel
-                    ViewModelChanged.Where(vm => vm != null).Select(vm =>
-                        // and the latest matching sender
-                            partySelector(vm).Where(party => party != null).Select(targetParty =>
-                            {
-                                // and listen for the position changes of its view.
-                                return parent.PartyViewsDragPanel.PartyViews.ObserveWhere(
-                                    party => party.PositionChanged,
-                                    party => party.ViewModel.Party == targetParty).Select(e => e.Element);
-                            }).Switch()
-                    ).Switch()
-            ).Switch();
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) &&
+                e.KeyCode == (int) Keys.Enter)
+            {
+                var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
+                if (windowsView != null)
+                {
+                    if (ViewModel.MessageType == Message.MessageType.Invocation)
+                    {
+                        {
+                            Debug.Print("Create dialog.");
+                            // Create dialog.
+                            var returnFormatStringVM = ViewModel.FormatString as InvocationFormatStringViewModel;
+                            var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
+                            var dialogView = new InvocationMessageDialogView(dialogVM);
+                            var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 350, 140);
+
+                            ViewModel.Diagram.Messages.OnDelete.Where(deleted => deleted.Element == ViewModel.Message)
+                                .TakeUntil(window.WindowClosed)
+                                .Subscribe(_ => windowsView.RemoveWindowWith(dialogView));
+                        }
+                    }
+                }
+
+                e.IsHandled = true;
+            }
         }
     }
 }

@@ -29,14 +29,15 @@ namespace Interactr.View.Controls
         private readonly Button _moveUpButton;
         private readonly Button _moveDownButton;
         private readonly Button _deleteButton;
-        private readonly ListView<T> _listView;
+
+        public ListView<T> ListView { get; }
 
         public ListBox(Func<T, UIElement> viewFactory)
         {
             this.StackOrientation = Orientation.Vertical;
 
-            _listView = new ListView<T>(viewFactory);
-            this.ItemsSourceChanged.Subscribe(list => _listView.ItemsSource = list);
+            ListView = new ListView<T>(viewFactory);
+            this.ItemsSourceChanged.Subscribe(list => ListView.ItemsSource = list);
 
             // Add move up button.
             _moveUpButton = new Button
@@ -45,9 +46,9 @@ namespace Interactr.View.Controls
             };
             _moveUpButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.MoveByIndex(_listView.SelectedIndex, _listView.SelectedIndex - 1);
+                ItemsSource.MoveByIndex(ListView.SelectedIndex, ListView.SelectedIndex - 1);
             });
-            _listView.SelectedIndexChanged
+            ListView.SelectedIndexChanged
                 .Select(index => index > 0)
                 .Subscribe(canMoveUp => _moveUpButton.IsEnabled = canMoveUp);
 
@@ -58,9 +59,9 @@ namespace Interactr.View.Controls
             };
             _moveDownButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.MoveByIndex(_listView.SelectedIndex, _listView.SelectedIndex + 1);
+                ItemsSource.MoveByIndex(ListView.SelectedIndex, ListView.SelectedIndex + 1);
             });
-            _listView.SelectedIndexChanged
+            ListView.SelectedIndexChanged
                 .Select(index => index >= 0 && index < ItemsSource.Count-1)
                 .Subscribe(canMoveDown => _moveDownButton.IsEnabled = canMoveDown);
 
@@ -71,9 +72,9 @@ namespace Interactr.View.Controls
             };
             _deleteButton.OnButtonClick.Subscribe(_ =>
             {
-                ItemsSource.RemoveAt(_listView.SelectedIndex);
+                ItemsSource.RemoveAt(ListView.SelectedIndex);
             });
-            _listView.SelectedIndexChanged
+            ListView.SelectedIndexChanged
                 .Select(index => index >= 0)
                 .Subscribe(canDelete => _deleteButton.IsEnabled = canDelete);
 
@@ -88,7 +89,12 @@ namespace Interactr.View.Controls
                 StackOrientation = Orientation.Horizontal
             };
             this.Children.Add(stackPanel);
-            this.Children.Add(_listView);
+            this.Children.Add(ListView);
+        }
+
+        public override void PaintElement(Graphics g)
+        {
+            g.DrawRectangle(Pens.Black, 0, 0, Width-1, Height-1);
         }
     }
 }

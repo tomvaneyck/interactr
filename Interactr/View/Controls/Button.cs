@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Reactive;
 using System.Reactive.Subjects;
 using System.Windows.Forms;
@@ -172,6 +173,16 @@ namespace Interactr.View.Controls
 
                 // Draw button label.
                 g.DrawString(Label, LabelFont, Brushes.Black, 1, 2);
+            }
+
+            if (IsFocused)
+            {
+                using (Pen focusPen = new Pen(Color.Gray))
+                {
+                    focusPen.DashStyle = DashStyle.Dot;
+                    focusPen.DashOffset = 2;
+                    g.DrawRectangle(focusPen, 2, 2, Width - 5, Height - 5);
+                }
             }
         }
     }
