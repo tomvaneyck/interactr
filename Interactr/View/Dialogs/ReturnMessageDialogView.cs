@@ -26,7 +26,8 @@ namespace Interactr.View.Dialogs
         {
             ViewModel = viewModel;
 
-
+            IsTabScope = true;
+            
             // Add a textbox for typing the messageLabel.
             TextBox returnMessageTextBox = new TextBox();
             

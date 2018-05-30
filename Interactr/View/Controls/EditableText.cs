@@ -140,20 +140,19 @@ namespace Interactr.View.Controls
             });
 
             // Leave edit mode if focus is lost and Repaint.
-            FocusChanged
-                .Where(isFocused => !IsFocused)
-                .Subscribe(_ => HandleFocusChange());
+            FocusChanged.Subscribe(HandleFocusChange);
         }
 
         /// <summary>
         /// Handles the loss of focus.
         /// </summary>
+        /// <param name="isFocused"></param>
         /// <remarks>
         /// Defers the implementation to derived classes with the template pattern.
         /// </remarks>
-        protected virtual void HandleFocusChange()
+        protected virtual void HandleFocusChange(bool isFocused)
         {
-            IsInEditMode = false;
+            IsInEditMode = isFocused;
         }
 
         /// <summary>
@@ -204,6 +203,9 @@ namespace Interactr.View.Controls
                         {
                             Text = Text.Substring(0, Text.Length - 1);
                         }
+
+                        // Cancel event propagation.
+                        eventData.IsHandled = true;
                     }
                     // If Keychar is a letter or a colon.
                     else if (char.IsLetterOrDigit(eventData.KeyChar) ||
@@ -213,11 +215,10 @@ namespace Interactr.View.Controls
                              eventData.KeyChar == HexaDecimalKeyChars.Comma)
                     {
                         Text += eventData.KeyChar;
+                        // Cancel event propagation.
+                        eventData.IsHandled = true;
                     }
                 }
-
-                // Cancel event propagation.
-                eventData.IsHandled = true;
             }
         }
 

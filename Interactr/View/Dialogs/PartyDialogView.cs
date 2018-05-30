@@ -30,10 +30,12 @@ namespace Interactr.View.Dialogs
 
         public PartyDialogView()
         {
+            this.IsTabScope = true;
+
             LabelView instanceNameLabel = new LabelView
             {
                 Text = "Instance name:",
-                IsVisibleToMouse = false,
+                CanBeFocused = false,
                 IsReadOnly = true
             };
             AnchorsProperty.SetValue(instanceNameLabel, Anchors.Left | Anchors.Top);
@@ -58,7 +60,7 @@ namespace Interactr.View.Dialogs
             LabelView classNameLabel = new LabelView
             {
                 Text = "Class name:",
-                IsVisibleToMouse = false,
+                CanBeFocused = false,
                 IsReadOnly = true
             };
             AnchorsProperty.SetValue(classNameLabel, Anchors.Left | Anchors.Top);
@@ -83,7 +85,7 @@ namespace Interactr.View.Dialogs
             LabelView partyTypeLabel = new LabelView
             {
                 Text = "Party type:",
-                IsVisibleToMouse = false,
+                CanBeFocused = false,
                 IsReadOnly = true
             };
             AnchorsProperty.SetValue(partyTypeLabel, Anchors.Left | Anchors.Top);
