@@ -32,6 +32,8 @@ namespace Interactr.View
 
         public MainView()
         {
+            IsTabScope = true;
+
             // Create DiagramEditorViews for each Diagram
             var diagramEditors = ViewModelChanged
                 .Where(vm => vm != null)

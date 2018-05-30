@@ -29,6 +29,8 @@ namespace Interactr.View.Dialogs
 
         public DiagramDialogView()
         {
+            IsTabScope = true;
+
             // Setup radio button controls
             RadioButtonGroup.RadioButton sequenceDiagramButton = new RadioButtonGroup.RadioButton
             {

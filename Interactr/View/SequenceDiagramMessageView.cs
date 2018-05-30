@@ -132,7 +132,6 @@ namespace Interactr.View
                     LabelWithMessageNumberView.LabelView.Font);
                 Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
-
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });
@@ -187,20 +186,31 @@ namespace Interactr.View
             {
                 var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
                 if (windowsView != null)
+                {
+                    WindowsView.Window window;
 
                     if (ViewModel.MessageType == Message.MessageType.Result)
                     {
-                        Debug.Print("Create dialog.");
                         // Create dialog.
                         var returnFormatStringVM = ViewModel.FormatString as ReturnFormatStringViewModel;
                         var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
                         var dialogView = new ReturnMessageDialogView(dialogVM);
-                        var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 230, 140);
+                        window = Dialog.OpenDialog(this, dialogView, "Return message settings", 230, 100);
+                    }
+                    else
+                    {
+                        // Create dialog.
+                        var returnFormatStringVM = ViewModel.FormatString as InvocationFormatStringViewModel;
+                        var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
+                        var dialogView = new InvocationMessageDialogView(dialogVM);
+                        window = Dialog.OpenDialog(this, dialogView, "Invocation message settings", 350, 140);
+                    }
 
-                        //TODO: close dialog box.
-                        ViewModel.Diagram.Messages.OnDelete.Where(deleted => deleted.Element == ViewModel.Message)
-                            .TakeUntil(window.WindowClosed).Subscribe(_ => windowsView.RemoveWindowWith(dialogView));
-                    }                
+                    ViewModel.Diagram.Messages.OnDelete
+                        .Where(deleted => deleted.Element == ViewModel.Message)
+                        .TakeUntil(window.WindowClosed)
+                        .Subscribe(_ => windowsView.Children.Remove(window));
+                }
 
                 e.IsHandled = true;
             }

@@ -126,11 +126,23 @@ namespace Interactr.View.Controls
                 // On click, mark this button as selected.
                 if (eventData.Id == MouseEvent.MOUSE_PRESSED)
                 {
+                    Focus();
                     IsSelected = true;
                     eventData.IsHandled = true;
                     return;
                 }
                 base.OnMouseEvent(eventData);
+            }
+
+            protected override void OnKeyEvent(KeyEventData eventData)
+            {
+                if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_SPACE)
+                {
+                    IsSelected = true;
+                    eventData.IsHandled = true;
+                    return;
+                }
+                base.OnKeyEvent(eventData);
             }
 
             public override void PaintElement(Graphics g)

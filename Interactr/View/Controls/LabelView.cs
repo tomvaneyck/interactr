@@ -59,6 +59,8 @@ namespace Interactr.View.Controls
 
         public LabelView() : base()
         {
+            CanLeaveEditMode = true;
+
             // Leave edit mode if ReadOnly is activated
             IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
 
@@ -72,12 +74,13 @@ namespace Interactr.View.Controls
             });
         }
 
+        /// <param name="isFocused"></param>
         /// <see cref="HandleFocusChange">
-        protected override void HandleFocusChange()
+        protected override void HandleFocusChange(bool isFocused)
         {
-            if (CanLeaveEditMode)
+            if (!isFocused && CanLeaveEditMode)
             {
-                base.HandleFocusChange(); 
+                IsInEditMode = false;
             }
         }
 

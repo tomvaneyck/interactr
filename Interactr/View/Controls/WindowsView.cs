@@ -157,6 +157,7 @@ namespace Interactr.View.Controls
             public Window(UIElement innerElement)
             {
                 AutoCompactEnabled = false;
+                IsTabScope = true;
 
                 // Title
                 Title = "New Window";
