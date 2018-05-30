@@ -74,12 +74,13 @@ namespace Interactr.View.Controls
             });
         }
 
+        /// <param name="isFocused"></param>
         /// <see cref="HandleFocusChange">
-        protected override void HandleFocusChange()
+        protected override void HandleFocusChange(bool isFocused)
         {
-            if (CanLeaveEditMode)
+            if (!isFocused && CanLeaveEditMode)
             {
-                base.HandleFocusChange(); 
+                IsInEditMode = false;
             }
         }
 

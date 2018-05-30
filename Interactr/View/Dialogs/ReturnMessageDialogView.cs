@@ -26,6 +26,7 @@ namespace Interactr.View.Dialogs
         public ReturnMessageDialogView(ReturnMessageDialogViewModel viewModel)
         {
             ViewModel = viewModel;
+            IsTabScope = true;
 
             // Add a label
             LabelView returnMessageLabel = new LabelView
