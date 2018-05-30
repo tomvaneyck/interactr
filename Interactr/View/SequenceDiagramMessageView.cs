@@ -132,7 +132,6 @@ namespace Interactr.View
                     LabelWithMessageNumberView.LabelView.Font);
                 Point textPos = _arrow.CalculateMidPoint() - new Point(textSize.Width / 2, 0);
 
-
                 MarginsProperty.SetValue(LabelWithMessageNumberView,
                     new Margins(textPos.X, textPos.Y));
             });

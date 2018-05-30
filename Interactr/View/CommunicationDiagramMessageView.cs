@@ -149,9 +149,7 @@ namespace Interactr.View
             {
                 var windowsView = WalkToRoot().OfType<WindowsView>().FirstOrDefault();
                 if (windowsView != null)
-
-
-
+                {
                     if (ViewModel.MessageType == Message.MessageType.Invocation)
                     {
                         {
@@ -160,14 +158,14 @@ namespace Interactr.View
                             var returnFormatStringVM = ViewModel.FormatString as InvocationFormatStringViewModel;
                             var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
                             var dialogView = new InvocationMessageDialogView(dialogVM);
-                            var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 230, 140);
+                            var window = Dialog.OpenDialog(this, dialogView, "Return Message settings", 350, 140);
 
                             ViewModel.Diagram.Messages.OnDelete.Where(deleted => deleted.Element == ViewModel.Message)
                                 .TakeUntil(window.WindowClosed)
                                 .Subscribe(_ => windowsView.RemoveWindowWith(dialogView));
                         }
                     }
-
+                }
 
                 e.IsHandled = true;
             }
