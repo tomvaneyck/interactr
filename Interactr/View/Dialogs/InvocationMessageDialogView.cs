@@ -35,7 +35,8 @@ namespace Interactr.View.Dialogs
             {
                 Text = "Method name:",
                 IsVisibleToMouse = false,
-                IsReadOnly = true
+                IsReadOnly = true,
+                CanBeFocused = false
             };
             AnchorsProperty.SetValue(methodNameLabel, Anchors.Left | Anchors.Top);
             MarginsProperty.SetValue(methodNameLabel, new Margins(5, 5));
@@ -54,7 +55,8 @@ namespace Interactr.View.Dialogs
             {
                 Text = "Method arguments:",
                 IsVisibleToMouse = false,
-                IsReadOnly = true
+                IsReadOnly = true,
+                CanBeFocused = false
             };
             AnchorsProperty.SetValue(methodArgumentsLabel, Anchors.Left | Anchors.Top);
             MarginsProperty.SetValue(methodArgumentsLabel, new Margins(5, 30));

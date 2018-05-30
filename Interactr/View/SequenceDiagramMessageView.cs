@@ -204,7 +204,7 @@ namespace Interactr.View
                         var returnFormatStringVM = ViewModel.FormatString as InvocationFormatStringViewModel;
                         var dialogVM = returnFormatStringVM.CreateNewDialogViewModel(ViewModel.Message);
                         var dialogView = new InvocationMessageDialogView(dialogVM);
-                        window = Dialog.OpenDialog(this, dialogView, "Invocation message settings", 230, 140);
+                        window = Dialog.OpenDialog(this, dialogView, "Invocation message settings", 350, 140);
                     }
 
                     ViewModel.Diagram.Messages.OnDelete
