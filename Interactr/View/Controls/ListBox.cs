@@ -26,18 +26,29 @@ namespace Interactr.View.Controls
 
         #endregion
 
+        private readonly Button _addButton;
         private readonly Button _moveUpButton;
         private readonly Button _moveDownButton;
         private readonly Button _deleteButton;
 
         public ListView<T> ListView { get; }
 
-        public ListBox(Func<T, UIElement> viewFactory)
+        public ListBox(Func<T> itemFactory, Func<T, UIElement> viewFactory)
         {
             this.StackOrientation = Orientation.Vertical;
 
             ListView = new ListView<T>(viewFactory);
             this.ItemsSourceChanged.Subscribe(list => ListView.ItemsSource = list);
+
+            // Add move up button.
+            _addButton = new Button
+            {
+                Label = "Add new"
+            };
+            _addButton.OnButtonClick.Subscribe(_ =>
+            {
+                ItemsSource.Add(itemFactory());
+            });
 
             // Add move up button.
             _moveUpButton = new Button
@@ -82,6 +93,7 @@ namespace Interactr.View.Controls
             {
                 Children =
                 {
+                    _addButton,
                     _moveUpButton,
                     _moveDownButton,
                     _deleteButton
