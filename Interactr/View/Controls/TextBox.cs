@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Interactr.View.Controls
 {
-    class TextBox : EditableText
+    public class TextBox : EditableText
     {
         public TextBox()
         {
