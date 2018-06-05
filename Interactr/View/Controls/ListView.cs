@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
@@ -146,6 +147,23 @@ namespace Interactr.View.Controls
         {
             ItemContainer container = Children.OfType<ItemContainer>().FirstOrDefault(c => c.View == e);
             return Children.IndexOf(container);
+        }
+
+        protected override void OnKeyEvent(KeyEventData eventData)
+        {
+            if (eventData.Id == KeyEvent.KEY_PRESSED)
+            {
+                if (eventData.KeyCode == (int)Keys.Down && SelectedIndex < ItemsSource.Count-1)
+                {
+                    SelectedIndex++;
+                    eventData.IsHandled = true;
+                }
+                else if (eventData.KeyCode == (int)Keys.Up && SelectedIndex > 0)
+                {
+                    SelectedIndex--;
+                    eventData.IsHandled = true;
+                }
+            }
         }
 
         private class ItemContainer : AnchorPanel
