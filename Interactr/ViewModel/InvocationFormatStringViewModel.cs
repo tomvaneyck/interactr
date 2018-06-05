@@ -112,7 +112,9 @@ namespace Interactr.ViewModel
         {
             var dialogVM = new InvocationMessageDiagramViewModel();
             model.LabelChanged.Subscribe(newLabel => dialogVM.Message.Text = newLabel);
-            dialogVM.Message.TextChanged.Subscribe(newLabel => model.Label = newLabel);
+            dialogVM.Message.TextChanged
+                .Where(_ => dialogVM.Message.HasValidText())
+                .Subscribe(newLabel => model.Label = newLabel);
 
             return dialogVM;
         }
