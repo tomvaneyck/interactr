@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 
@@ -15,6 +11,9 @@ namespace Interactr.View.Controls
     public class ImageView : UIElement
     {
         #region Image
+
+        private readonly ReactiveProperty<Image> _image = new ReactiveProperty<Image>();
+
         /// <summary>
         /// The image to display.
         /// </summary>
@@ -23,29 +22,29 @@ namespace Interactr.View.Controls
             get => _image.Value;
             set => _image.Value = value;
         }
-        private readonly ReactiveProperty<Image> _image = new ReactiveProperty<Image>();
+
         public IObservable<Image> ImageChanged => _image.Changed;
+
         #endregion
 
         public ImageView()
         {
-            SetupObservables();
-        }
+            CanBeFocused = false;
 
-        private void SetupObservables()
-        {
             //When the image changes, change to preferred size and repaint.
-            this.ImageChanged.Subscribe(newImage =>
+            ImageChanged.Subscribe(newImage =>
             {
                 if (newImage != null)
                 {
                     PreferredWidth = newImage.Width;
                     PreferredHeight = newImage.Height;
                 }
+
                 Repaint();
             });
         }
 
+        /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
             if (Image == null)
@@ -54,6 +53,7 @@ namespace Interactr.View.Controls
                 g.FillRectangle(Brushes.Pink, 0, 0, this.Width, this.Height);
                 return;
             }
+
             g.DrawImage(Image, 0, 0, this.Width, this.Height);
         }
     }

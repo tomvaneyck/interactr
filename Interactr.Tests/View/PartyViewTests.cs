@@ -11,23 +11,21 @@ namespace Interactr.Tests.View
     [Category("RequiresUI")]
     public class PartyViewTests
     {
-        // Exposing _labelView by inheritance.
-        private class PartyViewTest : PartyView
-        {
-            public LabelView LabelView => _labelView;
-        }
-
         // Party variable.
-        private PartyViewTest partyView;
+        private Diagram diagram;
+        private Party party;
+        private PartyView partyView;
 
 
         [SetUp]
         public void SetupPartyViewTest()
         {
-
-            partyView = new PartyViewTest
+            party = new Party(Party.PartyType.Actor, "instance:Classname");
+            diagram = new Diagram {Parties = { party }};
+            
+            partyView = new PartyView
             {
-                ViewModel = new PartyViewModel(new Party(Party.PartyType.Actor, "instance:Classname"))
+                ViewModel = new PartyViewModel(diagram, party)
             };
         }
 
@@ -78,7 +76,7 @@ namespace Interactr.Tests.View
         {
             partyView.LabelView.Text = "test:IsRight";
 
-            Assert.AreEqual(partyView.ViewModel.Label, partyView.LabelView.Text);
+            Assert.AreEqual(partyView.ViewModel.Label.Text, partyView.LabelView.Text);
         }
 
         [Test]
@@ -88,7 +86,7 @@ namespace Interactr.Tests.View
             partyView.LabelView.Text = "test:IsRight";
             partyView.LabelView.IsInEditMode = false;
 
-            Assert.AreEqual(partyView.ViewModel.Label, partyView.ViewModel.Party.Label);
+            Assert.AreEqual(partyView.ViewModel.Label.Text, partyView.ViewModel.Party.Label);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Interactr.Reactive;
+using System.Linq;
+using System;
 
 namespace Interactr.Model
 {
@@ -10,8 +12,15 @@ namespace Interactr.Model
     {
         public Diagram()
         {
-            Messages = new ReactiveList<Message>();
-            Parties = new ReactiveList<Party>();
+            Messages = new ReactiveArrayList<Message>();
+            Parties = new ReactiveArrayList<Party>();
+
+            Parties.OnDelete.Subscribe(e =>
+            {
+                var messagesToBeRemoved = Messages
+                    .Where(message => message.Sender == e.Element || message.Receiver == e.Element);
+                Messages.RemoveAll(messagesToBeRemoved);
+            });
         }
 
         /// <summary>
@@ -23,5 +32,10 @@ namespace Interactr.Model
         /// List of messages present in the diagram.
         /// </summary>
         public ReactiveList<Message> Messages { get; }
+
+        public enum Type
+        {
+            Sequence, Communication
+        }
     }
 }

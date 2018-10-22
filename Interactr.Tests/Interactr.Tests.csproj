@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -40,6 +40,7 @@
       <HintPath>..\Interactr\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\Interactr\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -53,8 +54,10 @@
       <HintPath>..\Interactr\packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InvocationLabelParserTests.cs" />
     <Compile Include="Model\PartyLabelTests.cs" />
     <Compile Include="Reactive\ReactiveDictionaryTests.cs" />
     <Compile Include="Reactive\ReactiveListTests.cs" />
@@ -62,27 +65,36 @@
     <Compile Include="Model\Messagetests.cs" />
     <Compile Include="Model\PartyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\MainViewModelTests.cs" />
+    <Compile Include="ScenarioTestCase.cs" />
+    <Compile Include="ViewModel\DiagramEditorViewModelTests.cs" />
+    <Compile Include="ViewModel\MessageStackWalkerTests.cs" />
+    <Compile Include="View\CommunicationDiagramViewTests.cs" />
     <Compile Include="View\Controls\LabelViewTests.cs" />
+    <Compile Include="View\Controls\LineViewTests.cs" />
+    <Compile Include="View\Controls\MarginTests.cs" />
     <Compile Include="View\Controls\StackPanelTests.cs" />
+    <Compile Include="View\Controls\WindowsViewTests.cs" />
+    <Compile Include="View\DiagramEditorViewTests.cs" />
     <Compile Include="View\Framework\AttachedPropertyTests.cs" />
     <Compile Include="View\Controls\AnchorPanelTests.cs" />
     <Compile Include="ViewModel\PartyViewModelTests.cs" />
     <Compile Include="View\Framework\UIElementTests.cs" />
     <Compile Include="View\PartyViewTests.cs" />
+    <Compile Include="View\Controls\ArrowViewTests.cs" />
+    <Compile Include="View\Controls\DragPanelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Interactr\Interactr.csproj">
       <Project>{951a91e8-f6cd-4250-a59d-45efe143f2d9}</Project>
       <Name>Interactr</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

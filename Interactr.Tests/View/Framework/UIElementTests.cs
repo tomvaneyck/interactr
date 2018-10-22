@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interactr.Reactive;
+using Interactr.View.Controls;
 using Interactr.View.Framework;
 using Microsoft.Reactive.Testing;
 
@@ -15,7 +13,6 @@ namespace Interactr.Tests.View.Framework
     [TestFixture]
     public class UIElementTests : ReactiveTest
     {
-
         [Test]
         public void TestTreeStructure()
         {
@@ -34,7 +31,7 @@ namespace Interactr.Tests.View.Framework
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement();
 
-            
+
             elem1.Focus();
             Assert.AreEqual(elem1, UIElement.FocusedElement);
             Assert.IsTrue(elem1.IsFocused);
@@ -70,7 +67,7 @@ namespace Interactr.Tests.View.Framework
         }
 
         [Test]
-        public void TestFindElementAt()
+        public void TestFindChildrenAt()
         {
             UIElement elem1 = new UIElement();
             UIElement elem2 = new UIElement
@@ -81,9 +78,8 @@ namespace Interactr.Tests.View.Framework
             };
             elem1.Children.Add(elem2);
 
-            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(5, 5)));
-            Assert.AreEqual(elem2, elem1.FindElementAt(new Point(12, 12)));
-            Assert.AreEqual(elem1, elem1.FindElementAt(new Point(20, 20)));
+            Assert.AreEqual(0, elem1.FindChildrenAt(new Point(5, 5)).Count());
+            Assert.AreEqual(elem2, elem1.FindChildrenAt(new Point(12, 12)).Single());
         }
 
         [Test]
@@ -143,64 +139,174 @@ namespace Interactr.Tests.View.Framework
         }
 
         [Test]
-        public void TestValidateLayout()
+        public void TestGetDecendantsOneLevelDown()
         {
-            TestableUIElement parent = new TestableUIElement
-            {
-                Width = 100,
-                Height = 100
-            };
+            // Build a UIElement tree with two children one level down the root element.
 
-            UIElement child1 = new UIElement
-            {
-                Width = 200,
-                Height = 200
-            };
-            parent.Children.Add(child1);
+            UIElement root = new UIElement();
+            UIElement childElement = new UIElement();
+            UIElement childElement2 = new UIElement();
+            root.Children.Add(childElement);
+            root.Children.Add(childElement2);
 
-            UIElement child2 = new UIElement
-            {
-                Width = 100,
-                Height = 100
-            };
-            parent.Children.Add(child2);
+            IEnumerable<UIElement> decendants = root.GetDecendants();
 
-            UIElement child3 = new UIElement
-            {
-                Position = new Point(90, 90),
-                Width = 50,
-                Height = 50
-            };
-            parent.Children.Add(child3);
+            // The number of decendants is correct.
+            Assert.AreEqual(2, decendants.Count());
 
-            UIElement child4 = new UIElement
-            {
-                Width = 50,
-                Height = 50
-            };
-            parent.Children.Add(child4);
-
-            parent.RunValidateLayout();
-
-            Assert.AreEqual(100, child1.Width);
-            Assert.AreEqual(100, child1.Height);
-
-            Assert.AreEqual(100, child2.Width);
-            Assert.AreEqual(100, child2.Height);
-
-            Assert.AreEqual(10, child3.Width);
-            Assert.AreEqual(10, child3.Height);
-
-            Assert.AreEqual(50, child4.Width);
-            Assert.AreEqual(50, child4.Height);
+            // The decendants contain the expected elements.
+            Assert.True(decendants.Contains(childElement));
+            Assert.True(decendants.Contains(childElement2));
         }
 
-        class TestableUIElement : UIElement
+        [Test]
+        public void TestGetDecendantsMultipleLevelsDown()
         {
-            public void RunValidateLayout()
+            // Build a UIElement tree with two children one level down the root element.
+            UIElement root = new UIElement();
+            UIElement childElement = new UIElement();
+            UIElement childElement2 = new UIElement();
+            root.Children.Add(childElement);
+            root.Children.Add(childElement2);
+
+            // Add elements to the two levels down.
+            UIElement childElement3 = new UIElement();
+            UIElement childElement4 = new UIElement();
+            childElement.Children.Add(childElement3);
+            childElement.Children.Add(childElement4);
+
+            // Add an element 3 levels down.
+            UIElement childElement5 = new UIElement();
+            childElement3.Children.Add(childElement5);
+
+            IEnumerable<UIElement> decendants = root.GetDecendants();
+
+            // The number of decendants is correct.
+            Assert.AreEqual(5, decendants.Count());
+
+            // The decendants contain the expected elements.
+            Assert.True(decendants.Contains(childElement));
+            Assert.True(decendants.Contains(childElement2));
+            Assert.True(decendants.Contains(childElement3));
+            Assert.True(decendants.Contains(childElement4));
+            Assert.True(decendants.Contains(childElement5));
+        }
+
+        [Test]
+        public void AbsolutePositionElementItSelfChanged()
+        {
+            var scheduler = new TestScheduler();
+
+            var root = new UIElement();
+            var element = new UIElement();
+
+            // Add element to root as a child.
+            root.Children.Add(element);
+
+            // Change the position of the element.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(86, 4));
+
+            var expected = new[]
             {
-                ValidateLayout();
-            }
+                ReactiveTest.OnNext(1, new Point(0, 0)),
+                ReactiveTest.OnNext(10, new Point(86, 4))
+            };
+
+            var actual = scheduler.Start(() => element.AbsolutePositionChanged, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
+        [Test]
+        public void AbsolutePositionParentChanged()
+        {
+            var scheduler = new TestScheduler();
+
+            var root = new UIElement();
+            var element = new RectangleView();
+            var child = new Button();
+
+            // Add element to root as a child.
+            root.Children.Add(element);
+            element.Children.Add(child);
+
+            // Change the position of the element.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(86, 4));
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, new Point(0, 0)),
+                ReactiveTest.OnNext(10, new Point(86, 4))
+            };
+            
+            var actual = scheduler.Start(() => child.AbsolutePositionChanged, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
+        [Test]
+        public void ObserveParentWidth()
+        {
+            var scheduler = new TestScheduler();
+
+            var parent = new UIElement();
+            var child = new RectangleView();
+            var observable = child.ParentChanged.Where(t => t != null && child.IsVisible).Select(p => p.WidthChanged).Switch();
+            
+            // Setup parent child relationship
+            parent.Children.Add(child);
+
+            // Change the width of the parent.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => parent.Width = 500);
+
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, 0),
+                ReactiveTest.OnNext(10, 500)
+            };
+
+            var actual = scheduler.Start(() => observable, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
+        [Test]
+        public void AbsolutePositionGrandparentChanged()
+        {
+            var scheduler = new TestScheduler();
+
+            var root = new UIElement();
+            var element = new UIElement();
+            var child = new UIElement();
+            var grandChild = new UIElement();
+
+            // Add element to root as a child.
+            root.Children.Add(element);
+            element.Children.Add(child);
+            child.Children.Add(grandChild);
+
+            // Change the position of the element.
+            scheduler.Schedule(TimeSpan.FromTicks(10), () => element.Position = new Point(10, 10));
+
+            // Check if the absolute position of the grandChild changes.
+            var expected = new[]
+            {
+                ReactiveTest.OnNext(1, new Point(0, 0)),
+                ReactiveTest.OnNext(10, new Point(10, 10))
+            };
+
+            var actual = scheduler.Start(() => grandChild.AbsolutePositionChanged, 0, 0, 1000).Messages;
+            ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+
+        [Test]
+        public void TestElementDeleted()
+        {
+            UIElement parent = new UIElement();
+            UIElement child = new UIElement();
+            parent.Children.Add(child);
+
+            child.Focus();
+            Assert.AreEqual(child, UIElement.FocusedElement);
+            parent.Children.Remove(child);
+            Assert.AreEqual(parent, UIElement.FocusedElement);
         }
     }
 }

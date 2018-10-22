@@ -1,90 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
+using System.Reactive.Linq;
 using Interactr.Model;
 using Interactr.Reactive;
 
 namespace Interactr.ViewModel
 {
     /// <summary>
-    /// The ViewModel for MessageView.
+    /// Contain the shared functionality and properties of message view models.
     /// </summary>
     public class MessageViewModel
     {
+        public Diagram Diagram { get; }
+
         /// <summary>
         /// Reference to the Message model.
         /// </summary>
         public Message Message { get; }
 
-        /// <summary>
-        /// This marks the position of this call in the sequence of messages.
-        /// </summary>
-        public int Tick { get; set; }
+        public IFormatStringViewModel FormatString { get; }
 
-        #region Sender
+        #region MessageNumber
 
-        private readonly ReactiveProperty<Party> _sender = new ReactiveProperty<Party>();
+        private readonly ReactiveProperty<string> _messageNumber = new ReactiveProperty<string>();
 
         /// <summary>
-        /// The sender stored in message view model.
+        /// The number of this message, used for displaying in the label.
         /// </summary>
-        /// <remarks>This should not necessarily be the same as the sender in the message model.
-        /// If the changes of viewModel are not propagated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public Party Sender
+        public string MessageNumber
         {
-            get => _sender.Value;
-            private set => _sender.Value = value;
+            get => _messageNumber.Value;
+            set => _messageNumber.Value = value;
         }
 
-        public IObservable<Party> SenderChanged => _sender.Changed;
+        /// <summary>
+        /// An observable that emits the new label when it has changed.
+        /// </summary>
+        public IObservable<string> MessageNumberChanged => _messageNumber.Changed;
 
         #endregion
 
-        #region Receiver
+        #region Tick
 
-        private readonly ReactiveProperty<Party> _receiver = new ReactiveProperty<Party>();
-
-        /// <summary>
-        /// The receiver stored in message view model.
-        /// </summary>
-        /// <remarks>This should not necessarily be the same as the sender in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public Party Receiver
-        {
-            get => _receiver.Value;
-            private set => _receiver.Value = value;
-        }
-
-        public IObservable<Party> ReceiverChanged => _receiver.Changed;
-
-        #endregion
-
-        #region Label
-
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
+        private readonly ReactiveProperty<int> _tick = new ReactiveProperty<int>();
 
         /// <summary>
-        /// The Label stored in message view model.
+        /// Mark the position of this call in the sequence of messages.
         /// </summary>
-        /// <remarks>This should not necessarily be the same as the label in the message model.
-        /// If the changes of viewModel are not propogated to the model for example.
-        /// Any changes to the model are however immediately propagated to the viewmodel.
-        /// </remarks>
-        public string Label
+        public int Tick
         {
-            get => _label.Value;
-            private set => _label.Value = value;
+            get => _tick.Value;
+            set => _tick.Value = value;
         }
 
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<int> TickChanged => _tick.Changed;
 
         #endregion
 
@@ -100,17 +72,72 @@ namespace Interactr.ViewModel
 
         #endregion
 
-        //TODO reference to activation bars
+        #region CanApplyLabel
 
-        public MessageViewModel(Message message, int tick)
+        private readonly ReactiveProperty<bool> _canApplyLabel = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// Indicate if the label is valid and thus can be applied in the model.
+        /// </summary>
+        public bool CanApplyLabel
         {
-            Message = message;
-            Tick = tick;
+            get => _canApplyLabel.Value;
+            set => _canApplyLabel.Value = value;
+        }
 
-            // Propogate changes in the model to the viewmodel.
-            message.SenderChanged.Subscribe(newSender => Sender = newSender);
-            message.ReceiverChanged.Subscribe(newReceiver => Receiver = newReceiver);
-            message.LabelChanged.Subscribe(newLabel => Label = newLabel);
+        public IObservable<bool> CanApplyLabelChanged => _canApplyLabel.Changed;
+
+        #endregion
+
+        /// <summary>
+        /// Indicates if the label of the party view is in edit mode.
+        /// </summary>
+        /// <remarks>
+        /// This property gets set in the party view of this party view model.
+        /// It maintains a binding so that the view model is aware of changes in the view.
+        /// </remarks>
+        public bool LabelInEditMode { get; set; }
+
+        public MessageViewModel(Diagram diagram, Message message)
+        {
+            Diagram = diagram;
+            Message = message;
+
+            // Set CanApplyLabel to true if the message is of the ResultType
+            if (MessageType == Message.MessageType.Result)
+            {
+                CanApplyLabel = true;
+                FormatString = new ReturnFormatStringViewModel();
+            }
+            else
+            {
+                FormatString = new InvocationFormatStringViewModel();
+            }
+
+            // Bidirectional bind between the message number in the viewmodel and model.
+            Message.MessageNumberChanged.Subscribe(m => MessageNumber = m);
+            MessageNumberChanged.Subscribe(m => Message.MessageNumber = m);
+
+            // Bind the label in the viewmodel to the label in the model.
+            message.LabelChanged.Subscribe(newLabelText =>
+            {
+                if (FormatString.Text != newLabelText && !LabelInEditMode)
+                {
+                    FormatString.Text = newLabelText;
+                }
+            });
+
+            // Update CanApplyLabel when the label changes.
+            FormatString.TextChanged.Select(_ => FormatString.HasValidText())
+                .Subscribe(isValid => CanApplyLabel = isValid);
+        }
+
+        /// <summary>
+        /// Set the model label to the label in the viewmodel.
+        /// </summary>
+        public void ApplyLabel()
+        {
+            Message.Label = FormatString.Text;
         }
     }
 }

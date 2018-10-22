@@ -91,7 +91,8 @@ namespace Interactr.View.Framework
         public T DefaultValue => (T) DefaultValueObject;
 
         public AttachedProperty(T defaultValueObject) : base(typeof(T), defaultValueObject)
-        {}
+        {
+        }
 
         /// <summary>
         /// Retrieve the value for this property on the given element, 
@@ -101,7 +102,7 @@ namespace Interactr.View.Framework
         /// <returns>The property value.</returns>
         public T GetValue(UIElement elem)
         {
-            return (T)GetValueObject(elem);
+            return (T) GetValueObject(elem);
         }
 
         /// <summary>

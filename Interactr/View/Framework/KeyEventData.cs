@@ -1,4 +1,8 @@
-﻿namespace Interactr.View.Framework
+﻿using System;
+using System.Reactive.Linq;
+using Interactr.Reactive;
+
+namespace Interactr.View.Framework
 {
     /// <summary>
     /// Information about a keyboard input event.
@@ -19,6 +23,12 @@
         /// The character associated with this key.
         /// </summary>
         public char KeyChar { get; }
+
+        /// <summary>
+        /// True when the propagation of an event has to be stopped.
+        /// This enable stopping event propagation in observables.
+        /// </summary>
+        public bool IsHandled { get; set; } = false;
 
         public KeyEventData(int id, int keyCode, char keyChar)
         {

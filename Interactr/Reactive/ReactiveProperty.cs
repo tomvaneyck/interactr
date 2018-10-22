@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interactr.Reactive
 {
@@ -28,7 +24,7 @@ namespace Interactr.Reactive
         /// <remarks>
         /// Stream is readonly.
         /// </remarks>
-        public IObservable<T> Changed => _changed.StartWith(Value);
+        public IObservable<T> Changed => Observable.Defer(() => _changed.StartWith(Value));
 
         /// <summary>
         /// Represents the value of the property, the value has a type T. 

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using Interactr.Model;
 using Interactr.Properties;
 using Interactr.Reactive;
 using Interactr.View.Controls;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
 using Interactr.ViewModel;
 using Interactr.Window;
@@ -22,6 +21,9 @@ namespace Interactr.View
     /// </summary>
     public class PartyView : AnchorPanel
     {
+        private static readonly Color DefaultLabelColor = Color.Black;
+        private static readonly Color InvalidLabelColor = Color.Red;
+
         #region ViewModel
 
         private readonly ReactiveProperty<PartyViewModel> _viewModel = new ReactiveProperty<PartyViewModel>();
@@ -40,11 +42,13 @@ namespace Interactr.View
         protected readonly RectangleView _objectRectangle = new RectangleView();
         protected readonly LabelView _labelView = new LabelView();
 
+        /// <summary>
+        /// The label view associated with this party view.
+        /// </summary>
         public LabelView LabelView
         {
             get => _labelView;
         }
-
 
         public PartyView()
         {
@@ -68,16 +72,21 @@ namespace Interactr.View
             });
 
             // Bi-directional bind party label to view
-            ViewModelChanged.ObserveNested(vm => vm.LabelChanged)
-                .Subscribe(newLabel => LabelView.Text = newLabel);
+            ViewModelChanged.ObserveNested(vm => vm.Label.TextChanged)
+                .Where(newLabel => newLabel != null)
+                .Subscribe(newLabel =>
+                    {
+                        if (!LabelView.IsInEditMode)
+                        {
+                            LabelView.Text = newLabel;
+                        }
+                    }
+                );
+
             LabelView.TextChanged.Subscribe(newText =>
             {
-                if (ViewModel != null) ViewModel.Label = newText;
+                if (ViewModel != null) ViewModel.Label.Text = newText;
             });
-
-            // On position change in the viewmodel change the position in the view.
-            ViewModelChanged.ObserveNested(vm => vm.PositionChanged)
-                .Subscribe(newPosition => this.Position = newPosition);
 
             // Add child elements
             Children.Add(_actorImage);
@@ -88,13 +97,10 @@ namespace Interactr.View
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
                 .Subscribe(canApplyLabel => LabelView.CanLeaveEditMode = canApplyLabel);
 
-            // Bind text of label between this and PartyViewModel.
-            _labelView.TextChanged.Subscribe(text =>
+            // The label is red if CanApplyLabel is false.
+            ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged).Subscribe(canApplyLabel =>
             {
-                if (ViewModel != null)
-                {
-                    ViewModel.Label = text;
-                }
+                LabelView.Color = canApplyLabel ? DefaultLabelColor : InvalidLabelColor;
             });
 
             ViewModelChanged.ObserveNested(vm => vm.CanApplyLabelChanged)
@@ -104,46 +110,61 @@ namespace Interactr.View
             LabelView.EditModeChanged.Subscribe(
                 isInEditMode =>
                 {
-                    if (ViewModel != null && !isInEditMode) ViewModel.ApplyLabel();
+                    if (ViewModel != null)
+                    {
+                        ViewModel.LabelInEditMode = isInEditMode;
+
+                        if (!isInEditMode)
+                        {
+                            ViewModel.ApplyLabel();
+                        }
+                    }
                 }
             );
 
             // Bind text of label between this and PartyViewModel.
-            LabelView.TextChanged.Subscribe(text => 
+            LabelView.TextChanged.Subscribe(text =>
             {
                 if (ViewModel != null)
                 {
-                    ViewModel.Label = text;
+                    ViewModel.Label.Text = text;
                 }
             });
-
         }
 
-        protected override bool OnKeyEvent(KeyEventData e)
+        /// <see cref="OnMouseEvent"/>
+        protected override void OnMouseEvent(MouseEventData e)
         {
-            if (LabelView.IsFocused && e.Id == KeyEvent.KEY_PRESSED && e.KeyCode == 46)
+            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0 && FocusedElement.CanLoseFocus)
             {
-                // Delete this party from the parent view.
-                UIElement parent = Parent;
-                Parent.Children.Remove(this);
-                parent.Repaint();
-                return true;
-            }
-
-            return false;
-        }
-
-        protected override bool OnMouseEvent(MouseEventData e)
-        {
-            if (e.Id == MouseEvent.MOUSE_CLICKED && e.ClickCount % 2 == 0)
-            {
-                Debug.WriteLine("Click registered.");
                 ViewModel.SwitchPartyType();
                 Parent.Repaint();
-                return true;
+                e.IsHandled = true;
             }
+        }
 
-            return false;
+        protected override void OnKeyEvent(KeyEventData e)
+        {
+            // On CTRL+Enter, open a party dialog
+            if (e.Id == KeyEvent.KEY_PRESSED && Keyboard.IsKeyDown(KeyEvent.VK_CONTROL) && e.KeyCode == (int)Keys.Enter)
+            {
+                // Create dialog.
+                var dialogVM = ViewModel.CreateNewDialogViewModel();
+                var dialogView = new PartyDialogView {ViewModel = dialogVM};
+                var window = Dialog.OpenDialog(this, dialogView, "Party settings", 230, 140);
+
+                // Close dialog when the party is deleted or the close button is clicked.
+                var windowsView = (WindowsView)window.Parent;
+                ViewModel.Diagram.Parties.OnDelete
+                    .Where(deleted => deleted.Element == ViewModel.Party)
+                    .TakeUntil(window.WindowClosed)
+                    .Subscribe(_ =>
+                    {
+                        windowsView.RemoveWindowWith(dialogView);
+                    });
+
+                e.IsHandled = true;
+            }
         }
     }
 }

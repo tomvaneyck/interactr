@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace Interactr.View.Framework
     /// </summary>
     public class UIElement
     {
+        #region FocusedElement
+
+        private static readonly ReactiveProperty<UIElement> _focusedElement = new ReactiveProperty<UIElement>();
+
         /// <summary>
         /// The UI element that currently has the keyboard focus.
         /// </summary>
@@ -23,17 +28,90 @@ namespace Interactr.View.Framework
         /// The focused element is the first element to receive keyboard events.
         /// Use UIElement.Focus() to set an element as the focused element.
         /// </remarks>
-        public static UIElement FocusedElement { get; private set; }
+        public static UIElement FocusedElement
+        {
+            get => _focusedElement.Value;
+            private set => _focusedElement.Value = value;
+        }
+
+        public static IObservable<UIElement> FocusedElementChanged => _focusedElement.Changed;
+
+        #endregion
+
+        #region InputEvents
+
+        #region Mouse
+
+        private readonly Subject<MouseEventData> _mouseEventPreviewOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventPreviewOccured => _mouseEventPreviewOccured;
+
+        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
+        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
+
+        #endregion
+
+        #region Key
+
+        private readonly Subject<KeyEventData> _keyEventPreviewOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventPreviewOccurred => _keyEventPreviewOccurred;
+
+        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
+        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
+
+        #endregion
+
+        #endregion
+
+        #region MouseCapturingElement
+
+        private readonly ReactiveProperty<UIElement> _mouseCapturingElement = new ReactiveProperty<UIElement>();
+
+        /// <summary>
+        /// The UI element that has captured the mouse under this element.
+        /// </summary>
+        /// <remarks>
+        /// If an element captures the mouse, it will receive all mouse events that occur within the bounds of this element.
+        /// </remarks>
+        public UIElement MouseCapturingElement
+        {
+            get => _mouseCapturingElement.Value;
+            set
+            {
+                if (value != null && !value.IsVisibleToMouse)
+                {
+                    throw new ArgumentException("Cannot capture mouse on element that is invisible to mouse.");
+                }
+
+                _mouseCapturingElement.Value = value;
+            }
+        }
+
+        public IObservable<UIElement> MouseCapturingElementChanged => _mouseCapturingElement.Changed;
+
+        #endregion
 
         /// <summary>
         /// The child-elements of this element in the view-tree.
         /// </summary>
-        public ReactiveList<UIElement> Children { get; } = new ReactiveList<UIElement>();
+        public ReactiveList<UIElement> Children { get; } = new ReactiveArrayList<UIElement>();
+
+        #region Parent
+
+        private readonly ReactiveProperty<UIElement> _parent = new ReactiveProperty<UIElement>();
 
         /// <summary>
         /// The parent element of this element in the view-tree.
+        /// This property is set automatically when the element is added to another elements Children.
         /// </summary>
-        public UIElement Parent { get; private set; }
+        public UIElement Parent
+        {
+            get => _parent.Value;
+            private set => _parent.Value = value;
+        }
+
+        public IObservable<UIElement> ParentChanged => _parent.Changed;
+
+        #endregion
 
         /// <summary>
         /// The properties that are attached to this element.
@@ -58,6 +136,8 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        public IObservable<Point> AbsolutePositionChanged { get; }
+
         #region Width
 
         private readonly ReactiveProperty<int> _width = new ReactiveProperty<int>();
@@ -65,7 +145,15 @@ namespace Interactr.View.Framework
         public int Width
         {
             get => _width.Value;
-            set => _width.Value = value;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Invalid width value: " + value);
+                }
+
+                _width.Value = value;
+            }
         }
 
         public IObservable<int> WidthChanged => _width.Changed;
@@ -79,7 +167,15 @@ namespace Interactr.View.Framework
         public int Height
         {
             get => _height.Value;
-            set => _height.Value = value;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Invalid height value: " + value);
+                }
+
+                _height.Value = value;
+            }
         }
 
         public IObservable<int> HeightChanged => _height.Changed;
@@ -128,6 +224,25 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        #region IsVisibleToMouse
+
+        private readonly ReactiveProperty<bool> _isVisibleToMouse = new ReactiveProperty<bool>();
+
+        /// <summary>
+        /// If this property is false, this element will be ignored when searching the mouseover element.
+        /// Both IsVisible and IsVisibleToMouse must be true for this element to receive mouse events.
+        /// True by default.
+        /// </summary>
+        public bool IsVisibleToMouse
+        {
+            get => _isVisibleToMouse.Value;
+            set => _isVisibleToMouse.Value = value;
+        }
+
+        public IObservable<bool> IsVisibleToMouseChanged => _isVisibleToMouse.Changed;
+
+        #endregion
+
         #region Focus
 
         public bool IsFocused => FocusedElement == this;
@@ -145,28 +260,30 @@ namespace Interactr.View.Framework
 
         #endregion
 
-        #region Event observables
+        public bool CanBeFocused { get; set; } = true;
 
-        private readonly Subject<MouseEventData> _mouseEventOccured = new Subject<MouseEventData>();
-        public IObservable<MouseEventData> MouseEventOccured => _mouseEventOccured;
-
-        private readonly Subject<KeyEventData> _keyEventOccurred = new Subject<KeyEventData>();
-        public IObservable<KeyEventData> KeyEventOccurred => _keyEventOccurred;
-
-        #endregion
-
-        public bool CanBeFocused { get; protected set; } = true;
+        public bool IsTabScope { get; set; }
 
         public UIElement()
         {
             this.IsVisible = true;
+            this.IsVisibleToMouse = true;
 
-            this.PositionChanged.Subscribe(_ => Repaint());
-            this.WidthChanged.Subscribe(_ => Repaint());
-            this.HeightChanged.Subscribe(_ => Repaint());
-            this.IsVisibleChanged.Subscribe(_ => Repaint());
-            this.Children.OnDelete.Subscribe(_ => Repaint());
-            this.Children.OnAdd.Subscribe(_ => Repaint());
+            //Trigger AbsolutePositionChanged when this elements position or an ancestors position changes.
+            //Don't fire the event if the position relative to the root doesn't change. (because the changes cancel out.)
+            AbsolutePositionChanged = ReactiveExtensions.MergeEvents(
+                PositionChanged,
+                ParentChanged.ObserveNested(parent => parent.AbsolutePositionChanged)
+            ).Select(_ => GetPositionRelativeToRoot()).DistinctUntilChanged();
+
+            ReactiveExtensions.MergeEvents(
+                PositionChanged,
+                WidthChanged,
+                HeightChanged,
+                IsVisibleChanged,
+                Children.OnDelete,
+                Children.OnAdd
+            ).Subscribe(_ => Repaint());
 
             SetupParentChildRelationship();
         }
@@ -186,7 +303,15 @@ namespace Interactr.View.Framework
             });
 
             // Remove parent-child relationship on child remove
-            Children.OnDelete.Subscribe(e => { e.Element.Parent = null; });
+            Children.OnDelete.Subscribe(e =>
+            {
+                e.Element.Parent = null;
+                if (FocusedElement == e.Element || (FocusedElement?.WalkToRoot().Contains(e.Element) ?? false))
+                {
+                    // Focused element will be removed from the visual tree, focus the first ancestor.
+                    this.Focus();
+                }
+            });
 
             // When a child requests a repaint, pass the request upwards so the canvaswindow on top can do the redraw.
             Children.ObserveEach(child => child.RepaintRequested).Subscribe(_ => Repaint());
@@ -221,78 +346,96 @@ namespace Interactr.View.Framework
         /// Emit a keyboard event.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        public static bool HandleKeyEvent(KeyEventData eventData)
+        public static void HandleKeyEvent(KeyEventData eventData)
         {
-            if (TunnelDownKeyEventPreview(eventData))
+            var targetElement = FocusedElement;
+
+            TunnelDownKeyEventPreview(eventData);
+            if (eventData.IsHandled)
             {
                 //Event was handled
-                return true;
+                return;
             }
 
             //Bubble up event from FocusedElement to root
-            return FocusedElement.BubbleUpKeyEvent(eventData);
+            targetElement.BubbleUpKeyEvent(eventData);
+            if (eventData.IsHandled)
+            {
+                //Event was handled
+                return;
+            }
+
+            if (eventData.Id == KeyEvent.KEY_PRESSED && eventData.KeyCode == KeyEvent.VK_TAB)
+            {
+                targetElement.FocusNextTabStop();
+            }
         }
 
         /// <summary>
-        /// Take a key event, call OnKeyEventPreview on every element from the root down until an element returns true or FocusedElement is reached.
+        /// Take a key event, call OnKeyEventPreview on every element from the root down until the event is canceled or FocusedElement is reached.
         /// </summary>
         /// <remarks>
         /// Only the ancestors of FocusedElement will receive the event.
         /// </remarks>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if the event was handled by an element</returns>
-        private static bool TunnelDownKeyEventPreview(KeyEventData eventData)
+        private static void TunnelDownKeyEventPreview(KeyEventData eventData)
         {
             foreach (UIElement element in UIElement.FocusedElement.WalkToRoot().Reverse())
             {
-                if (element.OnKeyEventPreview(eventData))
+                element.OnKeyEventPreview(eventData);
+                if (eventData.IsHandled)
                 {
-                    return true;
+                    return;
+                }
+
+                element._keyEventPreviewOccurred.OnNext(eventData);
+                if (eventData.IsHandled)
+                {
+                    return;
                 }
             }
-
-            return false;
         }
 
         /// <summary>
         /// Take a key event, call OnKeyEvent and pass the event to the parent element until an element handles it.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if this element or one of its ancestors has handled the event</returns>
-        private bool BubbleUpKeyEvent(KeyEventData eventData)
+        private void BubbleUpKeyEvent(KeyEventData eventData)
         {
-            _keyEventOccurred.OnNext(eventData);
-            if (this.OnKeyEvent(eventData))
+            OnKeyEvent(eventData);
+            if (eventData.IsHandled)
             {
-                return true;
+                return;
             }
 
-            return Parent?.BubbleUpKeyEvent(eventData) ?? false;
+            _keyEventOccurred.OnNext(eventData);
+            if (eventData.IsHandled)
+            {
+                return;
+            }
+
+            Parent?.BubbleUpKeyEvent(eventData);
         }
 
         /// <summary>
         /// Is called when keyboard events are triggered.
         /// Can be overriden to intercept key events before they reach the FocusedElement.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set evenData.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEventPreview(KeyEventData eventData)
+        protected virtual void OnKeyEventPreview(KeyEventData eventData)
         {
-            return false;
         }
 
         /// <summary>
         /// Is called when keyboard events are triggered.
         /// Can be overridden to handle keyboard events.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set e.IsCancelled to true indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
         /// <param name="eventData">Details about this event.</param>
         /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnKeyEvent(KeyEventData eventData)
+        protected virtual void OnKeyEvent(KeyEventData eventData)
         {
-            return false;
         }
 
         #endregion
@@ -304,98 +447,148 @@ namespace Interactr.View.Framework
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        public static bool HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
+        public static void HandleMouseEvent(UIElement rootElement, MouseEventData eventData)
         {
-            UIElement mouseoverElement = rootElement.FindElementAt(eventData.MousePosition);
-
-            if (TunnelDownMouseEventPreview(rootElement, mouseoverElement, eventData))
+            UIElement targetElement = rootElement.FindMouseEventTarget(eventData.MousePosition);
+            
+            TunnelDownMouseEventPreview(rootElement, targetElement, eventData);
+            if (eventData.IsHandled)
             {
                 // Event was handled.
-                return true;
+                return;
             }
 
             // Bubble up event from FocusedElement to root.
-            Point relativeMousePos = rootElement.TranslatePointTo(mouseoverElement, eventData.MousePosition);
-            return mouseoverElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos,
-                eventData.ClickCount));
+            Point relativeMousePos = rootElement.TranslatePointTo(targetElement, eventData.MousePosition);
+            targetElement.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+        }
+
+        private UIElement FindMouseEventTarget(Point mousePos)
+        {
+            return FindMouseEventTargetCandidates(mousePos).FirstOrDefault(e => e.IsVisibleToMouse);
+        }
+
+        private IEnumerable<UIElement> FindMouseEventTargetCandidates(Point mousePos)
+        {
+            if (MouseCapturingElement != null)
+            {
+                yield return MouseCapturingElement;
+            }
+            else
+            {
+                foreach (var child in FindChildrenAt(mousePos))
+                {
+                    Point p = TranslatePointTo(child, mousePos);
+                    foreach (var candidates in child.FindMouseEventTargetCandidates(p))
+                    {
+                        yield return candidates;
+                    }
+                }
+            }
+
+            yield return this;
         }
 
         /// <summary>
-        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until an element returns true or mouseover-element is reached.
+        /// Take a mouse event, call OnMouseEventPreview on every element from the root down until the evenData
+        /// is cancelled or mouseover-element is reached.
         /// Only the ancestors of the mouseover-element will receive the event.
         /// </summary>
         /// <param name="rootElement">The element at the top of the view-tree.</param>
         /// <param name="mouseoverElement">The element the mouse is over.</param>
         /// <param name="eventData">Details about this event. Should be relative to rootElement.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        private static bool TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement,
-            MouseEventData eventData)
+        private static void TunnelDownMouseEventPreview(UIElement rootElement, UIElement mouseoverElement, MouseEventData eventData)
         {
             foreach (UIElement element in mouseoverElement.WalkToRoot().Reverse())
             {
                 Point relativeMousePos = rootElement.TranslatePointTo(element, eventData.MousePosition);
-                if (element.OnMouseEventPreview(
-                    new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount)))
+                var newMouseEventData = new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount);
+
+                element.OnMouseEventPreview(newMouseEventData);
+                if (newMouseEventData.IsHandled)
                 {
-                    return true;
+                    // Stop event propagation.
+                    eventData.IsHandled = true;
+                    return;
+                }
+
+                element._mouseEventPreviewOccured.OnNext(newMouseEventData);
+                if (newMouseEventData.IsHandled)
+                {
+                    // Stop event propagation.
+                    eventData.IsHandled = true;
+                    return;
                 }
             }
-
-            return false;
         }
 
         /// <summary>
         /// Take a mouse event, call OnMouseEvent and keep passing the event to the parent element until an element handles it.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if the event was handled by an element.</returns>
-        private bool BubbleUpMouseEvent(MouseEventData eventData)
+        private void BubbleUpMouseEvent(MouseEventData eventData)
         {
-            _mouseEventOccured.OnNext(eventData);
-            if (this.OnMouseEvent(eventData))
+            OnMouseEvent(eventData);
+            if (eventData.IsHandled)
             {
-                return true;
+                return;
             }
 
+            _mouseEventOccured.OnNext(eventData);
+            if (eventData.IsHandled)
+            {
+                return;
+            }
+
+            // Return at root.
             if (Parent == null)
             {
-                return false;
+                return;
             }
 
-            Point relativeMousePos = this.TranslatePointTo(Parent, eventData.MousePosition);
-            return Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
+            Point relativeMousePos = TranslatePointTo(Parent, eventData.MousePosition);
+            Parent.BubbleUpMouseEvent(new MouseEventData(eventData.Id, relativeMousePos, eventData.ClickCount));
         }
 
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Override this method to intercept mouse events before they reach the element the mouse is over.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set e.IsCancelled to true to indicate that the event has been handled and should not be pushed
+        /// to more UI elements.
         /// </summary>
         /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEventPreview(MouseEventData eventData)
+        protected virtual void OnMouseEventPreview(MouseEventData eventData)
         {
-            return false;
         }
 
         /// <summary>
         /// Is called when mouse events are triggered.
         /// Can be overriden to handle mouse events.
-        /// Return true to indicate that the event has been handled and should not be pushed to more ui elements.
+        /// Set e.IsCancelled to true to indicate that the event has been handled and should not be pushed to more ui elements.
         /// </summary>
-        /// <param name="eventData">Details about this event. Should be relative to this element.</param>
-        /// <returns>True if this element has handled the event</returns>
-        protected virtual bool OnMouseEvent(MouseEventData eventData)
+        /// <param name="e">Details about this event. Should be relative to this element.</param>
+        protected virtual void OnMouseEvent(MouseEventData e)
         {
             // Only focus on mouseclick.
-            if (eventData.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            if (e.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
             {
-                this.Focus();
-                return true;
+                Focus();
+                e.IsHandled = true;
             }
+        }
 
-            return false;
+        public void CaptureMouseAtRoot()
+        {
+            WalkToRoot().Last().MouseCapturingElement = this;
+        }
+
+        public void ReleaseMouseAtRoot()
+        {
+            var root = WalkToRoot().Last();
+            if (root.MouseCapturingElement == this)
+            {
+                root.MouseCapturingElement = null;
+            }
         }
 
         #endregion
@@ -408,12 +601,85 @@ namespace Interactr.View.Framework
         /// <param name="g">The graphics object</param>
         public void Paint(Graphics g)
         {
-            if (IsVisible)
+            // Create drawing stack
+            Stack<PaintingStackFrame> stack = new Stack<PaintingStackFrame>();
+
+            // Put this element on the stack
+            stack.Push(new PaintingStackFrame
             {
-                ValidateLayout();
-                PaintElement(g);
-                PaintChildren(g);
+                Element = this,
+                Origin = new Point(0, 0),
+                RenderHeight = Height,
+                RenderWidth = Width
+            });
+
+            // Save current transform and clip
+            Matrix defaultTransform = g.Transform;
+            Region defaultClip = g.Clip;
+
+            // Draw elements
+            while (stack.Count > 0)
+            {
+                // Get current stack frame
+                PaintingStackFrame f = stack.Pop();
+                UIElement curElement = f.Element;
+
+                // Push visible children of curElement onto stack
+                // We use Children.Reverse() because the usage of the stack reverses.
+                foreach (UIElement child in curElement.Children.Reverse().Where(c => c.IsVisible))
+                {
+                    // Check if the element is completely outside the available space.
+                    if (child.Position.X > f.RenderWidth || child.Position.Y > f.RenderHeight ||
+                        child.Position.X + child.Width < 0 || child.Position.Y + child.Height < 0)
+                    {
+                        // Child is out of bounds, don't render.
+                        continue;
+                    }
+
+                    stack.Push(new PaintingStackFrame
+                    {
+                        Element = child,
+                        Origin = f.Origin + child.Position,
+                        RenderWidth = Math.Min(child.Width, f.RenderWidth - child.Position.X),
+                        RenderHeight = Math.Min(child.Height, f.RenderHeight - child.Position.Y)
+                    });
+                }
+
+                g.SetClip(new RectangleF(f.Origin.X, f.Origin.Y, f.RenderWidth, f.RenderHeight));
+                // Map x, y coordinates to child space (relative to child origin)
+                g.TranslateTransform(f.Origin.X, f.Origin.Y);
+
+                // Paint
+                if (curElement.IsFocused)
+                {
+                    using (Pen focusPen = new Pen(Color.Gray))
+                    {
+                        focusPen.DashStyle = DashStyle.Dot;
+                        focusPen.DashOffset = 2;
+                        g.DrawRectangle(focusPen, 0, 0, curElement.Width - 1, curElement.Height - 1);
+                    }
+                }
+                curElement.PaintElement(g);
+
+                // Reset clip and transform
+                g.Transform = defaultTransform;
+                g.Clip = defaultClip;
             }
+        }
+
+        private class PaintingStackFrame
+        {
+            // Element to be painted.
+            public UIElement Element { get; set; }
+
+            // Origin point of this element.
+            public Point Origin { get; set; }
+
+            // Actual width in pixels to render the Element at.
+            public int RenderWidth { get; set; }
+
+            // Actual height in pixels to render the Element at.
+            public int RenderHeight { get; set; }
         }
 
         /// <summary>
@@ -429,49 +695,6 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Draw the children of this element
-        /// </summary>
-        private void PaintChildren(Graphics g)
-        {
-            // Render first to last, so last element is on top
-            foreach (UIElement child in Children)
-            {
-                // Save current transform and clip
-                Matrix currentTransform = g.Transform;
-                Region currentClip = g.Clip;
-
-                // Map x, y coordinates to child space (relative to child origin)
-                g.TranslateTransform(child.Position.X, child.Position.Y);
-                g.SetClip(new RectangleF(0, 0, child.Width, child.Height));
-
-                // Paint
-                child.Paint(g);
-
-                // Reset clip and transform
-                g.Transform = currentTransform;
-                g.Clip = currentClip;
-            }
-        }
-
-        protected void ValidateLayout()
-        {
-            foreach (UIElement child in Children)
-            {
-                int availableWidth = this.Width - child.Position.X;
-                if (availableWidth < child.Width)
-                {
-                    child.Width = availableWidth;
-                }
-
-                int availableHeight = this.Height - child.Position.Y;
-                if (availableHeight < child.Height)
-                {
-                    child.Height = availableHeight;
-                }
-            }
-        }
-
-        /// <summary>
         /// Render this element to the screen.
         /// </summary>
         /// <param name="g">The graphics object that can be used to draw</param>
@@ -481,6 +704,48 @@ namespace Interactr.View.Framework
 
         #endregion
 
+        private void FocusNextTabStop()
+        {
+            // Move focus to the first focusable descendant, unless we have already just done this.
+            var child = GetDecendants().FirstOrDefault(c => c.CanBeFocused && c.IsVisible);
+            if (child != null)
+            {
+                child.Focus();
+                return;
+            }
+
+            // Focus the first next sibling or their descendant thereof that is focusable.
+            // If no such element is found, go up one level in the tree and repeat.
+            // If a tabscope is encountered, don't go up and focus the first focusable descendant of the tab scope instead.
+            UIElement curElement = this;
+            while (curElement.Parent != null)
+            {
+                var siblingsAfterCurElement = curElement.Parent.Children.SkipWhile(e => e != curElement).Skip(1);
+                foreach (var sibling in siblingsAfterCurElement)
+                {
+                    var candidates = new[] { sibling }.Concat(sibling.GetDecendants());
+                    var nextFocusableElement = candidates.FirstOrDefault(e => e.CanBeFocused && e.IsVisible);
+                    if (nextFocusableElement != null)
+                    {
+                        nextFocusableElement.Focus();
+                        return;
+                    }
+                }
+
+                if (curElement.Parent.IsTabScope)
+                {
+                    var e = curElement.Parent.Children.FirstOrDefault(c => c.CanBeFocused && c.IsVisible);
+                    if (e != null)
+                    {
+                        e.Focus();
+                        return;
+                    }
+                }
+
+                curElement = curElement.Parent;
+            }
+        }
+
         /// <summary>
         /// Transform input point p to coördinates relative to the given UIElement.
         /// </summary>
@@ -489,9 +754,9 @@ namespace Interactr.View.Framework
         /// <returns>Transformed point</returns>
         public Point TranslatePointTo(UIElement e, Point p)
         {
-            Point pRoot = RelativeToRoot(p);
+            Point pRoot = GetPositionRelativeToRoot(p);
 
-            Point uiElementPosition = e.RelativeToRoot();
+            Point uiElementPosition = e.GetPositionRelativeToRoot();
 
             return new Point(
                 pRoot.X - uiElementPosition.X,
@@ -500,34 +765,27 @@ namespace Interactr.View.Framework
         }
 
         /// <summary>
-        /// Find the UIElement that is visible at this point on the screen.
-        /// This function searches downward in the tree for the bottom-most node that contains the specified point.
+        /// Find the visible child UIElements that contain the specified point.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public UIElement FindElementAt(Point point)
+        /// <param name="point">The point that should be contained by the returned children.</param>
+        /// <returns>An enumerable of children of this element that contain the specified children.</returns>
+        public IEnumerable<UIElement> FindChildrenAt(Point point)
         {
-            var childContainingPoint = Children.FirstOrDefault(child =>
-                child.IsVisible &&
-                point.X >= child.Position.X && point.Y >= child.Position.Y &&
-                point.X < (child.Position.X + child.Width) &&
-                point.Y < (child.Position.Y + child.Height));
-
-            if (childContainingPoint == null)
-            {
-                //No child of this element contains 'point', so this is the deepest element that does.
-                return this;
-            }
-
-            Point relativePosition = this.TranslatePointTo(childContainingPoint, point);
-            return childContainingPoint.FindElementAt(relativePosition);
+            return Children
+                .Reverse()
+                .Where(child =>
+                    child.IsVisible &&
+                    point.X >= child.Position.X && point.Y >= child.Position.Y &&
+                    point.X < (child.Position.X + child.Width) &&
+                    point.Y < (child.Position.Y + child.Height)
+                );
         }
 
         /// <summary>
         /// Return coördinates relative to the root of this UIElement.
         /// </summary>
         /// <returns>Given point relative to the root.</returns>
-        private Point RelativeToRoot(Point p = default(Point))
+        private Point GetPositionRelativeToRoot(Point p = default(Point))
         {
             return WalkToRoot().Select(c => c.Position).Aggregate((p1, p2) => p1 + p2) + p;
         }
@@ -545,6 +803,35 @@ namespace Interactr.View.Framework
                 ancestor = ancestor.Parent;
                 yield return ancestor;
             }
+        }
+
+        /// <summary>
+        /// Return all the decendants of this element, in a breadth first order.
+        /// </summary>
+        /// <returns>All decendants of this element.</returns>
+        public IEnumerable<UIElement> GetDecendants()
+        {
+            foreach (var child in Children)
+            {
+                yield return child;
+            }
+
+            foreach (var child in Children)
+            {
+                foreach (var subChild in child.GetDecendants())
+                {
+                    yield return subChild;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Walk through the children of the UIElement to check if one of them is in focus.
+        /// </summary>
+        /// <returns>Wether the UIElement has a child that is currently in focus.</returns>
+        public bool HasChildInFocus()
+        {
+            return GetDecendants().Any(d => d.IsFocused);
         }
     }
 }

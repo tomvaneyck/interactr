@@ -11,58 +11,58 @@ namespace Interactr.Tests.View.Controls
     [TestFixture]
     public class LabelViewInputTests
     {
-        private TestableLabelView _labelView;
+        private LabelView _labelView;
         private TestScheduler _scheduler;
 
         [SetUp]
         public void BeforeEach()
         {
-            _labelView = new TestableLabelView();
+            _labelView = new LabelView();
+            _labelView.Focus();
             _scheduler = new TestScheduler();
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void EscKeyFunctionalityEvent()
         {
-            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
+                KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
             _labelView.IsInEditMode = true;
 
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            UIElement.HandleKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsHandled);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void EscKeyFunctionalityNoEvent()
-        {
-            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, -1, '\x1b');
-            _labelView.CanLeaveEditMode = true;
-            _labelView.IsInEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
-
-            // Check if an action was handled.
-            Assert.IsFalse(result);
-
-            // Check if expected ESC action occurred.
-            Assert.IsTrue(_labelView.IsInEditMode);
-        }
-
-        [Test]
-        public void EscKeyFunctionalityNotInEnterEditMode()
         {
             KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED, KeyEvent.VK_ESCAPE, '\x1b');
             _labelView.CanLeaveEditMode = true;
-            bool result = _labelView.RunOnKeyEvent(keyEventData);
+            _labelView.IsInEditMode = true;
+            UIElement.HandleKeyEvent(keyEventData);
 
             // Check if an action was handled.
-            Assert.IsTrue(result);
+            Assert.IsTrue(keyEventData.IsHandled);
+
+            // Check if expected ESC action occurred.
+            Assert.IsFalse(_labelView.IsInEditMode);
+        }
+
+        [Test]
+        public void EscKeyFunctionalityNotInEditMode()
+        {
+            KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_RELEASED,
+                KeyEvent.VK_ESCAPE, '\x1b');
+            _labelView.CanLeaveEditMode = true;
+            UIElement.HandleKeyEvent(keyEventData);
 
             // Check if expected ESC action occurred.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -77,7 +77,7 @@ namespace Interactr.Tests.View.Controls
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.MOUSE_CLICKED, new Point(_labelView.Width + 1, _labelView.Height + 1), 1);
 
-            var result = _labelView.RunOnMouseEvent((mouseEventData));
+            UIElement.HandleMouseEvent(_labelView, mouseEventData);
 
             // Edit mode should still be false.
             Assert.IsFalse(_labelView.IsInEditMode);
@@ -93,14 +93,14 @@ namespace Interactr.Tests.View.Controls
             MouseEventData mouseEventData =
                 new MouseEventData(MouseEvent.NOBUTTON, pointInLabel, 1);
 
-            _labelView.RunOnMouseEvent(mouseEventData);
+            UIElement.HandleMouseEvent(_labelView, mouseEventData);
 
             // Check if expected mouse action occured.
             Assert.IsFalse(_labelView.IsInEditMode);
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void LabelTextChangesWhenOneKeyTyped()
         {
             _labelView.IsInEditMode = true;
@@ -119,7 +119,7 @@ namespace Interactr.Tests.View.Controls
         }
 
         [Test]
-        [Category("UIRequired")]
+        [Category("RequiresUI")]
         public void TestBackSpaceInLabelView()
         {
             _labelView.IsInEditMode = true;
@@ -165,24 +165,11 @@ namespace Interactr.Tests.View.Controls
             // Schedule to type a character in every 10 ticks.
             foreach (char character in text)
             {
-                KeyEventData keyEventData =
-                    new KeyEventData(KeyEvent.KEY_TYPED, KeyEvent.CHAR_UNDEFINED, character);
-                _scheduler.Schedule(TimeSpan.FromTicks(scheduleTicks),
-                    () => _labelView.RunOnKeyEvent(keyEventData));
+                KeyEventData keyEventData = new KeyEventData(KeyEvent.KEY_TYPED, KeyEvent.CHAR_UNDEFINED, character);
+
+                _scheduler.Schedule(TimeSpan.FromTicks(scheduleTicks), () => UIElement.HandleKeyEvent(keyEventData));
+
                 scheduleTicks += 10;
-            }
-        }
-
-        private class TestableLabelView : LabelView
-        {
-            public bool RunOnKeyEvent(KeyEventData keyEventData)
-            {
-                return OnKeyEvent(keyEventData);
-            }
-
-            public bool RunOnMouseEvent(MouseEventData mouseEventData)
-            {
-                return OnMouseEvent(mouseEventData);
             }
         }
     }

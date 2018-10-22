@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Interactr.Constants;
 using Interactr.Reactive;
 using Interactr.View.Framework;
 using Interactr.Window;
@@ -14,50 +13,27 @@ using Interactr.Window;
 namespace Interactr.View.Controls
 {
     /// <summary>
-    /// A view for displaying and aediting the text label.
+    /// A view for displaying and editing the text label.
     /// </summary>
-    public class LabelView : UIElement
+    public class LabelView : EditableText
     {
+        #region IsReadOnly
 
-        #region Text
+        private readonly ReactiveProperty<bool> _isReadOnly = new ReactiveProperty<bool>();
 
-        private readonly ReactiveProperty<string> _text = new ReactiveProperty<string>();
-
-        public string Text
+        /// <summary>
+        /// Indicate if the label is readonly.
+        /// </summary>
+        public bool IsReadOnly
         {
-            get => _text.Value;
-            set => _text.Value = value;
+            get => _isReadOnly.Value;
+            set => _isReadOnly.Value = value;
         }
 
-        public IObservable<string> TextChanged => _text.Changed;
-
-        #endregion
-
-        #region Font
-
-        private readonly ReactiveProperty<Font> _font = new ReactiveProperty<Font>();
-
-        public Font Font
-        {
-            get => _font.Value;
-            set => _font.Value = value;
-        }
-
-        public IObservable<Font> FontChanged => _font.Changed;
-
-        #endregion
-
-        #region IsInEditMode
-
-        private readonly ReactiveProperty<bool> _isInEditMode = new ReactiveProperty<bool>();
-
-        public bool IsInEditMode
-        {
-            get => _isInEditMode.Value;
-            set => _isInEditMode.Value = value;
-        }
-
-        public IObservable<bool> EditModeChanged => _isInEditMode.Changed;
+        /// <summary>
+        /// Emit the new IsReadOnly values.
+        /// </summary>
+        public IObservable<bool> IsReadOnlyChanged => _isReadOnly.Changed;
 
         #endregion
 
@@ -65,158 +41,116 @@ namespace Interactr.View.Controls
 
         private readonly ReactiveProperty<bool> _canLeaveEditMode = new ReactiveProperty<bool>();
 
+        /// <summary>
+        /// Indicate if leaving edit mode is allowed.
+        /// </summary>
         public bool CanLeaveEditMode
         {
             get => _canLeaveEditMode.Value;
             set => _canLeaveEditMode.Value = value;
         }
 
+        /// <summary>
+        /// Emit the new canLeaceEditMode value when it changes.
+        /// </summary>
         public IObservable<bool> CanLeaveEditModeChanged => _canLeaveEditMode.Changed;
 
         #endregion
 
-        #region CursorIsVisible
-
-        private bool _cursorIsVisible;
-
-        #endregion
-
-        private bool _isFocusing;
-
-        public LabelView()
+        public LabelView() : base()
         {
-            // Set the text to empty string
-            Text = "";
-            
-            // Set the default font.
-            Font = new Font("Arial", 11);
-
-            // When a property changes, repaint.
-            TextChanged.Select(_ => Unit.Default).Merge(
-                FontChanged.Select(_ => Unit.Default)
-            ).Subscribe(_ => Repaint());
-
-            // Blink cursor if label is in edit mode.
-            EditModeChanged.Select(editMode =>
-            {
-                if (editMode)
-                {
-                    return Observable.Interval(TimeSpan.FromMilliseconds(SystemInformation.CaretBlinkTime))
-                        .StartWith(0);
-                }
-                else
-                {
-                    _cursorIsVisible = false;
-                    // Repainting to get rid of cursor.
-                    Repaint();
-                    return Observable.Empty<long>();
-                }
-            }).Switch().Subscribe(_ =>
-            {
-                _cursorIsVisible = !_cursorIsVisible;
-                Repaint();
-            });
-
-            // Leave edit mode if focus is lost and Repaint.
-            FocusChanged.Subscribe(isFocused =>
-            {
-                if (!isFocused)
-                {
-                    IsInEditMode = false;
-                }
-
-                Repaint();
-            });
-
-            // Ignore mouse clicked when just received focus.
-            FocusChanged.Where(v => v).Subscribe(_ => _isFocusing = true);
-
-            // Update canLoseFocus when the CanLeaveEditMode is changed.
-            CanLeaveEditModeChanged.Subscribe(canLoseFocus => CanLoseFocus = canLoseFocus);
             CanLeaveEditMode = true;
+
+            // Leave edit mode if ReadOnly is activated
+            IsReadOnlyChanged.Where(isReadOnly => isReadOnly == true).Subscribe(i => { IsInEditMode = false; });
+
+            // In edit mode, capture the mouse on the diagram editor scope.
+            EditModeChanged.Subscribe(editMode =>
+            {
+                UIElement mouseCaptureScope =
+                    WalkToRoot().OfType<DiagramEditorView>().FirstOrDefault() ?? WalkToRoot().Last();
+
+                mouseCaptureScope.MouseCapturingElement = editMode ? this : null;
+            });
+        }
+
+        /// <param name="isFocused"></param>
+        /// <see cref="HandleFocusChange">
+        protected override void HandleFocusChange(bool isFocused)
+        {
+            if (!isFocused && CanLeaveEditMode)
+            {
+                IsInEditMode = false;
+            }
         }
 
         /// <see cref="PaintElement"/>
         public override void PaintElement(Graphics g)
         {
-            // Measure how much space it would take to fully render the
-            // the string. Must be done in this function because it requires
-            // a Graphics object.
-            var preferredSize = g.MeasureString(Text, Font);
-            PreferredWidth = (int) Math.Ceiling(preferredSize.Width);
-            PreferredHeight = (int) Math.Ceiling(preferredSize.Height);
+            base.PaintElement(g);
 
-            if (IsFocused)
+            // Draw editing or focus rectangle.
+            if (IsInEditMode)
             {
-                g.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+                using (Pen pen = new Pen(Color.DodgerBlue))
+                {
+                    g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+                }
             }
-
-            // Draw the string.
-            g.DrawString(Text, Font, Brushes.Black, 0, 0);
-
-            // Draw cursor.
-            if (_cursorIsVisible)
+            else if (IsFocused)
             {
-                g.DrawLine(Pens.Black, PreferredWidth - 5, 0, PreferredWidth - 5, PreferredHeight);
+                using (Pen pen = new Pen(Color))
+                {
+                    g.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+                }
             }
-        }
-
-        public void FocusLabel()
-        {
-            Focus();
         }
 
         /// <see cref="OnKeyEvent"/>
-        protected override bool OnKeyEvent(KeyEventData eventData)
+        protected override void OnKeyEvent(KeyEventData eventData)
         {
-            if (eventData.KeyCode == KeyEvent.VK_ESCAPE)
+            if (IsInEditMode &&
+                eventData.Id == KeyEvent.KEY_RELEASED &&
+                eventData.KeyCode == KeyEvent.VK_ESCAPE &&
+                CanLeaveEditMode)
             {
-                if (eventData.Id == KeyEvent.KEY_RELEASED && CanLeaveEditMode)
+                IsInEditMode = false;
+                eventData.IsHandled = true;
+            }
+            else
+            {
+                base.OnKeyEvent(eventData);
+            }
+        }
+
+        protected override void OnMouseEvent(MouseEventData e)
+        {
+            // When the user clicks outside of the label bounds, try to exit edit mode.
+            if (IsInEditMode)
+            {
+                bool eventOutOfLabelBounds = e.MousePosition.X < 0 || e.MousePosition.Y < 0 ||
+                                             e.MousePosition.X >= Width || e.MousePosition.Y >= Height;
+
+                if (e.Id == MouseEvent.MOUSE_PRESSED && eventOutOfLabelBounds && CanLeaveEditMode)
                 {
                     IsInEditMode = false;
                 }
 
-                return true;
+                e.IsHandled = true;
             }
-            else if (eventData.Id == KeyEvent.KEY_TYPED && IsInEditMode)
-            {
-                // If the keyChar is backspace.
-                if (eventData.KeyChar == '\b')
-                {
-                    if (Text.Length > 0)
-                    {
-                        Text = Text.Substring(0, Text.Length - 1);
-                    }
-                }
-                // If Keychar is not escape.
-                else if (eventData.KeyChar != '\x1b')
-                {
-                    Text += eventData.KeyChar;
-                }
-
-                return true;
-                
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <see cref="OnMouseEvent"/>
-        protected override bool OnMouseEvent(MouseEventData eventData)
-        {
-            if (_isFocusing && eventData.Id == MouseEvent.MOUSE_CLICKED)
-            {
-                _isFocusing = false;
-            }
-            else if (IsFocused && eventData.Id == MouseEvent.MOUSE_CLICKED)
+            
+            // When the label is focused and the user clicks the label, enter edit mode.
+            else if (IsFocused && e.Id == MouseEvent.MOUSE_PRESSED && !IsReadOnly)
             {
                 IsInEditMode = true;
-                return true;
+                e.IsHandled = true;
             }
 
-            return base.OnMouseEvent(eventData);
+            if (e.Id == MouseEvent.MOUSE_PRESSED && CanBeFocused)
+            {
+                Focus();
+                e.IsHandled = true;
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Interactr.Model;
 using Microsoft.Reactive.Testing;
 using System.Reactive.Concurrency;
@@ -14,8 +12,8 @@ namespace Interactr.Tests.Model
         private const Message.MessageType DefaultMessageType = Message.MessageType.Invocation;
 
         //Test labels
-        private const string MessageLabel1 = "testLabel1";
-        private const string MessageLabel2 = "testLabel2";
+        private const string MessageLabel1 = "testlabel()";
+        private const string MessageLabel2 = "testlabel2()";
 
         private const string ValidPartyLabel1 = "instanceName:Classname";
         private const string ValidPartyLabel2 = "instanceName2:Classname2";
@@ -97,6 +95,7 @@ namespace Interactr.Tests.Model
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
+            Assert.AreEqual(MessageLabel1, _defaultTestMessage.Label);
         }
 
         [Test]
@@ -197,6 +196,138 @@ namespace Interactr.Tests.Model
 
             // Assert
             ReactiveAssert.AreElementsEqual(expected, actual);
+        }
+    }
+
+    [TestFixture]
+    public class LabelContentTests
+    {
+        // Valid Test labels
+        private const string ValidMessageLabelNormal = "testlabel()";
+        private const string ValidMessageLabelWithNumber = "testlabel2()";
+        private const string ValidMessageLabelWithCapitals = "testLABEL()";
+        private const string ValidMessageLabelWithArguments = "testlabel(arg1,arg2,arg3)";
+        private const string ValidMessageLabelWithCapitalInArguments = "testlabel(Arg1,ARG2,aRG3)";
+        private const string ValidMessageLabelUnderscores = "test_label()";
+
+        // Invalid test labels
+        private const string InvalidMessageLabelNoParenthesis = "testlabel";
+        private const string InvalidMessageLabelStartWithCapital = "Testlabel";
+        private const string InvalidMessageLabelIllegalChars1 = "test*abel";
+        private const string InvalidMessageLabelIllegalChars2 = "test&label";
+        private const string InvalidMessageLabelIllegalArgsParenthesis = "testlabel(arg(ji), helofj(,394)";
+        private const string InvalidMessageLabelIllegalArgsComma = "testlabel(argji, helofj,,394)";
+        private const string InvalidMessageLabelTextafterParenthesis = "testlabel(arg,arg2)jefeo";
+
+        [Test]
+        public void ValidNormalMessageLabelTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelNormal);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ValidMessageLabelWithNumberTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelWithNumber);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ValidMessageLabelWithCapitalsTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelWithCapitals);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ValidMessageLabelWithArgumentsTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelWithArguments);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ValidMessageLabelWithCapitalInArgumentsTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelWithCapitalInArguments);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ValidMessageLabelWithUnderscoresTest()
+        {
+            bool expected = true;
+            bool actual = Message.IsValidInvocationLabel(ValidMessageLabelUnderscores);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelCapitalsTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelStartWithCapital);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelNoParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelNoParenthesis);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalCharactersTest()
+        {
+            bool expected1 = false;
+            bool actual1 = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalChars1);
+            bool expected2 = false;
+            bool actual2 = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalChars2);
+
+            Assert.AreEqual(expected1, actual1);
+            Assert.AreEqual(expected2, actual2);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalArgsCommaTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalArgsComma);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelIllegalArgsParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelIllegalArgsParenthesis);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void InvalidMessageLabelTextAfterParenthesisTest()
+        {
+            bool expected = false;
+            bool actual = Message.IsValidInvocationLabel(InvalidMessageLabelTextafterParenthesis);
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interactr.Model;
 using Interactr.Reactive;
+using Interactr.View.Dialogs;
 using Interactr.View.Framework;
+using Interactr.ViewModel.Dialogs;
 
 namespace Interactr.ViewModel
 {
@@ -41,23 +40,27 @@ namespace Interactr.ViewModel
 
         #region Label
 
-        private readonly ReactiveProperty<string> _label = new ReactiveProperty<string>();
-
         /// <summary> A label.
         /// <example> instance_name;class_name </example>
         /// </summary>
-        public string Label
-        {
-            get => _label.Value;
-            set => _label.Value = value;
-        }
+        public PartyFormatStringViewModel Label { get; }
 
         /// <summary>
-        /// An observable that emits the new label when it has changed.
+        /// An observable that emits a default unit if something
+        /// in the Formatted string label changes.
         /// </summary>
-        public IObservable<string> LabelChanged => _label.Changed;
+        public IObservable<string> LabelChanged => Label.TextChanged;
 
         #endregion
+
+        /// <summary>
+        /// Indicates if the label of the party view is in edit mode.
+        /// </summary>
+        /// <remarks>
+        /// This property gets set in the party view of this party view model.
+        /// It maintains a binding so that the view model is aware of changes in the view.
+        /// </remarks>
+        public bool LabelInEditMode { get; set; }
 
         #region CanApplyLabel
 
@@ -91,18 +94,29 @@ namespace Interactr.ViewModel
 
         #endregion
 
+        public Diagram Diagram { get; }
+
         public Party Party { get; }
 
-        public PartyViewModel(Party party)
+        public PartyViewModel(Diagram diagram, Party party)
         {
+            Diagram = diagram;
             Party = party;
+
+            // Create a new party formatted string view model
+            Label = new PartyFormatStringViewModel();
 
             // Bind the type in the viewmodel to the type in the model.
             party.TypeChanged.Subscribe(newType => Type = newType);
 
             // Define the label in the viewmodel to change when the label changes in the model.
-            party.LabelChanged.Subscribe(newLabel => Label = newLabel);
-
+            party.LabelChanged.Subscribe(newLabel =>
+            {
+                if (!LabelInEditMode)
+                {
+                    Label.Text = newLabel;
+                }
+            });
             // Update CanApplyLabel when the label changes.
             LabelChanged.Select(Party.IsValidLabel).Subscribe(isValid => CanApplyLabel = isValid);
         }
@@ -124,8 +138,26 @@ namespace Interactr.ViewModel
         /// </summary>
         public void ApplyLabel()
         {
-            Party.Label = Label;
+            Party.Label = Label.Text;
         }
 
+        public PartyDialogViewModel CreateNewDialogViewModel()
+        {
+            PartyDialogViewModel dialog = new PartyDialogViewModel();
+
+            dialog.Label.ClassName = Label.ClassName;
+            dialog.Label.InstanceName = Label.InstanceName;
+
+            dialog.Label.TextChanged
+                .Where(_ => dialog.Label.HasValidText())
+                .Subscribe(newLabel => Party.Label = newLabel);
+            
+            Label.ClassNameChanged.Subscribe(newClassName => dialog.Label.ClassName = newClassName);
+            Label.InstanceNameChanged.Subscribe(newInstanceName => dialog.Label.InstanceName = newInstanceName);
+
+            dialog.PartyTypeChanged.Subscribe(newType => Party.Type = newType);
+            Party.TypeChanged.Subscribe(newType => dialog.PartyType = newType);
+            return dialog;
+        }
     }
 }
